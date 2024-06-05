@@ -61,7 +61,14 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     final uri = Uri.parse('https://tapetestufan.mx:6002/token');
     final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    final body = 'username=${Uri.encodeComponent(_emailController.text)}&password=${Uri.encodeComponent(_passwordController.text)}';
+    final Map<String, dynamic> body = {
+          'grant_type': '',
+          'username': _emailController.text,
+          'password': _passwordController.text,
+          'scope': '',
+          'client_id': '',
+          'client_secret': '',
+        };
 
     try {
       final response = await http.post(uri, headers: headers, body: body);

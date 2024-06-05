@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
-
 class LoginScreen extends StatefulWidget {
   final VoidCallback onLoginSuccess;
 
@@ -59,17 +58,28 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     final uri = Uri.parse('https://tapetestufan.mx:6002/token');
     final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    final body = 'username=${Uri.encodeComponent(_emailController.text)}&password=${Uri.encodeComponent(_passwordController.text)}';
 
     try {
-      final response = await http.post(uri, headers: headers, body: body);
+      final response = await http.post(
+        uri,
+        headers: headers,
+        body: {
+          'grant_type': '',
+          'username': _emailController.text,
+          'password': _passwordController.text,
+          'scope': '',
+          'client_id': '',
+          'client_secret': '',
+        },
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final token = data['access_token'];
         print('Token: $token');
         // Aquí deberías guardar el token en algún lugar seguro
-        await storage.write(key: 'jwtToken', value: token); // Almacenar el token
+        await storage.write(
+            key: 'jwtToken', value: token); // Almacenar el token
         // Mostrar mensaje de éxito
         _showSnackBar("Inicio de sesión exitoso.");
 
@@ -78,7 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         _showSnackBar("Acceso Denegado.");
         // Manejo de errores, podrías querer mostrar algún mensaje en la interfaz de usuario
-        print('Error de inicio de sesión: ${response.statusCode} - ${response.body}');
+        print(
+            'Error de inicio de sesión: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       _showSnackBar('Error al conectar al API: $e');
@@ -93,10 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
     super.dispose();
   }
-  void _showSnackBar(String message) {
-  final snackBar = SnackBar(content: Text(message));
-  // Usa ScaffoldMessenger para compatibilidad con las versiones recientes de Flutter
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-}
-}
 
+  void _showSnackBar(String message) {
+    final snackBar = SnackBar(content: Text(message));
+    // Usa ScaffoldMessenger para compatibilidad con las versiones recientes de Flutter
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+}
