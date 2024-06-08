@@ -1,22 +1,22 @@
+import 'package:appexpflutter_update/config/config.dart';
 import 'package:flutter/material.dart';
+import 'presentation/screens/auth/screens.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Environment.initEnvironment();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Material App Bar'),
-        ),
-        body: const Center(
-          child: Text('Hello World'),
-        ),
-      ),
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Tufan',
+      home: LoginScreen(),
     );
   }
 }
