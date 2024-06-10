@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/main.dart';
@@ -13,15 +14,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-// late GoRouter _router;
+  late final GoRouter _router;
+  final storage = const FlutterSecureStorage();
 
-  // Future<void> _init() async {
-  //   final bloc = context.read<AuthBloc>();
-  //   final token = await bloc.getAccessToken();
-  //   _router = GoRouter(initialLocation: token != null ? HomeRoute.path : LoginRoute.path, routes: $appRoutes);
-  // }
-  final _router =
-      GoRouter(initialLocation: LoginRoute.path, routes: $appRoutes);
+  Future<void> _init() async {
+    final token = await storage.read(key: 'accessToken');
+    _router = GoRouter(
+        initialLocation: token != null ? HomeRoute.path : LoginRoute.path,
+        routes: $appRoutes);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +30,18 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider<AuthBloc>(create: (_) => injector<AuthBloc>()),
       ],
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: 'Tufan',
-        routerConfig: _router,
+      child: FutureBuilder(
+        future: _init(),
+        builder: (context, state) {
+          if (state.connectionState == ConnectionState.waiting) {
+            return Container();
+          }
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'Tufan',
+            routerConfig: _router,
+          );
+        },
       ),
     );
   }

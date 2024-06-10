@@ -25,7 +25,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  // Método para obtener el token almacenado
   Future<String?> getAccessToken() async {
     return await storage.read(key: 'accessToken');
   }
