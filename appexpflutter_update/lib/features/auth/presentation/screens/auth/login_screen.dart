@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:appexpflutter_update/features/auth/presentation/screens/auth/widgets/login_form.dart';
-import 'package:appexpflutter_update/features/auth/presentation/shared/widgets/geometrical_background.dart';
+import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

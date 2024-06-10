@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:api_client/api_client.dart';
 import 'package:appexpflutter_update/features/auth/data/data_sources/auth_data_source.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthDataSourceImpl implements AuthDatasource {
   final DioClient _dioClient;
-  final storage = const FlutterSecureStorage();
+  
 
   AuthDataSourceImpl({required DioClient dioClient}) : _dioClient = dioClient;
   @override
@@ -25,11 +24,14 @@ class AuthDataSourceImpl implements AuthDatasource {
         data: body,
         options: Options(headers: headers),
       );
-      print(response.data['access_token']);
-      return '';
-      // return response.data['access_token'] as String;
+      final token = response.data['access_token'] as String;
+
+   
+      return token;
     } catch (_) {
       rethrow;
     }
   }
+
+  
 }

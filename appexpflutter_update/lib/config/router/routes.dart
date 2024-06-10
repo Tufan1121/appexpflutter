@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/screens.dart' show LoginScreen;
@@ -21,9 +22,5 @@ class LoginRoute extends GoRouteData {
 class HomeRoute extends GoRouteData {
   static const path = '/home';
   @override
-  Widget build(BuildContext context, GoRouterState state) => const Scaffold(
-        body: Center(
-          child: Text('Home'),
-        ),
-      );
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }

@@ -63,7 +63,7 @@ class NetworkException extends Equatable implements Exception {
       case DioExceptionType.badResponse:
         final model = NetworkErrorModel.fromJson(
             dioException.response?.data as Map<String, dynamic>);
-        message = model.statusMessage ?? 'Mala respuesta inesperada';
+        message = model.statusMessage ?? 'Credenciales incorrectas';
         break;
 
       case DioExceptionType.unknown:

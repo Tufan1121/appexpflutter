@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/auth/presentation/shared/widgets/custom_filled_button.dart';
-import 'package:appexpflutter_update/features/auth/presentation/shared/widgets/custom_text_form_field.dart';
+import 'package:appexpflutter_update/config/config.dart';
+import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 
 class LoginForm extends StatefulHookWidget {
   const LoginForm({super.key});
@@ -56,6 +59,7 @@ class _LoginFormState extends State<LoginForm> {
               formControlName: 'password',
               label: 'Contraseña',
               obscureText: showPassword.value,
+              onSubmitted: (p0) => _submitForm(),
               validationMessages: {
                 ValidationMessage.required: (error) =>
                     'Este campo es requerido',
@@ -71,25 +75,50 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
             const SizedBox(height: 30),
-            SizedBox(
-                width: double.infinity,
-                height: 60,
-                child: CustomFilledButton(
-                  text: 'Iniciar sesión',
-                  buttonColor: Colores.secondaryColor,
-                  onPressed: () {
-                    if (form.invalid) {
-                      form.markAllAsTouched();
-                      return;
-                    }
-                    email = form.control('email').value!;
-                    password = form.control('password').value!;
-                  },
-                )),
+            BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: const Duration(seconds: 2),
+                      backgroundColor: Colors.red,
+                      content: Text(
+                        state.message,
+                        style:
+                            GoogleFonts.montserrat(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                } else if (state is AuthAuthenticated) {
+                  // Navegar a la pantalla de inicio
+                  HomeRoute().go(context);
+                }
+              },
+              builder: (context, state) {
+                return SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: CustomFilledButton(
+                        text: 'Iniciar sesión',
+                        buttonColor: Colores.secondaryColor,
+                        onPressed: _submitForm));
+              },
+            ),
             const Spacer(flex: 1),
           ],
         ),
       ),
     );
+  }
+
+  void _submitForm() {
+    if (form.invalid) {
+      form.markAllAsTouched();
+      return;
+    }
+    email = form.control('email').value!;
+    password = form.control('password').value!;
+    // Realiza las acciones necesarias, como iniciar sesión
+    context.read<AuthBloc>().add(LoginEvent(email, password));
   }
 }

@@ -1,12 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:appexpflutter_update/features/auth/domain/usecases/auth_usecase.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthUsecase authUsecase;
+  final storage = const FlutterSecureStorage();
+
   AuthBloc({required this.authUsecase}) : super(AuthInitial()) {
     on<LoginEvent>(_getToken);
   }
@@ -14,9 +17,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _getToken(LoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final result = await authUsecase.login(event.email, event.password);
-    result.fold(
-      (error) => emit(AuthError(message: error.message)),
-      (token) => emit(AuthAuthenticated(token: token)),
-    );
+    await result.fold((error) async => emit(AuthError(message: error.message)),
+        (token) async {
+      // Guarda el accessToken en el almacenamiento seguro
+      await storage.write(key: 'accessToken', value: token);
+      emit(AuthAuthenticated());
+    });
+  }
+
+  // Método para obtener el token almacenado
+  Future<String?> getAccessToken() async {
+    return await storage.read(key: 'accessToken');
+  }
+
+  // Método para eliminar el token almacenado (logout)
+  Future<void> deleteAccessToken() async {
+    await storage.delete(key: 'accessToken');
   }
 }
