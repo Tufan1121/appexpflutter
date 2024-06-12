@@ -1,7 +1,8 @@
-import 'package:appexpflutter_update/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/auth/presentation/screens/screens.dart' show LoginScreen;
+import 'package:appexpflutter_update/features/home/presentation/screens/home_screen.dart';
+import 'package:appexpflutter_update/features/precios/presentation/screens/precios.dart';
+import '../../features/auth/presentation/screens/auth/login_screen.dart';
 
 part 'routes.g.dart';
 
@@ -23,4 +24,14 @@ class HomeRoute extends GoRouteData {
   static const path = '/home';
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
+}
+
+@TypedGoRoute<PreciosRoute>(
+  path: PreciosRoute.path,
+)
+class PreciosRoute extends GoRouteData {
+  static const path = '/precios';
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const PreciosScreen();
 }

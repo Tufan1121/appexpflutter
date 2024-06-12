@@ -23,7 +23,6 @@ class LoginScreen extends StatelessWidget {
             // Icon Banner
             Image.asset(
               'assets/images/logo_tufan.png',
-              // color: Colors.white,
               scale: 10,
             ),
             const SizedBox(height: 80),
