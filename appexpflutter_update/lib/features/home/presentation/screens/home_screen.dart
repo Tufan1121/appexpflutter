@@ -16,44 +16,41 @@ class HomeScreen extends StatelessWidget {
           CustomPaint(
             size: Size(MediaQuery.of(context).size.width,
                 MediaQuery.of(context).size.height),
-            painter: BackgroundPainter(),
+            painter: BackgroundPainter2(),
           ),
           Column(
             children: [
               SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.logout),
-                            tooltip: 'Cerrar Sesión',
-                            color: Colores.scaffoldBackgroundColor,
-                            onPressed: () async {
-                              await context
-                                  .read<AuthBloc>()
-                                  .deleteAccessToken();
-                              if (context.mounted) LoginRoute().go(context);
-                            },
-                          )
-                        ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.logout,
+                            size: 30,
+                          ),
+                          tooltip: 'Cerrar Sesión',
+                          color: Colores.scaffoldBackgroundColor,
+                          onPressed: () async {
+                            await context.read<AuthBloc>().deleteAccessToken();
+                            if (context.mounted) LoginRoute().go(context);
+                          },
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Image.asset(
+                        'assets/images/logo_tufan.png',
+                        scale: 12,
                       ),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: Image.asset(
-                          'assets/images/logo_tufan.png',
-                          scale: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
               Expanded(
@@ -64,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   children: [
                     CardItem(
-                      icon: Icons.qr_code,
+                      icon: Icons.price_change_rounded,
                       label: 'Precios',
                       onTap: () => PreciosRoute().push(context),
                     ),

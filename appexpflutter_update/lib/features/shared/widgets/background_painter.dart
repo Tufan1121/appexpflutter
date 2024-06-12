@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../../../config/theme/app_theme.dart';
 
-class BackgroundPainter2 extends CustomPainter {
+class BackgroundPainter extends CustomPainter {
+  final Color? color;
+
+  BackgroundPainter({super.repaint, this.color});
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colores.secondaryColor.withOpacity(0.78)
+      ..color = color ?? Colores.secondaryColor.withOpacity(0.78)
       ..style = PaintingStyle.fill;
 
     final path = Path();
