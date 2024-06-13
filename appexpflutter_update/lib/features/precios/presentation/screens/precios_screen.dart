@@ -1,18 +1,101 @@
+import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/shared/widgets/widgets.dart'
     show LayoutScreens;
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'widgets/widgets.dart';
 
 class PreciosScreen extends StatelessWidget {
   const PreciosScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const LayoutScreens(
+    return LayoutScreens(
       icon: Icons.price_change,
       titleScreen: 'PRECIOS',
-      child: SearchPrices(),
+      child: Column(
+        children: [
+          const SearchPrices(),
+          BlocBuilder<PreciosBloc, PreciosState>(
+            builder: (context, state) {
+              if (state is PreciosLoading) {
+                return const Column(
+                  children: [
+                    SizedBox(
+                      height: 150,
+                    ),
+                    CircularProgressIndicator(),
+                  ],
+                );
+              } else if (state is PreciosLoaded) {
+                double existencia = state.producto.bodega1 +
+                    state.producto.bodega2 +
+                    state.producto.bodega3 +
+                    state.producto.bodega4;
+                return Column(
+                  children: [
+                    const SizedBox(
+                      height: 100,
+                    ),
+                    Card(
+                      child: Column(
+                        children: [
+                          Text(state.producto.producto,
+                              style: const TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold)),
+                          Text("Clave: ${state.producto.producto1}"),
+                          Text("Existencia en Bodegas: $existencia"),
+                          Text("Medidas: ${state.producto.medidas}"),
+                          Text(
+                              "Precio Lista: \$${state.producto.precio1.toDouble()}"),
+                          Text(
+                              "Precio Expo: \$${state.producto.precio2.toDouble()}"),
+                          Text(
+                              "Precio Mayoreo: \$${state.producto.precio3.toDouble()}"),
+                          Row(
+                            children: [
+                              const Text("Composicion:"),
+                              Column(
+                                children: [
+                                  Text(state.producto.compo1),
+                                  Text(state.producto.compo2),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              } else if (state is PreciosError) {
+                return Column(
+                  children: [
+                    const SizedBox(
+                      height: 150,
+                    ),
+                    Center(
+                      child: Text(
+                        state.message,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            },
+          )
+        ],
+      ),
     );
   }
 }
@@ -50,8 +133,12 @@ class SearchPrices extends StatelessWidget {
                 ),
                 obscureText: false,
                 keyboardType: TextInputType.text,
-                onChanged: (val) {},
-                onTap: () {},
+                onChanged: (value) => context
+                    .read<PreciosBloc>()
+                    .add(GetPreciosEvent(clave: value)),
+                onSubmitted: (value) => context
+                    .read<PreciosBloc>()
+                    .add(GetPreciosEvent(clave: value)),
                 decoration: InputDecoration(
                   prefixIcon: const Padding(
                     padding: EdgeInsets.all(10.0),
@@ -75,7 +162,12 @@ class SearchPrices extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => ScannerDialog(
+                child: ScannerPage(),
+              ),
+            ),
             style: ElevatedButton.styleFrom(
               elevation: 2,
               shape: const CircleBorder(),

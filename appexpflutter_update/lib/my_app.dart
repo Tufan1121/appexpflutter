@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:appexpflutter_update/main.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
@@ -29,6 +30,7 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(create: (_) => injector<AuthBloc>()),
+        BlocProvider<PreciosBloc>(create: (_) => injector<PreciosBloc>()),
       ],
       child: FutureBuilder(
         future: _init(),

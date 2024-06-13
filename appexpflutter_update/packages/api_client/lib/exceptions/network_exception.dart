@@ -27,6 +27,11 @@ import 'package:equatable/equatable.dart';
 class NetworkException extends Equatable implements Exception {
   late final String message;
   late final int? statusCode;
+
+  NetworkException.customMessage(String messages) {
+    message = messages;
+  }
+
   NetworkException.fromDioError(DioException dioException) {
     statusCode = dioException.response?.statusCode;
 

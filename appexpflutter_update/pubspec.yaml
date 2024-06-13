@@ -26,6 +26,7 @@ dependencies:
   mobile_scanner: ^5.1.1
   reactive_forms: ^17.0.1
   shared_preferences: ^2.2.3
+  auto_size_text: ^3.0.0
   rxdart: ^0.27.7
 
 dev_dependencies:

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 
@@ -44,7 +45,7 @@ class CardItem extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(50))),
                   child: Icon(icon, size: 30, color: Colores.secondaryColor)),
               const SizedBox(height: 10),
-              Text(label,
+              AutoSizeText(label,
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
