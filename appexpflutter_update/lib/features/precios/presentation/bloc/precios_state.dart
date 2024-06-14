@@ -12,21 +12,13 @@ final class PreciosInitial extends PreciosState {}
 class PreciosLoading extends PreciosState {}
 
 class PreciosLoaded extends PreciosState {
+  final List<ProductoEntity> productos;
   final ProductoEntity producto;
 
-  const PreciosLoaded({required this.producto});
+  const PreciosLoaded({required this.producto, required this.productos});
 
   @override
   List<Object> get props => [producto];
-}
-
-class PreciosRelativosLoaded extends PreciosState {
-  final List<ProductoEntity> precios;
-
-  const PreciosRelativosLoaded({required this.precios});
-
-  @override
-  List<Object> get props => [precios];
 }
 
 final class PreciosError extends PreciosState {

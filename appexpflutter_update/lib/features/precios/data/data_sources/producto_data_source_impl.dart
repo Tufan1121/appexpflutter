@@ -24,12 +24,12 @@ class ProductoDataSourceImpl implements ProductoDataSource {
             },
           ));
       final List<dynamic> jsonList = result.data;
-    if (jsonList.isNotEmpty) {
-      final producto = ProductoModel.fromJson(jsonList[0]);
-      return producto;
-    } else {
-      throw NotFoundException('Producto no encontrado');
-    }
+      if (jsonList.isNotEmpty) {
+        final producto = ProductoModel.fromJson(jsonList[0]);
+        return producto;
+      } else {
+        throw NotFoundException('Producto no encontrado');
+      }
     } catch (_) {
       rethrow;
     }
@@ -40,8 +40,12 @@ class ProductoDataSourceImpl implements ProductoDataSource {
       String descripcion, String diseno, String producto) async {
     final token = await storage.read(key: 'accessToken');
     try {
-      final result = await _dioClient.get(
-          '/restoScan/?descripcio=$descripcion&diseno=$diseno&producto=$producto',
+      final result = await _dioClient.get('/restoScan/',
+          queryParameters: {
+            'descripcio': descripcion,
+            'diseno': diseno,
+            'producto': producto
+          },
           options: Options(
             headers: {
               'Authorization': 'Bearer $token',

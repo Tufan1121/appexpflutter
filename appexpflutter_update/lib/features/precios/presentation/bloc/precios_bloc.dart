@@ -1,7 +1,7 @@
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/precios/domain/usecases/producto_usecase.dart';
 
 part 'precios_event.dart';
@@ -10,33 +10,64 @@ part 'precios_state.dart';
 class PreciosBloc extends Bloc<PreciosEvent, PreciosState> {
   final ProductoUsecase productoUsecase;
   PreciosBloc({required this.productoUsecase}) : super(PreciosInitial()) {
-    on<GetQRPreciosEvent>(_getQRPreciosEvent);
-    on<GetPreciosEvent>(
+    on<GetQRProductEvent>(_getQRPreciosEvent);
+    on<GetProductEvent>(
       _getPreciosEvent,
       transformer: debounce(const Duration(milliseconds: 500)),
     );
+    on<GetRelativedProductsEvent>(_getRelativedProductsEvent);
+    on<SelectRelatedProductEvent>(_selectRelatedProductEvent);
   }
 
   Future<void> _getQRPreciosEvent(
-      GetQRPreciosEvent event, Emitter<PreciosState> emit) async {
+      GetQRProductEvent event, Emitter<PreciosState> emit) async {
     emit(PreciosLoading());
 
     final result = await productoUsecase.getProductInfo(event.clave);
-    result.fold(
-      (failure) => emit(PreciosError(message: failure.message)),
-      (data) => emit(PreciosLoaded(producto: data)),
-    );
+    result.fold((failure) => emit(PreciosError(message: failure.message)),
+        (producto) {
+      add(GetRelativedProductsEvent(producto: producto));
+    });
   }
 
   Future<void> _getPreciosEvent(
-      GetPreciosEvent event, Emitter<PreciosState> emit) async {
+      GetProductEvent event, Emitter<PreciosState> emit) async {
     emit(PreciosLoading());
 
     final result = await productoUsecase.getProductInfo(event.clave);
+    result.fold((failure) => emit(PreciosError(message: failure.message)),
+        (producto) {
+      add(GetRelativedProductsEvent(producto: producto));
+    });
+  }
+
+  Future<void> _getRelativedProductsEvent(
+      GetRelativedProductsEvent event, Emitter<PreciosState> emit) async {
+    emit(PreciosLoading());
+
+    final result = await productoUsecase.getRelativedProducts(
+      event.producto.descripcio,
+      event.producto.diseno,
+      event.producto.producto,
+    );
+
     result.fold(
       (failure) => emit(PreciosError(message: failure.message)),
-      (data) => emit(PreciosLoaded(producto: data)),
+      (data) => emit(PreciosLoaded(productos: data, producto: event.producto)),
     );
+  }
+
+  Future<void> _selectRelatedProductEvent(
+      SelectRelatedProductEvent event, Emitter<PreciosState> emit) async {
+    // Verifica si el estado actual es PreciosLoaded
+    if (state is PreciosLoaded) {
+      // Extrae el estado actual como PreciosLoaded
+      final currentState = state as PreciosLoaded;
+
+      // Emite un nuevo estado PreciosLoaded con el producto seleccionado actualizado
+      emit(PreciosLoaded(
+          producto: event.selectedProduct, productos: currentState.productos));
+    }
   }
 }
 

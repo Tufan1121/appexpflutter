@@ -7,18 +7,36 @@ sealed class PreciosEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetQRPreciosEvent extends PreciosEvent {
+class GetQRProductEvent extends PreciosEvent {
   final String clave;
 
-  const GetQRPreciosEvent({required this.clave});
+  const GetQRProductEvent({required this.clave});
   @override
   List<Object> get props => [clave];
 }
 
-class GetPreciosEvent extends PreciosEvent {
+class GetProductEvent extends PreciosEvent {
   final String clave;
 
-  const GetPreciosEvent({required this.clave});
+  const GetProductEvent({required this.clave});
   @override
   List<Object> get props => [clave];
+}
+
+class GetRelativedProductsEvent extends PreciosEvent {
+  final ProductoEntity producto;
+
+  const GetRelativedProductsEvent({required this.producto});
+
+  @override
+  List<Object> get props => [producto];
+}
+
+class SelectRelatedProductEvent extends PreciosEvent {
+  final ProductoEntity selectedProduct;
+
+  const SelectRelatedProductEvent(this.selectedProduct);
+
+  @override
+  List<Object> get props => [selectedProduct];
 }

@@ -32,6 +32,5 @@ class HomeRoute extends GoRouteData {
 class PreciosRoute extends GoRouteData {
   static const path = '/precios';
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const PreciosScreen();
+  Widget build(BuildContext context, GoRouterState state) => PreciosScreen();
 }

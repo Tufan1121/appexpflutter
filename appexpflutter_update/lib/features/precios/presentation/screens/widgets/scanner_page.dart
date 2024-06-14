@@ -15,7 +15,17 @@ class ScannerPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final scanResult = useState<String>('');
-    final barcodeState = useState<BarcodeCapture?>(null);
+
+    useEffect(() {
+      // Inicia la cámara cuando se construye el widget por primera vez
+      cameraController.start();
+
+      // Limpiar el controlador cuando se elimina el widget
+      return () {
+        cameraController.stop();
+        cameraController.dispose();
+      };
+    }, []);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -37,9 +47,17 @@ class ScannerPage extends HookWidget {
                         controller: cameraController,
                         fit: BoxFit.cover,
                         onDetect: (barcode) {
-                          barcodeState.value = barcode;
+                          // Manejar la detección de códigos de barras
                           scanResult.value =
-                              barcodeState.value?.barcodes.first.rawValue ?? '';
+                              barcode.barcodes.first.rawValue ?? '';
+
+                          // Cerrar modal, se crea una ruta a la que deseas regresar cuando se cierra el modal
+                          Navigator.of(context)
+                              .popUntil(ModalRoute.withName('/precios'));
+
+                          context
+                              .read<PreciosBloc>()
+                              .add(GetQRProductEvent(clave: scanResult.value));
                         },
                       ),
                     ),
@@ -152,16 +170,6 @@ class ScannerPage extends HookWidget {
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              context
-                  .read<PreciosBloc>()
-                  .add(GetQRPreciosEvent(clave: scanResult.value));
-            },
-            child: const Text('Aceptar'),
           ),
         ],
       ),
