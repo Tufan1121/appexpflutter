@@ -6,48 +6,71 @@ import 'package:flutter/material.dart';
 class ProductoCard extends StatelessWidget {
   final ProductoEntity producto;
   final double existencia;
+  final GestureTapCallback onTap;
+  final String? imagen;
 
   const ProductoCard({
     super.key,
     required this.producto,
     required this.existencia,
+    required this.onTap,
+    this.imagen,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(10.0),
+      clipBehavior: Clip.antiAlias,
+      margin: const EdgeInsets.symmetric(horizontal: 10.0),
       elevation: 4.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AutoSizeText(
-              producto.producto,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-              maxLines: 1,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (imagen != null && imagen!.isNotEmpty)
+            GestureDetector(
+                onTap: onTap,
+                child: FadeInImage(
+                  image: NetworkImage(
+                    imagen!,
+                  ),
+                  placeholder:
+                      const AssetImage('assets/loaders/jar-loading.gif'),
+                  width: double.infinity,
+                  height: 200,
+                  fadeInDuration: const Duration(milliseconds: 300),
+                  fit: BoxFit.cover,
+                )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+            child: Column(
+              children: [
+                AutoSizeText(
+                  producto.producto,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 10),
+                _buildInfoRow('Clave', producto.producto1),
+                _buildInfoRow('Existencia en Bodegas', existencia.toString()),
+                _buildInfoRow('Medidas', producto.medidas),
+                _buildInfoRow('Precio Lista',
+                    Utils.formatPrice(producto.precio1.toDouble())),
+                _buildInfoRow('Precio Expo',
+                    Utils.formatPrice(producto.precio2.toDouble())),
+                _buildInfoRow('Precio Mayoreo',
+                    Utils.formatPrice(producto.precio3.toDouble())),
+                _buildCompositionRow(
+                    'Composición', '${producto.compo1} ${producto.compo2}'),
+              ],
             ),
-            const SizedBox(height: 10),
-            _buildInfoRow('Clave', producto.producto1),
-            _buildInfoRow('Existencia en Bodegas', existencia.toString()),
-            _buildInfoRow('Medidas', producto.medidas),
-            _buildInfoRow(
-                'Precio Lista', Utils.formatPrice(producto.precio1.toDouble())),
-            _buildInfoRow(
-                'Precio Expo', Utils.formatPrice(producto.precio2.toDouble())),
-            _buildInfoRow('Precio Mayoreo',
-                Utils.formatPrice(producto.precio3.toDouble())),
-            _buildCompositionRow(
-                'Composición', '${producto.compo1} ${producto.compo2}'),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

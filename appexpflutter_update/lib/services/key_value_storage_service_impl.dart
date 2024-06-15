@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'key_value_storage_service.dart';
 
-
 class KeyValueStorageServiceImpl extends KeyValueStorageService {
   // Instancia Asíncrona de SharedPreferences:**
   Future<SharedPreferences> getSharedPrefs() async {
@@ -16,9 +15,9 @@ class KeyValueStorageServiceImpl extends KeyValueStorageService {
 
     // 2. Recuperación Segura de Valores por Tipo:
     switch (T) {
-      case int:
-        return prefs.getInt(key) as T?; 
-      case String:
+      case const (int):
+        return prefs.getInt(key) as T?;
+      case const (String):
         return prefs.getString(key) as T?;
       default:
         throw UnimplementedError(
@@ -44,10 +43,10 @@ class KeyValueStorageServiceImpl extends KeyValueStorageService {
 
     // 2. Almacenamiento Seguro por Tipo:
     switch (T) {
-      case int:
+      case const (int):
         prefs.setInt(key, value as int);
         break;
-      case String:
+      case const (String):
         prefs.setString(key, value as String);
         break;
       default:

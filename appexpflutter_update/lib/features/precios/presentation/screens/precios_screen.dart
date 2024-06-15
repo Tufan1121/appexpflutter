@@ -1,8 +1,8 @@
-import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/producto_card.dart';
+import 'package:appexpflutter_update/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/producto_card.dart';
 import 'package:appexpflutter_update/config/utils.dart';
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/search_prices.dart';
@@ -17,10 +17,9 @@ class PreciosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-        // Permite la navegación hacia atrás nativa 
+      // Permite la navegación hacia atrás nativa
       onPopInvoked: (didPop) async {
-        context.read<PreciosBloc>().add(
-            ClearPreciosStateEvent());
+        context.read<PreciosBloc>().add(ClearPreciosStateEvent());
       },
       child: LayoutScreens(
         icon: Icons.price_change,
@@ -50,14 +49,28 @@ class PreciosScreen extends StatelessWidget {
                       state.producto.bodega3 +
                       state.producto.bodega4;
 
+                  List<String> imagePaths = [
+                    state.producto.pathima1,
+                    state.producto.pathima2,
+                    state.producto.pathima3,
+                    state.producto.pathima4,
+                    state.producto.pathima5,
+                    state.producto.pathima6,
+                  ].where((path) => path.isNotEmpty).toList();
+
                   return Column(
                     children: [
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 4),
                       ProductoCard(
+                        imagen:
+                            'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(state.producto.pathima1)}',
                         producto: state.producto,
                         existencia: existencia,
+                        onTap: () => PhotoGalleryRoute(
+                                imageUrls: imagePaths, initialIndex: 0)
+                            .push(context),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 10),
                       CustomFilledButton2(
                         buttonColor: Colores.secondaryColor,
                         onPressed: () => context.read<PreciosBloc>().add(
@@ -65,6 +78,7 @@ class PreciosScreen extends StatelessWidget {
                                 producto: state.producto)),
                         text: 'Productos relacionados',
                       ),
+                      const SizedBox(height: 5),
                     ],
                   );
                 } else if (state is PreciosRelativosLoaded) {
@@ -73,12 +87,26 @@ class PreciosScreen extends StatelessWidget {
                       state.producto.bodega3 +
                       state.producto.bodega4;
 
+                  List<String> imagePaths = [
+                    state.producto.pathima1,
+                    state.producto.pathima2,
+                    state.producto.pathima3,
+                    state.producto.pathima4,
+                    state.producto.pathima5,
+                    state.producto.pathima6,
+                  ].where((path) => path.isNotEmpty).toList();
+
                   return Column(
                     children: [
                       const SizedBox(height: 20),
                       ProductoCard(
+                        imagen:
+                            'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(state.producto.pathima1)}',
                         producto: state.producto,
                         existencia: existencia,
+                        onTap: () => PhotoGalleryRoute(
+                                imageUrls: imagePaths, initialIndex: 0)
+                            .push(context),
                       ),
                       const SizedBox(height: 5),
                       _buildRelatedProductsList(context, state.productos),

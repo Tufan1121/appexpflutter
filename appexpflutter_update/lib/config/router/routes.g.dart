@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
       $loginRoute,
       $homeRoute,
       $preciosRoute,
+      $photoGalleryRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -66,6 +67,36 @@ extension $PreciosRouteExtension on PreciosRoute {
 
   String get location => GoRouteData.$location(
         '/precios',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $photoGalleryRoute => GoRouteData.$route(
+      path: '/galeria',
+      factory: $PhotoGalleryRouteExtension._fromState,
+    );
+
+extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
+  static PhotoGalleryRoute _fromState(GoRouterState state) => PhotoGalleryRoute(
+        imageUrls:
+            state.uri.queryParametersAll['image-urls']!.map((e) => e).toList(),
+        initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/galeria',
+        queryParams: {
+          'image-urls': imageUrls.map((e) => e).toList(),
+          'initial-index': initialIndex.toString(),
+        },
       );
 
   void go(BuildContext context) => context.go(location);
