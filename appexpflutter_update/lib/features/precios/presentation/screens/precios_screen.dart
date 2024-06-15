@@ -15,82 +15,96 @@ class PreciosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutScreens(
-      icon: Icons.price_change,
-      titleScreen: 'PRECIOS',
-      child: Column(
-        children: [
-          const SearchPrices(),
-          BlocBuilder<PreciosBloc, PreciosState>(
-            builder: (context, state) {
-              if (state is PreciosLoading) {
-                return const Column(
-                  children: [
-                    SizedBox(height: 150),
-                    CircularProgressIndicator(
-                      color: Colores.secondaryColor,
-                    ),
-                  ],
-                );
-              } else if (state is PreciosLoaded) {
-                double existencia = state.producto.bodega1 +
-                    state.producto.bodega2 +
-                    state.producto.bodega3 +
-                    state.producto.bodega4;
-
-                return Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    ProductoCard(
-                      producto: state.producto,
-                      existencia: existencia,
-                    ),
-                    const SizedBox(height: 5),
-                    CustomFilledButton2(
-                      buttonColor: Colores.secondaryColor,
-                      onPressed: () => context.read<PreciosBloc>().add(
-                          GetRelativedProductsEvent(producto: state.producto)),
-                      text: 'Productos relacionados',
-                    ),
-                  ],
-                );
-              } else if (state is PreciosRelativosLoaded) {
-                double existencia = state.producto.bodega1 +
-                    state.producto.bodega2 +
-                    state.producto.bodega3 +
-                    state.producto.bodega4;
-
-                return Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    ProductoCard(
-                      producto: state.producto,
-                      existencia: existencia,
-                    ),
-                    const SizedBox(height: 5),
-                    _buildRelatedProductsList(context, state.productos),
-                  ],
-                );
-              } else if (state is PreciosError) {
-                return Column(
-                  children: [
-                    const SizedBox(height: 150),
-                    Center(
-                      child: Text(
-                        state.message,
-                        textAlign: TextAlign.center,
-                        style:
-                            const TextStyle(color: Colors.red, fontSize: 16.0),
+    return PopScope(
+      canPop: true,
+        // Permite la navegación hacia atrás nativa 
+      onPopInvoked: (didPop) async {
+        context.read<PreciosBloc>().add(
+            ClearPreciosStateEvent());
+      },
+      child: LayoutScreens(
+        icon: Icons.price_change,
+        titleScreen: 'PRECIOS',
+        onPressed: () {
+          context.read<PreciosBloc>().add(
+              ClearPreciosStateEvent()); // Limpia el estado al salir de la pantalla
+          Navigator.pop(context);
+        },
+        child: Column(
+          children: [
+            const SearchPrices(),
+            BlocBuilder<PreciosBloc, PreciosState>(
+              builder: (context, state) {
+                if (state is PreciosLoading) {
+                  return const Column(
+                    children: [
+                      SizedBox(height: 150),
+                      CircularProgressIndicator(
+                        color: Colores.secondaryColor,
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                return Container();
-              }
-            },
-          )
-        ],
+                    ],
+                  );
+                } else if (state is PreciosLoaded) {
+                  double existencia = state.producto.bodega1 +
+                      state.producto.bodega2 +
+                      state.producto.bodega3 +
+                      state.producto.bodega4;
+
+                  return Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      ProductoCard(
+                        producto: state.producto,
+                        existencia: existencia,
+                      ),
+                      const SizedBox(height: 5),
+                      CustomFilledButton2(
+                        buttonColor: Colores.secondaryColor,
+                        onPressed: () => context.read<PreciosBloc>().add(
+                            GetRelativedProductsEvent(
+                                producto: state.producto)),
+                        text: 'Productos relacionados',
+                      ),
+                    ],
+                  );
+                } else if (state is PreciosRelativosLoaded) {
+                  double existencia = state.producto.bodega1 +
+                      state.producto.bodega2 +
+                      state.producto.bodega3 +
+                      state.producto.bodega4;
+
+                  return Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      ProductoCard(
+                        producto: state.producto,
+                        existencia: existencia,
+                      ),
+                      const SizedBox(height: 5),
+                      _buildRelatedProductsList(context, state.productos),
+                    ],
+                  );
+                } else if (state is PreciosError) {
+                  return Column(
+                    children: [
+                      const SizedBox(height: 150),
+                      Center(
+                        child: Text(
+                          state.message,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              color: Colors.red, fontSize: 16.0),
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            )
+          ],
+        ),
       ),
     );
   }

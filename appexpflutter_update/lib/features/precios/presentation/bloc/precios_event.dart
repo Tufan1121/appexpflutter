@@ -40,3 +40,8 @@ class SelectRelatedProductEvent extends PreciosEvent {
   @override
   List<Object> get props => [selectedProduct];
 }
+
+class ClearPreciosStateEvent extends PreciosEvent {
+  @override
+  List<Object> get props => [];
+}

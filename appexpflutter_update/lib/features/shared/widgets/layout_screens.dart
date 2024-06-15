@@ -9,10 +9,12 @@ class LayoutScreens extends StatelessWidget {
     this.icon,
     this.titleScreen,
     this.child,
+    required this.onPressed,
   });
   final IconData? icon;
   final String? titleScreen;
   final Widget? child;
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +29,7 @@ class LayoutScreens extends StatelessWidget {
           ),
           SafeArea(
             child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: onPressed,
                 icon: const Icon(Icons.arrow_back_rounded,
                     size: 30, color: Colores.scaffoldBackgroundColor)),
           ),

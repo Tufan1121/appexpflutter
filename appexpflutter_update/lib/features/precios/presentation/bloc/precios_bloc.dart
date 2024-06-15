@@ -17,6 +17,7 @@ class PreciosBloc extends Bloc<PreciosEvent, PreciosState> {
     );
     on<GetRelativedProductsEvent>(_getRelativedProductsEvent);
     on<SelectRelatedProductEvent>(_selectRelatedProductEvent);
+    on<ClearPreciosStateEvent>((event, emit) => _clearPreciosState(emit));
   }
 
   Future<void> _getQRPreciosEvent(
@@ -70,5 +71,9 @@ class PreciosBloc extends Bloc<PreciosEvent, PreciosState> {
 
   EventTransformer<T> debounce<T>(Duration duration) {
     return (events, mapper) => events.debounceTime(duration).flatMap(mapper);
+  }
+
+void _clearPreciosState(Emitter<PreciosState> emit) {
+    emit(PreciosInitial());
   }
 }
