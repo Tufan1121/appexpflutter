@@ -26,7 +26,7 @@ class PreciosBloc extends Bloc<PreciosEvent, PreciosState> {
     final result = await productoUsecase.getProductInfo(event.clave);
     result.fold((failure) => emit(PreciosError(message: failure.message)),
         (producto) {
-      add(GetRelativedProductsEvent(producto: producto));
+      emit(PreciosLoaded(producto: producto));
     });
   }
 
@@ -36,9 +36,7 @@ class PreciosBloc extends Bloc<PreciosEvent, PreciosState> {
 
     final result = await productoUsecase.getProductInfo(event.clave);
     result.fold((failure) => emit(PreciosError(message: failure.message)),
-        (producto) {
-      add(GetRelativedProductsEvent(producto: producto));
-    });
+        (producto) => emit(PreciosLoaded(producto: producto)));
   }
 
   Future<void> _getRelativedProductsEvent(
@@ -52,25 +50,25 @@ class PreciosBloc extends Bloc<PreciosEvent, PreciosState> {
     );
 
     result.fold(
-      (failure) => emit(PreciosError(message: failure.message)),
-      (data) => emit(PreciosLoaded(productos: data, producto: event.producto)),
-    );
+        (failure) => emit(PreciosError(message: failure.message)),
+        (data) => emit(
+            PreciosRelativosLoaded(producto: event.producto, productos: data)));
   }
 
   Future<void> _selectRelatedProductEvent(
       SelectRelatedProductEvent event, Emitter<PreciosState> emit) async {
     // Verifica si el estado actual es PreciosLoaded
-    if (state is PreciosLoaded) {
+    if (state is PreciosRelativosLoaded) {
       // Extrae el estado actual como PreciosLoaded
-      final currentState = state as PreciosLoaded;
+      final currentState = state as PreciosRelativosLoaded;
 
       // Emite un nuevo estado PreciosLoaded con el producto seleccionado actualizado
-      emit(PreciosLoaded(
+      emit(PreciosRelativosLoaded(
           producto: event.selectedProduct, productos: currentState.productos));
     }
   }
-}
 
-EventTransformer<T> debounce<T>(Duration duration) {
-  return (events, mapper) => events.debounceTime(duration).flatMap(mapper);
+  EventTransformer<T> debounce<T>(Duration duration) {
+    return (events, mapper) => events.debounceTime(duration).flatMap(mapper);
+  }
 }

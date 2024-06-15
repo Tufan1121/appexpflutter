@@ -58,6 +58,7 @@ class ScannerPage extends HookWidget {
                           context
                               .read<PreciosBloc>()
                               .add(GetQRProductEvent(clave: scanResult.value));
+
                         },
                       ),
                     ),

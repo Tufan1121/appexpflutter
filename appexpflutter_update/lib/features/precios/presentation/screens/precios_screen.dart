@@ -8,7 +8,7 @@ import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_
 import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/search_prices.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/shared/widgets/widgets.dart'
-    show LayoutScreens;
+    show CustomFilledButton2, LayoutScreens;
 
 class PreciosScreen extends StatelessWidget {
   const PreciosScreen({super.key});
@@ -33,6 +33,28 @@ class PreciosScreen extends StatelessWidget {
                   ],
                 );
               } else if (state is PreciosLoaded) {
+                double existencia = state.producto.bodega1 +
+                    state.producto.bodega2 +
+                    state.producto.bodega3 +
+                    state.producto.bodega4;
+
+                return Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    ProductoCard(
+                      producto: state.producto,
+                      existencia: existencia,
+                    ),
+                    const SizedBox(height: 5),
+                    CustomFilledButton2(
+                      buttonColor: Colores.secondaryColor,
+                      onPressed: () => context.read<PreciosBloc>().add(
+                          GetRelativedProductsEvent(producto: state.producto)),
+                      text: 'Productos relacionados',
+                    ),
+                  ],
+                );
+              } else if (state is PreciosRelativosLoaded) {
                 double existencia = state.producto.bodega1 +
                     state.producto.bodega2 +
                     state.producto.bodega3 +
@@ -118,5 +140,3 @@ class PreciosScreen extends StatelessWidget {
           );
   }
 }
-
-

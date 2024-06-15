@@ -38,9 +38,11 @@ class SearchPrices extends StatelessWidget {
                 ),
                 obscureText: false,
                 keyboardType: TextInputType.text,
-                onChanged: (value) => context
-                    .read<PreciosBloc>()
-                    .add(GetProductEvent(clave: value)),
+                onChanged: (value) {
+                  context
+                      .read<PreciosBloc>()
+                      .add(GetProductEvent(clave: value));
+                },
                 onSubmitted: (value) => context
                     .read<PreciosBloc>()
                     .add(GetProductEvent(clave: value)),
