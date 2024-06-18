@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
-import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_dialog.dart';
-import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_page.dart';
 
-class SearchPrices extends StatelessWidget {
-  const SearchPrices({
+class SearchClientes extends StatelessWidget {
+  const SearchClientes({
     super.key,
   });
 
@@ -54,7 +52,7 @@ class SearchPrices extends StatelessWidget {
                       color: Colores.secondaryColor,
                     ),
                   ),
-                  hintText: 'Clave',
+                  hintText: 'Cliente',
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
                   filled: true,
@@ -66,25 +64,6 @@ class SearchPrices extends StatelessWidget {
                       const EdgeInsets.only(left: 12.0, top: 5, bottom: 20),
                 ),
               ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => ScannerDialog(
-                child: ScannerPage(),
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              elevation: 2,
-              shape: const CircleBorder(),
-              padding: const EdgeInsets.all(
-                  8), // padding para cambiar el tamaño del botón Fondo del botón
-            ),
-            child: const Icon(
-              Icons.qr_code_2_rounded,
-              color: Colores.secondaryColor,
-              size: 40,
             ),
           ),
         ],

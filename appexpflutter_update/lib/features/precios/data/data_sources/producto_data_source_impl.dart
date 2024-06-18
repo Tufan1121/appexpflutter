@@ -52,17 +52,23 @@ class ProductoDataSourceImpl implements ProductoDataSource {
             },
           ));
       //  convertir la respuesta a una lista y luego a una lista ProductoModel
-      final List<dynamic> jsonList = result.data['data'];
-      if (jsonList.isNotEmpty) {
-        final productosRelativos = jsonList
-            .map(
-              (json) => ProductoModel.fromJson(json),
-            )
-            .toList();
-        return productosRelativos;
-      } else {
-        throw NotFoundException('Productos no encontrados');
-      }
+      final List<dynamic> jsonList = result.data;
+      final productosRelativos = jsonList
+          .map(
+            (json) => ProductoModel.fromJson(json),
+          )
+          .toList();
+      return productosRelativos;
+      // if (jsonList.isNotEmpty) {
+      //   final productosRelativos = jsonList
+      //       .map(
+      //         (json) => ProductoModel.fromJson(json),
+      //       )
+      //       .toList();
+      //   return productosRelativos;
+      // } else {
+      //   throw NotFoundException('Productos no encontrados');
+      // }
     } catch (_) {
       rethrow;
     }

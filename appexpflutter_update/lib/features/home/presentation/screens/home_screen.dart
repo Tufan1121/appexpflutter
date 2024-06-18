@@ -4,6 +4,7 @@ import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -66,9 +67,41 @@ class HomeScreen extends StatelessWidget {
                       label: 'Precios',
                       onTap: () => PreciosRoute().push(context),
                     ),
-                    const CardItem(
+                    CardItem(
                       icon: Icons.shopping_cart_rounded,
                       label: 'Nueva Seccion de Ventas',
+                      onTap: () => showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (context) {
+                          return Popover(
+                            child: Container(
+                              height: 200,
+                              color: Colores.scaffoldBackgroundColor,
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                child: ListView(
+                                  children: [
+                                    CustomListTile(
+                                      text: 'CLIENTE NUEVO',
+                                      icon: FontAwesomeIcons.userPlus,
+                                      onTap: () =>
+                                          ClienteNuevoRoute().push(context),
+                                    ),
+                                    const Divider(),
+                                    CustomListTile(
+                                      text: 'CLIENTE EXISTENTE',
+                                      icon: FontAwesomeIcons.userCheck,
+                                      onTap: () =>
+                                          ClienteExistenteRoute().push(context),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     const CardItem(
                       icon: Icons.inventory_2_rounded,

@@ -7,7 +7,7 @@ class ConfigToken {
 
 // Eliminar el token
   Future<void> deleteToken() async {
-    await storage.delete(key: 'token');
+    await storage.delete(key: 'accessToken');
   }
 
 // Guardar la última fecha de verificación

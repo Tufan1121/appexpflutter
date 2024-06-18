@@ -1,17 +1,20 @@
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LayoutScreens extends StatelessWidget {
   const LayoutScreens({
     super.key,
     this.icon,
+    this.faIcon,
     this.titleScreen,
     this.child,
     required this.onPressed,
   });
   final IconData? icon;
+  final IconData? faIcon;
   final String? titleScreen;
   final Widget? child;
   final void Function()? onPressed;
@@ -39,18 +42,31 @@ class LayoutScreens extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
-                    Icon(
-                      icon,
-                      color: Colores.scaffoldBackgroundColor,
-                      size: 100,
-                      shadows: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 6,
-                          offset: Offset(2.0, 5.0),
-                        )
-                      ],
-                    ),
+                    icon != null
+                        ? Icon(
+                            icon,
+                            color: Colores.scaffoldBackgroundColor,
+                            size: 100,
+                            shadows: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 6,
+                                offset: Offset(2.0, 5.0),
+                              )
+                            ],
+                          )
+                        : FaIcon(
+                            faIcon,
+                            color: Colores.scaffoldBackgroundColor,
+                            size: 100,
+                            shadows: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 6,
+                                offset: Offset(2.0, 5.0),
+                              )
+                            ],
+                          ),
                     Text(
                       titleScreen ?? 'title',
                       style: GoogleFonts.montserrat(
@@ -67,7 +83,7 @@ class LayoutScreens extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               child ?? Container(),
             ],
           ),

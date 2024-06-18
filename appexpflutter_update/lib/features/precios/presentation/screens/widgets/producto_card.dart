@@ -36,8 +36,7 @@ class ProductoCard extends StatelessWidget {
                   image: NetworkImage(
                     imagen!,
                   ),
-                  placeholder:
-                      const AssetImage('assets/loaders/jar-loading.gif'),
+                  placeholder: const AssetImage('assets/loaders/loading.gif'),
                   width: double.infinity,
                   height: 200,
                   fadeInDuration: const Duration(milliseconds: 300),
@@ -55,7 +54,7 @@ class ProductoCard extends StatelessWidget {
                   ),
                   maxLines: 1,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 3),
                 _buildInfoRow('Clave', producto.producto1),
                 _buildInfoRow('Existencia en Bodegas', existencia.toString()),
                 _buildInfoRow('Medidas', producto.medidas),
@@ -77,7 +76,7 @@ class ProductoCard extends StatelessWidget {
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      padding: const EdgeInsets.symmetric(vertical: 3.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

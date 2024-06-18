@@ -11,6 +11,8 @@ List<RouteBase> get $appRoutes => [
       $homeRoute,
       $preciosRoute,
       $photoGalleryRoute,
+      $clienteNuevoRoute,
+      $clienteExistenteRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -97,6 +99,52 @@ extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
           'image-urls': imageUrls.map((e) => e).toList(),
           'initial-index': initialIndex.toString(),
         },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $clienteNuevoRoute => GoRouteData.$route(
+      path: '/cliente_nuevo',
+      factory: $ClienteNuevoRouteExtension._fromState,
+    );
+
+extension $ClienteNuevoRouteExtension on ClienteNuevoRoute {
+  static ClienteNuevoRoute _fromState(GoRouterState state) =>
+      ClienteNuevoRoute();
+
+  String get location => GoRouteData.$location(
+        '/cliente_nuevo',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $clienteExistenteRoute => GoRouteData.$route(
+      path: '/cliente_existente',
+      factory: $ClienteExistenteRouteExtension._fromState,
+    );
+
+extension $ClienteExistenteRouteExtension on ClienteExistenteRoute {
+  static ClienteExistenteRoute _fromState(GoRouterState state) =>
+      ClienteExistenteRoute();
+
+  String get location => GoRouteData.$location(
+        '/cliente_existente',
       );
 
   void go(BuildContext context) => context.go(location);

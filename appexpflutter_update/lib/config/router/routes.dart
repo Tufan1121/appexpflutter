@@ -1,3 +1,5 @@
+import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/home_screen.dart';
@@ -33,7 +35,8 @@ class HomeRoute extends GoRouteData {
 class PreciosRoute extends GoRouteData {
   static const path = '/precios';
   @override
-  Widget build(BuildContext context, GoRouterState state) => const PreciosScreen();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const PreciosScreen();
 }
 
 @TypedGoRoute<PhotoGalleryRoute>(
@@ -47,5 +50,27 @@ class PhotoGalleryRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      FullScreenGallery(imageUrls:imageUrls, initialIndex: initialIndex);
+      FullScreenGallery(imageUrls: imageUrls, initialIndex: initialIndex);
+}
+
+@TypedGoRoute<ClienteNuevoRoute>(
+  path: ClienteNuevoRoute.path,
+)
+class ClienteNuevoRoute extends GoRouteData {
+  static const path = '/cliente_nuevo';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ClienteNuevoScreen();
+}
+
+@TypedGoRoute<ClienteExistenteRoute>(
+  path: ClienteExistenteRoute.path,
+)
+class ClienteExistenteRoute extends GoRouteData {
+  static const path = '/cliente_existente';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ClienteExistenteScreen();
 }
