@@ -9,13 +9,30 @@ class ClienteNuevoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return LayoutScreens(
       onPressed: () => Navigator.pop(context),
       titleScreen: 'CLIENTE NUEVO',
       faIcon: FontAwesomeIcons.userPlus,
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Card(child: SizedBox(height: 500, child: ClienteForm())),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: SizedBox(
+          height: 470,
+          child: Card(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                height: size.height * 0.70,
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: 20),
+                    Flexible(flex: 1, child: ClienteForm()),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

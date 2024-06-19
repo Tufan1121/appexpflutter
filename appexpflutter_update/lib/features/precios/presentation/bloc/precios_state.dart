@@ -7,7 +7,7 @@ sealed class PreciosState extends Equatable {
   List<Object> get props => [];
 }
 
-final class PreciosInitial extends PreciosState {}
+class PreciosInitial extends PreciosState {}
 
 class PreciosLoading extends PreciosState {}
 
@@ -30,7 +30,7 @@ class PreciosRelativosLoaded extends PreciosState {
   List<Object> get props => [producto, productos];
 }
 
-final class PreciosError extends PreciosState {
+class PreciosError extends PreciosState {
   final String message;
 
   const PreciosError({required this.message});

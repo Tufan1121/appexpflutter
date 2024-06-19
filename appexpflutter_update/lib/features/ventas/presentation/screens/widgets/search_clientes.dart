@@ -1,7 +1,7 @@
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 
 class SearchClientes extends StatelessWidget {
   const SearchClientes({
@@ -38,12 +38,12 @@ class SearchClientes extends StatelessWidget {
                 keyboardType: TextInputType.text,
                 onChanged: (value) {
                   context
-                      .read<PreciosBloc>()
-                      .add(GetProductEvent(clave: value));
+                      .read<ClienteBloc>()
+                      .add(GetClientesEvent(name: value));
                 },
                 onSubmitted: (value) => context
-                    .read<PreciosBloc>()
-                    .add(GetProductEvent(clave: value)),
+                    .read<ClienteBloc>()
+                    .add(GetClientesEvent(name: value)),
                 decoration: InputDecoration(
                   prefixIcon: const Padding(
                     padding: EdgeInsets.all(10.0),

@@ -2,6 +2,12 @@ import 'dart:io';
 
 import 'package:appexpflutter_update/config/my_http_overrides.dart';
 import 'package:appexpflutter_update/features/auth/config/config_token.dart';
+import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente_data_source.dart';
+import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente_data_source_impl.dart';
+import 'package:appexpflutter_update/features/ventas/data/repositories/cliente_repository_impl.dart';
+import 'package:appexpflutter_update/features/ventas/domain/repositories/cliente_repository.dart';
+import 'package:appexpflutter_update/features/ventas/domain/usecases/cliente_usecase.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:api_client/dio_client.dart';

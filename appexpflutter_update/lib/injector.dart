@@ -12,21 +12,29 @@ Future<void> init() async {
         () => AuthDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<ProductoDataSource>(
         () => ProductoDataSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<ClienteDataSource>(
+        () => ClienteDataSourceImpl(dioClient: injector()))
 
     //* Repositories
     ..registerLazySingleton<AuthRepository>(
         () => AuthRepositoryImpl(authDatasource: injector()))
     ..registerLazySingleton<ProductoRepository>(
         () => ProductoRepositoryImpl(productoDataSource: injector()))
+    ..registerLazySingleton<ClienteRepository>(
+        () => ClienteRepositoryImpl(clienteDataSource: injector()))
 
     //* Usecases
     ..registerLazySingleton<AuthUsecase>(
         () => AuthUsecase(authRepository: injector()))
     ..registerLazySingleton<ProductoUsecase>(
         () => ProductoUsecase(productoRepository: injector()))
+    ..registerLazySingleton<ClienteUsecase>(
+        () => ClienteUsecase(clienteRepository: injector()))
 
     //* Blocs
     ..registerLazySingleton<AuthBloc>(() => AuthBloc(authUsecase: injector()))
     ..registerLazySingleton<PreciosBloc>(
-        () => PreciosBloc(productoUsecase: injector()));
+        () => PreciosBloc(productoUsecase: injector()))
+    ..registerLazySingleton<ClienteBloc>(
+        () => ClienteBloc(clienteUsecase: injector()));
 }

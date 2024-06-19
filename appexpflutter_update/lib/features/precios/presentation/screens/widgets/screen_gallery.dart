@@ -48,7 +48,7 @@ class FullScreenGallery extends StatelessWidget {
             builder: (context, index) {
               return PhotoViewGalleryPageOptions(
                 imageProvider: NetworkImage(
-                    'https://tapetestufan.mx:446/imagen/${imageUrls[index]}'),
+                    'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(imageUrls[index])}'),
                 initialScale: PhotoViewComputedScale.contained,
                 minScale:
                     PhotoViewComputedScale.contained, // Nivel mínimo de zoom

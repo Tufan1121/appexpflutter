@@ -1,10 +1,8 @@
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/producto_card.dart';
-import 'package:appexpflutter_update/config/utils.dart';
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/search_prices.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
@@ -32,7 +30,7 @@ class PreciosScreen extends StatelessWidget {
           Navigator.pop(context);
         },
         child: SizedBox(
-          height: screenHeight * 0.75,
+          height: screenHeight * 0.90,
           child: Column(
             children: [
               const SearchPrices(),
@@ -69,10 +67,10 @@ class PreciosScreen extends StatelessWidget {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 50),
                                 ProductoCard(
                                   imagen:
-                                      'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(state.producto.pathima1)}',
+                                      'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
                                   producto: state.producto,
                                   existencia: existencia,
                                   onTap: () => PhotoGalleryRoute(
@@ -117,7 +115,7 @@ class PreciosScreen extends StatelessWidget {
                                 const SizedBox(height: 5),
                                 ProductoCard(
                                   imagen:
-                                      'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(state.producto.pathima1)}',
+                                      'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
                                   producto: state.producto,
                                   existencia: existencia,
                                   onTap: () => PhotoGalleryRoute(
@@ -126,6 +124,14 @@ class PreciosScreen extends StatelessWidget {
                                       .push(context),
                                 ),
                                 const SizedBox(height: 5),
+                                const Center(
+                                  child: AutoSizeText(
+                                    'Productos Relacionados',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
                                 _buildRelatedProductsList(
                                     context, state.productos),
                               ],
@@ -164,43 +170,30 @@ class PreciosScreen extends StatelessWidget {
       BuildContext context, List<ProductoEntity> productosRelacionados) {
     return productosRelacionados.isEmpty
         ? Container()
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const AutoSizeText(
-                'Productos Relacionados',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 130,
-                child: ListView.builder(
-                  itemCount: productosRelacionados.length,
-                  itemBuilder: (context, index) {
-                    final productoRelacionado = productosRelacionados[index];
-                    return Card(
-                      child: ListTile(
-                        title: AutoSizeText(productoRelacionado.producto,
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold)),
-                        onTap: () {
-                          context.read<PreciosBloc>().add(
-                              SelectRelatedProductEvent(productoRelacionado));
-                        },
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AutoSizeText(
-                                "Clave: ${productoRelacionado.producto1}"),
-                            AutoSizeText(
-                                "Precio: ${Utils.formatPrice(productoRelacionado.precio1.toDouble())}"),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+        : SizedBox(
+            height: MediaQuery.of(context).size.height * 0.30,
+            child: ListView.builder(
+              itemCount: productosRelacionados.length,
+              itemBuilder: (context, index) {
+                final productoRelacionado = productosRelacionados[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Card(
+                    child: ListTile(
+                      title: AutoSizeText(productoRelacionado.producto,
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold)),
+                      onTap: () {
+                        context.read<PreciosBloc>().add(
+                            SelectRelatedProductEvent(productoRelacionado));
+                      },
+                      subtitle: AutoSizeText(
+                          "Clave: ${productoRelacionado.producto1}"),
+                    ),
+                  ),
+                );
+              },
+            ),
           );
   }
 }

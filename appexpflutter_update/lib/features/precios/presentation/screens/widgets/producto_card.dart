@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
 
 class ProductoCard extends StatelessWidget {
   final ProductoEntity producto;
@@ -38,7 +38,7 @@ class ProductoCard extends StatelessWidget {
                   ),
                   placeholder: const AssetImage('assets/loaders/loading.gif'),
                   width: double.infinity,
-                  height: 200,
+                  height: 120,
                   fadeInDuration: const Duration(milliseconds: 300),
                   fit: BoxFit.cover,
                 )),

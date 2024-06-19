@@ -1,29 +1,9 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
+
 import 'package:api_client/exceptions/network_error_model.dart';
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
-///
-/// Esta clase extiende [Equatable] e implementa [Exception].
-/// Contiene una propiedad [message] y [statusCode].
-/// La propiedad [message] contiene el mensaje de error y el [statusCode]
-/// propiedad contiene el código de estado HTTP de la respuesta.
-///
-/// Esta clase tiene un constructor [fromDioError] que toma una [DioException]
-/// como parámetro y establece las propiedades [statusCode] y [message] según
-/// el tipo de [DioException].
-///
-/// Esta clase también anula el captador [props] de [Equatable] para comparar
-/// instancias de esta clase basadas en las propiedades [message] y [statusCode].
-///
-/// Ejemplo de uso:
-/// ```dart
-/// try {
-///   // some network request
-/// } on DioException catch (e) {
-///   throw NetworkException.fromDioError(e);
-/// }
-/// ```
 class NetworkException extends Equatable implements Exception {
   late final String message;
   late final int? statusCode;
@@ -33,8 +13,6 @@ class NetworkException extends Equatable implements Exception {
   }
 
   NetworkException.fromDioError(DioException dioException) {
-    statusCode = dioException.response?.statusCode;
-
     switch (dioException.type) {
       case DioExceptionType.cancel:
         message = 'La solicitud al servidor API fue cancelada';
@@ -55,11 +33,10 @@ class NetworkException extends Equatable implements Exception {
       case DioExceptionType.connectionError:
         if (dioException.error.runtimeType == SocketException) {
           message = 'Por favor revise su conexion a internet';
-          break;
         } else {
           message = 'Ocurrió un error inesperado';
-          break;
         }
+        break;
 
       case DioExceptionType.badCertificate:
         message = 'Certificado incorrecto';
@@ -67,20 +44,33 @@ class NetworkException extends Equatable implements Exception {
 
       case DioExceptionType.badResponse:
         final data = dioException.response?.data;
-        if (data is Map<String, dynamic>) {
-          final model = NetworkErrorModel.fromJson(data);
-          message = model.statusMessage ?? 'Credenciales incorrectas';
-        } else {
-          message =
-              'Error inesperado: ${dioException.response?.statusMessage ?? ' error desconocido'}';
-        }
+        statusCode = dioException.response?.statusCode;
 
+        if (statusCode == 404) {
+          if (data is Map<String, dynamic> && data.containsKey('detail')) {
+            message = data['detail'];
+          } else {
+            message =
+                'No se encontraron elementos que coincidan con la búsqueda';
+          }
+        } else {
+          if (data is Map<String, dynamic>) {
+            final model = NetworkErrorModel.fromJson(data);
+            message = model.statusMessage ?? 'Credenciales incorrectas';
+          } else {
+            message =
+                'Error inesperado: ${dioException.response?.statusMessage ?? 'error desconocido'}';
+          }
+        }
         break;
 
       case DioExceptionType.unknown:
         message = 'Ocurrió un error inesperado';
         break;
     }
+
+    // Para manejar los casos donde statusCode no se haya inicializado
+    statusCode ??= dioException.response?.statusCode;
   }
 
   @override

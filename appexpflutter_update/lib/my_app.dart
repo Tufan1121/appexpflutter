@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider<AuthBloc>(create: (_) => injector<AuthBloc>()),
         BlocProvider<PreciosBloc>(create: (_) => injector<PreciosBloc>()),
+        BlocProvider<ClienteBloc>(create: (_) => injector<ClienteBloc>()),
       ],
       child: FutureBuilder(
         future: _init(),

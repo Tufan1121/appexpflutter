@@ -18,6 +18,7 @@ class _LoginFormState extends State<ClienteForm> {
   late String apellido;
   late String telefono;
   late String correo;
+  late ValueNotifier<bool> factura;
 
   final form = FormGroup({
     'nombre': FormControl<String>(validators: [Validators.required]),
@@ -31,7 +32,7 @@ class _LoginFormState extends State<ClienteForm> {
 
   @override
   Widget build(BuildContext context) {
-    final factura = useState(false);
+    factura = useState(false);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -39,7 +40,6 @@ class _LoginFormState extends State<ClienteForm> {
         formGroup: form,
         child: Column(
           children: [
-            const SizedBox(height: 50),
             CustomReactiveTextField(
               formControlName: 'nombre',
               label: 'Nombre',
@@ -72,7 +72,10 @@ class _LoginFormState extends State<ClienteForm> {
               label: 'Telefono/WhatsApp',
               keyboardType: TextInputType.phone,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[^0-9]')),
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^[0-9]*$'),
+                ),
+                LengthLimitingTextInputFormatter(10),
               ],
               validationMessages: {
                 ValidationMessage.required: (error) =>
@@ -108,7 +111,7 @@ class _LoginFormState extends State<ClienteForm> {
                 child: CustomFilledButton(
                     text: 'Guardar',
                     buttonColor: Colores.secondaryColor,
-                    onPressed: _submitForm)),
+                    onPressed: () => _submitForm())),
             const Spacer(flex: 1),
           ],
         ),
@@ -117,6 +120,7 @@ class _LoginFormState extends State<ClienteForm> {
   }
 
   void _submitForm() {
+    FocusScope.of(context).unfocus();
     if (form.invalid) {
       form.markAllAsTouched();
       return;
@@ -125,6 +129,15 @@ class _LoginFormState extends State<ClienteForm> {
     apellido = form.control('apellido').value!;
     telefono = form.control('telefono').value!;
     correo = form.control('email').value!;
+
+    print('''
+CLIENTE:
+        nombre: $nombre
+        apellido: $apellido
+        telefono: $telefono
+        correo: $correo
+        factura: ${factura.value}
+''');
   }
 }
 
