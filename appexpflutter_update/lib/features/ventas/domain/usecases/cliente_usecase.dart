@@ -12,4 +12,9 @@ class ClienteUsecase {
       String nombre) async {
     return await clienteRepository.getClientes(nombre);
   }
+
+  Future<Either<NetworkException, String>> updateClientes(
+      Map<String, dynamic> data) async {
+    return await clienteRepository.updateClientes(data);
+  }
 }

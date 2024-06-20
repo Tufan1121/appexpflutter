@@ -76,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                         builder: (context) {
                           return Popover(
                             child: Container(
-                              height: 200,
+                              height: 160,
                               color: Colores.scaffoldBackgroundColor,
                               child: Container(
                                 padding: const EdgeInsets.all(10),

@@ -14,25 +14,30 @@ class ClienteNuevoScreen extends StatelessWidget {
       onPressed: () => Navigator.pop(context),
       titleScreen: 'CLIENTE NUEVO',
       faIcon: FontAwesomeIcons.userPlus,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: SizedBox(
-          height: 470,
-          child: Card(
-            child: SingleChildScrollView(
-              child: SizedBox(
-                height: size.height * 0.70,
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: 20),
-                    Flexible(flex: 1, child: ClienteForm()),
-                  ],
+      child: Column(
+        children: [
+          const SizedBox(height: 45),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: SizedBox(
+              height: 470,
+              child: Card(
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    height: size.height * 0.70,
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(height: 20),
+                        Flexible(flex: 1, child: ClienteForm()),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

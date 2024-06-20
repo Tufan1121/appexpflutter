@@ -13,11 +13,12 @@ class ClienteLoading extends ClienteState {}
 
 class ClienteLoaded extends ClienteState {
   final List<ClienteEntity> clientes;
+  final String? message; 
 
-  const ClienteLoaded({required this.clientes});
+  const ClienteLoaded({required this.clientes, this.message});
 
   @override
-  List<Object> get props => [clientes];
+  List<Object> get props => [clientes, message ?? ''];
 }
 
 class ClienteError extends ClienteState {

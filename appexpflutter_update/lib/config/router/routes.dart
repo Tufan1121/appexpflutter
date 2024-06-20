@@ -1,5 +1,7 @@
+import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/home_screen.dart';
@@ -73,4 +75,19 @@ class ClienteExistenteRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ClienteExistenteScreen();
+}
+
+@TypedGoRoute<PedidoRoute>(
+  path: PedidoRoute.path,
+)
+class PedidoRoute extends GoRouteData {
+  static const path = '/pedido';
+  final ClienteEntity $extra;
+
+  PedidoRoute({required this.$extra});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => PedidoScreen(
+        clienteEntity: $extra,
+      );
 }

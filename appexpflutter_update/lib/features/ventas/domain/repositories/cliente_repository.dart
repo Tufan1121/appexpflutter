@@ -5,15 +5,7 @@ import 'package:fpdart/fpdart.dart';
 abstract interface class ClienteRepository {
   Future<Either<NetworkException, List<ClienteEntity>>> getClientes(String nombre);
   Future<Either<NetworkException, ClienteEntity>> clienteNuevo(
-      String nombre,
-      String apellido,
-      String telefono,
-      String correo,
-      String factura,
-      {String? dirreccion,
-      String? rfc,
-      String? tipoPersona,
-      String? usoCfdi,
-      String? empresa,
-      String? cp});
+      Map<String, dynamic> data);
+  Future<Either<NetworkException, String>> updateClientes(
+      Map<String, dynamic> data);
 }

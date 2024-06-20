@@ -13,6 +13,7 @@ List<RouteBase> get $appRoutes => [
       $photoGalleryRoute,
       $clienteNuevoRoute,
       $clienteExistenteRoute,
+      $pedidoRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -155,4 +156,30 @@ extension $ClienteExistenteRouteExtension on ClienteExistenteRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $pedidoRoute => GoRouteData.$route(
+      path: '/pedido',
+      factory: $PedidoRouteExtension._fromState,
+    );
+
+extension $PedidoRouteExtension on PedidoRoute {
+  static PedidoRoute _fromState(GoRouterState state) => PedidoRoute(
+        $extra: state.extra as ClienteEntity,
+      );
+
+  String get location => GoRouteData.$location(
+        '/pedido',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }

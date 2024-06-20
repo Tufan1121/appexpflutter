@@ -6,4 +6,5 @@ class Utils {
         NumberFormat.currency(locale: 'en_US', symbol: '\$');
     return formatter.format(price);
   }
+  
 }

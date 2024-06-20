@@ -1,42 +1,48 @@
 import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:appexpflutter_update/config/config.dart';
+import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_entity.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 
-class ClienteForm extends StatefulHookWidget {
-  const ClienteForm({super.key});
+class ClienteFormEdit extends StatefulHookWidget {
+  const ClienteFormEdit({required this.cliente, super.key});
+  final ClienteEntity cliente;
 
   @override
-  State<ClienteForm> createState() => _LoginFormState();
+  State<ClienteFormEdit> createState() => _ClienteFormState();
 }
 
-class _LoginFormState extends State<ClienteForm> {
+class _ClienteFormState extends State<ClienteFormEdit> {
   late String nombre;
   late String apellido;
   late String telefono;
   late String correo;
   late ValueNotifier<bool> factura;
 
-  final form = FormGroup({
-    'nombre': FormControl<String>(validators: [Validators.required]),
-    'apellido': FormControl<String>(validators: [Validators.required]),
-    'telefono': FormControl<String>(validators: [Validators.required]),
-    'email': FormControl<String>(validators: [
-      Validators.required,
-      Validators.email,
-    ]),
-  });
-
   @override
   Widget build(BuildContext context) {
+    final form = FormGroup({
+      'nombre': FormControl<String>(
+          validators: [Validators.required], value: widget.cliente.nombre),
+      'apellido': FormControl<String>(
+          validators: [Validators.required], value: widget.cliente.apellido),
+      'telefono': FormControl<String>(
+          validators: [Validators.required], value: widget.cliente.telefono),
+      'email': FormControl<String>(validators: [
+        Validators.required,
+        Validators.email,
+      ], value: widget.cliente.correo),
+    });
     factura = useState(false);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: ReactiveForm(
         formGroup: form,
         child: Column(
@@ -88,7 +94,7 @@ class _LoginFormState extends State<ClienteForm> {
               formControlName: 'email',
               label: 'Correo',
               keyboardType: TextInputType.emailAddress,
-              onSubmitted: (p0) => _submitForm(),
+              onSubmitted: (p0) => _submitForm(form, context),
               validationMessages: {
                 ValidationMessage.required: (error) =>
                     'Este campo es requerido',
@@ -110,9 +116,9 @@ class _LoginFormState extends State<ClienteForm> {
                 width: double.infinity,
                 height: 60,
                 child: CustomFilledButton(
-                    text: 'Guardar',
+                    text: 'Aceptar',
                     buttonColor: Colores.secondaryColor,
-                    onPressed: () => _submitForm())),
+                    onPressed: () => _submitForm(form, context))),
             const Spacer(flex: 1),
           ],
         ),
@@ -120,8 +126,7 @@ class _LoginFormState extends State<ClienteForm> {
     );
   }
 
-  void _submitForm() {
-    FocusScope.of(context).unfocus();
+  void _submitForm(FormGroup form, BuildContext context) {
     if (form.invalid) {
       form.markAllAsTouched();
       return;
@@ -131,14 +136,19 @@ class _LoginFormState extends State<ClienteForm> {
     telefono = form.control('telefono').value!;
     correo = form.control('email').value!;
 
-    print('''
-CLIENTE:
-        nombre: $nombre
-        apellido: $apellido
-        telefono: $telefono
-        correo: $correo
-        factura: ${factura.value}
-''');
+    final data = {
+      'id_cliente': widget.cliente.idCliente,
+      'nombre': nombre,
+      'apellido': apellido,
+      'telefono': telefono,
+      'correo': correo,
+      'factura': factura.value == false ? 0 : 1
+    };
+
+    context.read<ClienteBloc>().add(UpdateClientesEvent(data: data));
+    Navigator.of(context).pop();
+    FocusScope.of(context).unfocus();
   }
 }
+
 

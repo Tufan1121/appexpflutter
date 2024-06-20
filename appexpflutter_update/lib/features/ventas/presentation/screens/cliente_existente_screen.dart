@@ -1,14 +1,17 @@
-import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente_bloc.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/mixins/modal.dart';
 
+import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
+import 'package:appexpflutter_update/features/home/presentation/screens/widgets/popover.dart';
+import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente_bloc.dart';
 import '../../../../config/config.dart';
 import 'widgets/widgets.dart' show SearchClientes;
 
-class ClienteExistenteScreen extends StatelessWidget {
+class ClienteExistenteScreen extends StatelessWidget with Modal {
   const ClienteExistenteScreen({super.key});
 
   @override
@@ -20,8 +23,26 @@ class ClienteExistenteScreen extends StatelessWidget {
       faIcon: FontAwesomeIcons.userCheck,
       child: Column(
         children: [
+          const SizedBox(height: 20),
           const SearchClientes(),
-          BlocBuilder<ClienteBloc, ClienteState>(
+          BlocConsumer<ClienteBloc, ClienteState>(
+            listener: (context, state) {
+              if (state is ClienteLoaded && state.message != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message!),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } else if (state is ClienteError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
             builder: (context, state) {
               if (state is ClienteLoading) {
                 return const Column(
@@ -44,9 +65,37 @@ class ClienteExistenteScreen extends StatelessWidget {
                         child: Card(
                           elevation: 4,
                           child: ListTile(
-                            onTap: () {
-                              print(state.clientes[index].idCliente);
-                            },
+                            onLongPress: () => showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              context: context,
+                              builder: (BuildContext context) => Popover(
+                                child: Container(
+                                  height: 100,
+                                  color: Colores.scaffoldBackgroundColor,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: ListView(
+                                      children: [
+                                        CustomListTile(
+                                          text: 'EDITAR CLIENTE',
+                                          icon: FontAwesomeIcons.userPlus,
+                                          onTap: () {
+                                            FocusScope.of(context).unfocus();
+                                            Navigator.pop(context);
+                                            modalEditarCliente(size, context,
+                                                state.clientes[index]);
+                                          },
+                                        ),
+                                        const Divider(),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onTap: () =>
+                                PedidoRoute($extra: state.clientes[index])
+                                    .push(context),
                             leading: Container(
                               height: 40,
                               width: 40,
@@ -55,7 +104,6 @@ class ClienteExistenteScreen extends StatelessWidget {
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey,
-
                                       blurRadius: 1,
                                       offset: Offset(
                                           0, 4), // changes position of shadow
@@ -72,7 +120,7 @@ class ClienteExistenteScreen extends StatelessWidget {
                               ),
                             ),
                             title: AutoSizeText(
-                              state.clientes[index].nombre,
+                              '${state.clientes[index].nombre} ${state.clientes[index].apellido}',
                               style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 15,
