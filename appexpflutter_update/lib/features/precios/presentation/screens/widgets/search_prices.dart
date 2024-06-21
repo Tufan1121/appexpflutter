@@ -1,17 +1,18 @@
+import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_page_precios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
-import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_dialog.dart';
-import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_page.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class SearchPrices extends StatelessWidget {
+class SearchPrices extends HookWidget {
   const SearchPrices({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final scanResult = useState<String>('');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -69,17 +70,29 @@ class SearchPrices extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => ScannerDialog(
-                child: ScannerPage(),
-              ),
-            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => ScannerPrecioPage(
+                  onDetect: (barcode) {
+                    // Manejar la detección de códigos de barras aquí
+                    scanResult.value = barcode.barcodes.first.rawValue ?? '';
+
+                    context
+                        .read<PreciosBloc>()
+                        .add(GetQRProductEvent(clave: scanResult.value));
+
+                    Navigator.of(context)
+                        .popUntil(ModalRoute.withName('/precios'));
+                  },
+                ),
+              );
+            },
             style: ElevatedButton.styleFrom(
               elevation: 2,
               shape: const CircleBorder(),
-              padding: const EdgeInsets.all(
-                  8), // padding para cambiar el tamaño del botón Fondo del botón
+              padding: const EdgeInsets.all(8),
+              // Estilos adicionales según sea necesario
             ),
             child: const Icon(
               Icons.qr_code_2_rounded,

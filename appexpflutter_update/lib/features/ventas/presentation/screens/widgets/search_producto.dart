@@ -1,19 +1,32 @@
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
 import 'package:flutter/material.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_v.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_dialog.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../shared/widgets/widgets.dart' show CustomSearch;
 
-class SearchProducto extends StatelessWidget {
-  const SearchProducto({
+class SearchProducto extends HookWidget {
+  SearchProducto({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final controller = useTextEditingController();
+    final scanResult = useState<String>('');
+    final textFieldValue = useState<String>('');
+
+    useEffect(() {
+      controller.addListener(() {
+        textFieldValue.value = controller.text;
+      });
+      return null;
+    }, [controller]);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -34,6 +47,7 @@ class SearchProducto extends StatelessWidget {
                 ],
               ),
               child: TextField(
+                controller: controller,
                 style: const TextStyle(
                   color: Colores.secondaryColor,
                   fontSize: 16,
@@ -41,15 +55,38 @@ class SearchProducto extends StatelessWidget {
                 obscureText: false,
                 keyboardType: TextInputType.text,
                 onChanged: (value) {},
-                onSubmitted: (value) {},
+                onSubmitted: (value) {
+                  context
+                      .read<ProductosBloc>()
+                      .add(GetQRProductEvent(clave: value));
+                  controller.clear();
+                },
                 decoration: InputDecoration(
-                  prefixIcon: const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Icon(
-                      Icons.search,
-                      color: Colores.secondaryColor,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: IconButton(
+                      onPressed: () {
+                        context
+                            .read<ProductosBloc>()
+                            .add(GetQRProductEvent(clave: controller.text));
+                        FocusScope.of(context).unfocus();
+                      },
+                      icon: const Icon(
+                        Icons.search,
+                        color: Colores.secondaryColor,
+                      ),
                     ),
                   ),
+                  suffixIcon: controller.text.isNotEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            controller.clear();
+                          },
+                          icon: const Icon(
+                            Icons.clear,
+                            color: Colors.red,
+                          ))
+                      : null,
                   hintText: 'Clave Manual',
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -112,11 +149,15 @@ class SearchProducto extends StatelessWidget {
                             const SizedBox(
                                 height:
                                     10), // Espacio entre la barra y el resto del contenido
-                            CustomSearch(
-                              hintText: 'Calidad',
-                              onChanged: (value) {},
-                              onSubmitted: (value) {},
-                              // Otros widgets aquí
+                            Row(
+                              children: [
+                                CustomSearch(
+                                  hintText: 'Calidad',
+                                  onChanged: (value) {},
+                                  onSubmitted: (value) {},
+                                  // Otros widgets aquí
+                                ),
+                              ],
                             )
                           ],
                         ),
@@ -140,14 +181,25 @@ class SearchProducto extends StatelessWidget {
           ElevatedButton(
             onPressed: () => showDialog(
               context: context,
-              builder: (context) => ScannerDialog(
-                child: ScannerPagev(),
+              builder: (context) => ScannerProductoPage(
+                onDetect: (barcode) {
+                  // / Manejar la detección de códigos de barras
+                  scanResult.value = barcode.barcodes.first.rawValue ?? '';
+
+                  context
+                      .read<ProductosBloc>()
+                      .add(GetQRProductEvent(clave: scanResult.value));
+
+                  Navigator.of(context)
+                      .popUntil(ModalRoute.withName('/pedido'));
+                },
               ),
             ),
             style: ElevatedButton.styleFrom(
               elevation: 2,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
+              // Otros estilos según sea necesario
             ),
             child: const Icon(
               Icons.qr_code_2_rounded,

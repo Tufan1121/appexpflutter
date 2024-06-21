@@ -7,7 +7,7 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/mixins
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/popover.dart';
 import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente/cliente_bloc.dart';
 import '../../../../config/config.dart';
 import 'widgets/widgets.dart' show SearchClientes;
 

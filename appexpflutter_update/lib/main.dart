@@ -7,7 +7,7 @@ import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente_d
 import 'package:appexpflutter_update/features/ventas/data/repositories/cliente_repository_impl.dart';
 import 'package:appexpflutter_update/features/ventas/domain/repositories/cliente_repository.dart';
 import 'package:appexpflutter_update/features/ventas/domain/usecases/cliente_usecase.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente/cliente_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:api_client/dio_client.dart';
@@ -26,6 +26,7 @@ import 'package:appexpflutter_update/features/precios/domain/usecases/producto_u
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/ventas/presentation/bloc/producto/productos_bloc.dart';
 part './injector.dart';
 
 void main() async {

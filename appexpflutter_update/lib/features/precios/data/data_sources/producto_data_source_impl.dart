@@ -73,4 +73,38 @@ class ProductoDataSourceImpl implements ProductoDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<List<ProductoModel>> getIBodegaProducts(
+      Map<String, dynamic> data) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.get('/ibodegas/',
+          queryParameters: data,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ));
+      final List<dynamic> jsonList = result.data;
+      final productosRelativos = jsonList
+          .map(
+            (json) => ProductoModel.fromJson(json),
+          )
+          .toList();
+      return productosRelativos;
+      // if (jsonList.isNotEmpty) {
+      //   final productosRelativos = jsonList
+      //       .map(
+      //         (json) => ProductoModel.fromJson(json),
+      //       )
+      //       .toList();
+      //   return productosRelativos;
+      // } else {
+      //   throw NotFoundException('Productos no encontrados');
+      // }
+    } catch (_) {
+      rethrow;
+    }
+  }
 }
