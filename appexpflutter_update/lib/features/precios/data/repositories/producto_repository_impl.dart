@@ -34,7 +34,22 @@ class ProductoRepositoryImpl implements ProductoRepository {
       return Right(productosEntity);
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
+    } catch (e) {
+      return Left(
+          NetworkException.customMessage('Ocurrió un error inesperado. '));
+    }
+  }
 
+  @override
+  Future<Either<NetworkException, List<ProductoEntity>>> getIBodegaProducts(
+      Map<String, dynamic> data) async {
+    try {
+      final result = await productoDataSource.getIBodegaProducts(data);
+      // Mapear la lista de ProductoModel a ProductoEntity usando toEntity()
+      final productosEntity = result.map((model) => model.toEntity()).toList();
+      return Right(productosEntity);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
     } catch (e) {
       return Left(
           NetworkException.customMessage('Ocurrió un error inesperado. '));

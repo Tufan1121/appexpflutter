@@ -5,7 +5,7 @@ import 'package:appexpflutter_update/features/precios/domain/entities/producto_e
 
 class ProductoCard extends StatelessWidget {
   final ProductoEntity producto;
-  final double existencia;
+  final int existencia;
   final GestureTapCallback onTap;
   final String? imagen;
 

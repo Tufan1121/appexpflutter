@@ -72,7 +72,7 @@ class PreciosScreen extends StatelessWidget {
                                   imagen:
                                       'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
                                   producto: state.producto,
-                                  existencia: existencia,
+                                  existencia: existencia.toInt(),
                                   onTap: () => PhotoGalleryRoute(
                                           imageUrls: imagePaths,
                                           initialIndex: 0)
@@ -117,7 +117,7 @@ class PreciosScreen extends StatelessWidget {
                                   imagen:
                                       'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
                                   producto: state.producto,
-                                  existencia: existencia,
+                                  existencia: existencia.toInt(),
                                   onTap: () => PhotoGalleryRoute(
                                           imageUrls: imagePaths,
                                           initialIndex: 0)

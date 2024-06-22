@@ -46,6 +46,24 @@ class ClearProductoStateEvent extends ProductosEvent {
   List<Object> get props => [];
 }
 
+class GetIbodegaProductEvent extends ProductosEvent {
+  final Map<String, dynamic> data;
+
+  const GetIbodegaProductEvent({required this.data});
+
+  @override
+  List<Object> get props => [data];
+}
+
+class AddProductToScannedEvent extends ProductosEvent {
+  final ProductoEntity producto;
+
+  const AddProductToScannedEvent(this.producto);
+
+  @override
+  List<Object> get props => [producto];
+}
+
 class RemoveProductEvent extends ProductosEvent {
   final ProductoEntity producto;
 
@@ -54,3 +72,16 @@ class RemoveProductEvent extends ProductosEvent {
   @override
   List<Object> get props => [producto];
 }
+
+class StartMultiSelectEvent extends ProductosEvent {}
+
+class ToggleProductSelectionEvent extends ProductosEvent {
+  final ProductoEntity producto;
+
+  const ToggleProductSelectionEvent(this.producto);
+
+  @override
+  List<Object> get props => [producto];
+}
+
+class AddSelectedProductsToScannedEvent extends ProductosEvent {}
