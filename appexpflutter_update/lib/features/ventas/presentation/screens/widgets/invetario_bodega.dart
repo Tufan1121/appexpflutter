@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos_bodega.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,7 +22,7 @@ class _InventarioBodegaState extends State<InventarioBodega> {
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.71, // Altura inicial del modal
-      minChildSize: 0.5, // Altura mínima del modal
+      minChildSize: 0.2, // Altura mínima del modal
       maxChildSize: 0.9, // Altura máxima del modal
       builder: (BuildContext context, ScrollController scrollController) {
         return Padding(
@@ -91,6 +92,7 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                   if (state is IbodegaProductosLoaded) {
                     final productos = state.productos;
                     final selectedProducts = state.selectedProducts;
+
                     return Expanded(
                       child: ListView.builder(
                         controller: scrollController,
@@ -99,44 +101,34 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                           final producto = productos[index];
                           final isSelected =
                               selectedProducts.contains(producto);
+                          final existencia = productos[index].bodega1 +
+                              productos[index].bodega2 +
+                              productos[index].bodega3 +
+                              productos[index].bodega4;
                           return GestureDetector(
-                            onLongPress: () {
-                              setState(() {
-                                isMultiSelectMode = true;
-                              });
-                              context
-                                  .read<ProductosBloc>()
-                                  .add(StartMultiSelectEvent());
-                            },
-                            onTap: () {
-                              if (isMultiSelectMode) {
+                              onLongPress: () {
+                                setState(() {
+                                  isMultiSelectMode = true;
+                                });
                                 context
                                     .read<ProductosBloc>()
-                                    .add(ToggleProductSelectionEvent(producto));
-                              } else {
-                                context
-                                    .read<ProductosBloc>()
-                                    .add(AddProductToScannedEvent(producto));
-                              }
-                            },
-                            child: Card(
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 15),
-                              clipBehavior: Clip.hardEdge,
-                              color: isSelected
-                                  ? Colores.secondaryColor.withOpacity(0.5)
-                                  : null, // Cambiar color de fondo si está seleccionado
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 10),
-                                leading: Icon(Icons.shopping_cart,
-                                    color: Theme.of(context).primaryColor),
-                                title: Text(producto.producto),
-                                subtitle: Text('Precio: \$${producto.precio1}'),
-                                trailing: Text('Cantidad: ${producto.bodega1}'),
-                              ),
-                            ),
-                          );
+                                    .add(StartMultiSelectEvent());
+                              },
+                              onTap: () {
+                                if (isMultiSelectMode) {
+                                  context.read<ProductosBloc>().add(
+                                      ToggleProductSelectionEvent(producto));
+                                } else {
+                                  context
+                                      .read<ProductosBloc>()
+                                      .add(AddProductToScannedEvent(producto));
+                                }
+                              },
+                              child: ListaProductosBodegaCard(
+                                producto: producto,
+                                isSelected: isSelected,
+                                existencia: existencia.toInt(),
+                              ));
                         },
                       ),
                     );

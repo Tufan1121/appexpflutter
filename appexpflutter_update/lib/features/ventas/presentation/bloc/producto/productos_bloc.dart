@@ -22,7 +22,8 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     on<ToggleProductSelectionEvent>(_toggleProductSelectionEvent);
     on<AddSelectedProductsToScannedEvent>(_addSelectedProductsToScannedEvent);
     on<RemoveProductEvent>(_removeProductEvent);
-    on<ClearProductoStateEvent>((event, emit) => _clearPreciosState(emit));
+    on<ClearProductoStateEvent>((event, emit) => _clearProductsState(emit));
+    on<ClearProductoIBodegaStateEvent>((event, emit) => _clearProductsIBodegaState(emit));
     on<AddProductToScannedEvent>(
       _addProductToScannedEvent,
       transformer: debounce(const Duration(milliseconds: 500)),
@@ -136,8 +137,11 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     return (events, mapper) => events.debounceTime(duration).flatMap(mapper);
   }
 
-  void _clearPreciosState(Emitter<ProductosState> emit) {
+  void _clearProductsState(Emitter<ProductosState> emit) {
     scannedProducts.clear();
     emit(ProductoInitial());
+  }
+  void _clearProductsIBodegaState(Emitter<ProductosState> emit) {
+    emit(IbodegaProductosInitial());
   }
 }

@@ -46,6 +46,8 @@ class ClearProductoStateEvent extends ProductosEvent {
   List<Object> get props => [];
 }
 
+class ClearProductoIBodegaStateEvent extends ProductosEvent {}
+
 class GetIbodegaProductEvent extends ProductosEvent {
   final Map<String, dynamic> data;
 

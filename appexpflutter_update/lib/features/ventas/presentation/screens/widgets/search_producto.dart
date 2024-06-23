@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/invetario_bodega.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -98,6 +99,29 @@ class SearchProducto extends HookWidget {
                 ),
               ),
             ),
+          ),
+          BlocBuilder<ProductosBloc, ProductosState>(
+            builder: (context, state) {
+              if (state is ProductosLoaded) {
+                return ElevatedButton(
+                  onPressed: () {
+                    GenerarPedidoRoute().push(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    elevation: 2,
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8),
+                  ),
+                  child: const FaIcon(
+                    FontAwesomeIcons.truck,
+                    color: Colores.secondaryColor,
+                    size: 35,
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
           ),
           ElevatedButton(
             onPressed: () {

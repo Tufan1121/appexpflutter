@@ -2,6 +2,7 @@ import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_ent
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/generar_pedido.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/home_screen.dart';
@@ -90,4 +91,17 @@ class PedidoRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) => PedidoScreen(
         clienteEntity: $extra,
       );
+}
+
+@TypedGoRoute<GenerarPedidoRoute>(
+  path: GenerarPedidoRoute.path,
+)
+class GenerarPedidoRoute extends GoRouteData {
+  static const path = '/generar_pedido';
+  // final ClienteEntity $extra;
+
+  GenerarPedidoRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const GenerarPedidoScreen();
 }

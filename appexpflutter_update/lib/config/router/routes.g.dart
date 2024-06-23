@@ -14,6 +14,7 @@ List<RouteBase> get $appRoutes => [
       $clienteNuevoRoute,
       $clienteExistenteRoute,
       $pedidoRoute,
+      $generarPedidoRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -182,4 +183,27 @@ extension $PedidoRouteExtension on PedidoRoute {
 
   void replace(BuildContext context) =>
       context.replace(location, extra: $extra);
+}
+
+RouteBase get $generarPedidoRoute => GoRouteData.$route(
+      path: '/generar_pedido',
+      factory: $GenerarPedidoRouteExtension._fromState,
+    );
+
+extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
+  static GenerarPedidoRoute _fromState(GoRouterState state) =>
+      GenerarPedidoRoute();
+
+  String get location => GoRouteData.$location(
+        '/generar_pedido',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

@@ -12,6 +12,7 @@ class ProductoInitial extends ProductosState {}
 class IbodegaProductosInitial extends ProductosState {}
 
 class ProductoLoading extends ProductosState {}
+
 class IbodegaProductosLoading extends ProductosState {}
 
 class ProductosLoaded extends ProductosState {
@@ -27,8 +28,7 @@ class IbodegaProductosLoaded extends ProductosState {
   final List<ProductoEntity> selectedProducts; // Añadir esta línea
 
   const IbodegaProductosLoaded(
-      {required this.productos,
-      this.selectedProducts = const []}); 
+      {required this.productos, this.selectedProducts = const []});
 
   @override
   List<Object> get props => [productos, selectedProducts];

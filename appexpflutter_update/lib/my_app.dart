@@ -22,6 +22,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _init() async {
     final token = await storage.read(key: 'accessToken');
+    // _router =
+    //     GoRouter(initialLocation: GenerarPedidoRoute.path, routes: $appRoutes);
     _router = GoRouter(
         initialLocation: token != null ? HomeRoute.path : LoginRoute.path,
         routes: $appRoutes);
