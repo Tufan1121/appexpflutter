@@ -87,3 +87,13 @@ class ToggleProductSelectionEvent extends ProductosEvent {
 }
 
 class AddSelectedProductsToScannedEvent extends ProductosEvent {}
+
+class UpdateProductEvent extends ProductosEvent {
+  final ProductoEntity producto;
+
+  const UpdateProductEvent(this.producto);
+
+  @override
+  List<Object> get props => [producto];
+}
+

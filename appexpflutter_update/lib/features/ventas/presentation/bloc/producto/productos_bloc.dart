@@ -29,6 +29,7 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
       transformer: debounce(const Duration(milliseconds: 500)),
     );
     on<GetIbodegaProductEvent>(_getIbodegaProductEvent);
+    on<UpdateProductEvent>(_updateProductEvent);
     // on<SelectRelatedProductEvent>(_selectRelatedProductEvent);
   }
 
@@ -143,5 +144,14 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
   }
   void _clearProductsIBodegaState(Emitter<ProductosState> emit) {
     emit(IbodegaProductosInitial());
+  }
+
+    Future<void> _updateProductEvent(UpdateProductEvent event, Emitter<ProductosState> emit) async {
+    final updatedProducts = scannedProducts.map((producto) {
+      return producto.producto1 == event.producto.producto1 ? event.producto : producto;
+    }).toList();
+
+    scannedProducts = updatedProducts;
+    emit(ProductosLoaded(productos: List.from(scannedProducts)));
   }
 }

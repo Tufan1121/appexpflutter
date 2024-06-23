@@ -18,8 +18,8 @@ class ListaProductos extends HookWidget {
     final countList =
         useState<List<int>>(List<int>.filled(productos.length, 1));
 
-    final selectedPriceList = useState<List<int?>>(
-        List<int?>.filled(productos.length, 1)); 
+    final selectedPriceList =
+        useState<List<int?>>(List<int?>.filled(productos.length, 1));
 
     void updateTotal() {
       double newTotal = 0.0;
@@ -247,10 +247,15 @@ class ListaProductos extends HookWidget {
                                       child: ElevatedButton(
                                         onPressed: customPrice.value != null
                                             ? () {
-                                                final price = int.parse(
+                                                final price = double.parse(
                                                     customPriceController.text);
-                                                producto.copyWith(
-                                                    precio3: price);
+                                                final updatedProduct =
+                                                    producto.copyWith(
+                                                        precio3: price.toInt());
+                                                context
+                                                    .read<ProductosBloc>()
+                                                    .add(UpdateProductEvent(
+                                                        updatedProduct));
                                                 updateTotal();
                                               }
                                             : null,
