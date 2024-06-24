@@ -9,10 +9,15 @@ import 'package:appexpflutter_update/features/precios/domain/entities/producto_e
 
 class ListaProductosBodegaCard extends HookWidget {
   const ListaProductosBodegaCard(
-      {super.key, required this.producto, this.isSelected, this.existencia});
+      {super.key,
+      required this.producto,
+      this.isSelected,
+      this.existencia,
+      this.isMultiSelectMode});
   final ProductoEntity producto;
   final bool? isSelected;
   final int? existencia;
+  final bool? isMultiSelectMode;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +25,11 @@ class ListaProductosBodegaCard extends HookWidget {
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         clipBehavior: Clip.hardEdge,
-        color: isSelected! ? Colores.secondaryColor.withOpacity(0.5) : null,
+        color: isMultiSelectMode!
+            ? isSelected!
+                ? Colores.secondaryColor.withOpacity(0.5)
+                : null
+            : null,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

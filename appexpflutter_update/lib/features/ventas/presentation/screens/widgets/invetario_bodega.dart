@@ -128,6 +128,7 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                 producto: producto,
                                 isSelected: isSelected,
                                 existencia: existencia.toInt(),
+                                isMultiSelectMode: isMultiSelectMode,
                               ));
                         },
                       ),

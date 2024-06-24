@@ -23,7 +23,8 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     on<AddSelectedProductsToScannedEvent>(_addSelectedProductsToScannedEvent);
     on<RemoveProductEvent>(_removeProductEvent);
     on<ClearProductoStateEvent>((event, emit) => _clearProductsState(emit));
-    on<ClearProductoIBodegaStateEvent>((event, emit) => _clearProductsIBodegaState(emit));
+    on<ClearProductoIBodegaStateEvent>(
+        (event, emit) => _clearProductsIBodegaState(emit));
     on<AddProductToScannedEvent>(
       _addProductToScannedEvent,
       transformer: debounce(const Duration(milliseconds: 500)),
@@ -142,16 +143,29 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     scannedProducts.clear();
     emit(ProductoInitial());
   }
+
   void _clearProductsIBodegaState(Emitter<ProductosState> emit) {
     emit(IbodegaProductosInitial());
   }
 
-    Future<void> _updateProductEvent(UpdateProductEvent event, Emitter<ProductosState> emit) async {
-    final updatedProducts = scannedProducts.map((producto) {
-      return producto.producto1 == event.producto.producto1 ? event.producto : producto;
-    }).toList();
+ /// Maneja el evento de actualización de producto en el Bloc.
+Future<void> _updateProductEvent(
+    UpdateProductEvent event, Emitter<ProductosState> emit) async {
+  
+  // Mapea la lista de productos escaneados y actualiza el producto que coincide con el producto proporcionado en el evento.
+  final updatedProducts = scannedProducts.map((producto) {
+    // Si el producto en la lista tiene la misma clave (producto1) que el producto en el evento,
+    // reemplázalo con el producto del evento. De lo contrario, deja el producto tal como está.
+    return producto.producto1 == event.producto.producto1
+        ? event.producto
+        : producto;
+  }).toList();
 
-    scannedProducts = updatedProducts;
-    emit(ProductosLoaded(productos: List.from(scannedProducts)));
-  }
+  // Actualiza la lista de productos escaneados con la lista de productos actualizada.
+  scannedProducts = updatedProducts;
+
+  // Emite un nuevo estado con la lista de productos actualizada.
+  emit(ProductosLoaded(productos: List.from(scannedProducts)));
+}
+
 }
