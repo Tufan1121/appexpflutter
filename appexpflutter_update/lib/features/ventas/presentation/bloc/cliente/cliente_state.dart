@@ -22,12 +22,12 @@ class ClienteLoaded extends ClienteState {
 }
 
 class ClienteSave extends ClienteState {
-  final bool value;
+  final int idCliente;
 
-  const ClienteSave({required this.value});
+  const ClienteSave({required this.idCliente});
 
   @override
-  List<Object> get props => [value];
+  List<Object> get props => [idCliente];
 }
 
 class ClienteError extends ClienteState {

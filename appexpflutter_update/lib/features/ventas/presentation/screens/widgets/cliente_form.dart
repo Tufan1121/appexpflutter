@@ -122,6 +122,7 @@ class _LoginFormState extends State<ClienteForm> {
                   form.control('telefono').reset();
                   form.control('email').reset();
                   factura.value = false;
+                  PedidoRoute(idCliente: state.idCliente).push(context);
                 } else if (state is ClienteError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

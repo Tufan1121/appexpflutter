@@ -84,13 +84,13 @@ class ClienteExistenteRoute extends GoRouteData {
 )
 class PedidoRoute extends GoRouteData {
   static const path = '/pedido';
-  final ClienteEntity $extra;
+  final int idCliente;
 
-  PedidoRoute({required this.$extra});
+  PedidoRoute({required this.idCliente});
 
   @override
   Widget build(BuildContext context, GoRouterState state) => PedidoScreen(
-        clienteEntity: $extra,
+        idCliente: idCliente,
       );
 }
 

@@ -31,8 +31,8 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     final result = await clienteUsecase.createsClientes(event.data);
     result.fold(
       (failure) => emit(ClienteError(message: failure.message)),
-      (success) {
-        emit(ClienteSave(value: success));
+      (idCliente) {
+        emit(ClienteSave(idCliente: int.parse(idCliente)));
       },
     );
   }

@@ -95,7 +95,7 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                             ),
                             onTap: () {
                               FocusScope.of(context).unfocus();
-                              PedidoRoute($extra: state.clientes[index])
+                              PedidoRoute(idCliente: state.clientes[index].idCliente)
                                   .push(context);
                             },
                             leading: Container(

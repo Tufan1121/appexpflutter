@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -6,7 +5,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
-import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/search_producto.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos.dart';
@@ -20,8 +18,8 @@ const list = [
 ];
 
 class PedidoScreen extends StatefulHookWidget {
-  const PedidoScreen({super.key, required this.clienteEntity});
-  final ClienteEntity clienteEntity;
+  const PedidoScreen({super.key, required this.idCliente});
+  final int idCliente;
 
   @override
   State<PedidoScreen> createState() => _PedidoScreenState();
@@ -67,7 +65,7 @@ class _PedidoScreenState extends State<PedidoScreen> {
           const SizedBox(height: 25),
           SearchProducto(
               estatusPedido: dropdownValue.value,
-              idCliente: widget.clienteEntity.idCliente),
+              idCliente: widget.idCliente),
           const SizedBox(height: 5),
           BlocConsumer<ProductosBloc, ProductosState>(
             listener: (context, state) {

@@ -7,6 +7,6 @@ abstract interface class ClienteRepository {
       String nombre);
   Future<Either<NetworkException, String>> updateClientes(
       Map<String, dynamic> data);
-  Future<Either<NetworkException, bool>> createClientes(
+  Future<Either<NetworkException, String>> createClientes(
       Map<String, dynamic> data);
 }

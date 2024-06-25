@@ -18,7 +18,7 @@ class ClienteUsecase {
     return await clienteRepository.updateClientes(data);
   }
 
-  Future<Either<NetworkException, bool>> createsClientes(
+  Future<Either<NetworkException, String>> createsClientes(
       Map<String, dynamic> data) async {
     return await clienteRepository.createClientes(data);
   }

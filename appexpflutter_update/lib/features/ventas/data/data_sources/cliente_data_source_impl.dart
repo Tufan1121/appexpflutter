@@ -15,7 +15,7 @@ class ClienteDataSourceImpl implements ClienteDataSource {
       : _dioClient = dioClient;
 
   @override
-  Future<bool> createClientes(Map<String, dynamic> data) async {
+  Future<String> createClientes(Map<String, dynamic> data) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = await storage.read(key: 'accessToken');
 
@@ -30,7 +30,7 @@ class ClienteDataSourceImpl implements ClienteDataSource {
         ),
       );
       await prefs.setString('id_cliente', result.data['id_cliente']);
-      return true;
+      return result.data['id_cliente'] as String;
     } catch (_) {
       rethrow;
     }

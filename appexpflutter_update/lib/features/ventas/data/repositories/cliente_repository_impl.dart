@@ -27,7 +27,7 @@ class ClienteRepositoryImpl implements ClienteRepository {
   }
 
   @override
-  Future<Either<NetworkException, bool>> createClientes(
+  Future<Either<NetworkException, String>> createClientes(
       Map<String, dynamic> data) async {
     try {
       final result = await clienteDataSource.createClientes(data);
