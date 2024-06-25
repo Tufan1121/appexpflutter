@@ -22,6 +22,13 @@ class UpdateClientesEvent extends ClienteEvent {
   @override
   List<Object> get props => [data];
 }
+class CreateClientesEvent extends ClienteEvent {
+  final Map<String, dynamic> data;
+
+  const CreateClientesEvent({required this.data});
+  @override
+  List<Object> get props => [data];
+}
 
 class GetClienteEvent extends ClienteEvent {
   final int clienteId;

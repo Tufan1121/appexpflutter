@@ -10,12 +10,7 @@ class ClienteRepositoryImpl implements ClienteRepository {
   final ClienteDataSource clienteDataSource;
 
   ClienteRepositoryImpl({required this.clienteDataSource});
-  @override
-  Future<Either<NetworkException, ClienteEntity>> clienteNuevo(
-      Map<String, dynamic> data) {
-    // TODO: implement clienteNuevo
-    throw UnimplementedError();
-  }
+
 
   @override
   Future<Either<NetworkException, List<ClienteEntity>>> getClientes(
@@ -30,9 +25,21 @@ class ClienteRepositoryImpl implements ClienteRepository {
       return Left(NetworkException.fromDioError(e));
     }
   }
-  
+
   @override
-  Future<Either<NetworkException, String>> updateClientes(Map<String, dynamic> data) async {
+  Future<Either<NetworkException, bool>> createClientes(
+      Map<String, dynamic> data) async {
+    try {
+      final result = await clienteDataSource.createClientes(data);
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, String>> updateClientes(
+      Map<String, dynamic> data) async {
     try {
       final result = await clienteDataSource.updateClientes(data);
       return Right(result);

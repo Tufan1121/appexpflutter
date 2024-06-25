@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
@@ -98,10 +99,18 @@ class PedidoRoute extends GoRouteData {
 )
 class GenerarPedidoRoute extends GoRouteData {
   static const path = '/generar_pedido';
-  // final ClienteEntity $extra;
+  final List<ProductoEntity> $extra;
+  final int idCliente;
 
-  GenerarPedidoRoute();
+  GenerarPedidoRoute({
+    required this.$extra,
+    required this.idCliente,
+  });
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const GenerarPedidoScreen();
+  Widget build(BuildContext context, GoRouterState state) =>
+      GenerarPedidoScreen(
+        productos: $extra,
+        idCliente: idCliente,
+      );
 }

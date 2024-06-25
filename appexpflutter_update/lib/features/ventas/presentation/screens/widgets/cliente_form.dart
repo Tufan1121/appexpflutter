@@ -1,6 +1,8 @@
 import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente/cliente_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:appexpflutter_update/config/config.dart';
@@ -106,13 +108,39 @@ class _LoginFormState extends State<ClienteForm> {
               },
             ),
             const SizedBox(height: 20),
-            SizedBox(
-                width: double.infinity,
-                height: 60,
-                child: CustomFilledButton(
-                    text: 'Guardar',
-                    buttonColor: Colores.secondaryColor,
-                    onPressed: () => _submitForm())),
+            BlocConsumer<ClienteBloc, ClienteState>(
+              listener: (context, state) {
+                if (state is ClienteSave) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Cliente creado'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  form.control('nombre').reset();
+                  form.control('apellido').reset();
+                  form.control('telefono').reset();
+                  form.control('email').reset();
+                  factura.value = false;
+                } else if (state is ClienteError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                return SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: CustomFilledButton(
+                        text: 'Guardar',
+                        buttonColor: Colores.secondaryColor,
+                        onPressed: _submitForm));
+              },
+            ),
             const Spacer(flex: 1),
           ],
         ),
@@ -131,14 +159,14 @@ class _LoginFormState extends State<ClienteForm> {
     telefono = form.control('telefono').value!;
     correo = form.control('email').value!;
 
-    print('''
-CLIENTE:
-        nombre: $nombre
-        apellido: $apellido
-        telefono: $telefono
-        correo: $correo
-        factura: ${factura.value}
-''');
+    final data = {
+      'nombre': nombre,
+      'apellido': apellido,
+      'telefono': telefono,
+      'correo': correo,
+      'factura': factura.value == false ? 0 : 1
+    };
+
+    context.read<ClienteBloc>().add(CreateClientesEvent(data: data));
   }
 }
-

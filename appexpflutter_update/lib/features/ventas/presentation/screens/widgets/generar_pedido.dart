@@ -1,3 +1,6 @@
+import 'package:appexpflutter_update/config/utils.dart';
+import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -5,7 +8,13 @@ import '../../../../../config/theme/app_theme.dart';
 import '../../../../shared/widgets/layout_screens.dart';
 
 class GenerarPedidoScreen extends StatefulHookWidget {
-  const GenerarPedidoScreen({super.key});
+  const GenerarPedidoScreen({
+    super.key,
+    required this.productos,
+    required this.idCliente,
+  });
+  final List<ProductoEntity> productos;
+  final int idCliente;
 
   @override
   State<GenerarPedidoScreen> createState() => _GenerarPedidoScreenState();
@@ -31,45 +40,55 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     '04 Tarjeta de Crédito o Débito'
   ];
 
+  final totalAPagar = UtilsVenta.total;
+
   @override
   Widget build(BuildContext context) {
     final isEntregado = useState(false);
 
     final isPendienteFinDeExpo = useState(true);
     final size = MediaQuery.of(context).size;
+    final debePorPagar = useState(totalAPagar);
     final scrollController = useScrollController();
 
     void toggleCheckbox(String controlName) {
       if (controlName == 'entregado') {
         isEntregado.value = true;
         isPendienteFinDeExpo.value = false;
-        form.control('entregado').value = true;
-        form.control('pendienteFinDeExpo').value = false;
+        form.control('entregado').value = isEntregado.value;
+        form.control('pendienteFinDeExpo').value = isPendienteFinDeExpo.value;
       } else if (controlName == 'pendienteFinDeExpo') {
         isEntregado.value = false;
         isPendienteFinDeExpo.value = true;
-        form.control('entregado').value = false;
-        form.control('pendienteFinDeExpo').value = true;
+        form.control('entregado').value = isEntregado.value;
+        form.control('pendienteFinDeExpo').value = isPendienteFinDeExpo.value;
       }
     }
 
-    // void resetScrollPosition() {
-    //   Future.delayed(const Duration(milliseconds: 300), () {
-    //     scrollController.animateTo(
-    //       0.0,
-    //       duration: const Duration(milliseconds: 300),
-    //       curve: Curves.easeOut,
-    //     );
-    //   });
-    // }
+    void updateDebePorPagar() {
+      final anticipoPago1 = form.control('anticipoPago1').value ?? 0.0;
+      final anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
+      final anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
+      final totalAnticipo = anticipoPago1 + anticipoPago2 + anticipoPago3;
+      debePorPagar.value = totalAPagar - totalAnticipo;
+    }
 
-    // useEffect(() {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     resetScrollPosition();
-    //   });
-    //   return null;
-    // }, []);
+    useEffect(() {
+      form
+          .control('anticipoPago1')
+          .valueChanges
+          .listen((_) => updateDebePorPagar());
+      form
+          .control('anticipoPago2')
+          .valueChanges
+          .listen((_) => updateDebePorPagar());
+      form
+          .control('anticipoPago3')
+          .valueChanges
+          .listen((_) => updateDebePorPagar());
 
+      return null;
+    }, []);
     return LayoutScreens(
       onPressed: () => Navigator.pop(context),
       titleScreen: 'GENERAR PEDIDO',
@@ -78,7 +97,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
-              height: size.height - 93, // 80 los dos sizebox
+              height: 700, // 80 los dos sizebox
               width: double.infinity,
 
               child: Card(
@@ -97,23 +116,23 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'DM24-7645B',
-                              style: TextStyle(
-                                  color: Colors.pink,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                            // const Text(
+                            //   'DM24-7645B',
+                            //   style: TextStyle(
+                            //       color: Colors.pink,
+                            //       fontWeight: FontWeight.bold),
+                            // ),
                             const SizedBox(height: 16.0),
-                            const Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Total a pagar'),
+                                    const Text('Total a pagar'),
                                     Text(
-                                      '\$990.00',
-                                      style: TextStyle(
+                                      Utils.formatPrice(UtilsVenta.total),
+                                      style: const TextStyle(
                                           color: Colors.purple,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -122,10 +141,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text('Debe por pagar'),
+                                    const Text('Debe por pagar'),
                                     Text(
-                                      '\$990.00',
-                                      style: TextStyle(
+                                      Utils.formatPrice(debePorPagar.value),
+                                      style: const TextStyle(
                                           color: Colors.red,
                                           fontWeight: FontWeight.bold),
                                     ),

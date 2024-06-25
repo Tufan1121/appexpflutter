@@ -3,9 +3,10 @@ import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_ent
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class ClienteRepository {
-  Future<Either<NetworkException, List<ClienteEntity>>> getClientes(String nombre);
-  Future<Either<NetworkException, ClienteEntity>> clienteNuevo(
-      Map<String, dynamic> data);
+  Future<Either<NetworkException, List<ClienteEntity>>> getClientes(
+      String nombre);
   Future<Either<NetworkException, String>> updateClientes(
+      Map<String, dynamic> data);
+  Future<Either<NetworkException, bool>> createClientes(
       Map<String, dynamic> data);
 }

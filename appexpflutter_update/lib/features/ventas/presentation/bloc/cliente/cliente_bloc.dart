@@ -12,6 +12,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   ClienteBloc({required this.clienteUsecase}) : super(ClienteInitial()) {
     on<GetClientesEvent>(_getClientesEvent,
         transformer: debounce(const Duration(milliseconds: 500)));
+    on<CreateClientesEvent>(_createClienteEvent);
     on<UpdateClientesEvent>(_updateClientesEvent);
   }
 
@@ -22,6 +23,17 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     result.fold(
       (failure) => emit(ClienteError(message: failure.message)),
       (clientes) => emit(ClienteLoaded(clientes: clientes)),
+    );
+  }
+
+  Future<void> _createClienteEvent(
+      CreateClientesEvent event, Emitter<ClienteState> emit) async {
+    final result = await clienteUsecase.createsClientes(event.data);
+    result.fold(
+      (failure) => emit(ClienteError(message: failure.message)),
+      (success) {
+        emit(ClienteSave(value: success));
+      },
     );
   }
 

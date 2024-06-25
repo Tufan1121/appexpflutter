@@ -192,18 +192,26 @@ RouteBase get $generarPedidoRoute => GoRouteData.$route(
 
 extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
   static GenerarPedidoRoute _fromState(GoRouterState state) =>
-      GenerarPedidoRoute();
+      GenerarPedidoRoute(
+        idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
+        $extra: state.extra as List<ProductoEntity>,
+      );
 
   String get location => GoRouteData.$location(
         '/generar_pedido',
+        queryParams: {
+          'id-cliente': idCliente.toString(),
+        },
       );
 
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: $extra);
 
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: $extra);
 
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }

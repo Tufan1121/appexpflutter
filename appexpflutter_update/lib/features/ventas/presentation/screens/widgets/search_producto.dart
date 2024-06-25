@@ -9,8 +9,12 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/widget
 
 class SearchProducto extends HookWidget {
   const SearchProducto({
+    required this.estatusPedido,
+    required this.idCliente,
     super.key,
   });
+  final String estatusPedido;
+  final int idCliente;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +108,32 @@ class SearchProducto extends HookWidget {
               if (state is ProductosLoaded) {
                 return ElevatedButton(
                   onPressed: () {
-                    GenerarPedidoRoute().push(context);
+                    if (estatusPedido.isNotEmpty) {
+                      GenerarPedidoRoute(
+                              $extra: state.productos,
+                              idCliente: idCliente,
+                              )
+                          .push(context);
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Atención'),
+                            content: const Text(
+                                'Debes seleccionar del Select un estatus del pedido'),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Aceptar'),
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     elevation: 2,
@@ -117,9 +146,52 @@ class SearchProducto extends HookWidget {
                     size: 35,
                   ),
                 );
-              } else {
-                return Container();
               }
+              if (state is ProductoError) {
+                if (state.productos.isNotEmpty) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      if (estatusPedido.isNotEmpty) {
+                        GenerarPedidoRoute(
+                                $extra: state.productos,
+                                idCliente: idCliente,
+                                )
+                            .push(context);
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Atención'),
+                              content: const Text(
+                                  'Debes seleccionar del Select un estatus del pedido'),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Aceptar'),
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 2,
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(8),
+                    ),
+                    child: const FaIcon(
+                      FontAwesomeIcons.truck,
+                      color: Colores.secondaryColor,
+                      size: 35,
+                    ),
+                  );
+                }
+              }
+              return Container();
             },
           ),
           ElevatedButton(

@@ -3,7 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:api_client/api_client.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente_data_source.dart';
 import 'package:appexpflutter_update/features/ventas/data/models/cliente_model.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ClienteDataSourceImpl implements ClienteDataSource {
   final DioClient _dioClient;
@@ -11,6 +13,28 @@ class ClienteDataSourceImpl implements ClienteDataSource {
 
   ClienteDataSourceImpl({required DioClient dioClient})
       : _dioClient = dioClient;
+
+  @override
+  Future<bool> createClientes(Map<String, dynamic> data) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = await storage.read(key: 'accessToken');
+
+    try {
+      final result = await _dioClient.post(
+        '/insertClientesExpo',
+        queryParameters: data,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      await prefs.setString('id_cliente', result.data['id_cliente']);
+      return true;
+    } catch (_) {
+      rethrow;
+    }
+  }
 
   @override
   Future<List<ClienteModel>> getCliente(String name) async {
