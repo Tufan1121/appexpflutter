@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,9 +43,17 @@ class ListaProductos extends HookWidget {
               break;
           }
         }
+        UtilsVenta.listProductsOrder.add(
+          DetallePedido(
+              idPedido: 0,
+              clave: productos[i].producto1,
+              clave2: productos[i].producto,
+              cantidad: count,
+              precio: newTotal),
+        );
       }
       total.value = newTotal;
-      UtilsVenta.total = newTotal;
+      UtilsVenta.total = total.value;
     }
 
     useEffect(() {
@@ -75,6 +84,7 @@ class ListaProductos extends HookWidget {
                   productos[index].bodega2 +
                   productos[index].bodega3 +
                   productos[index].bodega4;
+
               return HookBuilder(
                 builder: (context) {
                   final count = useState(1);

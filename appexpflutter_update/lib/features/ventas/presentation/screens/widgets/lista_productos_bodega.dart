@@ -37,11 +37,21 @@ class ListaProductosBodegaCard extends HookWidget {
             children: [
               Row(
                 children: [
-                  Image.network(
-                    'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
-                    width: 60,
-                    height: 60,
+                  FadeInImage.assetNetwork(
+                    placeholder: 'assets/loaders/loading.gif',
+                    image:
+                        'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
+                    width: 70,
+                    height: 70,
                     fit: BoxFit.cover,
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/no-image.jpg',
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      );
+                    },
                   ),
                   const SizedBox(width: 10),
                   Expanded(

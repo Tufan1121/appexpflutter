@@ -13,7 +13,7 @@ class SearchProducto extends HookWidget {
     required this.idCliente,
     super.key,
   });
-  final String estatusPedido;
+  final int estatusPedido;
   final int idCliente;
 
   @override
@@ -108,11 +108,10 @@ class SearchProducto extends HookWidget {
               if (state is ProductosLoaded) {
                 return ElevatedButton(
                   onPressed: () {
-                    if (estatusPedido.isNotEmpty) {
+                    if (estatusPedido != 0) {
                       GenerarPedidoRoute(
-                              $extra: state.productos,
                               idCliente: idCliente,
-                              )
+                              estadoPedido: estatusPedido)
                           .push(context);
                     } else {
                       showDialog(
@@ -151,11 +150,10 @@ class SearchProducto extends HookWidget {
                 if (state.productos.isNotEmpty) {
                   return ElevatedButton(
                     onPressed: () {
-                      if (estatusPedido.isNotEmpty) {
+                      if (estatusPedido != 0) {
                         GenerarPedidoRoute(
-                                $extra: state.productos,
                                 idCliente: idCliente,
-                                )
+                                estadoPedido: estatusPedido)
                             .push(context);
                       } else {
                         showDialog(

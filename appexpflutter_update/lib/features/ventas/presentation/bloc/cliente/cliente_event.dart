@@ -22,6 +22,7 @@ class UpdateClientesEvent extends ClienteEvent {
   @override
   List<Object> get props => [data];
 }
+
 class CreateClientesEvent extends ClienteEvent {
   final Map<String, dynamic> data;
 
@@ -38,3 +39,5 @@ class GetClienteEvent extends ClienteEvent {
   @override
   List<Object> get props => [clienteId];
 }
+
+class ClearClienteStateEvent extends ClienteEvent {}

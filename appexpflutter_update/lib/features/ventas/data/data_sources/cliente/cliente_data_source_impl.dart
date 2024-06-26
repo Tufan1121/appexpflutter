@@ -1,7 +1,7 @@
 import 'package:appexpflutter_update/config/custom_exceptions/not_found_expection.dart';
 import 'package:dio/dio.dart';
 import 'package:api_client/api_client.dart';
-import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente_data_source.dart';
+import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source.dart';
 import 'package:appexpflutter_update/features/ventas/data/models/cliente_model.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

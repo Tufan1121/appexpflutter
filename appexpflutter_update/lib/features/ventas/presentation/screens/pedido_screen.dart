@@ -26,6 +26,9 @@ class PedidoScreen extends StatefulHookWidget {
 }
 
 class _PedidoScreenState extends State<PedidoScreen> {
+  int getEstadoPedidoPagoId(String metodo) {
+    return list.indexOf(metodo) + 1;
+  }
   @override
   Widget build(BuildContext context) {
     final dropdownValue = useState<String>(list.first);
@@ -64,7 +67,7 @@ class _PedidoScreenState extends State<PedidoScreen> {
           ),
           const SizedBox(height: 25),
           SearchProducto(
-              estatusPedido: dropdownValue.value,
+              estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
               idCliente: widget.idCliente),
           const SizedBox(height: 5),
           BlocConsumer<ProductosBloc, ProductosState>(

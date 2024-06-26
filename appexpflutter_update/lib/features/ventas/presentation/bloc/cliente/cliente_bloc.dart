@@ -14,6 +14,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
         transformer: debounce(const Duration(milliseconds: 500)));
     on<CreateClientesEvent>(_createClienteEvent);
     on<UpdateClientesEvent>(_updateClientesEvent);
+    on<ClearClienteStateEvent>((event, emit) => _clearClienteState(emit));
   }
 
   Future<void> _getClientesEvent(
@@ -74,6 +75,10 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
         },
       );
     }
+  }
+
+  void _clearClienteState(Emitter<ClienteState> emit) {
+    emit(ClienteInitial());
   }
 
   EventTransformer<T> debounce<T>(Duration duration) {

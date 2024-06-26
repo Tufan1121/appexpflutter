@@ -1,7 +1,12 @@
+import 'package:appexpflutter_update/config/router/routes.dart';
+import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils.dart';
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente/cliente_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/pedido/pedido_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../../config/theme/app_theme.dart';
@@ -10,11 +15,11 @@ import '../../../../shared/widgets/layout_screens.dart';
 class GenerarPedidoScreen extends StatefulHookWidget {
   const GenerarPedidoScreen({
     super.key,
-    required this.productos,
     required this.idCliente,
+    required this.estadoPedido,
   });
-  final List<ProductoEntity> productos;
   final int idCliente;
+  final int estadoPedido;
 
   @override
   State<GenerarPedidoScreen> createState() => _GenerarPedidoScreenState();
@@ -22,13 +27,21 @@ class GenerarPedidoScreen extends StatefulHookWidget {
 
 class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
   final form = FormGroup({
-    'metodoDePago1': FormControl<String>(),
-    'anticipoPago1': FormControl<double>(disabled: true),
+    'metodoDePago1': FormControl<String>(validators: [
+      Validators.required,
+    ]),
+    'anticipoPago1': FormControl<double>(disabled: true, validators: [
+      Validators.required,
+    ]),
     'metodoDePago2': FormControl<String>(),
     'anticipoPago2': FormControl<double>(disabled: true),
     'metodoDePago3': FormControl<String>(),
     'anticipoPago3': FormControl<double>(disabled: true),
-    'observaciones': FormControl<String>(),
+    'observaciones': FormControl<String>(
+      validators: [
+        Validators.required,
+      ],
+    ),
     'entregado': FormControl<bool>(value: false),
     'pendienteFinDeExpo': FormControl<bool>(value: true),
   });
@@ -40,6 +53,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     '04 Tarjeta de Crédito o Débito'
   ];
 
+  int getMetodoDePagoId(String metodo) {
+    return metodosDePago.indexOf(metodo) + 1;
+  }
+
   final totalAPagar = UtilsVenta.total;
 
   @override
@@ -50,6 +67,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     final size = MediaQuery.of(context).size;
     final debePorPagar = useState(totalAPagar);
     final scrollController = useScrollController();
+    final loading = useState<bool>(false);
 
     void toggleCheckbox(String controlName) {
       if (controlName == 'entregado') {
@@ -154,11 +172,14 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                             ),
                             const SizedBox(height: 10.0),
                             buildDropdownAndTextField(
-                              context: context,
-                              hintText: 'Selecciona Método de Pago 1',
-                              controlNameDropdown: 'metodoDePago1',
-                              controlNameTextField: 'anticipoPago1',
-                            ),
+                                context: context,
+                                hintText: 'Selecciona Método de Pago 1',
+                                controlNameDropdown: 'metodoDePago1',
+                                controlNameTextField: 'anticipoPago1',
+                                validationMessages: {
+                                  ValidationMessage.required: (error) =>
+                                      'Este campo es requerido'
+                                }),
                             const SizedBox(height: 10.0),
                             buildDropdownAndTextField(
                               context: context,
@@ -180,6 +201,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                   labelText: 'Observaciones'),
                               maxLines: 3, // Permitir múltiples líneas
                               keyboardType: TextInputType.multiline,
+                              validationMessages: {
+                                ValidationMessage.required: (error) =>
+                                    'Este campo es requerido',
+                              },
                             ),
                             const SizedBox(height: 16.0),
                             Row(
@@ -211,30 +236,77 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    if (form.valid) {
-                                      // Maneja el envío del formulario
-                                    } else {
-                                      form.markAllAsTouched();
+                                BlocConsumer<PedidoBloc, PedidoState>(
+                                  listener: (context, state) {
+                                    if (state is PedidoDetalleLoaded) {
+                                      // ScaffoldMessenger.of(context)
+                                      //     .removeCurrentSnackBar();
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(const SnackBar(
+                                      //   content: Text('Pedido Guardado'),
+                                      //   backgroundColor: Colors.green,
+                                      // ));
+
+                                      form.control('metodoDePago1').reset();
+                                      form.control('anticipoPago1').reset();
+                                      form.control('metodoDePago2').reset();
+                                      form.control('anticipoPago2').reset();
+                                      form.control('metodoDePago3').reset();
+                                      form.control('anticipoPago3').reset();
+                                      form.control('observaciones').reset();
+                                      form.control('entregado').reset();
+                                      form
+                                          .control('pendienteFinDeExpo')
+                                          .reset();
+                                      // reset state
+                                      context
+                                          .read<ClienteBloc>()
+                                          .add(ClearClienteStateEvent());
+                                      context
+                                          .read<ProductosBloc>()
+                                          .add(ClearProductoStateEvent());
+                                      context
+                                          .read<PedidoBloc>()
+                                          .add(ClearPedidoStateEvent());
+
+                                      HomeRoute().push(context);
+                                    } else if (state is PedidoError) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(state.message),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
                                     }
                                   },
-                                  icon: const Icon(
-                                    Icons.save,
-                                    color: Colores.scaffoldBackgroundColor,
-                                  ),
-                                  label: const Text(
-                                    'GUARDAR',
-                                    style: TextStyle(
-                                        color: Colores.scaffoldBackgroundColor),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colores.secondaryColor),
+                                  builder: (context, state) {
+                                    if (state is PedidoLoading) {
+                                      loading.value = true;
+                                    } else if (state is PedidoDetalleLoaded) {
+                                      loading.value = false;
+                                    }
+                                    return ElevatedButton.icon(
+                                      onPressed:
+                                          loading.value ? null : _submitForm,
+                                      icon: const Icon(
+                                        Icons.save,
+                                        color: Colores.scaffoldBackgroundColor,
+                                      ),
+                                      label: Text(
+                                        loading.value ? 'Espere...' : 'GUARDAR',
+                                        style: const TextStyle(
+                                            color: Colores
+                                                .scaffoldBackgroundColor),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              Colores.secondaryColor),
+                                    );
+                                  },
                                 ),
                                 ElevatedButton.icon(
-                                  onPressed: () {
-                                    form.reset();
-                                  },
+                                  onPressed: _dialogCancel,
                                   icon: const Icon(Icons.close,
                                       color: Colores.secondaryColor),
                                   label: const Text(
@@ -261,37 +333,40 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     );
   }
 
-  Widget buildDropdownAndTextField({
-    required BuildContext context,
-    required String hintText,
-    required String controlNameDropdown,
-    required String controlNameTextField,
-  }) {
+  Widget buildDropdownAndTextField(
+      {required BuildContext context,
+      required String hintText,
+      required String controlNameDropdown,
+      required String controlNameTextField,
+      Map<String, String Function(Object)>? validationMessages}) {
     final enable = useState(false);
     return Center(
       child: Column(
         children: [
-          SizedBox(
-            height: 45,
-            width: 300,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(2.0, 5.0),
-                  )
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+          Stack(
+            alignment: AlignmentDirectional.center,
+            children: [
+              Container(
+                  width: ScreenUtils.percentWidth(context, 80),
+                  height: ScreenUtils.percentHeight(context, 5),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.06),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5))
+                      ])),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: ReactiveDropdownField<String>(
+                  validationMessages: validationMessages,
                   formControlName: controlNameDropdown,
                   decoration: InputDecoration(
-                      hintText: hintText, border: InputBorder.none),
+                      alignLabelWithHint: true,
+                      hintText: hintText,
+                      border: InputBorder.none),
                   items: metodosDePago.map((String metodo) {
                     return DropdownMenuItem<String>(
                       value: metodo,
@@ -304,28 +379,149 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                   },
                 ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(height: 5.0),
-          SizedBox(
-            height: 45,
-            width: 300,
-            child: ReactiveTextField(
-              formControlName: controlNameTextField,
-              decoration: const InputDecoration(
-                hintText: 'Anticipo o Pago',
-                prefixIcon: Padding(
-                  padding: EdgeInsets.only(top: 15.0, left: 15.0, right: 5.0),
-                  child: Text('\$', style: TextStyle(color: Colors.black)),
+          const SizedBox(height: 4.0),
+          Stack(
+            children: [
+              SizedBox(
+                  width: ScreenUtils.percentWidth(context, 80),
+                  height: ScreenUtils.percentHeight(context, 4.0)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: ReactiveTextField(
+                  formControlName: controlNameTextField,
+                  validationMessages: validationMessages,
+                  decoration: const InputDecoration(
+                      hintText: 'Anticipo o Pago',
+                      prefixIcon: Padding(
+                        padding:
+                            EdgeInsets.only(top: 15.0, left: 15.0, right: 5.0),
+                        child:
+                            Text('\$', style: TextStyle(color: Colors.black)),
+                      ),
+                      suffixText: 'MXN',
+                      contentPadding:
+                          EdgeInsets.only(top: 15.0, left: 15.0, right: 5.0),
+                      alignLabelWithHint: true),
+                  keyboardType: TextInputType.number,
+                  readOnly: enable.value,
                 ),
-                suffixText: 'MXN',
               ),
-              keyboardType: TextInputType.number,
-              readOnly: enable.value,
-            ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  void _submitForm() {
+    if (form.valid) {
+      // Maneja el envío del formulario
+      final metodo1 = form.control('metodoDePago1').value != null
+          ? getMetodoDePagoId(form.control('metodoDePago1').value)
+          : 0;
+      final metodo2 = form.control('metodoDePago2').value != null
+          ? getMetodoDePagoId(form.control('metodoDePago2').value)
+          : 0;
+      final metodo3 = form.control('metodoDePago3').value != null
+          ? getMetodoDePagoId(form.control('metodoDePago3').value)
+          : 0;
+      final String observaciones = form.control('observaciones').value;
+
+      final double anticipoPago = form.control('anticipoPago1').value ?? 0.0;
+      final double anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
+      final double anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
+      final entregado = form.control('entregado').value ? 1 : 0;
+
+      final data = {
+        'id_cliente': widget.idCliente,
+        'id_metodopago': metodo1,
+        'observaciones': observaciones,
+        'estatus': widget.estadoPedido,
+        'anticipo': anticipoPago.toInt(),
+        'anticipo2': anticipoPago2.toInt(),
+        'anticipo3': anticipoPago3.toInt(),
+        'total_pagar': totalAPagar.toInt(),
+        'entregado': entregado,
+        'id_metodopago2': metodo2,
+        'id_metodopago3': metodo3.toString(),
+      };
+
+      context.read<PedidoBloc>().add(
+          PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
+    } else {
+      form.markAllAsTouched();
+    }
+  }
+
+  Future<void> _dialogCancel() {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.warning,
+                color: Colors.red,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Atención',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+          content: const SizedBox(
+            height: 50,
+            child: Column(
+              children: [
+                Text(
+                  '¿Deseas cancelar el pedido?',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'Los cambios no se guardarán.',
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colores.secondaryColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colores.secondaryColor,
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+              ),
+              onPressed: () {
+                form.reset();
+                context.read<ClienteBloc>().add(ClearClienteStateEvent());
+                context.read<ProductosBloc>().add(ClearProductoStateEvent());
+                context.read<PedidoBloc>().add(ClearPedidoStateEvent());
+                HomeRoute().push(context);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

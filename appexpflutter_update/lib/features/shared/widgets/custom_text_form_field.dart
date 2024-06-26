@@ -6,6 +6,7 @@ class CustomReactiveTextField extends StatelessWidget {
   final String? label;
   final String? hint;
   final String? errorMessage;
+  final String? suffixText;
   final bool obscureText;
   final TextInputType? keyboardType;
   final String formControlName;
@@ -15,6 +16,7 @@ class CustomReactiveTextField extends StatelessWidget {
   final IconData? icon;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final bool readOnly;
 
   const CustomReactiveTextField({
     super.key,
@@ -30,6 +32,8 @@ class CustomReactiveTextField extends StatelessWidget {
     this.suffixIcon,
     this.onSubmitted,
     this.prefixIcon,
+    this.suffixText,
+    this.readOnly = false,
   });
 
   @override
@@ -60,6 +64,7 @@ class CustomReactiveTextField extends StatelessWidget {
                 ])),
         SizedBox(
           child: ReactiveTextField<String>(
+            readOnly: readOnly,
             obscureText: obscureText,
             keyboardType: keyboardType,
             formControlName: formControlName,
@@ -69,33 +74,34 @@ class CustomReactiveTextField extends StatelessWidget {
             style: const TextStyle(fontSize: 20, color: Colors.black54),
             validationMessages: validationMessages,
             decoration: InputDecoration(
-              floatingLabelStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18),
-              enabledBorder: border,
-              focusedBorder: border,
-              errorBorder: border.copyWith(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: borderRadius,
-                      bottomLeft: borderRadius,
-                      bottomRight: borderRadius),
-                  borderSide: BorderSide(color: Colors.red.shade800)),
-              focusedErrorBorder: border.copyWith(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: borderRadius,
-                      bottomLeft: borderRadius,
-                      bottomRight: borderRadius),
-                  borderSide: BorderSide(color: Colors.red.shade800)),
-              isDense: true,
-              label: label != null ? Text(label!) : null,
-              hintText: hint,
-              focusColor: colors.primary,
-              prefixIcon: prefixIcon,
-              suffixIcon: suffixIcon,
-              border: InputBorder.none,
-              // icon: Icon( Icons.supervised_user_circle_outlined, color: colors.primary, )
-            ),
+                floatingLabelStyle: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+                enabledBorder: border,
+                focusedBorder: border,
+                errorBorder: border.copyWith(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: borderRadius,
+                        bottomLeft: borderRadius,
+                        bottomRight: borderRadius),
+                    borderSide: BorderSide(color: Colors.red.shade800)),
+                focusedErrorBorder: border.copyWith(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: borderRadius,
+                        bottomLeft: borderRadius,
+                        bottomRight: borderRadius),
+                    borderSide: BorderSide(color: Colors.red.shade800)),
+                isDense: true,
+                label: label != null ? Text(label!) : null,
+                hintText: hint,
+                focusColor: colors.primary,
+                prefixIcon: prefixIcon,
+                suffixIcon: suffixIcon,
+                border: InputBorder.none,
+                suffixText: suffixText
+                // icon: Icon( Icons.supervised_user_circle_outlined, color: colors.primary, )
+                ),
           ),
         ),
       ],

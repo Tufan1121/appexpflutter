@@ -195,24 +195,23 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
   static GenerarPedidoRoute _fromState(GoRouterState state) =>
       GenerarPedidoRoute(
         idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
-        $extra: state.extra as List<ProductoEntity>,
+        estadoPedido: int.parse(state.uri.queryParameters['estado-pedido']!),
       );
 
   String get location => GoRouteData.$location(
         '/generar_pedido',
         queryParams: {
           'id-cliente': idCliente.toString(),
+          'estado-pedido': estadoPedido.toString(),
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  void go(BuildContext context) => context.go(location);
 
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location);
 
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+  void replace(BuildContext context) => context.replace(location);
 }
