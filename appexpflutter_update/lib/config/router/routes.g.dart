@@ -167,12 +167,14 @@ RouteBase get $pedidoRoute => GoRouteData.$route(
 extension $PedidoRouteExtension on PedidoRoute {
   static PedidoRoute _fromState(GoRouterState state) => PedidoRoute(
         idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
+        nombreCliente: state.uri.queryParameters['nombre-cliente']!,
       );
 
   String get location => GoRouteData.$location(
         '/pedido',
         queryParams: {
           'id-cliente': idCliente.toString(),
+          'nombre-cliente': nombreCliente,
         },
       );
 

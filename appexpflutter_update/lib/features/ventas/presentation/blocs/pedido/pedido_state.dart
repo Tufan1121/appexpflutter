@@ -12,18 +12,19 @@ final class PedidoInitial extends PedidoState {}
 final class PedidoLoading extends PedidoState {}
 
 final class PedidoLoaded extends PedidoState {
-  final int idPedido;
+  final PedidoEntity pedido;
 
-  const PedidoLoaded({required this.idPedido});
+  const PedidoLoaded({required this.pedido});
 
   @override
-  List<Object> get props => [idPedido];
+  List<Object> get props => [pedido];
 }
 
 final class PedidoDetalleLoaded extends PedidoState {
+  final PedidoEntity pedido;
   final String message;
 
-  const PedidoDetalleLoaded({required this.message});
+  const PedidoDetalleLoaded({required this.message, required this.pedido});
 
   @override
   List<Object> get props => [message];

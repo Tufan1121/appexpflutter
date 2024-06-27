@@ -1,11 +1,12 @@
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/pedido/pedido_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/main.dart';
 import 'package:appexpflutter_update/config/config.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente/cliente_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
@@ -39,6 +40,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<ProductosBloc>(create: (_) => injector<ProductosBloc>()),
         BlocProvider<ClienteBloc>(create: (_) => injector<ClienteBloc>()),
         BlocProvider<PedidoBloc>(create: (_) => injector<PedidoBloc>()),
+        BlocProvider<InventarioBloc>(create: (_) => injector<InventarioBloc>()),
       ],
       child: FutureBuilder(
         future: _init(),

@@ -1,9 +1,10 @@
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos_bodega.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_search.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -57,29 +58,38 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                 ),
               ),
               if (isMultiSelectMode)
-                IconButton(
-                  icon: const Icon(Icons.check),
-                  onPressed: () {
-                    context
-                        .read<ProductosBloc>()
-                        .add(AddSelectedProductsToScannedEvent());
-                    setState(() {
-                      isMultiSelectMode = false;
-                    });
+                BlocBuilder<InventarioBloc, InventarioState>(
+                  builder: (context, state) {
+                    if (state is InventarioProductosLoaded) {
+                      return IconButton(
+                        icon: const Icon(Icons.check),
+                        onPressed: () {
+                          context.read<ProductosBloc>().add(
+                              AddSelectedProductsToScannedEvent(
+                                  state.selectedProducts));
+                          context
+                              .read<InventarioBloc>()
+                              .add(ClearInventarioProductoEvent());
+                          setState(() {
+                            isMultiSelectMode = false;
+                          });
+                        },
+                      );
+                    }
+                    return Container();
                   },
                 ),
               const SizedBox(height: 10),
               CustomSearch(
                 hintText: 'Calidad',
                 onChanged: (value) {},
-                onSubmitted: (value) => context
-                    .read<ProductosBloc>()
-                    .add(GetIbodegaProductEvent(data: {'descripcio': value})),
+                onSubmitted: (value) => context.read<InventarioBloc>().add(
+                    GetInventarioProductEvent(data: {'descripcio': value})),
               ),
               const SizedBox(height: 5),
-              BlocBuilder<ProductosBloc, ProductosState>(
+              BlocBuilder<InventarioBloc, InventarioState>(
                 builder: (context, state) {
-                  if (state is IbodegaProductosLoading) {
+                  if (state is InventarioLoading) {
                     return const Column(
                       children: [
                         SizedBox(height: 150),
@@ -89,7 +99,7 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                       ],
                     );
                   }
-                  if (state is IbodegaProductosLoaded) {
+                  if (state is InventarioProductosLoaded) {
                     final productos = state.productos;
                     final selectedProducts = state.selectedProducts;
 
@@ -111,17 +121,20 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                   isMultiSelectMode = true;
                                 });
                                 context
-                                    .read<ProductosBloc>()
+                                    .read<InventarioBloc>()
                                     .add(StartMultiSelectEvent());
                               },
                               onTap: () {
                                 if (isMultiSelectMode) {
-                                  context.read<ProductosBloc>().add(
+                                  context.read<InventarioBloc>().add(
                                       ToggleProductSelectionEvent(producto));
                                 } else {
                                   context
                                       .read<ProductosBloc>()
                                       .add(AddProductToScannedEvent(producto));
+                                  context
+                                      .read<InventarioBloc>()
+                                      .add(ClearInventarioProductoEvent());
                                 }
                               },
                               child: ListaProductosBodegaCard(
@@ -134,7 +147,7 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                       ),
                     );
                   }
-                  if (state is ProductoError) {
+                  if (state is InventarioError) {
                     return Column(
                       children: [
                         const SizedBox(height: 150),

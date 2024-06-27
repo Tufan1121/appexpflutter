@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/pedido_data_source.dart';
@@ -21,11 +22,11 @@ class PedidoRepositoryImpl implements PedidoRepository {
   }
 
   @override
-  Future<Either<NetworkException, int>> addPedido(
+  Future<Either<NetworkException, PedidoEntity>> addPedido(
       Map<String, dynamic> data) async {
     try {
       final result = await pedidoDataSource.addPedido(data);
-      return Right(result);
+      return Right(result.toEntity());
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }

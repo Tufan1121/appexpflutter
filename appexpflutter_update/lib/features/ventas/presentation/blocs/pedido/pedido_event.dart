@@ -18,10 +18,10 @@ class PedidoAddEvent extends PedidoEvent {
 }
 
 class PedidoAddDetalleEvent extends PedidoEvent {
-  final int idPedido;
+  final PedidoEntity pedido ;
   final List<DetallePedido> products;
 
-  const PedidoAddDetalleEvent({required this.products, required this.idPedido});
+  const PedidoAddDetalleEvent({required this.products, required this.pedido});
 
   @override
   List<Object> get props => [products];

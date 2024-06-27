@@ -8,7 +8,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 
 class ListaProductos extends HookWidget {
   const ListaProductos({super.key, required this.productos});
@@ -17,40 +17,46 @@ class ListaProductos extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
+    final totalDetalle = useState<double>(0.0);
     final countList =
         useState<List<int>>(List<int>.filled(productos.length, 1));
-
     final selectedPriceList =
         useState<List<int?>>(List<int?>.filled(productos.length, 1));
 
     void updateTotal() {
       double newTotal = 0.0;
+      UtilsVenta.listProductsOrder.clear();
       for (var i = 0; i < productos.length; i++) {
         final count = countList.value[i];
         final selectedPrice = selectedPriceList.value[i];
         if (count > 0) {
+          double precio = 0.0;
           switch (selectedPrice) {
             case 1:
-              newTotal += productos[i].precio1 * count;
+              precio = productos[i].precio1.toDouble();
               break;
             case 2:
-              newTotal += productos[i].precio2 * count;
+              precio = productos[i].precio2.toDouble();
               break;
             case 3:
-              newTotal += productos[i].precio3 * count;
+              precio = productos[i].precio3.toDouble();
               break;
             default:
               break;
           }
-        }
-        UtilsVenta.listProductsOrder.add(
-          DetallePedido(
+          final subtotal = precio * count;
+          newTotal += subtotal;
+          totalDetalle.value = precio * countList.value[i];
+          UtilsVenta.listProductsOrder.add(
+            DetallePedido(
               idPedido: 0,
               clave: productos[i].producto1,
               clave2: productos[i].producto,
-              cantidad: count,
-              precio: newTotal),
-        );
+              cantidad: countList.value[i],
+              precio: totalDetalle.value,
+            ),
+          );
+        }
       }
       total.value = newTotal;
       UtilsVenta.total = total.value;
@@ -60,6 +66,15 @@ class ListaProductos extends HookWidget {
       updateTotal(); // Initial calculation
       return null; // No cleanup needed
     }, [countList.value, selectedPriceList.value]);
+
+    useEffect(() {
+      // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
+      countList.value = List<int>.filled(productos.length, 1);
+      selectedPriceList.value = List<int?>.filled(productos.length, 1);
+      updateTotal();
+      return null;
+    }, [productos.length]);
+
     return Column(
       children: [
         Text('Total: ${Utils.formatPrice(total.value)}',
@@ -75,7 +90,7 @@ class ListaProductos extends HookWidget {
                   )
                 ])),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.67,
+          height: MediaQuery.of(context).size.height * 0.66,
           child: ListView.builder(
             itemCount: productos.length,
             itemBuilder: (context, index) {
@@ -196,8 +211,7 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio1.toDouble(),
                                         value: selectedPrice.value == 1,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = selectedPrice
-                                              .value = value! ? 1 : 0;
+                                          selectedPrice.value = value! ? 1 : 0;
                                           selectedPriceList.value[index] =
                                               selectedPrice.value;
                                           updateTotal();
@@ -209,8 +223,7 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio2.toDouble(),
                                         value: selectedPrice.value == 2,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = selectedPrice
-                                              .value = value! ? 2 : 0;
+                                          selectedPrice.value = value! ? 2 : 0;
                                           selectedPriceList.value[index] =
                                               selectedPrice.value;
                                           updateTotal();
@@ -222,8 +235,7 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio3.toDouble(),
                                         value: selectedPrice.value == 3,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = selectedPrice
-                                              .value = value! ? 3 : 0;
+                                          selectedPrice.value = value! ? 3 : 0;
                                           selectedPriceList.value[index] =
                                               selectedPrice.value;
                                           updateTotal();
@@ -257,6 +269,9 @@ class ListaProductos extends HookWidget {
                                       height: 33,
                                       width: 110,
                                       child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colores.secondaryColor),
                                         onPressed: customPrice.value != null
                                             ? () {
                                                 final price = double.parse(
@@ -272,8 +287,13 @@ class ListaProductos extends HookWidget {
                                               }
                                             : null,
                                         child: const AutoSizeText(
-                                          'Aplicar descuento',
-                                          style: TextStyle(fontSize: 2),
+                                          'APLICAR DESCUENTO',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colores
+                                                  .scaffoldBackgroundColor),
+                                          // maxLines: 1,
+                                          minFontSize: 8,
                                         ),
                                       ),
                                     ),
@@ -299,22 +319,24 @@ class ListaProductos extends HookWidget {
     required String label,
     required double price,
     required bool value,
-    required void Function(bool?) onChanged,
+    required void Function(bool?)? onChanged,
   }) {
     return Column(
       children: [
         AutoSizeText(label,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+        const SizedBox(width: 2),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Checkbox(
-                value: value,
-                onChanged: onChanged,
-                activeColor: Colores.secondaryColor),
-            AutoSizeText(
-              Utils.formatPrice(price),
-              maxLines: 2,
+              value: value,
+              onChanged: onChanged,
+              activeColor: Colores.secondaryColor,
             ),
+            const SizedBox(width: 5),
+            AutoSizeText(Utils.formatPrice(price),
+                style: const TextStyle(fontSize: 12)),
           ],
         ),
       ],

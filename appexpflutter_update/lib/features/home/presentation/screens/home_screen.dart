@@ -69,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     CardItem(
                       icon: Icons.shopping_cart_rounded,
-                      label: 'Nueva Seccion de Ventas',
+                      label: 'Nueva Sesión de Ventas',
                       onTap: () => showModalBottomSheet(
                         backgroundColor: Colors.transparent,
                         context: context,

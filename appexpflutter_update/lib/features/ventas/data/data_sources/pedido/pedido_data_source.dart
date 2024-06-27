@@ -1,4 +1,6 @@
+import 'package:appexpflutter_update/features/ventas/data/models/pedido_model.dart';
+
 abstract interface class PedidoDataSource {
-  Future<int> addPedido(Map<String, dynamic> data);
+  Future<PedidoModel> addPedido(Map<String, dynamic> data);
   Future< String> addDetallePedido(Map<String, dynamic> data);
 }

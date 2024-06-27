@@ -45,6 +45,8 @@ Future<void> init() async {
         () => ProductosBloc(productoUsecase: injector()))
     ..registerLazySingleton<ClienteBloc>(
         () => ClienteBloc(clienteUsecase: injector()))
+    ..registerLazySingleton<InventarioBloc>(
+        () => InventarioBloc(productoUsecase: injector()))
     ..registerLazySingleton<PedidoBloc>(
         () => PedidoBloc(pedidoUsecase: injector()));
 }

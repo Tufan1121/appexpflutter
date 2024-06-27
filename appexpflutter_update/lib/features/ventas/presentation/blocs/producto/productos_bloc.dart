@@ -18,56 +18,30 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     on<GetProductEvent>(_getProductEvent
         // transformer: debounce(const Duration(milliseconds: 500)),
         );
-    on<StartMultiSelectEvent>(_startMultiSelectEvent);
-    on<ToggleProductSelectionEvent>(_toggleProductSelectionEvent);
+
     on<AddSelectedProductsToScannedEvent>(_addSelectedProductsToScannedEvent);
     on<RemoveProductEvent>(_removeProductEvent);
     on<ClearProductoStateEvent>((event, emit) => _clearProductsState(emit));
-    on<ClearProductoIBodegaStateEvent>(
-        (event, emit) => _clearProductsIBodegaState(emit));
+    
     on<AddProductToScannedEvent>(
       _addProductToScannedEvent,
       transformer: debounce(const Duration(milliseconds: 500)),
     );
-    on<GetIbodegaProductEvent>(_getIbodegaProductEvent);
+ 
     on<UpdateProductEvent>(_updateProductEvent);
     // on<SelectRelatedProductEvent>(_selectRelatedProductEvent);
   }
 
-  Future<void> _startMultiSelectEvent(
-      StartMultiSelectEvent event, Emitter<ProductosState> emit) async {
-    if (state is IbodegaProductosLoaded) {
-      emit(IbodegaProductosLoaded(
-          productos: (state as IbodegaProductosLoaded).productos,
-          selectedProducts: const []));
-    }
-  }
 
-  Future<void> _toggleProductSelectionEvent(
-      ToggleProductSelectionEvent event, Emitter<ProductosState> emit) async {
-    if (state is IbodegaProductosLoaded) {
-      final currentState = state as IbodegaProductosLoaded;
-      final selectedProducts =
-          List<ProductoEntity>.from(currentState.selectedProducts);
-      if (selectedProducts.contains(event.producto)) {
-        selectedProducts.remove(event.producto);
-      } else {
-        selectedProducts.add(event.producto);
-      }
-      emit(IbodegaProductosLoaded(
-          productos: currentState.productos,
-          selectedProducts: selectedProducts));
-    }
-  }
 
   Future<void> _addSelectedProductsToScannedEvent(
       AddSelectedProductsToScannedEvent event,
       Emitter<ProductosState> emit) async {
-    if (state is IbodegaProductosLoaded) {
-      final currentState = state as IbodegaProductosLoaded;
-      scannedProducts.addAll(currentState.selectedProducts);
+      scannedProducts.addAll(event.productos);
+    // if (state is IbodegaProductosLoaded) {
+    //   final currentState = state as IbodegaProductosLoaded;
+    // }
       emit(ProductosLoaded(productos: List.from(scannedProducts)));
-    }
   }
 
   Future<void> _getQRProductEvent(
@@ -110,20 +84,7 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     }
   }
 
-  Future<void> _getIbodegaProductEvent(
-      GetIbodegaProductEvent event, Emitter<ProductosState> emit) async {
-    emit(IbodegaProductosLoading());
 
-    final result = await productoUsecase.getIBodegaProducts(event.data);
-    result.fold(
-      (failure) => emit(
-          ProductoError(productos: scannedProducts, message: failure.message)),
-      (producto) {
-        // scannedProducts.add(producto);
-        emit(IbodegaProductosLoaded(productos: producto));
-      },
-    );
-  }
 
   Future<void> _removeProductEvent(
       RemoveProductEvent event, Emitter<ProductosState> emit) async {
@@ -144,9 +105,7 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     emit(ProductoInitial());
   }
 
-  void _clearProductsIBodegaState(Emitter<ProductosState> emit) {
-    emit(IbodegaProductosInitial());
-  }
+
 
  /// Maneja el evento de actualización de producto en el Bloc.
 Future<void> _updateProductEvent(

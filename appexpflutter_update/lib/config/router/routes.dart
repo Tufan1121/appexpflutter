@@ -84,12 +84,14 @@ class ClienteExistenteRoute extends GoRouteData {
 class PedidoRoute extends GoRouteData {
   static const path = '/pedido';
   final int idCliente;
+  final String nombreCliente;
 
-  PedidoRoute({required this.idCliente});
+  PedidoRoute({required this.idCliente, required this.nombreCliente});
 
   @override
   Widget build(BuildContext context, GoRouterState state) => PedidoScreen(
         idCliente: idCliente,
+        nombreCliente: nombreCliente,
       );
 }
 

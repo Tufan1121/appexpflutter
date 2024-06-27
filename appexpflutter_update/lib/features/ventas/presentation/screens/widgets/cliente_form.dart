@@ -1,5 +1,5 @@
 import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente/cliente_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -117,12 +117,14 @@ class _LoginFormState extends State<ClienteForm> {
                       backgroundColor: Colors.green,
                     ),
                   );
-                  form.control('nombre').reset();
                   form.control('apellido').reset();
                   form.control('telefono').reset();
                   form.control('email').reset();
+                  nombre = form.control('nombre').value!;
                   factura.value = false;
-                  PedidoRoute(idCliente: state.idCliente).push(context);
+                  PedidoRoute(idCliente: state.idCliente, nombreCliente: nombre).push(context);
+                  form.control('nombre').reset();
+                  
                 } else if (state is ClienteError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

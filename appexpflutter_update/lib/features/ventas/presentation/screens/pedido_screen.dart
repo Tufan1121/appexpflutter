@@ -5,7 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/search_producto.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos.dart';
 
@@ -18,8 +18,10 @@ const list = [
 ];
 
 class PedidoScreen extends StatefulHookWidget {
-  const PedidoScreen({super.key, required this.idCliente});
+  const PedidoScreen(
+      {super.key, required this.idCliente, required this.nombreCliente});
   final int idCliente;
+  final String nombreCliente;
 
   @override
   State<PedidoScreen> createState() => _PedidoScreenState();
@@ -29,6 +31,7 @@ class _PedidoScreenState extends State<PedidoScreen> {
   int getEstadoPedidoPagoId(String metodo) {
     return list.indexOf(metodo) + 1;
   }
+
   @override
   Widget build(BuildContext context) {
     final dropdownValue = useState<String>(list.first);
@@ -37,7 +40,26 @@ class _PedidoScreenState extends State<PedidoScreen> {
       titleScreen: 'PEDIDO',
       child: Column(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Cliente: ',
+                style: TextStyle(
+                    color: Colores.scaffoldBackgroundColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+              AutoSizeText(
+                maxLines: 2,
+                widget.nombreCliente,
+                style: const TextStyle(
+                    color: Colores.scaffoldBackgroundColor, fontSize: 20),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
           Center(
             child: CustomDropdownButton<String>(
               value: dropdownValue.value,
@@ -65,7 +87,7 @@ class _PedidoScreenState extends State<PedidoScreen> {
               }).toList(),
             ),
           ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 20),
           SearchProducto(
               estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
               idCliente: widget.idCliente),

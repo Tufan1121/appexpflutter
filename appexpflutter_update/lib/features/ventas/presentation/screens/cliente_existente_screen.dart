@@ -1,4 +1,5 @@
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,7 +9,7 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/mixins
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/popover.dart';
 import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente/cliente_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import '../../../../config/config.dart';
 import 'widgets/widgets.dart' show SearchClientes;
 
@@ -24,12 +25,14 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
       onPopInvoked: (didPop) async {
         context.read<ClienteBloc>().add(ClearClienteStateEvent());
         context.read<ProductosBloc>().add(ClearProductoStateEvent());
+        context.read<InventarioBloc>().add(ClearInventarioProductoEvent());
       },
       child: LayoutScreens(
         onPressed: () {
           Navigator.pop(context);
           context.read<ClienteBloc>().add(ClearClienteStateEvent());
           context.read<ProductosBloc>().add(ClearProductoStateEvent());
+          context.read<InventarioBloc>().add(ClearInventarioProductoEvent());
         },
         titleScreen: 'CLIENTE EXISTENTE',
         faIcon: FontAwesomeIcons.userCheck,
@@ -109,7 +112,9 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                                 FocusScope.of(context).unfocus();
                                 PedidoRoute(
                                         idCliente:
-                                            state.clientes[index].idCliente)
+                                            state.clientes[index].idCliente,
+                                        nombreCliente:
+                                            state.clientes[index].nombre)
                                     .push(context);
                               },
                               leading: Container(

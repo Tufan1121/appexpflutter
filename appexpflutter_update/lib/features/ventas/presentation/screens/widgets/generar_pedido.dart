@@ -1,14 +1,16 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/cliente/cliente_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/pedido/pedido_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../config/theme/app_theme.dart';
 import '../../../../shared/widgets/layout_screens.dart';
 
@@ -58,6 +60,23 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
   }
 
   final totalAPagar = UtilsVenta.total;
+
+  Future<void> _openPDF(String pdfUrl) async {
+    try {
+      // Lanzar la URL en un visor de PDF externo
+      await launchUrl(Uri.parse(pdfUrl), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      // Manejar errores si la URL no se puede abrir
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo abrir el PDF'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -242,10 +261,15 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                       // ScaffoldMessenger.of(context)
                                       //     .removeCurrentSnackBar();
                                       // ScaffoldMessenger.of(context)
-                                      //     .showSnackBar(const SnackBar(
-                                      //   content: Text('Pedido Guardado'),
+                                      //     .showSnackBar(SnackBar(
+                                      //   content: Text(state.message),
                                       //   backgroundColor: Colors.green,
                                       // ));
+
+                                      // Aquí  la URL donde está ubicado el PDF
+                                      String pdfUrl =
+                                          'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
+                                      _openPDF(pdfUrl);
 
                                       form.control('metodoDePago1').reset();
                                       form.control('anticipoPago1').reset();
@@ -268,6 +292,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                       context
                                           .read<PedidoBloc>()
                                           .add(ClearPedidoStateEvent());
+                                      context
+                                          .read<InventarioBloc>()
+                                          .add(ClearInventarioProductoEvent());
 
                                       HomeRoute().push(context);
                                     } else if (state is PedidoError) {
@@ -515,6 +542,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                 context.read<ClienteBloc>().add(ClearClienteStateEvent());
                 context.read<ProductosBloc>().add(ClearProductoStateEvent());
                 context.read<PedidoBloc>().add(ClearPedidoStateEvent());
+                context
+                    .read<InventarioBloc>()
+                    .add(ClearInventarioProductoEvent());
+                context
+                    .read<InventarioBloc>()
+                    .add(ClearInventarioProductoEvent());
                 HomeRoute().push(context);
                 Navigator.of(context).pop();
               },

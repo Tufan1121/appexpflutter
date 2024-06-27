@@ -1,10 +1,10 @@
-import 'package:appexpflutter_update/config/config.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/invetario_bodega.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:appexpflutter_update/config/config.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/invetario_bodega.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/bloc/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
 
 class SearchProducto extends HookWidget {
@@ -18,6 +18,7 @@ class SearchProducto extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productos = context.watch<ProductosBloc>().scannedProducts;
     final controller = useTextEditingController();
     final scanResult = useState<String>('');
     final textFieldValue = useState<String>('');
@@ -103,95 +104,45 @@ class SearchProducto extends HookWidget {
               ),
             ),
           ),
-          BlocBuilder<ProductosBloc, ProductosState>(
-            builder: (context, state) {
-              if (state is ProductosLoaded) {
-                return ElevatedButton(
-                  onPressed: () {
-                    if (estatusPedido != 0) {
-                      GenerarPedidoRoute(
-                              idCliente: idCliente,
-                              estadoPedido: estatusPedido)
-                          .push(context);
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Atención'),
-                            content: const Text(
-                                'Debes seleccionar del Select un estatus del pedido'),
-                            actions: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Aceptar'),
-                              )
-                            ],
-                          );
-                        },
+          if (productos.isNotEmpty)
+            ElevatedButton(
+              onPressed: () {
+                if (estatusPedido != 0) {
+                  GenerarPedidoRoute(
+                          idCliente: idCliente, estadoPedido: estatusPedido)
+                      .push(context);
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Atención'),
+                        content: const Text(
+                            'Debes seleccionar del Select un estatus del pedido'),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Aceptar'),
+                          )
+                        ],
                       );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 2,
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(8),
-                  ),
-                  child: const FaIcon(
-                    FontAwesomeIcons.truck,
-                    color: Colores.secondaryColor,
-                    size: 35,
-                  ),
-                );
-              }
-              if (state is ProductoError) {
-                if (state.productos.isNotEmpty) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      if (estatusPedido != 0) {
-                        GenerarPedidoRoute(
-                                idCliente: idCliente,
-                                estadoPedido: estatusPedido)
-                            .push(context);
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Atención'),
-                              content: const Text(
-                                  'Debes seleccionar del Select un estatus del pedido'),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Aceptar'),
-                                )
-                              ],
-                            );
-                          },
-                        );
-                      }
                     },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 2,
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(8),
-                    ),
-                    child: const FaIcon(
-                      FontAwesomeIcons.truck,
-                      color: Colores.secondaryColor,
-                      size: 35,
-                    ),
                   );
                 }
-              }
-              return Container();
-            },
-          ),
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 2,
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8),
+              ),
+              child: const FaIcon(
+                FontAwesomeIcons.truck,
+                color: Colores.secondaryColor,
+                size: 35,
+              ),
+            ),
           ElevatedButton(
             onPressed: () {
               showModalBottomSheet(
