@@ -37,41 +37,25 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
 
   Future<void> _pedidoAddDetalleEvent(
       PedidoAddDetalleEvent event, Emitter<PedidoState> emit) async {
-    // late Either<NetworkException, String> result;
-    bool hasFailure = false;
-
-    for (final producto in event.products) {
-      Map<String, dynamic> data = {
+    List<Map<String, dynamic>> detallesData = event.products.map((producto) {
+      return {
         'id_pedido': event.pedido.idPedido,
         'clave': producto.clave,
         'clave2': producto.clave2,
         'cantidad': producto.cantidad,
-        'precio': producto.precio
+        'precio': producto.precio,
       };
+    }).toList();
 
-      print(data);
+    print(detallesData);
 
-      final result = await pedidoUsecase.addDetallePedido(data);
-      result.fold(
-        (failure) {
-          emit(PedidoError(message: failure.message));
-          hasFailure = true;
-          return;
-        },
-        (success) {},
-      );
-
-      if (hasFailure) {
-        return; // Exit the method if there's a failure
-      }
-    }
-
-    // Emit the success state once, after all products are added
-    if (!hasFailure) {
-      emit(PedidoDetalleLoaded(
-          pedido: event.pedido,
-          message: 'Detalles del pedido agregados con éxito'));
-    }
+    final result = await pedidoUsecase.addDetallePedido(detallesData);
+    result.fold(
+      (failure) => emit(PedidoError(message: failure.message)),
+      (success) {
+        emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
+      },
+    );
   }
 
   void _clearPedidoState(Emitter<PedidoState> emit) {

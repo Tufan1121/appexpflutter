@@ -14,7 +14,7 @@ class PedidoUsecase {
   }
 
   Future<Either<NetworkException, String>> addDetallePedido(
-      Map<String, dynamic> data) {
+      List<Map<String, dynamic>> data) {
     return pedidoRepository.addDetallePedido(data);
   }
 }

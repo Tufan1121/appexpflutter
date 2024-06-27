@@ -11,19 +11,21 @@ class PedidoDataSourceImpl implements PedidoDataSource {
   PedidoDataSourceImpl({required DioClient dioClient}) : _dioClient = dioClient;
 
   @override
-  Future<String> addDetallePedido(Map<String, dynamic> data) async {
+  Future<String> addDetallePedido(List<Map<String, dynamic>> data) async {
     final token = await storage.read(key: 'accessToken');
     try {
-      final result = await _dioClient.post(
-        '/insertDetallePedido',
-        queryParameters: data,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-      return result.data['success'] as String;
+      for (var detalle in data) {
+        await _dioClient.post(
+          '/insertDetallePedido',
+          queryParameters: detalle,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+      }
+      return 'Detalles del pedido agregados con éxito';
     } catch (_) {
       rethrow;
     }

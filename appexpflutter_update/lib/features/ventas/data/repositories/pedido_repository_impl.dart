@@ -12,7 +12,7 @@ class PedidoRepositoryImpl implements PedidoRepository {
 
   @override
   Future<Either<NetworkException, String>> addDetallePedido(
-      Map<String, dynamic> data) async {
+      List<Map<String, dynamic>> data) async {
     try {
       final result = await pedidoDataSource.addDetallePedido(data);
       return Right(result);

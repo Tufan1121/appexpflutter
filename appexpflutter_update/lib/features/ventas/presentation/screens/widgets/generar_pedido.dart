@@ -260,11 +260,11 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                     if (state is PedidoDetalleLoaded) {
                                       // ScaffoldMessenger.of(context)
                                       //     .removeCurrentSnackBar();
-                                      // ScaffoldMessenger.of(context)
-                                      //     .showSnackBar(SnackBar(
-                                      //   content: Text(state.message),
-                                      //   backgroundColor: Colors.green,
-                                      // ));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text(state.message),
+                                        backgroundColor: Colors.green,
+                                      ));
 
                                       // Aquí  la URL donde está ubicado el PDF
                                       String pdfUrl =
