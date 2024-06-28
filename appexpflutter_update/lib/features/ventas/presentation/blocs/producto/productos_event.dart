@@ -46,8 +46,6 @@ class ClearProductoStateEvent extends ProductosEvent {
   List<Object> get props => [];
 }
 
-class ClearProductoIBodegaStateEvent extends ProductosEvent {}
-
 class AddProductToScannedEvent extends ProductosEvent {
   final ProductoEntity producto;
 
@@ -66,17 +64,6 @@ class RemoveProductEvent extends ProductosEvent {
   List<Object> get props => [producto];
 }
 
-// class StartMultiSelectEvent extends ProductosEvent {}
-
-// class ToggleProductSelectionEvent extends ProductosEvent {
-//   final ProductoEntity producto;
-
-//   const ToggleProductSelectionEvent(this.producto);
-
-//   @override
-//   List<Object> get props => [producto];
-// }
-
 class AddSelectedProductsToScannedEvent extends ProductosEvent {
   final List<ProductoEntity> productos;
   const AddSelectedProductsToScannedEvent(this.productos);
@@ -92,4 +79,24 @@ class UpdateProductEvent extends ProductosEvent {
 
   @override
   List<Object> get props => [producto];
+}
+
+class UpdateProductQuantityEvent extends ProductosEvent {
+  final String productoClave;
+  final int newQuantity;
+
+  const UpdateProductQuantityEvent(this.productoClave, this.newQuantity);
+
+  @override
+  List<Object> get props => [productoClave, newQuantity];
+}
+
+class UpdateProductSelectedPriceEvent extends ProductosEvent {
+  final String productoClave;
+  final int selectedPrice;
+
+  const UpdateProductSelectedPriceEvent(this.productoClave, this.selectedPrice);
+
+  @override
+  List<Object> get props => [productoClave, selectedPrice];
 }

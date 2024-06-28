@@ -70,42 +70,55 @@ class HomeScreen extends StatelessWidget {
                     CardItem(
                       icon: Icons.shopping_cart_rounded,
                       label: 'Nueva Sesión de Ventas',
-                      onTap: () => showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        context: context,
-                        builder: (context) {
-                          return Popover(
-                            child: Container(
-                              height: 160,
-                              color: Colores.scaffoldBackgroundColor,
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                child: ListView(
-                                  children: [
-                                    CustomListTile(
-                                      text: 'CLIENTE NUEVO',
-                                      icon: FontAwesomeIcons.userPlus,
-                                      onTap: () =>
-                                          ClienteNuevoRoute().push(context),
-                                    ),
-                                    const Divider(),
-                                    CustomListTile(
-                                      text: 'CLIENTE EXISTENTE',
-                                      icon: FontAwesomeIcons.userCheck,
-                                      onTap: () =>
-                                          ClienteExistenteRoute().push(context),
-                                    ),
-                                  ],
-                                ),
+                      onTap: () => homeModalButtom(
+                          height: 160,
+                          context: context,
+                          child: ListView(
+                            children: [
+                              CustomListTile(
+                                text: 'CLIENTE NUEVO',
+                                icon: FontAwesomeIcons.userPlus,
+                                onTap: () => ClienteNuevoRoute().push(context),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                              const Divider(),
+                              CustomListTile(
+                                text: 'CLIENTE EXISTENTE',
+                                icon: FontAwesomeIcons.userCheck,
+                                onTap: () =>
+                                    ClienteExistenteRoute().push(context),
+                              ),
+                            ],
+                          )),
                     ),
-                    const CardItem(
+                    CardItem(
                       icon: Icons.inventory_2_rounded,
                       label: 'Inventarios',
+                      onTap: () => homeModalButtom(
+                          context: context,
+                          height: 220,
+                          child: ListView(
+                            children: [
+                              CustomListTile(
+                                text: 'INVENTARIO EXPO',
+                                icon: FontAwesomeIcons.store,
+                                onTap: () => InvetarioExpoRoute().push(context),
+                              ),
+                              const Divider(),
+                              CustomListTile(
+                                text: 'INVENTARIO BODEGAS',
+                                icon: FontAwesomeIcons.store,
+                                onTap: () =>
+                                    InvetarioBodegaRoute().push(context),
+                              ),
+                              const Divider(),
+                              CustomListTile(
+                                text: 'INVENTARIO GLOBAL',
+                                icon: FontAwesomeIcons.store,
+                                onTap: () =>
+                                    BusquedaGlobalRoute().push(context),
+                              ),
+                            ],
+                          )),
                     ),
                     const CardItem(
                       icon: Icons.history,
@@ -126,6 +139,26 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<dynamic> homeModalButtom(
+      {required BuildContext context, required Widget child, double? height}) {
+    return showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) {
+        return Popover(
+          child: Container(
+            height: height,
+            color: Colores.scaffoldBackgroundColor,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              child: child,
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -12,36 +12,35 @@ part 'productos_state.dart';
 class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
   final ProductoUsecase productoUsecase;
   List<ProductoEntity> scannedProducts = [];
+  Map<String, int> productQuantities = {};
+  Map<String, int> productSelectedPrices = {};
 
   ProductosBloc({required this.productoUsecase}) : super(ProductoInitial()) {
     on<GetQRProductEvent>(_getQRProductEvent);
     on<GetProductEvent>(_getProductEvent
         // transformer: debounce(const Duration(milliseconds: 500)),
         );
-
     on<AddSelectedProductsToScannedEvent>(_addSelectedProductsToScannedEvent);
     on<RemoveProductEvent>(_removeProductEvent);
     on<ClearProductoStateEvent>((event, emit) => _clearProductsState(emit));
-    
+
     on<AddProductToScannedEvent>(
       _addProductToScannedEvent,
       transformer: debounce(const Duration(milliseconds: 500)),
     );
- 
     on<UpdateProductEvent>(_updateProductEvent);
-    // on<SelectRelatedProductEvent>(_selectRelatedProductEvent);
+    on<UpdateProductQuantityEvent>(_updateProductQuantityEvent);
+    on<UpdateProductSelectedPriceEvent>(_updateProductSelectedPriceEvent);
   }
-
-
 
   Future<void> _addSelectedProductsToScannedEvent(
       AddSelectedProductsToScannedEvent event,
       Emitter<ProductosState> emit) async {
-      scannedProducts.addAll(event.productos);
+    scannedProducts.addAll(event.productos);
     // if (state is IbodegaProductosLoaded) {
     //   final currentState = state as IbodegaProductosLoaded;
     // }
-      emit(ProductosLoaded(productos: List.from(scannedProducts)));
+    emit(ProductosLoaded(productos: List.from(scannedProducts)));
   }
 
   Future<void> _getQRProductEvent(
@@ -84,8 +83,6 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     }
   }
 
-
-
   Future<void> _removeProductEvent(
       RemoveProductEvent event, Emitter<ProductosState> emit) async {
     scannedProducts.remove(event.producto);
@@ -102,29 +99,40 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
 
   void _clearProductsState(Emitter<ProductosState> emit) {
     scannedProducts.clear();
+    productQuantities.clear();
+    productSelectedPrices.clear();
     emit(ProductoInitial());
   }
 
+  /// Maneja el evento de actualización de producto en el Bloc.
+  Future<void> _updateProductEvent(
+      UpdateProductEvent event, Emitter<ProductosState> emit) async {
+    // Mapea la lista de productos escaneados y actualiza el producto que coincide con el producto proporcionado en el evento.
+    final updatedProducts = scannedProducts.map((producto) {
+      // Si el producto en la lista tiene la misma clave (producto1) que el producto en el evento,
+      // reemplázalo con el producto del evento. De lo contrario, deja el producto tal como está.
+      return producto.producto1 == event.producto.producto1
+          ? event.producto
+          : producto;
+    }).toList();
 
+    // Actualiza la lista de productos escaneados con la lista de productos actualizada.
+    scannedProducts = updatedProducts;
 
- /// Maneja el evento de actualización de producto en el Bloc.
-Future<void> _updateProductEvent(
-    UpdateProductEvent event, Emitter<ProductosState> emit) async {
-  
-  // Mapea la lista de productos escaneados y actualiza el producto que coincide con el producto proporcionado en el evento.
-  final updatedProducts = scannedProducts.map((producto) {
-    // Si el producto en la lista tiene la misma clave (producto1) que el producto en el evento,
-    // reemplázalo con el producto del evento. De lo contrario, deja el producto tal como está.
-    return producto.producto1 == event.producto.producto1
-        ? event.producto
-        : producto;
-  }).toList();
+    // Emite un nuevo estado con la lista de productos actualizada.
+    emit(ProductosLoaded(productos: List.from(scannedProducts)));
+  }
 
-  // Actualiza la lista de productos escaneados con la lista de productos actualizada.
-  scannedProducts = updatedProducts;
+  Future<void> _updateProductQuantityEvent(
+      UpdateProductQuantityEvent event, Emitter<ProductosState> emit) async {
+    productQuantities[event.productoClave] = event.newQuantity;
+    emit(ProductosLoaded(productos: List.from(scannedProducts)));
+  }
 
-  // Emite un nuevo estado con la lista de productos actualizada.
-  emit(ProductosLoaded(productos: List.from(scannedProducts)));
-}
-
+  Future<void> _updateProductSelectedPriceEvent(
+      UpdateProductSelectedPriceEvent event,
+      Emitter<ProductosState> emit) async {
+    productSelectedPrices[event.productoClave] = event.selectedPrice;
+    emit(ProductosLoaded(productos: List.from(scannedProducts)));
+  }
 }

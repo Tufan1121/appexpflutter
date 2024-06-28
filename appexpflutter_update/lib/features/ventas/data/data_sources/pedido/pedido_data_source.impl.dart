@@ -15,6 +15,7 @@ class PedidoDataSourceImpl implements PedidoDataSource {
     final token = await storage.read(key: 'accessToken');
     try {
       for (var detalle in data) {
+        print('Enviando detalle: $detalle'); // Agrega este log para depuración
         await _dioClient.post(
           '/insertDetallePedido',
           queryParameters: detalle,
@@ -26,6 +27,25 @@ class PedidoDataSourceImpl implements PedidoDataSource {
         );
       }
       return 'Detalles del pedido agregados con éxito';
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> addIdPedido(int idPedido) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.post(
+        '/rtoPedido',
+        queryParameters: {'id_pedido': idPedido},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return result.data['success'] as String;
     } catch (_) {
       rethrow;
     }

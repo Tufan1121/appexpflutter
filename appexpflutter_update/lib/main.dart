@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:appexpflutter_update/config/my_http_overrides.dart';
 import 'package:appexpflutter_update/features/auth/config/config_token.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source_impl.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/pedido_data_source.dart';
@@ -15,6 +16,7 @@ import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usec
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/cubit/cantidad_precio_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:api_client/dio_client.dart';

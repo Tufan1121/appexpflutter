@@ -15,6 +15,9 @@ List<RouteBase> get $appRoutes => [
       $clienteExistenteRoute,
       $pedidoRoute,
       $generarPedidoRoute,
+      $invetarioExpoRoute,
+      $invetarioBodegaRoute,
+      $busquedaGlobalRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -206,6 +209,75 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
           'id-cliente': idCliente.toString(),
           'estado-pedido': estadoPedido.toString(),
         },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $invetarioExpoRoute => GoRouteData.$route(
+      path: '/inventario_expo',
+      factory: $InvetarioExpoRouteExtension._fromState,
+    );
+
+extension $InvetarioExpoRouteExtension on InvetarioExpoRoute {
+  static InvetarioExpoRoute _fromState(GoRouterState state) =>
+      InvetarioExpoRoute();
+
+  String get location => GoRouteData.$location(
+        '/inventario_expo',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $invetarioBodegaRoute => GoRouteData.$route(
+      path: '/inventario_bodega',
+      factory: $InvetarioBodegaRouteExtension._fromState,
+    );
+
+extension $InvetarioBodegaRouteExtension on InvetarioBodegaRoute {
+  static InvetarioBodegaRoute _fromState(GoRouterState state) =>
+      InvetarioBodegaRoute();
+
+  String get location => GoRouteData.$location(
+        '/inventario_bodega',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $busquedaGlobalRoute => GoRouteData.$route(
+      path: '/busqueda_global',
+      factory: $BusquedaGlobalRouteExtension._fromState,
+    );
+
+extension $BusquedaGlobalRouteExtension on BusquedaGlobalRoute {
+  static BusquedaGlobalRoute _fromState(GoRouterState state) =>
+      BusquedaGlobalRoute();
+
+  String get location => GoRouteData.$location(
+        '/busqueda_global',
       );
 
   void go(BuildContext context) => context.go(location);

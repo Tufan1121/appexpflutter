@@ -1,6 +1,7 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils.dart';
+import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
@@ -258,8 +259,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                 BlocConsumer<PedidoBloc, PedidoState>(
                                   listener: (context, state) {
                                     if (state is PedidoDetalleLoaded) {
-                                      // ScaffoldMessenger.of(context)
-                                      //     .removeCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .removeCurrentSnackBar();
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                         content: Text(state.message),
@@ -269,34 +270,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                       // Aquí  la URL donde está ubicado el PDF
                                       String pdfUrl =
                                           'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
-                                      _openPDF(pdfUrl);
-
-                                      form.control('metodoDePago1').reset();
-                                      form.control('anticipoPago1').reset();
-                                      form.control('metodoDePago2').reset();
-                                      form.control('anticipoPago2').reset();
-                                      form.control('metodoDePago3').reset();
-                                      form.control('anticipoPago3').reset();
-                                      form.control('observaciones').reset();
-                                      form.control('entregado').reset();
-                                      form
-                                          .control('pendienteFinDeExpo')
-                                          .reset();
-                                      // reset state
-                                      context
-                                          .read<ClienteBloc>()
-                                          .add(ClearClienteStateEvent());
-                                      context
-                                          .read<ProductosBloc>()
-                                          .add(ClearProductoStateEvent());
-                                      context
-                                          .read<PedidoBloc>()
-                                          .add(ClearPedidoStateEvent());
-                                      context
-                                          .read<InventarioBloc>()
-                                          .add(ClearInventarioProductoEvent());
-
-                                      HomeRoute().push(context);
+                                      // _openPDF(pdfUrl);
+                                      _showDownloadModal(context, pdfUrl,
+                                          state.pedido.pedidos);
                                     } else if (state is PedidoError) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -550,6 +526,96 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                     .add(ClearInventarioProductoEvent());
                 HomeRoute().push(context);
                 Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDownloadModal(
+      BuildContext context, String pdfUrl, String nombrePdf) {
+    final getpdf = Getpdf(context: context);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              const Text('PEDIDO:', style: TextStyle(fontSize: 15)),
+              Text(
+                nombrePdf,
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text('¿Quieres descargar este PDF?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                form.control('metodoDePago1').reset();
+                form.control('anticipoPago1').reset();
+                form.control('metodoDePago2').reset();
+                form.control('anticipoPago2').reset();
+                form.control('metodoDePago3').reset();
+                form.control('anticipoPago3').reset();
+                form.control('observaciones').reset();
+                form.control('entregado').reset();
+                form.control('pendienteFinDeExpo').reset();
+
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+
+                  context.read<ClienteBloc>().add(ClearClienteStateEvent());
+                  context.read<ProductosBloc>().add(ClearProductoStateEvent());
+                  context.read<PedidoBloc>().add(ClearPedidoStateEvent());
+                  context
+                      .read<InventarioBloc>()
+                      .add(ClearInventarioProductoEvent());
+                  HomeRoute().push(context);
+                }
+              },
+              child: const Text('Cancelar',
+                  style: TextStyle(color: Colores.secondaryColor)),
+            ),
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colores.secondaryColor,
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+              ),
+              onPressed: () async {
+                // opcion 1
+                // await getpdf.downloadPDF(pdfUrl, nombrePdf);
+                // opcion 2
+                _openPDF(pdfUrl);
+                form.control('metodoDePago1').reset();
+                form.control('anticipoPago1').reset();
+                form.control('metodoDePago2').reset();
+                form.control('anticipoPago2').reset();
+                form.control('metodoDePago3').reset();
+                form.control('anticipoPago3').reset();
+                form.control('observaciones').reset();
+                form.control('entregado').reset();
+                form.control('pendienteFinDeExpo').reset();
+
+                // reset state
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+
+                  context.read<ClienteBloc>().add(ClearClienteStateEvent());
+                  context.read<ProductosBloc>().add(ClearProductoStateEvent());
+                  context.read<PedidoBloc>().add(ClearPedidoStateEvent());
+                  context
+                      .read<InventarioBloc>()
+                      .add(ClearInventarioProductoEvent());
+                  HomeRoute().push(context);
+                }
               },
             ),
           ],

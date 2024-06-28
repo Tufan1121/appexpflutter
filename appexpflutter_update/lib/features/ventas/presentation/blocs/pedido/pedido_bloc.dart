@@ -13,6 +13,7 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
   PedidoBloc({required this.pedidoUsecase}) : super(PedidoInitial()) {
     on<PedidoAddEvent>(_pedidoAddEvent);
     on<PedidoAddDetalleEvent>(_pedidoAddDetalleEvent);
+    on<PedidoAddIdPedidoEvent>(_pedidoAddIdPedidoEvent);
     on<ClearPedidoStateEvent>((event, emit) => _clearPedidoState(emit));
   }
 
@@ -50,6 +51,17 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
     print(detallesData);
 
     final result = await pedidoUsecase.addDetallePedido(detallesData);
+    result.fold(
+      (failure) => emit(PedidoError(message: failure.message)),
+      (success) {
+        add(PedidoAddIdPedidoEvent(pedido:event.pedido));
+      },
+    );
+  }
+
+  Future<void> _pedidoAddIdPedidoEvent(
+      PedidoAddIdPedidoEvent event, Emitter<PedidoState> emit) async {
+    final result = await pedidoUsecase.addIdPedido(event.pedido.idPedido);
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (success) {

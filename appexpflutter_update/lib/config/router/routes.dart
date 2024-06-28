@@ -1,3 +1,5 @@
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/intenvario_bodega_screen.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/intenvario_global_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
@@ -114,6 +116,45 @@ class GenerarPedidoRoute extends GoRouteData {
         idCliente: idCliente,
         estadoPedido: estadoPedido,
       );
+}
+
+@TypedGoRoute<InvetarioExpoRoute>(
+  path: InvetarioExpoRoute.path,
+)
+class InvetarioExpoRoute extends GoRouteData {
+  static const path = '/inventario_expo';
+
+  InvetarioExpoRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const BusquedaGlobalScreen();
+}
+
+@TypedGoRoute<InvetarioBodegaRoute>(
+  path: InvetarioBodegaRoute.path,
+)
+class InvetarioBodegaRoute extends GoRouteData {
+  static const path = '/inventario_bodega';
+
+  InvetarioBodegaRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const IntentarioBodegaScreen();
+}
+
+@TypedGoRoute<BusquedaGlobalRoute>(
+  path: BusquedaGlobalRoute.path,
+)
+class BusquedaGlobalRoute extends GoRouteData {
+  static const path = '/busqueda_global';
+
+  BusquedaGlobalRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const BusquedaGlobalScreen();
 }
 
 

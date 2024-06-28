@@ -19,6 +19,24 @@ class ProductosLoaded extends ProductosState {
   List<Object> get props => [productos];
 }
 
+class ProductosCountUpdated extends ProductosState {
+  final List<int> countList;
+
+  const ProductosCountUpdated({required this.countList});
+
+  @override
+  List<Object> get props => [countList];
+}
+
+class ProductosPriceUpdated extends ProductosState {
+  final List<int?> selectedPriceList;
+
+  const ProductosPriceUpdated({required this.selectedPriceList});
+
+  @override
+  List<Object> get props => [selectedPriceList];
+}
+
 class ProductoError extends ProductosState {
   final List<ProductoEntity> productos;
   final String message;

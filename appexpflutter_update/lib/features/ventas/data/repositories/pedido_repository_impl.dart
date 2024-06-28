@@ -31,4 +31,14 @@ class PedidoRepositoryImpl implements PedidoRepository {
       return Left(NetworkException.fromDioError(e));
     }
   }
+  
+  @override
+  Future<Either<NetworkException, String>> addIdPedido(int idPedido)async {
+    try {
+      final result = await pedidoDataSource.addIdPedido(idPedido);
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
 }

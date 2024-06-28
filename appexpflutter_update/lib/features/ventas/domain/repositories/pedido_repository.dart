@@ -5,4 +5,5 @@ import 'package:fpdart/fpdart.dart';
 abstract interface class PedidoRepository {
   Future<Either<NetworkException, PedidoEntity>> addPedido(Map<String, dynamic> data);
   Future<Either<NetworkException, String>> addDetallePedido(List<Map<String, dynamic>> data);
+  Future<Either<NetworkException, String>> addIdPedido(int idPedido);
 }
