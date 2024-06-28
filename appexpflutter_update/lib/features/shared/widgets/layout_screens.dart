@@ -11,12 +11,14 @@ class LayoutScreens extends StatelessWidget {
     this.titleScreen,
     this.child,
     required this.onPressed,
+    this.floatingActionButton,
   });
   final IconData? icon;
   final IconData? faIcon;
   final String? titleScreen;
   final Widget? child;
   final void Function()? onPressed;
+  final Widget? floatingActionButton;
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +65,7 @@ class LayoutScreens extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

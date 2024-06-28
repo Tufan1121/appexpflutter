@@ -33,116 +33,9 @@ class SearchProducto extends HookWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: Container(
-              height: 50,
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30.0),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(2.0, 5.0),
-                  )
-                ],
-              ),
-              child: TextField(
-                controller: controller,
-                style: const TextStyle(
-                  color: Colores.secondaryColor,
-                  fontSize: 16,
-                ),
-                obscureText: false,
-                keyboardType: TextInputType.text,
-                onChanged: (value) {},
-                onSubmitted: (value) {
-                  context
-                      .read<ProductosBloc>()
-                      .add(GetQRProductEvent(clave: value));
-                  controller.clear();
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: IconButton(
-                      onPressed: () {
-                        context
-                            .read<ProductosBloc>()
-                            .add(GetQRProductEvent(clave: controller.text));
-                        FocusScope.of(context).unfocus();
-                      },
-                      icon: const Icon(
-                        Icons.search,
-                        color: Colores.secondaryColor,
-                      ),
-                    ),
-                  ),
-                  suffixIcon: controller.text.isNotEmpty
-                      ? IconButton(
-                          onPressed: () {
-                            controller.clear();
-                          },
-                          icon: const Icon(
-                            Icons.clear,
-                            color: Colors.red,
-                          ))
-                      : null,
-                  hintText: 'Clave Manual',
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding:
-                      const EdgeInsets.only(left: 12.0, top: 5, bottom: 20),
-                ),
-              ),
-            ),
-          ),
-          if (productos.isNotEmpty)
-            ElevatedButton(
-              onPressed: () {
-                if (estatusPedido != 0) {
-                  GenerarPedidoRoute(
-                          idCliente: idCliente, estadoPedido: estatusPedido)
-                      .push(context);
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Atención'),
-                        content: const Text(
-                            'Debes seleccionar del Select un estatus del pedido'),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Aceptar'),
-                          )
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                elevation: 2,
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8),
-              ),
-              child: const FaIcon(
-                FontAwesomeIcons.truck,
-                color: Colores.secondaryColor,
-                size: 35,
-              ),
-            ),
+          const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () {
               showModalBottomSheet(
@@ -167,6 +60,7 @@ class SearchProducto extends HookWidget {
               size: 35,
             ),
           ),
+          const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () => showDialog(
               context: context,

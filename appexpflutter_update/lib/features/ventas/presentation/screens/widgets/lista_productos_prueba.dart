@@ -18,77 +18,72 @@ class ListaProductos extends HookWidget {
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
     final totalDetalle = useState<double>(0.0);
-    final productosBloc = context.read<ProductosBloc>();
-    // final countList =
-    //     useState<List<int>>(List<int>.filled(productos.length, 1));
-    // final selectedPriceList =
-    //     useState<List<int?>>(List<int?>.filled(productos.length, 1));
+    final countList = useState<List<int>>(List<int>.filled(productos.length, 1));
+    final selectedPriceList = useState<List<int>>(List<int>.filled(productos.length, 1));
+
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
-
-      for (var producto in productos) {
-        final count = productosBloc.productQuantities[producto.producto1] ?? 1;
-        final selectedPrice =
-            productosBloc.productSelectedPrices[producto.producto1] ?? 1;
+      for (var i = 0; i < productos.length; i++) {
+        final count = countList.value[i];
+        final selectedPrice = selectedPriceList.value[i];
         if (count > 0) {
           double precio = 0.0;
           switch (selectedPrice) {
             case 1:
-              precio = producto.precio1.toDouble();
+              precio = productos[i].precio1.toDouble();
               break;
             case 2:
-              precio = producto.precio2.toDouble();
+              precio = productos[i].precio2.toDouble();
               break;
             case 3:
-              precio = producto.precio3.toDouble();
+              precio = productos[i].precio3.toDouble();
               break;
             default:
               break;
           }
           final subtotal = precio * count;
-          print(
-              'Producto: ${producto.producto}, Cantidad: $count, Precio Seleccionado: $selectedPrice, Precio: $precio, Subtotal: $subtotal');
           newTotal += subtotal;
-          totalDetalle.value = precio * count;
+          totalDetalle.value = precio * countList.value[i];
           UtilsVenta.listProductsOrder.add(
             DetallePedido(
               idPedido: 0,
-              clave: producto.producto1,
-              clave2: producto.producto,
-              cantidad: count,
-              precio: subtotal,
+              clave: productos[i].producto1,
+              clave2: productos[i].producto,
+              cantidad: countList.value[i],
+              precio: totalDetalle.value,
             ),
           );
         }
       }
-      print('Total: $newTotal');
       total.value = newTotal;
       UtilsVenta.total = total.value;
     }
 
-    // useEffect(() {
-    //   updateTotal(); // Initial calculation
-    //   return null; // No cleanup needed
-    // }, [countList.value, selectedPriceList.value]);
-
     useEffect(() {
       updateTotal(); // Initial calculation
       return null; // No cleanup needed
-    }, []);
-
-    // useEffect(() {
-    //   // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
-    //   countList.value = List<int>.filled(productos.length, 1);
-    //   selectedPriceList.value = List<int?>.filled(productos.length, 1);
-    //   updateTotal();
-    //   return null;
-    // }, [productos.length]);
+    }, [countList.value, selectedPriceList.value]);
 
     useEffect(() {
-      updateTotal(); // Initial calculation
-      return null; // No cleanup needed
-    }, [productosBloc.productQuantities, productosBloc.productSelectedPrices]);
+      // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
+      final newCountList = List<int>.from(countList.value);
+      final newSelectedPriceList = List<int>.from(selectedPriceList.value);
+
+      // Ajustar la longitud de las listas
+      if (newCountList.length < productos.length) {
+        newCountList.addAll(List<int>.filled(productos.length - newCountList.length, 1));
+        newSelectedPriceList.addAll(List<int>.filled(productos.length - newSelectedPriceList.length, 1));
+      } else if (newCountList.length > productos.length) {
+        newCountList.removeRange(productos.length, newCountList.length);
+        newSelectedPriceList.removeRange(productos.length, newSelectedPriceList.length);
+      }
+
+      countList.value = newCountList;
+      selectedPriceList.value = newSelectedPriceList;
+      updateTotal();
+      return null;
+    }, [productos.length]);
 
     return Column(
       children: [
@@ -114,17 +109,15 @@ class ListaProductos extends HookWidget {
                   productos[index].bodega2 +
                   productos[index].bodega3 +
                   productos[index].bodega4;
-              final count =
-                  productosBloc.productQuantities[producto.producto1] ?? 1;
-              final selectedPrice =
-                  productosBloc.productSelectedPrices[producto.producto1] ?? 1;
-              // final customPriceController = TextEditingController();
 
               return HookBuilder(
                 builder: (context) {
+                  final count = useState(countList.value[index]);
+                  final selectedPrice = useState<int>(selectedPriceList.value[index]);
                   final customPrice = useState<double?>(null);
                   final customPriceController = useTextEditingController(
                       text: producto.precio3.toString());
+
                   return ClipRect(
                     child: Card(
                       elevation: 4,
@@ -189,31 +182,23 @@ class ListaProductos extends HookWidget {
                                       IconButton(
                                         icon: const Icon(Icons.add),
                                         onPressed: () {
-                                          final newCount =
-                                              (count < existencia.toInt())
-                                                  ? count + 1
-                                                  : 1;
-                                          context.read<ProductosBloc>().add(
-                                                UpdateProductQuantityEvent(
-                                                  producto.producto1,
-                                                  newCount,
-                                                ),
-                                              );
-                                          updateTotal();
+                                          if (count.value <
+                                              existencia.toInt()) {
+                                            count.value++;
+                                            countList.value[index] =
+                                                count.value;
+                                            updateTotal();
+                                          }
                                         },
                                       ),
-                                      Text('$count'),
+                                      Text('${count.value}'),
                                       IconButton(
                                         icon: const Icon(Icons.remove),
                                         onPressed: () {
-                                          if (count > 1) {
-                                            final newCount =
-                                                (count > 1) ? count - 1 : 1;
-                                            context.read<ProductosBloc>().add(
-                                                  UpdateProductQuantityEvent(
-                                                      producto.producto1,
-                                                      newCount),
-                                                );
+                                          if (count.value > 1) {
+                                            count.value--;
+                                            countList.value[index] =
+                                                count.value;
                                             updateTotal();
                                           }
                                         },
@@ -234,17 +219,11 @@ class ListaProductos extends HookWidget {
                                         context: context,
                                         label: 'Precio de Lista',
                                         price: producto.precio1.toDouble(),
-                                        value: selectedPrice == 1,
+                                        value: selectedPrice.value == 1,
                                         onChanged: (bool? value) {
-                                          // selectedPrice.value = value! ? 1 : 0;
-                                          // selectedPriceList.value[index] =
-                                          //     selectedPrice.value;
-                                          context.read<ProductosBloc>().add(
-                                                UpdateProductSelectedPriceEvent(
-                                                  producto.producto1,
-                                                  value! ? 1 : 0,
-                                                ),
-                                              );
+                                          selectedPrice.value = 1;
+                                          selectedPriceList.value[index] =
+                                              selectedPrice.value;
                                           updateTotal();
                                         },
                                       ),
@@ -252,18 +231,11 @@ class ListaProductos extends HookWidget {
                                         context: context,
                                         label: 'Precio de Expo',
                                         price: producto.precio2.toDouble(),
-                                        value: selectedPrice == 2,
+                                        value: selectedPrice.value == 2,
                                         onChanged: (bool? value) {
-                                          // selectedPrice.value = value! ? 2 : 0;
-                                          // selectedPriceList.value[index] =
-                                          //     selectedPrice.value;
-                                          context.read<ProductosBloc>().add(
-                                                UpdateProductSelectedPriceEvent(
-                                                  producto.producto1,
-                                                  value! ? 2 : 0,
-                                                ),
-                                              );
-
+                                          selectedPrice.value = 2;
+                                          selectedPriceList.value[index] =
+                                              selectedPrice.value;
                                           updateTotal();
                                         },
                                       ),
@@ -271,17 +243,11 @@ class ListaProductos extends HookWidget {
                                         context: context,
                                         label: 'Precio Mayoreo',
                                         price: producto.precio3.toDouble(),
-                                        value: selectedPrice == 3,
+                                        value: selectedPrice.value == 3,
                                         onChanged: (bool? value) {
-                                          // selectedPrice.value = value! ? 3 : 0;
-                                          // selectedPriceList.value[index] =
-                                          //     selectedPrice.value;
-                                          context.read<ProductosBloc>().add(
-                                                UpdateProductSelectedPriceEvent(
-                                                  producto.producto1,
-                                                  value! ? 3 : 0,
-                                                ),
-                                              );
+                                          selectedPrice.value = 3;
+                                          selectedPriceList.value[index] =
+                                              selectedPrice.value;
                                           updateTotal();
                                         },
                                       ),
@@ -289,7 +255,7 @@ class ListaProductos extends HookWidget {
                                   ),
                                 ),
                               ),
-                              if (selectedPrice == 3)
+                              if (selectedPrice.value == 3)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -375,7 +341,11 @@ class ListaProductos extends HookWidget {
           children: [
             Checkbox(
               value: value,
-              onChanged: onChanged,
+              onChanged: (bool? newValue) {
+                if (newValue == true) {
+                  onChanged!(true);
+                }
+              },
               activeColor: Colores.secondaryColor,
             ),
             const SizedBox(width: 5),

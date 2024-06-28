@@ -21,7 +21,7 @@ class ListaProductos extends HookWidget {
     final countList =
         useState<List<int>>(List<int>.filled(productos.length, 1));
     final selectedPriceList =
-        useState<List<int?>>(List<int?>.filled(productos.length, 1));
+        useState<List<int>>(List<int>.filled(productos.length, 1));
 
     void updateTotal() {
       double newTotal = 0.0;
@@ -69,8 +69,23 @@ class ListaProductos extends HookWidget {
 
     useEffect(() {
       // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
-      countList.value = List<int>.filled(productos.length, 1);
-      selectedPriceList.value = List<int?>.filled(productos.length, 1);
+      final newCountList = List<int>.from(countList.value);
+      final newSelectedPriceList = List<int>.from(selectedPriceList.value);
+
+      // Ajustar la longitud de las listas
+      if (newCountList.length < productos.length) {
+        newCountList.addAll(
+            List<int>.filled(productos.length - newCountList.length, 1));
+        newSelectedPriceList.addAll(List<int>.filled(
+            productos.length - newSelectedPriceList.length, 1));
+      } else if (newCountList.length > productos.length) {
+        newCountList.removeRange(productos.length, newCountList.length);
+        newSelectedPriceList.removeRange(
+            productos.length, newSelectedPriceList.length);
+      }
+
+      countList.value = newCountList;
+      selectedPriceList.value = newSelectedPriceList;
       updateTotal();
       return null;
     }, [productos.length]);
@@ -102,8 +117,9 @@ class ListaProductos extends HookWidget {
 
               return HookBuilder(
                 builder: (context) {
-                  final count = useState(1);
-                  final selectedPrice = useState<int>(1);
+                  final count = useState(countList.value[index]);
+                  final selectedPrice =
+                      useState<int>(selectedPriceList.value[index]);
                   final customPrice = useState<double?>(null);
                   final customPriceController = useTextEditingController(
                       text: producto.precio3.toString());
@@ -211,7 +227,7 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio1.toDouble(),
                                         value: selectedPrice.value == 1,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = value! ? 1 : 0;
+                                          selectedPrice.value = 1;
                                           selectedPriceList.value[index] =
                                               selectedPrice.value;
                                           updateTotal();
@@ -223,7 +239,7 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio2.toDouble(),
                                         value: selectedPrice.value == 2,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = value! ? 2 : 0;
+                                          selectedPrice.value = 2;
                                           selectedPriceList.value[index] =
                                               selectedPrice.value;
                                           updateTotal();
@@ -235,7 +251,7 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio3.toDouble(),
                                         value: selectedPrice.value == 3,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = value! ? 3 : 0;
+                                          selectedPrice.value = 3;
                                           selectedPriceList.value[index] =
                                               selectedPrice.value;
                                           updateTotal();
@@ -331,7 +347,11 @@ class ListaProductos extends HookWidget {
           children: [
             Checkbox(
               value: value,
-              onChanged: onChanged,
+              onChanged: (bool? newValue) {
+                if (newValue == true) {
+                  onChanged!(true);
+                }
+              },
               activeColor: Colores.secondaryColor,
             ),
             const SizedBox(width: 5),

@@ -1,7 +1,6 @@
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/cubit/cantidad_precio_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,7 +44,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<InventarioBloc>(create: (_) => injector<InventarioBloc>()),
         BlocProvider<InventarioBodegaBloc>(
             create: (_) => injector<InventarioBodegaBloc>()),
-        BlocProvider<CantidadCubit>(create: (_) => injector<CantidadCubit>()),
       ],
       child: FutureBuilder(
         future: _init(),

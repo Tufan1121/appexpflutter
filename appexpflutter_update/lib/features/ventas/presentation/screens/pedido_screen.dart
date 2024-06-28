@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -35,9 +36,54 @@ class _PedidoScreenState extends State<PedidoScreen> {
   @override
   Widget build(BuildContext context) {
     final dropdownValue = useState<String>(list.first);
+    final productos = context.watch<ProductosBloc>().scannedProducts;
     return LayoutScreens(
       onPressed: () => Navigator.pop(context),
       titleScreen: 'PEDIDO',
+      floatingActionButton: ElevatedButton(
+        onPressed: () {
+          if (productos.isNotEmpty) {
+            GenerarPedidoRoute(
+                    idCliente: widget.idCliente,
+                    estadoPedido: getEstadoPedidoPagoId(dropdownValue.value))
+                .push(context);
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Atención'),
+                  content: const Text('Debes agregar algún producto'),
+                  actions: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colores.secondaryColor),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Aceptar',
+                        style:
+                            TextStyle(color: Colores.scaffoldBackgroundColor),
+                      ),
+                    )
+                  ],
+                );
+              },
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          elevation: 2,
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(8),
+        ),
+        child: const FaIcon(
+          FontAwesomeIcons.truck,
+          color: Colores.secondaryColor,
+          size: 35,
+        ),
+      ),
       child: Column(
         children: [
           const SizedBox(height: 2),

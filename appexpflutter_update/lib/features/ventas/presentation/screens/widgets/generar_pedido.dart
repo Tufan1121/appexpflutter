@@ -1,7 +1,7 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils.dart';
-import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
+// import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
@@ -536,7 +536,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
 
   void _showDownloadModal(
       BuildContext context, String pdfUrl, String nombrePdf) {
-    final getpdf = Getpdf(context: context);
+    // final getpdf = Getpdf(context: context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
