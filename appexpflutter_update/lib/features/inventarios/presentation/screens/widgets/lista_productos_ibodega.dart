@@ -12,15 +12,17 @@ class ListaProductosIBodegaCard extends HookWidget {
     required this.producto,
     this.isSelected,
     this.existencia,
+    this.onTap,
   });
   final ProductoEntity producto;
   final bool? isSelected;
   final int? existencia;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => print(producto.producto1),
+      onTap: onTap,
       child: ClipRect(
         child: Card(
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),

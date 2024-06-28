@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/intenvario_bodega_screen.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/intenvario_expo_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/intenvario_global_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
@@ -128,7 +129,7 @@ class InvetarioExpoRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const BusquedaGlobalScreen();
+      const IntentarioExpoScreen();
 }
 
 @TypedGoRoute<InvetarioBodegaRoute>(

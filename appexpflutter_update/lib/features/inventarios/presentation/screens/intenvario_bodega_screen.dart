@@ -61,6 +61,7 @@ class IntentarioBodegaScreen extends StatelessWidget {
                         producto: producto,
                         isSelected: isSelected,
                         existencia: existencia.toInt(),
+                        onTap: () => print(producto.producto1),
                       );
                     },
                   ),
