@@ -22,15 +22,17 @@ class ClienteNuevoScreen extends StatelessWidget {
             child: SizedBox(
               height: 470,
               child: Card(
-                child: SingleChildScrollView(
-                  child: SizedBox(
-                    height: size.height * 0.70,
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(height: 20),
-                        Flexible(flex: 1, child: ClienteForm()),
-                      ],
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    child: SizedBox(
+                      height: size.height * 0.70,
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(height: 20),
+                          Flexible(flex: 1, child: ClienteForm()),
+                        ],
+                      ),
                     ),
                   ),
                 ),

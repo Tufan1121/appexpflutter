@@ -35,127 +35,129 @@ class PreciosScreen extends StatelessWidget {
             children: [
               const SearchPrices(),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      BlocBuilder<PreciosBloc, PreciosState>(
-                        builder: (context, state) {
-                          if (state is PreciosLoading) {
-                            return const Column(
-                              children: [
-                                SizedBox(height: 150),
-                                CircularProgressIndicator(
-                                  color: Colores.secondaryColor,
-                                ),
-                              ],
-                            );
-                          } else if (state is PreciosLoaded) {
-                            double existencia = state.producto.bodega1 +
-                                state.producto.bodega2 +
-                                state.producto.bodega3 +
-                                state.producto.bodega4;
-
-                            List<String> imagePaths = [
-                              state.producto.pathima1,
-                              state.producto.pathima2,
-                              state.producto.pathima3,
-                              state.producto.pathima4,
-                              state.producto.pathima5,
-                              state.producto.pathima6,
-                            ].where((path) => path.isNotEmpty).toList();
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const SizedBox(height: 50),
-                                ProductoCard(
-                                  imagen:
-                                      'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
-                                  producto: state.producto,
-                                  existencia: existencia.toInt(),
-                                  onTap: () => PhotoGalleryRoute(
-                                          imageUrls: imagePaths,
-                                          initialIndex: 0)
-                                      .push(context),
-                                ),
-                                const SizedBox(height: 16),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: CustomFilledButton2(
-                                    buttonColor: Colores.secondaryColor,
-                                    onPressed: () => context
-                                        .read<PreciosBloc>()
-                                        .add(GetRelativedProductsEvent(
-                                            producto: state.producto)),
-                                    text: 'Productos relacionados',
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        BlocBuilder<PreciosBloc, PreciosState>(
+                          builder: (context, state) {
+                            if (state is PreciosLoading) {
+                              return const Column(
+                                children: [
+                                  SizedBox(height: 150),
+                                  CircularProgressIndicator(
+                                    color: Colores.secondaryColor,
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                              ],
-                            );
-                          } else if (state is PreciosRelativosLoaded) {
-                            double existencia = state.producto.bodega1 +
-                                state.producto.bodega2 +
-                                state.producto.bodega3 +
-                                state.producto.bodega4;
-
-                            List<String> imagePaths = [
-                              state.producto.pathima1,
-                              state.producto.pathima2,
-                              state.producto.pathima3,
-                              state.producto.pathima4,
-                              state.producto.pathima5,
-                              state.producto.pathima6,
-                            ].where((path) => path.isNotEmpty).toList();
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const SizedBox(height: 5),
-                                ProductoCard(
-                                  imagen:
-                                      'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
-                                  producto: state.producto,
-                                  existencia: existencia.toInt(),
-                                  onTap: () => PhotoGalleryRoute(
-                                          imageUrls: imagePaths,
-                                          initialIndex: 0)
-                                      .push(context),
-                                ),
-                                const SizedBox(height: 5),
-                                const Center(
-                                  child: AutoSizeText(
-                                    'Productos Relacionados',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+                                ],
+                              );
+                            } else if (state is PreciosLoaded) {
+                              double existencia = state.producto.bodega1 +
+                                  state.producto.bodega2 +
+                                  state.producto.bodega3 +
+                                  state.producto.bodega4;
+                  
+                              List<String> imagePaths = [
+                                state.producto.pathima1,
+                                state.producto.pathima2,
+                                state.producto.pathima3,
+                                state.producto.pathima4,
+                                state.producto.pathima5,
+                                state.producto.pathima6,
+                              ].where((path) => path.isNotEmpty).toList();
+                  
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  const SizedBox(height: 50),
+                                  ProductoCard(
+                                    imagen:
+                                        'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
+                                    producto: state.producto,
+                                    existencia: existencia.toInt(),
+                                    onTap: () => PhotoGalleryRoute(
+                                            imageUrls: imagePaths,
+                                            initialIndex: 0)
+                                        .push(context),
                                   ),
-                                ),
-                                _buildRelatedProductsList(
-                                    context, state.productos),
-                              ],
-                            );
-                          } else if (state is PreciosError) {
-                            return Column(
-                              children: [
-                                const SizedBox(height: 150),
-                                Center(
-                                  child: Text(
-                                    state.message,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                        color: Colors.red, fontSize: 16.0),
+                                  const SizedBox(height: 16),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: CustomFilledButton2(
+                                      buttonColor: Colores.secondaryColor,
+                                      onPressed: () => context
+                                          .read<PreciosBloc>()
+                                          .add(GetRelativedProductsEvent(
+                                              producto: state.producto)),
+                                      text: 'Productos relacionados',
+                                    ),
                                   ),
-                                ),
-                              ],
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-                    ],
+                                  const SizedBox(height: 5),
+                                ],
+                              );
+                            } else if (state is PreciosRelativosLoaded) {
+                              double existencia = state.producto.bodega1 +
+                                  state.producto.bodega2 +
+                                  state.producto.bodega3 +
+                                  state.producto.bodega4;
+                  
+                              List<String> imagePaths = [
+                                state.producto.pathima1,
+                                state.producto.pathima2,
+                                state.producto.pathima3,
+                                state.producto.pathima4,
+                                state.producto.pathima5,
+                                state.producto.pathima6,
+                              ].where((path) => path.isNotEmpty).toList();
+                  
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  const SizedBox(height: 5),
+                                  ProductoCard(
+                                    imagen:
+                                        'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
+                                    producto: state.producto,
+                                    existencia: existencia.toInt(),
+                                    onTap: () => PhotoGalleryRoute(
+                                            imageUrls: imagePaths,
+                                            initialIndex: 0)
+                                        .push(context),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  const Center(
+                                    child: AutoSizeText(
+                                      'Productos Relacionados',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  _buildRelatedProductsList(
+                                      context, state.productos),
+                                ],
+                              );
+                            } else if (state is PreciosError) {
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 150),
+                                  Center(
+                                    child: Text(
+                                      state.message,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          color: Colors.red, fontSize: 16.0),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )

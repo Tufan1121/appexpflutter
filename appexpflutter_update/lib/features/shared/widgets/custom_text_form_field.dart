@@ -17,6 +17,7 @@ class CustomReactiveTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final bool readOnly;
+  final TextStyle? hintStyle;
 
   const CustomReactiveTextField({
     super.key,
@@ -34,6 +35,7 @@ class CustomReactiveTextField extends StatelessWidget {
     this.prefixIcon,
     this.suffixText,
     this.readOnly = false,
+    this.hintStyle,
   });
 
   @override
@@ -74,6 +76,7 @@ class CustomReactiveTextField extends StatelessWidget {
             style: const TextStyle(fontSize: 20, color: Colors.black54),
             validationMessages: validationMessages,
             decoration: InputDecoration(
+                hintStyle: hintStyle,
                 floatingLabelStyle: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

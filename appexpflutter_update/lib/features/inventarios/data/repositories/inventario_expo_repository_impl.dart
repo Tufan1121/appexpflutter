@@ -3,19 +3,20 @@ import 'package:appexpflutter_update/features/inventarios/domain/entities/produc
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:api_client/exceptions/network_exception.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/repositories/producto_expo_repository.dart';
+import 'package:appexpflutter_update/features/inventarios/domain/repositories/inventario_expo_repository.dart';
 
-class ProductoExpoRepositoryImpl implements ProductoExpoRepository {
+class InventarioExpoRepositoryImpl implements InventarioExpoRepository {
   final InventarioExpoDataSource inventarioExpoDataSource;
 
-  ProductoExpoRepositoryImpl({required this.inventarioExpoDataSource});
+  InventarioExpoRepositoryImpl({required this.inventarioExpoDataSource});
   @override
-   Future<Either<NetworkException, List<ProductoExpoEntity>>> getProductoExpo(
+  Future<Either<NetworkException, List<ProductoExpoEntity>>> getProductoExpo(
       Map<String, dynamic> map) async {
     try {
       final result = await inventarioExpoDataSource.getProductoExpo(map);
       // Mapear la lista de ProductoModel a ProductoEntity usando toEntity()
-      final productosExpoEntity = result.map((model) => model.toEntity()).toList();
+      final productosExpoEntity =
+          result.map((model) => model.toEntity()).toList();
       return Right(productosExpoEntity);
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));

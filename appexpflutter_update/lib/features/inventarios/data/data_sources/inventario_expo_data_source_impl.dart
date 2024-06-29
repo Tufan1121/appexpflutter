@@ -5,10 +5,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class InventarioExpoDataSourceImpl implements InventarioExpoDataSource {
-    final DioClient _dioClient;
-    final storage = const FlutterSecureStorage();
+  final DioClient _dioClient;
+  final storage = const FlutterSecureStorage();
 
-  InventarioExpoDataSourceImpl({required DioClient dioClient}) : _dioClient = dioClient;
+  InventarioExpoDataSourceImpl({required DioClient dioClient})
+      : _dioClient = dioClient;
 
   @override
   Future<List<ProductoExpoModel>> getProductoExpo(

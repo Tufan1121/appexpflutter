@@ -51,11 +51,13 @@ class CustomDropdownButton<T> extends StatelessWidget {
             value: value,
             items: items,
             onChanged: onChanged,
-            hint: SingleChildScrollView(
-              child: AutoSizeText(
-                hint ?? '',
-                style: styleHint,
-                overflow: TextOverflow.ellipsis,
+            hint: Scrollbar(
+              child: SingleChildScrollView(
+                child: AutoSizeText(
+                  hint ?? '',
+                  style: styleHint,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             icon: Padding(

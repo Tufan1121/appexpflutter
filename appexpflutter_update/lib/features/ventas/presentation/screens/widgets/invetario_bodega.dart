@@ -1,12 +1,13 @@
+import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos_bodega.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:appexpflutter_update/features/shared/widgets/custom_search.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 class InventarioBodega extends StatefulWidget {
   const InventarioBodega({super.key});
@@ -17,6 +18,14 @@ class InventarioBodega extends StatefulWidget {
 
 class _InventarioBodegaState extends State<InventarioBodega> {
   bool isMultiSelectMode = false;
+  final form = FormGroup({
+    'descripcio': FormControl<String>(),
+    'diseno': FormControl<String>(),
+    'mlargo1': FormControl<String>(),
+    'mlargo2': FormControl<String>(),
+    'mancho1': FormControl<String>(),
+    'mancho2': FormControl<String>(),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,159 +33,341 @@ class _InventarioBodegaState extends State<InventarioBodega> {
       expand: false,
       initialChildSize: 0.71, // Altura inicial del modal
       minChildSize: 0.2, // Altura mínima del modal
-      maxChildSize: 0.9, // Altura máxima del modal
+      maxChildSize: 0.95, // Altura máxima del modal
       builder: (BuildContext context, ScrollController scrollController) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Barra indicativa para cerrar el modal
-              Container(
-                width: 40,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colores.secondaryColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: Text(
-                  'INVENTARIO EN BODEGAS',
-                  style: GoogleFonts.montserrat(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colores.secondaryColor,
-                    shadows: [
-                      const BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(2.0, 5.0),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (isMultiSelectMode)
-                BlocBuilder<InventarioBloc, InventarioState>(
-                  builder: (context, state) {
-                    if (state is InventarioProductosLoaded) {
-                      return IconButton(
-                        icon: const Icon(Icons.check),
-                        onPressed: () {
-                          context.read<ProductosBloc>().add(
-                              AddSelectedProductsToScannedEvent(
-                                  state.selectedProducts));
-                          context
-                              .read<InventarioBloc>()
-                              .add(ClearInventarioProductoEvent());
-                          setState(() {
-                            isMultiSelectMode = false;
-                          });
-                        },
-                      );
-                    }
-                    return Container();
-                  },
-                ),
-              const SizedBox(height: 10),
-              CustomSearch(
-                hintText: 'Calidad',
-                onChanged: (value) {},
-                onSubmitted: (value) => context.read<InventarioBloc>().add(
-                    GetInventarioProductEvent(data: {'descripcio': value})),
-              ),
-              const SizedBox(height: 5),
-              BlocBuilder<InventarioBloc, InventarioState>(
-                builder: (context, state) {
-                  if (state is InventarioLoading) {
-                    return const Column(
+        return Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                  top:
+                      20.0), // Ajusta el padding superior para dar espacio a la barra
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
                       children: [
-                        SizedBox(height: 150),
-                        CircularProgressIndicator(
-                          color: Colores.secondaryColor,
-                        ),
-                      ],
-                    );
-                  }
-                  if (state is InventarioProductosLoaded) {
-                    final productos = state.productos;
-                    final selectedProducts = state.selectedProducts;
-
-                    return Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        itemCount: productos.length,
-                        itemBuilder: (context, index) {
-                          final producto = productos[index];
-                          final isSelected =
-                              selectedProducts.contains(producto);
-                          final existencia = productos[index].bodega1 +
-                              productos[index].bodega2 +
-                              productos[index].bodega3 +
-                              productos[index].bodega4;
-                          return GestureDetector(
-                              onLongPress: () {
-                                setState(() {
-                                  isMultiSelectMode = true;
-                                });
-                                context
-                                    .read<InventarioBloc>()
-                                    .add(StartMultiSelectEvent());
-                              },
-                              onTap: () {
-                                if (isMultiSelectMode) {
-                                  context.read<InventarioBloc>().add(
-                                      ToggleProductSelectionEvent(producto));
-                                } else {
-                                  context
-                                      .read<ProductosBloc>()
-                                      .add(AddProductToScannedEvent(producto));
-                                  context
-                                      .read<InventarioBloc>()
-                                      .add(ClearInventarioProductoEvent());
-                                }
-                              },
-                              child: ListaProductosBodegaCard(
-                                producto: producto,
-                                isSelected: isSelected,
-                                existencia: existencia.toInt(),
-                                isMultiSelectMode: isMultiSelectMode,
-                              ));
-                        },
-                      ),
-                    );
-                  }
-                  if (state is InventarioError) {
-                    return Column(
-                      children: [
-                        const SizedBox(height: 150),
                         Center(
-                          child: SizedBox(
-                            height: 60,
-                            width: 300,
-                            child: Card(
-                              child: AutoSizeText(
-                                state.message,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                          child: Text(
+                            'INVENTARIO EN BODEGAS',
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colores.secondaryColor,
+                              shadows: [
+                                const BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 6,
+                                  offset: Offset(2.0, 5.0),
+                                ),
+                              ],
                             ),
                           ),
                         ),
+                        if (isMultiSelectMode)
+                          BlocBuilder<InventarioBloc, InventarioState>(
+                            builder: (context, state) {
+                              if (state is InventarioProductosLoaded) {
+                                return IconButton(
+                                  icon: const Icon(Icons.check),
+                                  onPressed: () {
+                                    context.read<ProductosBloc>().add(
+                                        AddSelectedProductsToScannedEvent(
+                                            state.selectedProducts));
+                                    context
+                                        .read<InventarioBloc>()
+                                        .add(ClearInventarioProductoEvent());
+                                    setState(() {
+                                      isMultiSelectMode = false;
+                                    });
+                                  },
+                                );
+                              }
+                              return Container();
+                            },
+                          ),
+                        const SizedBox(height: 10),
+                        ReactiveForm(
+                          formGroup: form,
+                          child: Column(
+                            children: [
+                              const Row(
+                                children: [
+                                  Flexible(
+                                    flex: 2,
+                                    child: CustomReactiveTextField(
+                                      formControlName: 'descripcio',
+                                      hint: 'Calidad',
+                                      hintStyle: TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width:
+                                          10), // Añadir un espacio entre los campos
+                                  Flexible(
+                                    flex: 2,
+                                    child: CustomReactiveTextField(
+                                      formControlName: 'diseno',
+                                      hint: 'Diseño',
+                                      hintStyle: TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 7),
+                              const Row(
+                                children: [
+                                  Flexible(
+                                    flex: 2,
+                                    child: CustomReactiveTextField(
+                                      formControlName: 'mlargo1',
+                                      hint: 'medida largo desde',
+                                      keyboardType: TextInputType.number,
+                                      hintStyle: TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width:
+                                          10), // Añadir un espacio entre los campos
+                                  Flexible(
+                                    flex: 2,
+                                    child: CustomReactiveTextField(
+                                      formControlName: 'mlargo2',
+                                      hint: 'medida largo hasta',
+                                      keyboardType: TextInputType.number,
+                                      hintStyle: TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 7),
+                              const Row(
+                                children: [
+                                  Flexible(
+                                    flex: 2,
+                                    child: CustomReactiveTextField(
+                                      formControlName: 'mancho1',
+                                      hint: 'medida ancho desde',
+                                      keyboardType: TextInputType.number,
+                                      hintStyle: TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width:
+                                          10), // Añadir un espacio entre los campos
+                                  Flexible(
+                                    flex: 2,
+                                    child: CustomReactiveTextField(
+                                      formControlName: 'mancho2',
+                                      hint: 'medida ancho hasta',
+                                      keyboardType: TextInputType.number,
+                                      hintStyle: TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 80.0),
+                                child: ElevatedButton(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colores.secondaryColor,
+                                    textStyle:
+                                        Theme.of(context).textTheme.labelLarge,
+                                  ),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.search,
+                                        color: Colores.scaffoldBackgroundColor,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        'Buscar',
+                                        style: TextStyle(
+                                            color: Colores
+                                                .scaffoldBackgroundColor),
+                                      ),
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    FocusScope.of(context).unfocus();
+                                    final String descripcio =
+                                        form.control('descripcio').value ?? '';
+                                    final String diseno =
+                                        form.control('diseno').value ?? '';
+                                    final double mlargo1 = double.tryParse(
+                                            form.control('mlargo1').value ??
+                                                '0.0') ??
+                                        0.0;
+
+                                    final double mlargo2 = double.tryParse(
+                                            form.control('mlargo2').value ??
+                                                '0.0') ??
+                                        0.0;
+                                    final double mancho1 = double.tryParse(
+                                            form.control('mancho1').value ??
+                                                '0.0') ??
+                                        0.0;
+
+                                    final double mancho2 = double.tryParse(
+                                            form.control('mancho2').value ??
+                                                '0.0') ??
+                                        0.0;
+                                    Map<String, dynamic> data = {};
+
+                                    if (mlargo1 > 0.0 && mlargo2 > 0.0) {
+                                      data = {
+                                        'descripcio': descripcio,
+                                        'diseno': diseno,
+                                        'mlargo1': mlargo1 - 0.01,
+                                        'mlargo2': mlargo2 + 0.01,
+                                      };
+                                    } else if (mancho1 > 0.0 && mancho2 > 0.0) {
+                                      data = {
+                                        'descripcio': descripcio,
+                                        'diseno': diseno,
+                                        'mancho1': mancho1 - 0.01,
+                                        'mancho2': mancho2 + 0.01,
+                                      };
+                                    } else if ((mlargo1 > 0.0 &&
+                                            mlargo2 > 0.0) &&
+                                        (mlargo1 > 0.0 && mlargo2 > 0.0)) {
+                                      data = {
+                                        'descripcio': descripcio,
+                                        'diseno': diseno,
+                                        'mlargo1': mlargo1 - 0.01,
+                                        'mlargo2': mlargo2 + 0.01,
+                                        'mancho1': mancho1 - 0.01,
+                                        'mancho2': mancho2 + 0.01,
+                                      };
+                                    } else {
+                                      data = {
+                                        'descripcio': descripcio,
+                                        'diseno': diseno,
+                                      };
+                                    }
+                                    context.read<InventarioBloc>().add(
+                                        GetInventarioProductEvent(data: data));
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        BlocBuilder<InventarioBloc, InventarioState>(
+                          builder: (context, state) {
+                            if (state is InventarioLoading) {
+                              return const Column(
+                                children: [
+                                  SizedBox(height: 150),
+                                  CircularProgressIndicator(
+                                    color: Colores.secondaryColor,
+                                  ),
+                                ],
+                              );
+                            }
+                            if (state is InventarioProductosLoaded) {
+                              final productos = state.productos;
+                              final selectedProducts = state.selectedProducts;
+
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: productos.length,
+                                itemBuilder: (context, index) {
+                                  final producto = productos[index];
+                                  final isSelected =
+                                      selectedProducts.contains(producto);
+                                  final existencia = productos[index].bodega1 +
+                                      productos[index].bodega2 +
+                                      productos[index].bodega3 +
+                                      productos[index].bodega4;
+                                  return GestureDetector(
+                                      onLongPress: () {
+                                        setState(() {
+                                          isMultiSelectMode = true;
+                                        });
+                                        context
+                                            .read<InventarioBloc>()
+                                            .add(StartMultiSelectEvent());
+                                      },
+                                      onTap: () {
+                                        if (isMultiSelectMode) {
+                                          context.read<InventarioBloc>().add(
+                                              ToggleProductSelectionEvent(
+                                                  producto));
+                                        } else {
+                                          context.read<ProductosBloc>().add(
+                                              AddProductToScannedEvent(
+                                                  producto));
+                                          context.read<InventarioBloc>().add(
+                                              ClearInventarioProductoEvent());
+                                        }
+                                      },
+                                      child: ListaProductosBodegaCard(
+                                        producto: producto,
+                                        isSelected: isSelected,
+                                        existencia: existencia.toInt(),
+                                        isMultiSelectMode: isMultiSelectMode,
+                                      ));
+                                },
+                              );
+                            }
+                            if (state is InventarioError) {
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 150),
+                                  Center(
+                                    child: SizedBox(
+                                      height: 60,
+                                      width: 300,
+                                      child: Card(
+                                        child: AutoSizeText(
+                                          state.message,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                            return Center(
+                              child: Container(),
+                            );
+                          },
+                        ),
                       ],
-                    );
-                  }
-                  return Center(
-                    child: Container(),
-                  );
-                },
+                    ),
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+            Positioned(
+              top: 8.0,
+              left: 0.0,
+              right: 0.0,
+              child: Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colores.secondaryColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );

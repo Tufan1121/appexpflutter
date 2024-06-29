@@ -1,6 +1,6 @@
-import 'package:appexpflutter_update/features/inventarios/presentation/screens/intenvario_bodega_screen.dart';
-import 'package:appexpflutter_update/features/inventarios/presentation/screens/intenvario_expo_screen.dart';
-import 'package:appexpflutter_update/features/inventarios/presentation/screens/intenvario_global_screen.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_bodega_screen.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_expo_screen.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_global_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
@@ -129,7 +129,7 @@ class InvetarioExpoRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const IntentarioExpoScreen();
+      const InventarioExpoScreen();
 }
 
 @TypedGoRoute<InvetarioBodegaRoute>(
@@ -142,7 +142,7 @@ class InvetarioBodegaRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const IntentarioBodegaScreen();
+      const InventarioBodegaScreen();
 }
 
 @TypedGoRoute<BusquedaGlobalRoute>(

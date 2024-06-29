@@ -49,13 +49,6 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                       backgroundColor: Colors.green,
                     ),
                   );
-                } else if (state is ClienteError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
                 }
               },
               builder: (context, state) {

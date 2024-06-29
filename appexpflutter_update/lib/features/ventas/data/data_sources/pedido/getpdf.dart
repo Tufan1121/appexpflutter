@@ -20,9 +20,11 @@ class Getpdf {
 
       if (response.statusCode == 200) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('PDF descargado en $filePath')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                'PDF descargado en $filePath',
+              ),
+              backgroundColor: Colors.green));
         }
       } else {
         if (context.mounted) {

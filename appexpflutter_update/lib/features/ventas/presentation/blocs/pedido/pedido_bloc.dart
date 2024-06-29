@@ -19,7 +19,9 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
 
   Future<void> _pedidoAddEvent(
       PedidoAddEvent event, Emitter<PedidoState> emit) async {
+    emit(PedidoLoading());
     final result = await pedidoUsecase.addPedido(event.data);
+
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (pedido) {
@@ -54,7 +56,7 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (success) {
-        add(PedidoAddIdPedidoEvent(pedido:event.pedido));
+        add(PedidoAddIdPedidoEvent(pedido: event.pedido));
       },
     );
   }
@@ -72,6 +74,7 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
 
   void _clearPedidoState(Emitter<PedidoState> emit) {
     UtilsVenta.listProductsOrder.clear();
+    UtilsVenta.total = 0.0;
     emit(PedidoInitial());
   }
 }

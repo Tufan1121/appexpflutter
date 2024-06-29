@@ -9,7 +9,7 @@ class ProductoExpoEntity extends Equatable {
   final int hm;
   final double largo;
   final double ancho;
-  final int precio;
+  final double precio;
   final String fulldescrip;
   final String almacen;
   final String compos;
@@ -71,37 +71,37 @@ class ProductoExpoEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    producto,
-    producto1,
-    descripcio,
-    diseno,
-    medidas,
-    hm,
-    largo,
-    ancho,
-    precio,
-    fulldescrip,
-    almacen,
-    compos,
-    origen,
-    rojo,
-    observac,
-    hobserva,
-    pathima1,
-    pathima2,
-    pathima3,
-    pathima4,
-    pathima5,
-    pathima6,
-    video1,
-    color1,
-    color2,
-    color3,
-    lava1,
-    lava2,
-    precio1,
-    precio2,
-    precio3,
-    desalmacen,
-  ];
+        producto,
+        producto1,
+        descripcio,
+        diseno,
+        medidas,
+        hm,
+        largo,
+        ancho,
+        precio,
+        fulldescrip,
+        almacen,
+        compos,
+        origen,
+        rojo,
+        observac,
+        hobserva,
+        pathima1,
+        pathima2,
+        pathima3,
+        pathima4,
+        pathima5,
+        pathima6,
+        video1,
+        color1,
+        color2,
+        color3,
+        lava1,
+        lava2,
+        precio1,
+        precio2,
+        precio3,
+        desalmacen,
+      ];
 }

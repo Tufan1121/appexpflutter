@@ -39,20 +39,22 @@ mixin Modal {
         ),
         content: SizedBox(
           height: 470,
-          child: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            child: SizedBox(
-              height: size.height * 0.60,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 20),
-                  Flexible(
-                      flex: 1,
-                      child: ClienteFormEdit(
-                        cliente: cliente,
-                      )),
-                ],
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: SizedBox(
+                height: size.height * 0.60,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 20),
+                    Flexible(
+                        flex: 1,
+                        child: ClienteFormEdit(
+                          cliente: cliente,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),

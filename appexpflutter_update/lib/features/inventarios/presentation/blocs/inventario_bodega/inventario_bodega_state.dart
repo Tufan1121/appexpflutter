@@ -13,13 +13,12 @@ class InventarioLoading extends InventarioBodegaState {}
 
 class InventarioProductosLoaded extends InventarioBodegaState {
   final List<ProductoEntity> productos;
-  final List<ProductoEntity> selectedProducts; // Añadir esta línea
 
   const InventarioProductosLoaded(
-      {required this.productos, this.selectedProducts = const []});
+      {required this.productos});
 
   @override
-  List<Object> get props => [productos, selectedProducts];
+  List<Object> get props => [productos];
 }
 
 class InventarioError extends InventarioBodegaState {

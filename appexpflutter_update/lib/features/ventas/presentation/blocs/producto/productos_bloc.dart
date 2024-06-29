@@ -12,8 +12,6 @@ part 'productos_state.dart';
 class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
   final ProductoUsecase productoUsecase;
   List<ProductoEntity> scannedProducts = [];
-  Map<String, int> productQuantities = {};
-  Map<String, int> productSelectedPrices = {};
 
   ProductosBloc({required this.productoUsecase}) : super(ProductoInitial()) {
     on<GetQRProductEvent>(_getQRProductEvent);
@@ -29,8 +27,6 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
       transformer: debounce(const Duration(milliseconds: 500)),
     );
     on<UpdateProductEvent>(_updateProductEvent);
-    on<UpdateProductQuantityEvent>(_updateProductQuantityEvent);
-    on<UpdateProductSelectedPriceEvent>(_updateProductSelectedPriceEvent);
   }
 
   Future<void> _addSelectedProductsToScannedEvent(
@@ -99,8 +95,6 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
 
   void _clearProductsState(Emitter<ProductosState> emit) {
     scannedProducts.clear();
-    productQuantities.clear();
-    productSelectedPrices.clear();
     emit(ProductoInitial());
   }
 
@@ -123,16 +117,4 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
     emit(ProductosLoaded(productos: List.from(scannedProducts)));
   }
 
-  Future<void> _updateProductQuantityEvent(
-      UpdateProductQuantityEvent event, Emitter<ProductosState> emit) async {
-    productQuantities[event.productoClave] = event.newQuantity;
-    emit(ProductosLoaded(productos: List.from(scannedProducts)));
-  }
-
-  Future<void> _updateProductSelectedPriceEvent(
-      UpdateProductSelectedPriceEvent event,
-      Emitter<ProductosState> emit) async {
-    productSelectedPrices[event.productoClave] = event.selectedPrice;
-    emit(ProductosLoaded(productos: List.from(scannedProducts)));
-  }
 }

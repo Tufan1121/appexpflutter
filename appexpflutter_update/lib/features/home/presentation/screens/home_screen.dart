@@ -112,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                               const Divider(),
                               CustomListTile(
-                                text: 'INVENTARIO GLOBAL',
+                                text: 'BUSQUEDA GLOBAL',
                                 icon: FontAwesomeIcons.store,
                                 onTap: () =>
                                     BusquedaGlobalRoute().push(context),

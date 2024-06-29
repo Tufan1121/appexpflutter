@@ -2,7 +2,13 @@ import 'dart:io';
 
 import 'package:appexpflutter_update/config/my_http_overrides.dart';
 import 'package:appexpflutter_update/features/auth/config/config_token.dart';
+import 'package:appexpflutter_update/features/inventarios/data/data_sources/inventario_expo_data_source.dart';
+import 'package:appexpflutter_update/features/inventarios/data/data_sources/inventario_expo_data_source_impl.dart';
+import 'package:appexpflutter_update/features/inventarios/data/repositories/inventario_expo_repository_impl.dart';
+import 'package:appexpflutter_update/features/inventarios/domain/repositories/inventario_expo_repository.dart';
+import 'package:appexpflutter_update/features/inventarios/domain/usecases/inventario_expo_usecase.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source_impl.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/pedido_data_source.dart';

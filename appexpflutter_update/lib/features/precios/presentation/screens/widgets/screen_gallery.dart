@@ -10,10 +10,10 @@ class FullScreenGallery extends StatelessWidget {
   final int initialIndex;
 
   const FullScreenGallery({
-    Key? key,
+    super.key,
     required this.imageUrls,
     required this.initialIndex,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

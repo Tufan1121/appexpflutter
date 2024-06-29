@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<InventarioBloc>(create: (_) => injector<InventarioBloc>()),
         BlocProvider<InventarioBodegaBloc>(
             create: (_) => injector<InventarioBodegaBloc>()),
+        BlocProvider<InventarioExpoBloc>(
+            create: (_) => injector<InventarioExpoBloc>()),
       ],
       child: FutureBuilder(
         future: _init(),
