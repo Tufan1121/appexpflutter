@@ -225,6 +225,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                     labelText: 'Observaciones'),
                                 maxLines: 3, // Permitir múltiples líneas
                                 keyboardType: TextInputType.multiline,
+                                onTapOutside: (event) {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                },
                                 validationMessages: {
                                   ValidationMessage.required: (error) =>
                                       'Este campo es requerido',
@@ -269,7 +273,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                       if (state is PedidoDetalleLoaded) {
                                         loading.value = false;
                                         debePorPagar.value = 0.0;
-                                        FocusScope.of(context).unfocus();
+
                                         ScaffoldMessenger.of(context)
                                             .removeCurrentSnackBar();
                                         ScaffoldMessenger.of(context)
@@ -286,7 +290,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                         _showDownloadModal(context, pdfUrl,
                                             state.pedido.pedidos);
 
-                                        form.reset();
+                                        //  form.reset();
                                         context
                                             .read<ClienteBloc>()
                                             .add(ClearClienteStateEvent());
@@ -528,6 +532,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                 style: TextStyle(color: Colores.secondaryColor),
               ),
               onPressed: () {
+                FocusScope.of(context).unfocus();
                 Navigator.of(context).pop();
               },
             ),
@@ -536,14 +541,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                 backgroundColor: Colores.secondaryColor,
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Center(
-                child: Text(
-                  'Aceptar',
-                  style: TextStyle(color: Colores.scaffoldBackgroundColor),
-                ),
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
               ),
               onPressed: () {
-                form.reset();
+                FocusScope.of(context).unfocus();
                 context.read<ClienteBloc>().add(ClearClienteStateEvent());
                 context.read<ProductosBloc>().add(ClearProductoStateEvent());
                 context.read<PedidoBloc>().add(ClearPedidoStateEvent());
@@ -565,6 +568,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     final getpdf = Getpdf(context: context);
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Descargar PDF'),
@@ -579,24 +583,35 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
             ],
           ),
           actions: [
-            ElevatedButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colores.secondaryColor,
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text(
-                'Aceptar',
-                style: TextStyle(color: Colores.scaffoldBackgroundColor),
-              ),
-              onPressed: () {
-                // opcion 1
-                getpdf.downloadPDF(pdfUrl, nombrePdf);
-                // opcion 2
-                // _openPDF(pdfUrl);
+            Center(
+              child: ElevatedButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colores.secondaryColor,
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text(
+                  'Aceptar',
+                  style: TextStyle(color: Colores.scaffoldBackgroundColor),
+                ),
+                onPressed: () {
+                  FocusScope.of(context).unfocus();
+                  // opcion 1
+                  getpdf.downloadPDF(pdfUrl, nombrePdf);
+                  // opcion 2
+                  // _openPDF(pdfUrl);
 
-                
-                Navigator.of(context).pop();
-              },
+                  form.control('metodoDePago1').reset();
+                  form.control('metodoDePago2').reset();
+                  form.control('metodoDePago3').reset();
+                  form.control('observaciones').reset();
+                  form.control('anticipoPago1').reset();
+                  form.control('anticipoPago2').reset();
+                  form.control('anticipoPago3').reset();
+                  form.control('entregado').reset();
+                  Navigator.of(context).pop();
+                  HomeRoute().go(context);
+                },
+              ),
             ),
           ],
         );
