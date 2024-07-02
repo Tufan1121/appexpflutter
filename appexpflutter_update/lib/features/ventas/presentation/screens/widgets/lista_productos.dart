@@ -35,37 +35,46 @@ class ListaProductos extends HookWidget {
 
         final count = countList.value[i];
         final selectedPrice = selectedPriceList.value[i];
+        // print('Producto ${productos[i].producto}: count = $count, selectedPrice = $selectedPrice');
+
         if (count > 0) {
-          double precio = 0.0;
+          double precioUnitario = 0.0;
           switch (selectedPrice) {
             case 1:
-              precio = productos[i].precio1.toDouble();
+              precioUnitario = productos[i].precio1.toDouble();
               break;
             case 2:
-              precio = productos[i].precio2.toDouble();
+              precioUnitario = productos[i].precio2.toDouble();
               break;
             case 3:
-              precio = productos[i].precio3.toDouble();
+              precioUnitario = productos[i].precio3.toDouble();
               break;
             default:
               break;
           }
-          final subtotal = precio * count;
+          final subtotal = precioUnitario * count;
+          print('subtotal = $subtotal');
           newTotal += subtotal;
-          totalDetalle.value = precio * countList.value[i];
           UtilsVenta.listProductsOrder.add(
             DetallePedido(
               idPedido: 0,
               clave: productos[i].producto1,
               clave2: productos[i].producto,
-              cantidad: countList.value[i],
-              precio: totalDetalle.value,
+              cantidad: count,
+              precio: subtotal,
             ),
           );
         }
       }
+      print('newTotal = $newTotal');
       total.value = newTotal;
       UtilsVenta.total = total.value;
+
+      // Imprimir detalles para depuración
+      print('Total Calculado: ${Utils.formatPrice(newTotal)}');
+      for (var detalle in UtilsVenta.listProductsOrder) {
+        print('Detalle: ${detalle}');
+      }
     }
 
     useEffect(() {
@@ -271,8 +280,6 @@ class ListaProductos extends HookWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    const Text('Precio Personalizado:'),
-                                    const SizedBox(width: 10),
                                     SizedBox(
                                       width: 80,
                                       height: 32,
@@ -282,6 +289,8 @@ class ListaProductos extends HookWidget {
                                         onChanged: (value) {
                                           customPrice.value =
                                               double.tryParse(value);
+                                        },
+                                        onSubmitted: (value) {
                                           if (customPrice.value != null) {
                                             selectedPriceList.value[index] =
                                                 3; // Precio personalizado
@@ -292,6 +301,41 @@ class ListaProductos extends HookWidget {
                                           border: OutlineInputBorder(),
                                           contentPadding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 0),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    SizedBox(
+                                      height: 33,
+                                      width: 110,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colores.secondaryColor),
+                                        onPressed: customPrice.value != null
+                                            ? () {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                                final price = double.parse(
+                                                    customPriceController.text);
+                                                final updatedProduct =
+                                                    producto.copyWith(
+                                                        precio3: price.toInt());
+                                                context
+                                                    .read<ProductosBloc>()
+                                                    .add(UpdateProductEvent(
+                                                        updatedProduct));
+                                                updateTotal();
+                                              }
+                                            : null,
+                                        child: const AutoSizeText(
+                                          'APLICAR DESCUENTO',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colores
+                                                  .scaffoldBackgroundColor),
+                                          // maxLines: 1,
+                                          minFontSize: 8,
                                         ),
                                       ),
                                     ),
