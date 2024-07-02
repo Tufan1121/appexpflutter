@@ -145,7 +145,7 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                         const SizedBox(height: 10),
                                         const CustomReactiveTextField(
                                           formControlName: 'diseno',
-                                          hint: 'Diseño',
+                                          hint: 'Color',
                                           hintStyle: TextStyle(fontSize: 15),
                                         ),
                                       ],
@@ -170,8 +170,8 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                             SizedBox(width: 10),
                                             Expanded(
                                               child: CustomReactiveTextField(
-                                                formControlName: 'mancho1',
-                                                hint: 'Ancho',
+                                                formControlName: 'mlargo2',
+                                                hint: 'Largo',
                                                 keyboardType:
                                                     TextInputType.number,
                                                 hintStyle:
@@ -185,8 +185,8 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                           children: [
                                             Expanded(
                                               child: CustomReactiveTextField(
-                                                formControlName: 'mlargo2',
-                                                hint: 'Largo',
+                                                formControlName: 'mancho1',
+                                                hint: 'Ancho',
                                                 keyboardType:
                                                     TextInputType.number,
                                                 hintStyle:

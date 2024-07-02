@@ -17,7 +17,6 @@ class ListaProductos extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
-    final totalDetalle = useState<double>(0.0);
 
     // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
     final countList = useState<List<int>>(List.filled(productos.length, 1));
@@ -53,7 +52,6 @@ class ListaProductos extends HookWidget {
               break;
           }
           final subtotal = precioUnitario * count;
-          print('subtotal = $subtotal');
           newTotal += subtotal;
           UtilsVenta.listProductsOrder.add(
             DetallePedido(
@@ -61,20 +59,13 @@ class ListaProductos extends HookWidget {
               clave: productos[i].producto1,
               clave2: productos[i].producto,
               cantidad: count,
-              precio: subtotal,
+              precio: precioUnitario,
             ),
           );
         }
       }
-      print('newTotal = $newTotal');
       total.value = newTotal;
       UtilsVenta.total = total.value;
-
-      // Imprimir detalles para depuración
-      print('Total Calculado: ${Utils.formatPrice(newTotal)}');
-      for (var detalle in UtilsVenta.listProductsOrder) {
-        print('Detalle: ${detalle}');
-      }
     }
 
     useEffect(() {

@@ -77,7 +77,7 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
                               SizedBox(height: 10),
                               CustomReactiveTextField(
                                 formControlName: 'diseno',
-                                hint: 'Diseño',
+                                hint: 'Color',
                                 hintStyle: TextStyle(fontSize: 15),
                               ),
                             ],
@@ -100,8 +100,8 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
                                   SizedBox(width: 10),
                                   Expanded(
                                     child: CustomReactiveTextField(
-                                      formControlName: 'mancho1',
-                                      hint: 'Ancho',
+                                      formControlName: 'mlargo2',
+                                      hint: 'Largo',
                                       keyboardType: TextInputType.number,
                                       hintStyle: TextStyle(fontSize: 15),
                                     ),
@@ -113,8 +113,8 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
                                 children: [
                                   Expanded(
                                     child: CustomReactiveTextField(
-                                      formControlName: 'mlargo2',
-                                      hint: 'Largo',
+                                      formControlName: 'mancho1',
+                                      hint: 'Ancho',
                                       keyboardType: TextInputType.number,
                                       hintStyle: TextStyle(fontSize: 15),
                                     ),

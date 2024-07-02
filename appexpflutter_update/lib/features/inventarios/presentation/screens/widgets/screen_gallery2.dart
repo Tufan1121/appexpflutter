@@ -80,23 +80,23 @@ class FullScreenGallery2 extends StatelessWidget {
               children: [
                 Text(
                   'Precio Normal: ${Utils.formatPrice(producto.precio1.toDouble())}',
-                  style: TextStyle(fontSize: 16.0),
+                  style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
                   'Precio Expo: ${Utils.formatPrice(producto.precio2.toDouble())}',
-                  style: TextStyle(fontSize: 16.0),
+                  style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
                   'Precio Mayoreo: ${Utils.formatPrice(producto.precio3.toDouble())}',
-                  style: TextStyle(fontSize: 16.0),
+                  style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
                   'Existencia: ${producto.hm}',
-                  style: TextStyle(fontSize: 16.0),
+                  style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
-                  producto.desalmacen,
-                  style: TextStyle(fontSize: 16.0),
+                  'Almacen: ${producto.desalmacen}',
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
