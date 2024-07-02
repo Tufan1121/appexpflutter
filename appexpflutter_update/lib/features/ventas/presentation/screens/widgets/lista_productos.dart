@@ -1,11 +1,11 @@
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:appexpflutter_update/config/utils.dart';
+import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
@@ -18,15 +18,21 @@ class ListaProductos extends HookWidget {
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
     final totalDetalle = useState<double>(0.0);
-    final countList =
-        useState<List<int>>(List<int>.filled(productos.length, 1));
+
+    // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
+    final countList = useState<List<int>>(List.filled(productos.length, 1));
     final selectedPriceList =
-        useState<List<int>>(List<int>.filled(productos.length, 1));
+        useState<List<int>>(List.filled(productos.length, 1));
 
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
       for (var i = 0; i < productos.length; i++) {
+        if (i >= countList.value.length ||
+            i >= selectedPriceList.value.length) {
+          continue; // Evita acceder fuera de los límites de las listas
+        }
+
         final count = countList.value[i];
         final selectedPrice = selectedPriceList.value[i];
         if (count > 0) {
@@ -72,7 +78,7 @@ class ListaProductos extends HookWidget {
       final newCountList = List<int>.from(countList.value);
       final newSelectedPriceList = List<int>.from(selectedPriceList.value);
 
-      // Ajustar la longitud de las listas
+      // Ajusta la longitud de las listas
       if (newCountList.length < productos.length) {
         newCountList.addAll(
             List<int>.filled(productos.length - newCountList.length, 1));
@@ -265,51 +271,27 @@ class ListaProductos extends HookWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    const Text('Precio Personalizado:'),
+                                    const SizedBox(width: 10),
                                     SizedBox(
-                                      width: 50,
-                                      height: 50,
+                                      width: 80,
+                                      height: 32,
                                       child: TextField(
-                                        decoration: const InputDecoration(),
-                                        style: const TextStyle(fontSize: 15),
-                                        inputFormatters: const [],
                                         controller: customPriceController,
                                         keyboardType: TextInputType.number,
                                         onChanged: (value) {
                                           customPrice.value =
                                               double.tryParse(value);
+                                          if (customPrice.value != null) {
+                                            selectedPriceList.value[index] =
+                                                3; // Precio personalizado
+                                            updateTotal();
+                                          }
                                         },
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    SizedBox(
-                                      height: 33,
-                                      width: 110,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Colores.secondaryColor),
-                                        onPressed: customPrice.value != null
-                                            ? () {
-                                                final price = double.parse(
-                                                    customPriceController.text);
-                                                final updatedProduct =
-                                                    producto.copyWith(
-                                                        precio3: price.toInt());
-                                                context
-                                                    .read<ProductosBloc>()
-                                                    .add(UpdateProductEvent(
-                                                        updatedProduct));
-                                                updateTotal();
-                                              }
-                                            : null,
-                                        child: const AutoSizeText(
-                                          'APLICAR DESCUENTO',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colores
-                                                  .scaffoldBackgroundColor),
-                                          // maxLines: 1,
-                                          minFontSize: 8,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 0),
                                         ),
                                       ),
                                     ),
@@ -335,7 +317,7 @@ class ListaProductos extends HookWidget {
     required String label,
     required double price,
     required bool value,
-    required void Function(bool?)? onChanged,
+    required Function(bool?) onChanged,
   }) {
     return Column(
       children: [
@@ -347,11 +329,7 @@ class ListaProductos extends HookWidget {
           children: [
             Checkbox(
               value: value,
-              onChanged: (bool? newValue) {
-                if (newValue == true) {
-                  onChanged!(true);
-                }
-              },
+              onChanged: onChanged,
               activeColor: Colores.secondaryColor,
             ),
             const SizedBox(width: 5),

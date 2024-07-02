@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:appexpflutter_update/config/utils.dart';
+import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
@@ -18,13 +18,21 @@ class ListaProductos extends HookWidget {
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
     final totalDetalle = useState<double>(0.0);
-    final countList = useState<List<int>>(List<int>.filled(productos.length, 1));
-    final selectedPriceList = useState<List<int>>(List<int>.filled(productos.length, 1));
+// Hook para countList y selectedPriceList
+    // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
+    final countList = useState<List<int>>(List.filled(productos.length, 1));
+    final selectedPriceList =
+        useState<List<int>>(List.filled(productos.length, 1));
 
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
       for (var i = 0; i < productos.length; i++) {
+        if (i >= countList.value.length ||
+            i >= selectedPriceList.value.length) {
+          // Si el índice está fuera del rango, omite este ciclo
+          continue;
+        }
         final count = countList.value[i];
         final selectedPrice = selectedPriceList.value[i];
         if (count > 0) {
@@ -72,11 +80,14 @@ class ListaProductos extends HookWidget {
 
       // Ajustar la longitud de las listas
       if (newCountList.length < productos.length) {
-        newCountList.addAll(List<int>.filled(productos.length - newCountList.length, 1));
-        newSelectedPriceList.addAll(List<int>.filled(productos.length - newSelectedPriceList.length, 1));
+        newCountList.addAll(
+            List<int>.filled(productos.length - newCountList.length, 1));
+        newSelectedPriceList.addAll(List<int>.filled(
+            productos.length - newSelectedPriceList.length, 1));
       } else if (newCountList.length > productos.length) {
         newCountList.removeRange(productos.length, newCountList.length);
-        newSelectedPriceList.removeRange(productos.length, newSelectedPriceList.length);
+        newSelectedPriceList.removeRange(
+            productos.length, newSelectedPriceList.length);
       }
 
       countList.value = newCountList;
@@ -113,7 +124,8 @@ class ListaProductos extends HookWidget {
               return HookBuilder(
                 builder: (context) {
                   final count = useState(countList.value[index]);
-                  final selectedPrice = useState<int>(selectedPriceList.value[index]);
+                  final selectedPrice =
+                      useState<int>(selectedPriceList.value[index]);
                   final customPrice = useState<double?>(null);
                   final customPriceController = useTextEditingController(
                       text: producto.precio3.toString());

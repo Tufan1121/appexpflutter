@@ -29,8 +29,9 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
             Pedido: ${pedido.idPedido}
             Pedidos: ${pedido.pedidos}
             expo: ${pedido.idExpo}
-
-            
+            anticipo: ${event.data['anticipo']}
+            total_pagar: ${event.data['total_pagar']}
+            total: ${event.data['total_pagar'] - event.data['anticipo']}
 ''');
         add(PedidoAddDetalleEvent(pedido: pedido, products: event.products));
         emit(PedidoLoaded(pedido: pedido));
@@ -50,7 +51,7 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
       };
     }).toList();
 
-    print(detallesData);
+    // print(detallesData);
 
     final result = await pedidoUsecase.addDetallePedido(detallesData);
     result.fold(

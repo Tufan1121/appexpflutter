@@ -34,4 +34,28 @@ class InventarioExpoDataSourceImpl implements InventarioExpoDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<List<ProductoExpoModel>> getProductoGlobal(
+      Map<String, dynamic> data) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.get('/busquedaGlobal/',
+          queryParameters: data,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ));
+      final List<dynamic> jsonList = result.data;
+      final productosBodega = jsonList
+          .map(
+            (json) => ProductoExpoModel.fromJson(json),
+          )
+          .toList();
+      return productosBodega;
+    } catch (_) {
+      rethrow;
+    }
+  }
 }

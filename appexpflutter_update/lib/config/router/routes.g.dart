@@ -11,6 +11,8 @@ List<RouteBase> get $appRoutes => [
       $homeRoute,
       $preciosRoute,
       $photoGalleryRoute,
+      $photoGalleryIBodegasRoute,
+      $photoGalleryRoute2,
       $clienteNuevoRoute,
       $clienteExistenteRoute,
       $pedidoRoute,
@@ -114,6 +116,74 @@ extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $photoGalleryIBodegasRoute => GoRouteData.$route(
+      path: '/galeria_ibodegas',
+      factory: $PhotoGalleryIBodegasRouteExtension._fromState,
+    );
+
+extension $PhotoGalleryIBodegasRouteExtension on PhotoGalleryIBodegasRoute {
+  static PhotoGalleryIBodegasRoute _fromState(GoRouterState state) =>
+      PhotoGalleryIBodegasRoute(
+        imageUrls:
+            state.uri.queryParametersAll['image-urls']!.map((e) => e).toList(),
+        initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
+        $extra: state.extra as ProductoEntity,
+      );
+
+  String get location => GoRouteData.$location(
+        '/galeria_ibodegas',
+        queryParams: {
+          'image-urls': imageUrls.map((e) => e).toList(),
+          'initial-index': initialIndex.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
+RouteBase get $photoGalleryRoute2 => GoRouteData.$route(
+      path: '/galeria_dos',
+      factory: $PhotoGalleryRoute2Extension._fromState,
+    );
+
+extension $PhotoGalleryRoute2Extension on PhotoGalleryRoute2 {
+  static PhotoGalleryRoute2 _fromState(GoRouterState state) =>
+      PhotoGalleryRoute2(
+        imageUrls:
+            state.uri.queryParametersAll['image-urls']!.map((e) => e).toList(),
+        initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
+        $extra: state.extra as ProductoExpoEntity,
+      );
+
+  String get location => GoRouteData.$location(
+        '/galeria_dos',
+        queryParams: {
+          'image-urls': imageUrls.map((e) => e).toList(),
+          'initial-index': initialIndex.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $clienteNuevoRoute => GoRouteData.$route(

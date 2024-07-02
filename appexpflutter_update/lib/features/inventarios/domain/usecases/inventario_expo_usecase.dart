@@ -11,4 +11,9 @@ class InventarioExpoUsecase {
       Map<String, dynamic> data) async {
     return await inventarioExpoRepository.getProductoExpo(data);
   }
+
+  Future<Either<NetworkException, List<ProductoExpoEntity>>> getProductoGlobal(
+      Map<String, dynamic> data) async {
+    return await inventarioExpoRepository.getProductoGlobal(data);
+  }
 }

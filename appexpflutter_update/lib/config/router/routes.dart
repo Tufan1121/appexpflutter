@@ -1,6 +1,10 @@
+import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_bodega_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_expo_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_global_screen.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery2.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery_ibodega.dart';
+import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
@@ -57,6 +61,50 @@ class PhotoGalleryRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       FullScreenGallery(imageUrls: imageUrls, initialIndex: initialIndex);
+}
+
+@TypedGoRoute<PhotoGalleryIBodegasRoute>(
+  path: PhotoGalleryIBodegasRoute.path,
+)
+class PhotoGalleryIBodegasRoute extends GoRouteData {
+  static const path = '/galeria_ibodegas';
+  final List<String> imageUrls;
+  final int initialIndex;
+  final ProductoEntity $extra;
+  PhotoGalleryIBodegasRoute(
+      {required this.imageUrls,
+      required this.initialIndex,
+      required this.$extra});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      FullScreenGalleryIBodegas(
+        imageUrls: imageUrls,
+        initialIndex: initialIndex,
+        producto: $extra,
+      );
+}
+
+@TypedGoRoute<PhotoGalleryRoute2>(
+  path: PhotoGalleryRoute2.path,
+)
+class PhotoGalleryRoute2 extends GoRouteData {
+  static const path = '/galeria_dos';
+  final List<String> imageUrls;
+  final int initialIndex;
+  final ProductoExpoEntity $extra;
+
+  PhotoGalleryRoute2(
+      {required this.imageUrls,
+      required this.initialIndex,
+      required this.$extra});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => FullScreenGallery2(
+        imageUrls: imageUrls,
+        initialIndex: initialIndex,
+        producto: $extra,
+      );
 }
 
 @TypedGoRoute<ClienteNuevoRoute>(

@@ -11,9 +11,25 @@ class InventarioExpoRepositoryImpl implements InventarioExpoRepository {
   InventarioExpoRepositoryImpl({required this.inventarioExpoDataSource});
   @override
   Future<Either<NetworkException, List<ProductoExpoEntity>>> getProductoExpo(
-      Map<String, dynamic> map) async {
+      Map<String, dynamic> data) async {
     try {
-      final result = await inventarioExpoDataSource.getProductoExpo(map);
+      final result = await inventarioExpoDataSource.getProductoExpo(data);
+      // Mapear la lista de ProductoModel a ProductoEntity usando toEntity()
+      final productosExpoEntity =
+          result.map((model) => model.toEntity()).toList();
+      return Right(productosExpoEntity);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    } catch (e) {
+      return Left(
+          NetworkException.customMessage('Ocurrió un error inesperado. '));
+    }
+  }
+  
+  @override
+  Future<Either<NetworkException, List<ProductoExpoEntity>>> getProductoGlobal(Map<String, dynamic> data) async{
+    try {
+      final result = await inventarioExpoDataSource.getProductoGlobal(data);
       // Mapear la lista de ProductoModel a ProductoEntity usando toEntity()
       final productosExpoEntity =
           result.map((model) => model.toEntity()).toList();

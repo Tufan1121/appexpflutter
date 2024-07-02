@@ -1,6 +1,6 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
-import 'package:appexpflutter_update/config/utils.dart';
+import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 // import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';

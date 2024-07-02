@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventar
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos_bodega.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
@@ -75,6 +76,23 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                     context.read<ProductosBloc>().add(
                                         AddSelectedProductsToScannedEvent(
                                             state.selectedProducts));
+
+                                    _showModal(
+                                      context: context,
+                                      icon: const Center(
+                                        child: FaIcon(
+                                          FontAwesomeIcons.circleCheck,
+                                          color: Colors.green,
+                                          size: 40,
+                                        ),
+                                      ),
+                                      title: 'Agregado',
+                                      menssage:
+                                          'Se agrego los productos a la lista',
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    );
                                     context
                                         .read<InventarioBloc>()
                                         .add(ClearInventarioProductoEvent());
@@ -94,75 +112,93 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                             children: [
                               const Row(
                                 children: [
-                                  Flexible(
-                                    flex: 2,
-                                    child: CustomReactiveTextField(
-                                      formControlName: 'descripcio',
-                                      hint: 'Calidad',
-                                      hintStyle: TextStyle(fontSize: 15),
-                                    ),
+                                  Spacer(
+                                    flex: 1,
                                   ),
-                                  SizedBox(
-                                      width:
-                                          10), // Añadir un espacio entre los campos
-                                  Flexible(
-                                    flex: 2,
-                                    child: CustomReactiveTextField(
-                                      formControlName: 'diseno',
-                                      hint: 'Diseño',
-                                      hintStyle: TextStyle(fontSize: 15),
-                                    ),
+                                  Text(
+                                    'Rango de medidas',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colores.secondaryColor),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 7),
+                              const SizedBox(height: 10),
                               const Row(
                                 children: [
-                                  Flexible(
-                                    flex: 2,
-                                    child: CustomReactiveTextField(
-                                      formControlName: 'mlargo1',
-                                      hint: 'medida largo desde',
-                                      keyboardType: TextInputType.number,
-                                      hintStyle: TextStyle(fontSize: 15),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        CustomReactiveTextField(
+                                          formControlName: 'descripcio',
+                                          hint: 'Calidad',
+                                          hintStyle: TextStyle(fontSize: 15),
+                                        ),
+                                        SizedBox(height: 10),
+                                        CustomReactiveTextField(
+                                          formControlName: 'diseno',
+                                          hint: 'Diseño',
+                                          hintStyle: TextStyle(fontSize: 15),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(
-                                      width:
-                                          10), // Añadir un espacio entre los campos
-                                  Flexible(
-                                    flex: 2,
-                                    child: CustomReactiveTextField(
-                                      formControlName: 'mlargo2',
-                                      hint: 'medida largo hasta',
-                                      keyboardType: TextInputType.number,
-                                      hintStyle: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 7),
-                              const Row(
-                                children: [
-                                  Flexible(
-                                    flex: 2,
-                                    child: CustomReactiveTextField(
-                                      formControlName: 'mancho1',
-                                      hint: 'medida ancho desde',
-                                      keyboardType: TextInputType.number,
-                                      hintStyle: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width:
-                                          10), // Añadir un espacio entre los campos
-                                  Flexible(
-                                    flex: 2,
-                                    child: CustomReactiveTextField(
-                                      formControlName: 'mancho2',
-                                      hint: 'medida ancho hasta',
-                                      keyboardType: TextInputType.number,
-                                      hintStyle: TextStyle(fontSize: 15),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: CustomReactiveTextField(
+                                                formControlName: 'mlargo1',
+                                                hint: 'Largo',
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                hintStyle:
+                                                    TextStyle(fontSize: 15),
+                                              ),
+                                            ),
+                                            SizedBox(width: 10),
+                                            Expanded(
+                                              child: CustomReactiveTextField(
+                                                formControlName: 'mancho1',
+                                                hint: 'Ancho',
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                hintStyle:
+                                                    TextStyle(fontSize: 15),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: CustomReactiveTextField(
+                                                formControlName: 'mlargo2',
+                                                hint: 'Largo',
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                hintStyle:
+                                                    TextStyle(fontSize: 15),
+                                              ),
+                                            ),
+                                            SizedBox(width: 10),
+                                            Expanded(
+                                              child: CustomReactiveTextField(
+                                                formControlName: 'mancho2',
+                                                hint: 'Ancho',
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                hintStyle:
+                                                    TextStyle(fontSize: 15),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -173,10 +209,11 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                     horizontal: 80.0),
                                 child: ElevatedButton(
                                   style: TextButton.styleFrom(
-                                    backgroundColor: Colores.secondaryColor,
-                                    textStyle:
-                                        Theme.of(context).textTheme.labelLarge,
-                                  ),
+                                      backgroundColor: Colores.secondaryColor,
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge,
+                                      elevation: 4),
                                   child: const Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -203,7 +240,6 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                             form.control('mlargo1').value ??
                                                 '0.0') ??
                                         0.0;
-
                                     final double mlargo2 = double.tryParse(
                                             form.control('mlargo2').value ??
                                                 '0.0') ??
@@ -212,7 +248,6 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                             form.control('mancho1').value ??
                                                 '0.0') ??
                                         0.0;
-
                                     final double mancho2 = double.tryParse(
                                             form.control('mancho2').value ??
                                                 '0.0') ??
@@ -254,7 +289,7 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                         GetInventarioProductEvent(data: data));
                                   },
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -305,6 +340,23 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                           context.read<ProductosBloc>().add(
                                               AddProductToScannedEvent(
                                                   producto));
+
+                                          _showModal(
+                                            context: context,
+                                            icon: const Center(
+                                              child: FaIcon(
+                                                FontAwesomeIcons.circleCheck,
+                                                color: Colors.green,
+                                                size: 40,
+                                              ),
+                                            ),
+                                            title: 'Agregado',
+                                            menssage:
+                                                'Se agrego a la lista el producto con la clave: ${producto.producto1}',
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          );
                                           context.read<InventarioBloc>().add(
                                               ClearInventarioProductoEvent());
                                         }
@@ -365,6 +417,46 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showModal(
+      {required BuildContext context,
+      required String title,
+      required String menssage,
+      required VoidCallback onPressed,
+      final Widget? icon}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          icon: icon,
+          title: Text(title),
+          content: Text(
+            menssage,
+            style: const TextStyle(fontSize: 15),
+          ),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colores.secondaryColor,
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text(
+                  'Aceptar',
+                  style: TextStyle(color: Colores.scaffoldBackgroundColor),
+                ),
+                onPressed: () {
+                  // opcion 1
+                  Navigator.of(context).pop();
+                },
               ),
             ),
           ],
