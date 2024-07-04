@@ -20,6 +20,7 @@ List<RouteBase> get $appRoutes => [
       $invetarioExpoRoute,
       $invetarioBodegaRoute,
       $busquedaGlobalRoute,
+      $historialRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -348,6 +349,28 @@ extension $BusquedaGlobalRouteExtension on BusquedaGlobalRoute {
 
   String get location => GoRouteData.$location(
         '/busqueda_global',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $historialRoute => GoRouteData.$route(
+      path: '/historial',
+      factory: $HistorialRouteExtension._fromState,
+    );
+
+extension $HistorialRouteExtension on HistorialRoute {
+  static HistorialRoute _fromState(GoRouterState state) => HistorialRoute();
+
+  String get location => GoRouteData.$location(
+        '/historial',
       );
 
   void go(BuildContext context) => context.go(location);

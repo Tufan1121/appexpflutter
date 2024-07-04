@@ -94,10 +94,12 @@ class SearchPrices extends HookWidget {
               padding: const EdgeInsets.all(8),
               // Estilos adicionales según sea necesario
             ),
-            child: const Icon(
-              Icons.qr_code_2_rounded,
-              color: Colores.secondaryColor,
-              size: 40,
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Image.asset(
+                'assets/iconos/qr/qr 72_.png',
+                scale: 5,
+              ),
             ),
           ),
         ],

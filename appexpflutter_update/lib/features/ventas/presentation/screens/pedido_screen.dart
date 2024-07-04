@@ -78,10 +78,9 @@ class _PedidoScreenState extends State<PedidoScreen> {
           shape: const CircleBorder(),
           padding: const EdgeInsets.all(8),
         ),
-        child: const FaIcon(
-          FontAwesomeIcons.truck,
-          color: Colores.secondaryColor,
-          size: 35,
+        child: Image.asset(
+          'assets/iconos/generar pedido- rosa.png',
+          scale: 4.5,
         ),
       ),
       child: Column(

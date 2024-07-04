@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
@@ -63,12 +64,12 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   children: [
                     CardItem(
-                      icon: Icons.price_change_rounded,
+                      assetPathIcon: 'assets/iconos/precios - rosa gris.png',
                       label: 'Precios',
                       onTap: () => PreciosRoute().push(context),
                     ),
                     CardItem(
-                      icon: Icons.shopping_cart_rounded,
+                      assetPathIcon: 'assets/iconos/precios - gris rosa.png',
                       label: 'Nueva Sesión de Ventas',
                       onTap: () => homeModalButtom(
                           height: 160,
@@ -77,13 +78,15 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               CustomListTile(
                                 text: 'CLIENTE NUEVO',
-                                icon: FontAwesomeIcons.userPlus,
+                                assetPathIcon:
+                                    'assets/iconos/cliente nuevo - rosa gris.png',
                                 onTap: () => ClienteNuevoRoute().push(context),
                               ),
                               const Divider(),
                               CustomListTile(
                                 text: 'CLIENTE EXISTENTE',
-                                icon: FontAwesomeIcons.userCheck,
+                                assetPathIcon:
+                                    'assets/iconos/cliente existente - rosa gris.png',
                                 onTap: () =>
                                     ClienteExistenteRoute().push(context),
                               ),
@@ -91,7 +94,8 @@ class HomeScreen extends StatelessWidget {
                           )),
                     ),
                     CardItem(
-                      icon: Icons.inventory_2_rounded,
+                      assetPathIcon:
+                          'assets/iconos/inventarios - rosa gris.png',
                       label: 'Inventarios',
                       onTap: () => homeModalButtom(
                           context: context,
@@ -100,29 +104,33 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               CustomListTile(
                                 text: 'INVENTARIO EXPO',
-                                icon: FontAwesomeIcons.store,
+                                assetPathIcon:
+                                    'assets/iconos/inventario expo - rosa.png',
                                 onTap: () => InvetarioExpoRoute().push(context),
                               ),
                               const Divider(),
                               CustomListTile(
                                 text: 'INVENTARIO BODEGAS',
-                                icon: FontAwesomeIcons.store,
+                                assetPathIcon:
+                                    'assets/iconos/inventario bodegas - rosa2.png',
                                 onTap: () =>
                                     InvetarioBodegaRoute().push(context),
                               ),
                               const Divider(),
                               CustomListTile(
                                 text: 'BUSQUEDA GLOBAL',
-                                icon: FontAwesomeIcons.store,
+                                assetPathIcon:
+                                    'assets/iconos/busqueda global - rosa.png',
                                 onTap: () =>
                                     BusquedaGlobalRoute().push(context),
                               ),
                             ],
                           )),
                     ),
-                    const CardItem(
-                      icon: Icons.history,
+                    CardItem(
+                      icon: Icons.history_rounded,
                       label: 'Historial',
+                      onTap: () => HistorialRoute().push(context),
                     ),
                     const CardItem(
                       icon: Icons.document_scanner_rounded,

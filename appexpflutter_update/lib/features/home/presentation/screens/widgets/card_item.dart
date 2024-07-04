@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 
 class CardItem extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String label;
   final VoidCallback? onTap;
+  final String? assetPathIcon;
 
   const CardItem({
     super.key,
-    required this.icon,
+    this.icon,
     required this.label,
     this.onTap,
+    this.assetPathIcon,
   });
 
   @override
@@ -43,7 +45,11 @@ class CardItem extends StatelessWidget {
                         ),
                       ],
                       borderRadius: BorderRadius.all(Radius.circular(50))),
-                  child: Icon(icon, size: 30, color: Colores.secondaryColor)),
+                  child: assetPathIcon != null
+                      ? Image.asset(assetPathIcon ?? '', scale: 6)
+                      : Center(
+                          child: Icon(icon,
+                              size: 30, color: Colores.secondaryColor))),
               const SizedBox(height: 10),
               AutoSizeText(label,
                   style: const TextStyle(

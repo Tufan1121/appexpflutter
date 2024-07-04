@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/invetario_bodega.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
 
@@ -18,7 +16,6 @@ class SearchProducto extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productos = context.watch<ProductosBloc>().scannedProducts;
     final controller = useTextEditingController();
     final scanResult = useState<String>('');
     final textFieldValue = useState<String>('');
@@ -54,10 +51,9 @@ class SearchProducto extends HookWidget {
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
             ),
-            child: const FaIcon(
-              FontAwesomeIcons.store,
-              color: Colores.secondaryColor,
-              size: 35,
+            child: Image.asset(
+              'assets/iconos/inventario bodegas - rosa2.png',
+              scale: 5,
             ),
           ),
           const SizedBox(width: 10),
@@ -84,11 +80,15 @@ class SearchProducto extends HookWidget {
               padding: const EdgeInsets.all(8),
               // Otros estilos según sea necesario
             ),
-            child: const Icon(
-              Icons.qr_code_2_rounded,
-              color: Colores.secondaryColor,
-              size: 40,
+            child: Image.asset(
+              'assets/iconos/qr/qr 72_.png',
+              scale: 5,
             ),
+            // child: const Icon(
+            //   Icons.qr_code_2_rounded,
+            //   color: Colores.secondaryColor,
+            //   size: 40,
+            // ),
           ),
         ],
       ),
