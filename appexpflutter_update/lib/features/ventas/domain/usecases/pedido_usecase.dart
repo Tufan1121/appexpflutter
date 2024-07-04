@@ -18,6 +18,16 @@ class PedidoUsecase {
     return pedidoRepository.addDetallePedido(data);
   }
 
+  Future<Either<NetworkException, PedidoEntity>> addSesionPedido(
+      Map<String, dynamic> data) {
+    return pedidoRepository.addSesionPedido(data);
+  }
+
+  Future<Either<NetworkException, String>> addSesionDetallePedido(
+      List<Map<String, dynamic>> data) {
+    return pedidoRepository.addSesionDetallePedido(data);
+  }
+
   Future<Either<NetworkException, String>> addIdPedido(int idPedido) {
     return pedidoRepository.addIdPedido(idPedido);
   }

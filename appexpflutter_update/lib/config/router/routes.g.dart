@@ -17,6 +17,7 @@ List<RouteBase> get $appRoutes => [
       $clienteExistenteRoute,
       $pedidoRoute,
       $generarPedidoRoute,
+      $sesionPedidoRoute,
       $invetarioExpoRoute,
       $invetarioBodegaRoute,
       $busquedaGlobalRoute,
@@ -276,6 +277,35 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
 
   String get location => GoRouteData.$location(
         '/generar_pedido',
+        queryParams: {
+          'id-cliente': idCliente.toString(),
+          'estado-pedido': estadoPedido.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $sesionPedidoRoute => GoRouteData.$route(
+      path: '/sesion_pedido',
+      factory: $SesionPedidoRouteExtension._fromState,
+    );
+
+extension $SesionPedidoRouteExtension on SesionPedidoRoute {
+  static SesionPedidoRoute _fromState(GoRouterState state) => SesionPedidoRoute(
+        idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
+        estadoPedido: int.parse(state.uri.queryParameters['estado-pedido']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/sesion_pedido',
         queryParams: {
           'id-cliente': idCliente.toString(),
           'estado-pedido': estadoPedido.toString(),

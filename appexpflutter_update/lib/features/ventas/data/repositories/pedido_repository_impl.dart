@@ -31,12 +31,34 @@ class PedidoRepositoryImpl implements PedidoRepository {
       return Left(NetworkException.fromDioError(e));
     }
   }
-  
+
   @override
-  Future<Either<NetworkException, String>> addIdPedido(int idPedido)async {
+  Future<Either<NetworkException, String>> addIdPedido(int idPedido) async {
     try {
       final result = await pedidoDataSource.addIdPedido(idPedido);
       return Right(result);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, String>> addSesionDetallePedido(
+      List<Map<String, dynamic>> data) async {
+    try {
+      final result = await pedidoDataSource.addSesionDetallePedido(data);
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, PedidoEntity>> addSesionPedido(
+      Map<String, dynamic> data) async {
+    try {
+      final result = await pedidoDataSource.addPedido(data);
+      return Right(result.toEntity());
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }

@@ -13,6 +13,7 @@ dependencies:
     path: packages/api_client
   auto_size_text: ^3.0.0
   carousel_slider: ^4.2.1
+  change_app_package_name: ^1.2.0
   cupertino_icons: ^1.0.6
   dio: ^5.4.3+1
   equatable: ^2.0.5

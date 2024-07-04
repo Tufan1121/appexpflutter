@@ -1,23 +1,19 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 // import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 // import 'package:url_launcher/url_launcher.dart';
-import '../../../../../config/theme/app_theme.dart';
-import '../../../../shared/widgets/layout_screens.dart';
+import '../../../../config/theme/app_theme.dart';
+import '../../../shared/widgets/layout_screens.dart';
 
-class GenerarPedidoScreen extends StatefulHookWidget {
-  const GenerarPedidoScreen({
+class SesionPedidoScreen extends StatefulHookWidget {
+  const SesionPedidoScreen({
     super.key,
     required this.idCliente,
     required this.estadoPedido,
@@ -26,10 +22,10 @@ class GenerarPedidoScreen extends StatefulHookWidget {
   final int estadoPedido;
 
   @override
-  State<GenerarPedidoScreen> createState() => _GenerarPedidoScreenState();
+  State<SesionPedidoScreen> createState() => _SesionPedidoScreenState();
 }
 
-class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
+class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
   final form = FormGroup({
     'metodoDePago1': FormControl<String>(validators: [
       Validators.required,
@@ -130,7 +126,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     }, []);
     return LayoutScreens(
       onPressed: () => Navigator.pop(context),
-      titleScreen: 'GENERAR PEDIDO',
+      titleScreen: 'SESION PEDIDO',
       child: Column(
         children: [
           Padding(
@@ -156,12 +152,6 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // const Text(
-                              //   'DM24-7645B',
-                              //   style: TextStyle(
-                              //       color: Colors.pink,
-                              //       fontWeight: FontWeight.bold),
-                              // ),
                               const SizedBox(height: 16.0),
                               Row(
                                 mainAxisAlignment:
@@ -265,7 +255,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  BlocConsumer<PedidoBloc, PedidoState>(
+                                  BlocConsumer<SesionPedidoBloc,
+                                      SesionPedidoState>(
                                     listener: (context, state) {
                                       if (state is PedidoLoading) {
                                         loading.value = true;
@@ -282,27 +273,37 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                           backgroundColor: Colors.green,
                                         ));
 
+                                        form.control('metodoDePago1').reset();
+                                        form.control('metodoDePago2').reset();
+                                        form.control('metodoDePago3').reset();
+                                        form.control('observaciones').reset();
+                                        form.control('anticipoPago1').reset();
+                                        form.control('anticipoPago2').reset();
+                                        form.control('anticipoPago3').reset();
+                                        form.control('entregado').reset();
+
                                         // Aquí  la URL donde está ubicado el PDF
-                                        String pdfUrl =
-                                            'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
+                                        // String pdfUrl =
+                                        //     'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
                                         // _openPDF(pdfUrl);
 
-                                        _showDownloadModal(context, pdfUrl,
-                                            state.pedido.pedidos);
+                                        // _showDownloadModal(context, pdfUrl,
+                                        //     state.pedido.pedidos);
 
                                         //  form.reset();
-                                        context
-                                            .read<ClienteBloc>()
-                                            .add(ClearClienteStateEvent());
-                                        context
-                                            .read<ProductosBloc>()
-                                            .add(ClearProductoStateEvent());
-                                        context
-                                            .read<PedidoBloc>()
-                                            .add(ClearPedidoStateEvent());
-                                        context.read<InventarioBloc>().add(
-                                            ClearInventarioProductoEvent());
+                                        // context
+                                        //     .read<ClienteBloc>()
+                                        //     .add(ClearClienteStateEvent());
+                                        // context
+                                        //     .read<ProductosBloc>()
+                                        //     .add(ClearProductoStateEvent());
+                                        // context
+                                        //     .read<SesionPedidoBloc>()
+                                        //     .add(ClearPedidoStateEvent());
+                                        // context.read<InventarioBloc>().add(
+                                        //     ClearInventarioProductoEvent());
                                       } else if (state is PedidoError) {
+                                        loading.value = false;
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
@@ -482,7 +483,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         'id_metodopago3': metodo3.toString(),
       };
 
-      context.read<PedidoBloc>().add(
+      context.read<SesionPedidoBloc>().add(
           PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
     } else {
       form.markAllAsTouched();
@@ -546,14 +547,14 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                 style: TextStyle(color: Colores.scaffoldBackgroundColor),
               ),
               onPressed: () {
-                FocusScope.of(context).unfocus();
-                context.read<ClienteBloc>().add(ClearClienteStateEvent());
-                context.read<ProductosBloc>().add(ClearProductoStateEvent());
-                context.read<PedidoBloc>().add(ClearPedidoStateEvent());
-                context
-                    .read<InventarioBloc>()
-                    .add(ClearInventarioProductoEvent());
-                HomeRoute().go(context);
+                // FocusScope.of(context).unfocus();
+                // context.read<ClienteBloc>().add(ClearClienteStateEvent());
+                // context.read<ProductosBloc>().add(ClearProductoStateEvent());
+                // context.read<SesionPedidoBloc>().add(ClearPedidoStateEvent());
+                // context
+                //     .read<InventarioBloc>()
+                //     .add(ClearInventarioProductoEvent());
+                // HomeRoute().go(context);
                 Navigator.of(context).pop();
               },
             ),
@@ -609,7 +610,6 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                   form.control('anticipoPago3').reset();
                   form.control('entregado').reset();
                   Navigator.of(context).pop();
-                  HomeRoute().go(context);
                 },
               ),
             ),

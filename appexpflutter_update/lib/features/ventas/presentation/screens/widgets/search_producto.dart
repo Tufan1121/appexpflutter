@@ -1,3 +1,5 @@
+import 'package:appexpflutter_update/config/router/routes.dart';
+import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -19,6 +21,7 @@ class SearchProducto extends HookWidget {
     final controller = useTextEditingController();
     final scanResult = useState<String>('');
     final textFieldValue = useState<String>('');
+    final productos = context.watch<ProductosBloc>().scannedProducts;
 
     useEffect(() {
       controller.addListener(() {
@@ -32,30 +35,6 @@ class SearchProducto extends HookWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                builder: (BuildContext context) {
-                  return const InventarioBodega();
-                },
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              elevation: 2,
-              shape: const CircleBorder(),
-              padding: const EdgeInsets.all(8),
-            ),
-            child: Image.asset(
-              'assets/iconos/inventario bodegas - rosa2.png',
-              scale: 5,
-            ),
-          ),
           const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () => showDialog(
@@ -84,11 +63,81 @@ class SearchProducto extends HookWidget {
               'assets/iconos/qr/qr 72_.png',
               scale: 5,
             ),
-            // child: const Icon(
-            //   Icons.qr_code_2_rounded,
-            //   color: Colores.secondaryColor,
-            //   size: 40,
-            // ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (BuildContext context) {
+                  return const InventarioBodega();
+                },
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              elevation: 2,
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(8),
+            ),
+            child: Image.asset(
+              'assets/iconos/inventario bodegas - rosa2.png',
+              scale: 5,
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () {
+              if (productos.isNotEmpty) {
+                SesionPedidoRoute(
+                        idCliente: idCliente, estadoPedido: estatusPedido)
+                    .push(context);
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Atención'),
+                      content: const Text('Debes agregar algún producto'),
+                      actions: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colores.secondaryColor),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Aceptar',
+                            style: TextStyle(
+                                color: Colores.scaffoldBackgroundColor),
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                );
+              }
+            },
+            // onPressed: () => SesionPedidoRoute(
+            //   idCliente: idCliente,
+            //   estadoPedido: estatusPedido,
+            // ).push(context),
+            style: ElevatedButton.styleFrom(
+              elevation: 2,
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(8),
+              // Otros estilos según sea necesario
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Image.asset(
+                'assets/iconos/pedidos - rosa gris.png',
+                scale: 6,
+              ),
+            ),
           ),
         ],
       ),

@@ -1,11 +1,8 @@
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -64,12 +61,12 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   children: [
                     CardItem(
-                      assetPathIcon: 'assets/iconos/precios - rosa gris.png',
+                      assetPathIcon: 'assets/iconos/qr/qr 72_.png',
                       label: 'Precios',
                       onTap: () => PreciosRoute().push(context),
                     ),
                     CardItem(
-                      assetPathIcon: 'assets/iconos/precios - gris rosa.png',
+                      assetPathIcon: 'assets/iconos/precios - rosa gris.png',
                       label: 'Nueva Sesión de Ventas',
                       onTap: () => homeModalButtom(
                           height: 160,

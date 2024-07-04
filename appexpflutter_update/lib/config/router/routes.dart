@@ -9,7 +9,8 @@ import 'package:appexpflutter_update/features/precios/domain/entities/producto_e
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/generar_pedido.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/generar_pedido_screen.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/sesion_pedido_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -163,6 +164,26 @@ class GenerarPedidoRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       GenerarPedidoScreen(
+        idCliente: idCliente,
+        estadoPedido: estadoPedido,
+      );
+}
+
+@TypedGoRoute<SesionPedidoRoute>(
+  path: SesionPedidoRoute.path,
+)
+class SesionPedidoRoute extends GoRouteData {
+  static const path = '/sesion_pedido';
+  final int idCliente;
+  final int estadoPedido;
+
+  SesionPedidoRoute({
+    required this.idCliente,
+    required this.estadoPedido,
+  });
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => SesionPedidoScreen(
         idCliente: idCliente,
         estadoPedido: estadoPedido,
       );

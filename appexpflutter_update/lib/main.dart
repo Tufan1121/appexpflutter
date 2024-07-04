@@ -23,6 +23,7 @@ import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usec
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:api_client/dio_client.dart';

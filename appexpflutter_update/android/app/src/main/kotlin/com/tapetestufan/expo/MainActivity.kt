@@ -1,4 +1,4 @@
-package com.example.appexpflutter_update
+package com.tapetestufan.expo
 
 import io.flutter.embedding.android.FlutterActivity
 

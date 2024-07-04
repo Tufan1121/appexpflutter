@@ -81,22 +81,3 @@ class UpdateProductEvent extends ProductosEvent {
   List<Object> get props => [producto];
 }
 
-class UpdateProductQuantityEvent extends ProductosEvent {
-  final String productoClave;
-  final int newQuantity;
-
-  const UpdateProductQuantityEvent(this.productoClave, this.newQuantity);
-
-  @override
-  List<Object> get props => [productoClave, newQuantity];
-}
-
-class UpdateProductSelectedPriceEvent extends ProductosEvent {
-  final String productoClave;
-  final int selectedPrice;
-
-  const UpdateProductSelectedPriceEvent(this.productoClave, this.selectedPrice);
-
-  @override
-  List<Object> get props => [productoClave, selectedPrice];
-}

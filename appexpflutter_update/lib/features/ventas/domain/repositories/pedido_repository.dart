@@ -3,7 +3,14 @@ import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_enti
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class PedidoRepository {
-  Future<Either<NetworkException, PedidoEntity>> addPedido(Map<String, dynamic> data);
-  Future<Either<NetworkException, String>> addDetallePedido(List<Map<String, dynamic>> data);
+  Future<Either<NetworkException, PedidoEntity>> addPedido(
+      Map<String, dynamic> data);
+  Future<Either<NetworkException, String>> addDetallePedido(
+      List<Map<String, dynamic>> data);
   Future<Either<NetworkException, String>> addIdPedido(int idPedido);
+  Future<Either<NetworkException, String>> addSesionDetallePedido(
+      List<Map<String, dynamic>> data);
+
+  Future<Either<NetworkException, PedidoEntity>> addSesionPedido(
+      Map<String, dynamic> data);
 }
