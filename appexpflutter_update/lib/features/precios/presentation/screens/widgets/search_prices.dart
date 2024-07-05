@@ -13,6 +13,16 @@ class SearchPrices extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final scanResult = useState<String>('');
+    final controller = useTextEditingController();
+    final textFieldValue = useState<String>('');
+
+    useEffect(() {
+      controller.addListener(() {
+        textFieldValue.value = controller.text;
+      });
+      return null;
+    }, [controller]);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -33,6 +43,7 @@ class SearchPrices extends HookWidget {
                 ],
               ),
               child: TextField(
+                controller: controller,
                 style: const TextStyle(
                   color: Colores.secondaryColor,
                   fontSize: 16,
@@ -55,6 +66,16 @@ class SearchPrices extends HookWidget {
                       color: Colores.secondaryColor,
                     ),
                   ),
+                  suffixIcon: controller.text.isNotEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            controller.clear();
+                          },
+                          icon: const Icon(
+                            Icons.clear,
+                            color: Colors.red,
+                          ))
+                      : null,
                   hintText: 'Clave',
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,

@@ -55,7 +55,7 @@ class PreciosScreen extends StatelessWidget {
                                   state.producto.bodega2 +
                                   state.producto.bodega3 +
                                   state.producto.bodega4;
-                  
+
                               List<String> imagePaths = [
                                 state.producto.pathima1,
                                 state.producto.pathima2,
@@ -64,7 +64,7 @@ class PreciosScreen extends StatelessWidget {
                                 state.producto.pathima5,
                                 state.producto.pathima6,
                               ].where((path) => path.isNotEmpty).toList();
-                  
+
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
@@ -100,7 +100,7 @@ class PreciosScreen extends StatelessWidget {
                                   state.producto.bodega2 +
                                   state.producto.bodega3 +
                                   state.producto.bodega4;
-                  
+
                               List<String> imagePaths = [
                                 state.producto.pathima1,
                                 state.producto.pathima2,
@@ -109,7 +109,7 @@ class PreciosScreen extends StatelessWidget {
                                 state.producto.pathima5,
                                 state.producto.pathima6,
                               ].where((path) => path.isNotEmpty).toList();
-                  
+
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
@@ -186,6 +186,9 @@ class PreciosScreen extends StatelessWidget {
                           style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold)),
                       onTap: () {
+                        context.read<PreciosBloc>().add(
+                            GetRelativedProductsEvent(
+                                producto: productoRelacionado));
                         context.read<PreciosBloc>().add(
                             SelectRelatedProductEvent(productoRelacionado));
                       },
