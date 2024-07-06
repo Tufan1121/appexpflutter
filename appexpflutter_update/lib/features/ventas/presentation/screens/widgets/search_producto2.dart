@@ -20,8 +20,8 @@ class SearchProducto extends HookWidget {
   Widget build(BuildContext context) {
     final productos = context.watch<ProductosBloc>().scannedProducts;
     final controller = useTextEditingController();
-    final scanResult = useState<String>('');
     final textFieldValue = useState<String>('');
+    final scanResult = useState<String>('');
 
     useEffect(() {
       controller.addListener(() {

@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/historial/presentation/bloc/historial_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
@@ -53,6 +54,7 @@ class _MyAppState extends State<MyApp> {
             create: (_) => injector<InventarioExpoBloc>()),
         BlocProvider<BusquedaGlobalBloc>(
             create: (_) => injector<BusquedaGlobalBloc>()),
+        BlocProvider<HistorialBloc>(create: (_) => injector<HistorialBloc>()),
       ],
       child: FutureBuilder(
         future: _init(),

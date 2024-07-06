@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/features/historial/presentation/historial_screen.dart';
+import 'package:appexpflutter_update/features/historial/presentation/screens/historial_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_bodega_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_expo_screen.dart';

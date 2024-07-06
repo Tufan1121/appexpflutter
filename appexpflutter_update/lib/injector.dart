@@ -18,6 +18,8 @@ Future<void> init() async {
         () => PedidoDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<InventarioExpoDataSource>(
         () => InventarioExpoDataSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<HistorialDataSource>(
+        () => HistorialDataSourceImpl(dioclient: injector()))
 
     //* Repositories
     ..registerLazySingleton<AuthRepository>(
@@ -30,6 +32,8 @@ Future<void> init() async {
         () => PedidoRepositoryImpl(pedidoDataSource: injector()))
     ..registerLazySingleton<InventarioExpoRepository>(() =>
         InventarioExpoRepositoryImpl(inventarioExpoDataSource: injector()))
+    ..registerLazySingleton<HistorialRepository>(
+        () => HistorialRepositoryImpl(historialDataSource: injector()))
 
     //* Usecases
     ..registerLazySingleton<AuthUsecase>(
@@ -42,6 +46,8 @@ Future<void> init() async {
         () => PedidoUsecase(pedidoRepository: injector()))
     ..registerLazySingleton<InventarioExpoUsecase>(
         () => InventarioExpoUsecase(inventarioExpoRepository: injector()))
+    ..registerLazySingleton<HistorialUsecase>(
+        () => HistorialUsecase(historialRepository: injector()))
 
     //* Blocs
     ..registerLazySingleton<AuthBloc>(() => AuthBloc(authUsecase: injector()))
@@ -61,6 +67,8 @@ Future<void> init() async {
         () => BusquedaGlobalBloc(productoUsecase: injector()))
     ..registerLazySingleton<SesionPedidoBloc>(
         () => SesionPedidoBloc(pedidoUsecase: injector()))
+    ..registerLazySingleton<HistorialBloc>(
+        () => HistorialBloc(historialUsecase: injector()))
     ..registerLazySingleton<PedidoBloc>(
         () => PedidoBloc(pedidoUsecase: injector()));
 }
