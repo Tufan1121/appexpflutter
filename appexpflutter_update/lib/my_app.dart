@@ -2,6 +2,7 @@ import 'package:appexpflutter_update/features/historial/presentation/bloc/histor
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/cotiza_pedido/cotiza_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
@@ -47,6 +48,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<PedidoBloc>(create: (_) => injector<PedidoBloc>()),
         BlocProvider<SesionPedidoBloc>(
             create: (_) => injector<SesionPedidoBloc>()),
+        BlocProvider<CotizaPedidoBloc>(
+            create: (_) => injector<CotizaPedidoBloc>()),
         BlocProvider<InventarioBloc>(create: (_) => injector<InventarioBloc>()),
         BlocProvider<InventarioBodegaBloc>(
             create: (_) => injector<InventarioBodegaBloc>()),

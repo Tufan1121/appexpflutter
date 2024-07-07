@@ -47,7 +47,7 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen> {
         titleScreen: 'INVENTARIO BODEGAS',
         child: Column(
           children: [
-            const SizedBox(height: 2),
+            const SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ReactiveForm(

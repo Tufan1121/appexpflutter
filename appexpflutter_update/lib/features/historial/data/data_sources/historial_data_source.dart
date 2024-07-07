@@ -1,5 +1,12 @@
-import 'package:appexpflutter_update/features/historial/data/models/historial_model.dart';
+import 'package:appexpflutter_update/features/historial/data/models/historial_cotiza_model.dart';
+import 'package:appexpflutter_update/features/historial/data/models/historial_pedido_model.dart';
+import 'package:appexpflutter_update/features/historial/data/models/historial_sesion_model.dart';
 
 abstract interface class HistorialDataSource {
-  Future<List<HistorialModel>> getHistorial(String parameter, String endpoint);
+  Future<List<HistorialPedidoModel>> getHistorialPedido(
+      String parameter);
+  Future<List<HistorialSesionModel>> getHistorialSesion(
+      String parameter);
+  Future<List<HistorialCotizaModel>> getHistorialCotiza(
+      String parameter);
 }

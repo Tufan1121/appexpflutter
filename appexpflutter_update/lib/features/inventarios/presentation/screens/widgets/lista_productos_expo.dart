@@ -75,9 +75,22 @@ class ListaProductosExpo extends HookWidget {
                           ),
                           const SizedBox(height: 4),
                           AutoSizeText(
-                            'Almacen: ${producto.desalmacen}',
+                            'Almacen: ${producto.almacen} - ${producto.desalmacen}',
                             style: const TextStyle(fontSize: 14),
                           ),
+                          Row(
+                            children: [
+                              AutoSizeText(
+                                'hm: ${producto.hm}',
+                                style: const TextStyle(fontSize: 16.0),
+                              ),
+                              const SizedBox(width: 10),
+                              AutoSizeText(
+                                'rojo: ${producto.rojo}',
+                                style: const TextStyle(fontSize: 16.0),
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     ),

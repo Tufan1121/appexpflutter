@@ -18,7 +18,7 @@ class PedidoAddEvent extends SesionPedidoEvent {
 }
 
 class PedidoAddDetalleEvent extends SesionPedidoEvent {
-  final PedidoEntity pedido;
+  final SesionEntity pedido;
   final List<DetallePedido> products;
 
   const PedidoAddDetalleEvent({required this.products, required this.pedido});

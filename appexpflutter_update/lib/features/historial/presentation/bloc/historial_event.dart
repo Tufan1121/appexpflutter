@@ -6,19 +6,40 @@ sealed class HistorialEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetHistorial extends HistorialEvent {
+class GetHistorialPedido extends HistorialEvent {
   final String parameter;
-  final String endpoint;
   final String search;
-  const GetHistorial({
+  const GetHistorialPedido({
     required this.parameter,
-    required this.endpoint,
     required this.search,
   });
 
   @override
-  List<Object> get props => [parameter, endpoint];
+  List<Object> get props => [parameter, search];
 }
 
+class GetHistorialSesion extends HistorialEvent {
+  final String parameter;
+  final String search;
+  const GetHistorialSesion({
+    required this.parameter,
+    required this.search,
+  });
+
+  @override
+  List<Object> get props => [parameter, search];
+}
+
+class GetHistorialCotiza extends HistorialEvent {
+  final String parameter;
+  final String search;
+  const GetHistorialCotiza({
+    required this.parameter,
+    required this.search,
+  });
+
+  @override
+  List<Object> get props => [parameter, search];
+}
 
 class ClearHistorialEvent extends HistorialEvent {}

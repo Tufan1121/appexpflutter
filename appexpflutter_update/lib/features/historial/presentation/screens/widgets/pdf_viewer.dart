@@ -1,41 +1,48 @@
-import 'dart:async';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class PdfViewerScreen extends StatefulWidget {
-  final String path;
+class PdfViewerScreen extends HookWidget {
   final String fileName;
   final String search;
+  final String url;
 
-  const PdfViewerScreen(
-      {super.key,
-      required this.path,
-      required this.fileName,
-      required this.search});
-
-  @override
-  State<PdfViewerScreen> createState() => _PdfViewerScreenState();
-}
-
-class _PdfViewerScreenState extends State<PdfViewerScreen>
-    with WidgetsBindingObserver {
-  final Completer<PDFViewController> _controller =
-      Completer<PDFViewController>();
-  int? pages = 0;
-  int? currentPage = 0;
-  bool isReady = false;
-  String errorMessage = '';
+  const PdfViewerScreen({
+    super.key,
+    required this.fileName,
+    required this.search,
+    required this.url,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final pdfViewerKey = useState(GlobalKey<SfPdfViewerState>());
+    final isUrlValid = useState<bool?>(null);
+    final dio = useMemoized(() => Dio());
+
+    useEffect(() {
+      Future<void> checkUrlValidity() async {
+        try {
+          final response = await dio.head(url);
+          isUrlValid.value = response.statusCode == 200;
+        } catch (e) {
+          isUrlValid.value = false;
+        }
+      }
+
+      checkUrlValidity();
+      return null;
+    }, [url]);
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colores.secondaryColor.withOpacity(0.78),
         title: Text(
-          '${widget.search}:  ${widget.fileName}',
+          '$search:  $fileName',
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.bold,
             color: Colores.scaffoldBackgroundColor,
@@ -49,75 +56,20 @@ class _PdfViewerScreenState extends State<PdfViewerScreen>
           ),
         ),
       ),
-      body: Center(
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: PDFView(
-                filePath: widget.path,
-                enableSwipe: true,
-                swipeHorizontal: true,
-                autoSpacing: false,
-                pageFling: true,
-                pageSnap: true,
-                defaultPage: currentPage!,
-                fitPolicy: FitPolicy.BOTH,
-                preventLinkNavigation: false,
-                onRender: (pages) {
-                  setState(() {
-                    pages = pages;
-                    isReady = true;
-                  });
-                },
-                onError: (error) {
-                  setState(() {
-                    errorMessage = error.toString();
-                  });
-                },
-                onPageError: (page, error) {
-                  setState(() {
-                    errorMessage = '$page: ${error.toString()}';
-                  });
-                },
-                onViewCreated: (PDFViewController pdfViewController) {
-                  _controller.complete(pdfViewController);
-                },
-                onLinkHandler: (String? uri) {},
-                onPageChanged: (int? page, int? total) {
-                  setState(() {
-                    currentPage = page;
-                  });
-                },
-              ),
-            ),
-            errorMessage.isEmpty
-                ? !isReady
-                    ? const Center(child: CircularProgressIndicator())
-                    : Container()
-                : Center(child: Text(errorMessage)),
-          ],
-        ),
-      ),
-      floatingActionButton: FutureBuilder<PDFViewController>(
-        future: _controller.future,
-        builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              backgroundColor: Colores.secondaryColor,
-              label: Text(
-                "ir a la pagina ${pages! ~/ 2}",
-                style: const TextStyle(color: Colores.scaffoldBackgroundColor),
-              ),
-              onPressed: () async {
-                await snapshot.data!.setPage(pages! ~/ 2);
-              },
-            );
-          }
-
-          return Container();
-        },
-      ),
+      body: isUrlValid.value == null
+          ? const Center(child: CircularProgressIndicator())
+          : isUrlValid.value == true
+              ? SfPdfViewer.network(
+                  url,
+                  key: pdfViewerKey.value,
+                )
+              : const Center(
+                  child: Text(
+                    'No se pudo acceder al PDF. Verifique la URL e inténtelo nuevamente.',
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
     );
   }
 }

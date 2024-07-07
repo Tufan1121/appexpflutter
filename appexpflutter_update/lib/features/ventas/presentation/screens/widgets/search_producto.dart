@@ -1,5 +1,7 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
+import 'package:appexpflutter_update/features/shared/widgets/modals_buttom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -92,9 +94,32 @@ class SearchProducto extends HookWidget {
           ElevatedButton(
             onPressed: () {
               if (productos.isNotEmpty) {
-                SesionPedidoRoute(
-                        idCliente: idCliente, estadoPedido: estatusPedido)
-                    .push(context);
+                Modals(
+                    context: context,
+                    height: 160,
+                    child: ListView(
+                      children: [
+                        CustomListTile(
+                          text: 'GENERAR SESION',
+                          assetPathIcon:
+                              'assets/iconos/pedidos - rosa gris.png',
+                          onTap: () => SesionPedidoRoute(
+                                  idCliente: idCliente,
+                                  estadoPedido: estatusPedido)
+                              .push(context),
+                        ),
+                        const Divider(),
+                        CustomListTile(
+                          text: 'GENERAR COTIZACION',
+                          assetPathIcon:
+                              'assets/iconos/pedidos - rosa gris.png',
+                          onTap: () => CotizaPedidoRoute(
+                                  idCliente: idCliente,
+                                  estadoPedido: estatusPedido)
+                              .push(context),
+                        ),
+                      ],
+                    )).homeModalButtom();
               } else {
                 showDialog(
                   context: context,

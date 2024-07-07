@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-class HistorialEntity extends Equatable {
-  final int idPedido;
+class HistorialSesionEntity extends Equatable {
+  final int idSesion;
   final int idCliente;
   final DateTime fecha;
   final int idMetodoPago;
@@ -23,13 +23,11 @@ class HistorialEntity extends Equatable {
   final String? dig3;
   final String? ticket;
   final String? nomCliente;
-  final int pdf;
-  final int rtop;
   final String nombre;
   final String apellido;
 
-  const HistorialEntity({
-    required this.idPedido,
+  const HistorialSesionEntity({
+    required this.idSesion,
     required this.idCliente,
     required this.fecha,
     required this.idMetodoPago,
@@ -51,15 +49,13 @@ class HistorialEntity extends Equatable {
     this.dig3,
     required this.ticket,
     this.nomCliente,
-    required this.pdf,
-    required this.rtop,
     required this.nombre,
     required this.apellido,
   });
 
   @override
   List<Object?> get props => [
-        idPedido,
+        idSesion,
         idCliente,
         fecha,
         idMetodoPago,
@@ -81,8 +77,6 @@ class HistorialEntity extends Equatable {
         dig3,
         ticket,
         nomCliente,
-        pdf,
-        rtop,
         nombre,
         apellido
       ];

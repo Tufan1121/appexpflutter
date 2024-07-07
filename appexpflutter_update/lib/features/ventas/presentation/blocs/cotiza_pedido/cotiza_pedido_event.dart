@@ -1,13 +1,13 @@
-part of 'pedido_bloc.dart';
+part of 'cotiza_pedido_bloc.dart';
 
-sealed class PedidoEvent extends Equatable {
-  const PedidoEvent();
+sealed class CotizaPedidoEvent extends Equatable {
+  const CotizaPedidoEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class PedidoAddEvent extends PedidoEvent {
+class PedidoAddEvent extends CotizaPedidoEvent {
   final Map<String, dynamic> data;
   final List<DetallePedido> products;
 
@@ -17,8 +17,8 @@ class PedidoAddEvent extends PedidoEvent {
   List<Object> get props => [data];
 }
 
-class PedidoAddDetalleEvent extends PedidoEvent {
-  final PedidoEntity pedido;
+class PedidoAddDetalleEvent extends CotizaPedidoEvent {
+  final CotizaEntity pedido;
   final List<DetallePedido> products;
 
   const PedidoAddDetalleEvent({required this.products, required this.pedido});
@@ -27,7 +27,7 @@ class PedidoAddDetalleEvent extends PedidoEvent {
   List<Object> get props => [products];
 }
 
-class PedidoAddIdPedidoEvent extends PedidoEvent {
+class PedidoAddIdPedidoEvent extends CotizaPedidoEvent {
   final PedidoEntity pedido;
 
   const PedidoAddIdPedidoEvent({required this.pedido});
@@ -36,4 +36,4 @@ class PedidoAddIdPedidoEvent extends PedidoEvent {
   List<Object> get props => [pedido];
 }
 
-class ClearPedidoStateEvent extends PedidoEvent {}
+class ClearPedidoStateEvent extends CotizaPedidoEvent {}

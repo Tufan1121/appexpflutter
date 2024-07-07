@@ -91,11 +91,11 @@ class FullScreenGallery2 extends StatelessWidget {
                   style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
-                  'Existencia: ${producto.hm}',
+                  'hm: ${producto.hm}',
                   style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
-                  'Almacen: ${producto.desalmacen}',
+                  'Almacen: ${producto.almacen} - ${producto.desalmacen}',
                   style: const TextStyle(fontSize: 16),
                 ),
               ],

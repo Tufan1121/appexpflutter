@@ -36,6 +36,7 @@ dependencies:
   reactive_forms: ^17.0.1
   rxdart: ^0.27.7
   shared_preferences: ^2.2.3
+  syncfusion_flutter_pdfviewer: ^26.1.40
   url_launcher: ^6.3.0
 
 dev_dependencies:

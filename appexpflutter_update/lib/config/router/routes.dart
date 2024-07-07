@@ -8,6 +8,7 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/w
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/cotiza_pedido_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/generar_pedido_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/sesion_pedido_screen.dart';
@@ -184,6 +185,25 @@ class SesionPedidoRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => SesionPedidoScreen(
+        idCliente: idCliente,
+        estadoPedido: estadoPedido,
+      );
+}
+@TypedGoRoute<CotizaPedidoRoute>(
+  path: CotizaPedidoRoute.path,
+)
+class CotizaPedidoRoute extends GoRouteData {
+  static const path = '/cotiza_pedido';
+  final int idCliente;
+  final int estadoPedido;
+
+  CotizaPedidoRoute({
+    required this.idCliente,
+    required this.estadoPedido,
+  });
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => CotizaPedidoScreen(
         idCliente: idCliente,
         estadoPedido: estadoPedido,
       );

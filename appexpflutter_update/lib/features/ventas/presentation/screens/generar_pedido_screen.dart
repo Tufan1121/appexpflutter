@@ -133,6 +133,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       titleScreen: 'GENERAR PEDIDO',
       child: Column(
         children: [
+          const SizedBox(
+            height: 5,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(

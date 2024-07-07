@@ -1,9 +1,9 @@
 import 'package:appexpflutter_update/config/mappers/entity_convertable.dart';
-import 'package:appexpflutter_update/features/historial/domain/entities/historial_entity.dart';
+import 'package:appexpflutter_update/features/historial/domain/entities/historial_pedido_entity.dart';
 
-class HistorialModel extends HistorialEntity
-    with EntityConvertible<HistorialModel, HistorialEntity> {
-  const HistorialModel({
+class HistorialPedidoModel extends HistorialPedidoEntity
+    with EntityConvertible<HistorialPedidoModel, HistorialPedidoEntity> {
+  const HistorialPedidoModel({
     required super.idPedido,
     required super.idCliente,
     required super.fecha,
@@ -32,7 +32,8 @@ class HistorialModel extends HistorialEntity
     required super.apellido,
   });
 
-  factory HistorialModel.fromJson(Map<String, dynamic> json) => HistorialModel(
+  factory HistorialPedidoModel.fromJson(Map<String, dynamic> json) =>
+      HistorialPedidoModel(
         idPedido: json['id_pedido'],
         idCliente: json['id_cliente'],
         fecha: DateTime.parse(json['fecha']),
@@ -91,7 +92,7 @@ class HistorialModel extends HistorialEntity
       };
 
   @override
-  HistorialEntity toEntity() => HistorialEntity(
+  HistorialPedidoEntity toEntity() => HistorialPedidoEntity(
         idPedido: idPedido,
         idCliente: idCliente,
         fecha: fecha,

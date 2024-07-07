@@ -45,7 +45,7 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
         titleScreen: 'INVENTARIO EXPO',
         child: Column(
           children: [
-            const SizedBox(height: 2),
+            const SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ReactiveForm(

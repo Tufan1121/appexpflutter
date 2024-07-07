@@ -18,6 +18,7 @@ List<RouteBase> get $appRoutes => [
       $pedidoRoute,
       $generarPedidoRoute,
       $sesionPedidoRoute,
+      $cotizaPedidoRoute,
       $invetarioExpoRoute,
       $invetarioBodegaRoute,
       $busquedaGlobalRoute,
@@ -306,6 +307,35 @@ extension $SesionPedidoRouteExtension on SesionPedidoRoute {
 
   String get location => GoRouteData.$location(
         '/sesion_pedido',
+        queryParams: {
+          'id-cliente': idCliente.toString(),
+          'estado-pedido': estadoPedido.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $cotizaPedidoRoute => GoRouteData.$route(
+      path: '/cotiza_pedido',
+      factory: $CotizaPedidoRouteExtension._fromState,
+    );
+
+extension $CotizaPedidoRouteExtension on CotizaPedidoRoute {
+  static CotizaPedidoRoute _fromState(GoRouterState state) => CotizaPedidoRoute(
+        idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
+        estadoPedido: int.parse(state.uri.queryParameters['estado-pedido']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/cotiza_pedido',
         queryParams: {
           'id-cliente': idCliente.toString(),
           'estado-pedido': estadoPedido.toString(),

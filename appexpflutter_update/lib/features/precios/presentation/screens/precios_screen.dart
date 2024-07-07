@@ -33,6 +33,9 @@ class PreciosScreen extends StatelessWidget {
           height: screenHeight * 0.90,
           child: Column(
             children: [
+              const SizedBox(
+                height: 5,
+              ),
               const SearchPrices(),
               Expanded(
                 child: Scrollbar(

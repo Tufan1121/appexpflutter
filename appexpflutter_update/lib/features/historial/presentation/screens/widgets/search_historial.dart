@@ -1,5 +1,4 @@
 import 'package:appexpflutter_update/features/historial/presentation/bloc/historial_bloc.dart';
-import 'package:appexpflutter_update/features/historial/utils.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_dropdownbutton.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -93,22 +92,17 @@ class SearchHistorial extends HookWidget {
                 if (textFieldValue.value.isNotEmpty) {
                   switch (dropdownValue.value) {
                     case 'Buscar por pedido':
-                      context.read<HistorialBloc>().add(GetHistorial(
-                          parameter: textFieldValue.value,
-                          endpoint: UtilsHistorial.buscaClientePedido,
-                          search: 'pedido'));
+                      context.read<HistorialBloc>().add(GetHistorialPedido(
+                          parameter: textFieldValue.value, search: 'pedido'));
                       break;
                     case 'Buscar por sesión':
-                      context.read<HistorialBloc>().add(GetHistorial(
-                          parameter: textFieldValue.value,
-                          endpoint: UtilsHistorial.buscaClienteSesion,
-                          search: 'sesión'));
+                      context.read<HistorialBloc>().add(GetHistorialSesion(
+                          parameter: textFieldValue.value, search: 'sesión'));
                       break;
 
                     case 'Buscar por cotización':
-                      context.read<HistorialBloc>().add(GetHistorial(
+                      context.read<HistorialBloc>().add(GetHistorialCotiza(
                           parameter: textFieldValue.value,
-                          endpoint: UtilsHistorial.buscaClienteCotiza,
                           search: 'cotización'));
                       break;
                   }

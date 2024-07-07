@@ -1,17 +1,17 @@
+import 'package:appexpflutter_update/features/ventas/domain/entities/cotiza_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_entity.dart';
-import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_entity.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
 
-part 'sesion_pedido_event.dart';
-part 'sesion_pedido_state.dart';
+part 'cotiza_pedido_event.dart';
+part 'cotiza_pedido_state.dart';
 
-class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
+class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
   final PedidoUsecase pedidoUsecase;
-  SesionPedidoBloc({required this.pedidoUsecase}) : super(PedidoInitial()) {
+  CotizaPedidoBloc({required this.pedidoUsecase}) : super(PedidoInitial()) {
     on<PedidoAddEvent>(_pedidoAddEvent);
     on<PedidoAddDetalleEvent>(_pedidoAddDetalleEvent);
     // on<PedidoAddIdPedidoEvent>(_pedidoAddIdPedidoEvent);
@@ -19,9 +19,9 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
   }
 
   Future<void> _pedidoAddEvent(
-      PedidoAddEvent event, Emitter<SesionPedidoState> emit) async {
+      PedidoAddEvent event, Emitter<CotizaPedidoState> emit) async {
     emit(PedidoLoading());
-    final result = await pedidoUsecase.addSesionPedido(event.data);
+    final result = await pedidoUsecase.addCotizaPedido(event.data);
 
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
@@ -40,10 +40,10 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
   }
 
   Future<void> _pedidoAddDetalleEvent(
-      PedidoAddDetalleEvent event, Emitter<SesionPedidoState> emit) async {
+      PedidoAddDetalleEvent event, Emitter<CotizaPedidoState> emit) async {
     List<Map<String, dynamic>> detallesData = event.products.map((producto) {
       return {
-        'id_sesion': event.pedido.idSesion,
+        'id_cotiza': event.pedido.idCotiza,
         'clave': producto.clave,
         'clave2': producto.clave2,
         'cantidad': producto.cantidad,
@@ -51,8 +51,7 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
       };
     }).toList();
 
-
-    final result = await pedidoUsecase.addSesionDetallePedido(detallesData);
+    final result = await pedidoUsecase.addCotizaDetallePedido(detallesData);
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (success) {
@@ -63,7 +62,7 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
   }
 
   // Future<void> _pedidoAddIdPedidoEvent(
-  //     PedidoAddIdPedidoEvent event, Emitter<SesionPedidoState> emit) async {
+  //     PedidoAddIdPedidoEvent event, Emitter<CotizaPedidoState> emit) async {
   //   final result = await pedidoUsecase.addIdPedido(event.pedido.idPedido);
   //   result.fold(
   //     (failure) => emit(PedidoError(message: failure.message)),
@@ -73,7 +72,7 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
   //   );
   // }
 
-  void _clearPedidoState(Emitter<SesionPedidoState> emit) {
+  void _clearPedidoState(Emitter<CotizaPedidoState> emit) {
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
     emit(PedidoInitial());

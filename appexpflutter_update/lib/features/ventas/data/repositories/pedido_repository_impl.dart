@@ -1,4 +1,7 @@
+import 'package:appexpflutter_update/config/custom_exceptions/not_found_expection.dart';
+import 'package:appexpflutter_update/features/ventas/domain/entities/cotiza_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_entity.dart';
+import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/pedido_data_source.dart';
@@ -54,10 +57,34 @@ class PedidoRepositoryImpl implements PedidoRepository {
   }
 
   @override
-  Future<Either<NetworkException, PedidoEntity>> addSesionPedido(
+  Future<Either<NetworkException, SesionEntity>> addSesionPedido(
       Map<String, dynamic> data) async {
     try {
-      final result = await pedidoDataSource.addPedido(data);
+      final result = await pedidoDataSource.addSesionPedido(data);
+      return Right(result.toEntity());
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, String>> addCotizaDetallePedido(
+      List<Map<String, dynamic>> data) async {
+    try {
+      final result = await pedidoDataSource.addCotizaDetallePedido(data);
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, CotizaEntity>> addCotizaPedido(
+      Map<String, dynamic> data) async {
+    try {
+      final result = await pedidoDataSource.addCotizaPedido(data);
       return Right(result.toEntity());
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));

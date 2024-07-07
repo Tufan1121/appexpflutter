@@ -3,10 +3,10 @@ import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/cotiza_pedido/cotiza_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 // import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,8 +16,8 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../config/theme/app_theme.dart';
 import '../../../shared/widgets/layout_screens.dart';
 
-class SesionPedidoScreen extends StatefulHookWidget {
-  const SesionPedidoScreen({
+class CotizaPedidoScreen extends StatefulHookWidget {
+  const CotizaPedidoScreen({
     super.key,
     required this.idCliente,
     required this.estadoPedido,
@@ -26,10 +26,10 @@ class SesionPedidoScreen extends StatefulHookWidget {
   final int estadoPedido;
 
   @override
-  State<SesionPedidoScreen> createState() => _SesionPedidoScreenState();
+  State<CotizaPedidoScreen> createState() => _SesionPedidoScreenState();
 }
 
-class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
+class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
   final form = FormGroup({
     'metodoDePago1': FormControl<String>(validators: [
       Validators.required,
@@ -130,7 +130,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
     }, []);
     return LayoutScreens(
       onPressed: () => Navigator.pop(context),
-      titleScreen: 'SESION PEDIDO',
+      titleScreen: 'COTIZACION PEDIDO',
       child: Column(
         children: [
           const SizedBox(
@@ -262,8 +262,8 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  BlocConsumer<SesionPedidoBloc,
-                                      SesionPedidoState>(
+                                  BlocConsumer<CotizaPedidoBloc,
+                                      CotizaPedidoState>(
                                     listener: (context, state) {
                                       if (state is PedidoLoading) {
                                         loading.value = true;
@@ -305,7 +305,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                             .read<ProductosBloc>()
                                             .add(ClearProductoStateEvent());
                                         context
-                                            .read<SesionPedidoBloc>()
+                                            .read<CotizaPedidoBloc>()
                                             .add(ClearPedidoStateEvent());
                                         context.read<InventarioBloc>().add(
                                             ClearInventarioProductoEvent());
@@ -491,7 +491,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
         'id_metodopago3': metodo3.toString(),
       };
 
-      context.read<SesionPedidoBloc>().add(
+      context.read<CotizaPedidoBloc>().add(
           PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
     } else {
       form.markAllAsTouched();

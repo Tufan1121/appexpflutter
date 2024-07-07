@@ -85,83 +85,87 @@ class _PedidoScreenState extends State<PedidoScreen> {
       ),
       child: Column(
         children: [
-          const SizedBox(height: 2),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          const SizedBox(height: 5),
+          Column(
             children: [
-              const Text(
-                'Cliente: ',
-                style: TextStyle(
-                    color: Colores.scaffoldBackgroundColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Cliente: ',
+                    style: TextStyle(
+                        color: Colores.scaffoldBackgroundColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                  AutoSizeText(
+                    maxLines: 2,
+                    widget.nombreCliente,
+                    style: const TextStyle(
+                        color: Colores.scaffoldBackgroundColor, fontSize: 20),
+                  ),
+                ],
               ),
-              AutoSizeText(
-                maxLines: 2,
-                widget.nombreCliente,
-                style: const TextStyle(
-                    color: Colores.scaffoldBackgroundColor, fontSize: 20),
+              const SizedBox(height: 5),
+              Center(
+                child: CustomDropdownButton<String>(
+                  value: dropdownValue.value,
+                  hint: 'Selecciona Estatus del pedido',
+                  styleHint: const TextStyle(fontSize: 15),
+                  prefixIcon: const FaIcon(
+                    FontAwesomeIcons.bagShopping,
+                    color: Colores.secondaryColor,
+                  ),
+                  onChanged: (value) {
+                    dropdownValue.value = value!;
+                  },
+                  icon: const FaIcon(
+                    FontAwesomeIcons.diagramNext,
+                    color: Colores.secondaryColor,
+                  ),
+                  items: list.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: AutoSizeText(
+                        value,
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
+              const SizedBox(height: 20),
+              SearchProducto(
+                  estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
+                  idCliente: widget.idCliente),
+              const SizedBox(height: 5),
+              BlocConsumer<ProductosBloc, ProductosState>(
+                listener: (context, state) {
+                  if (state is ProductoError) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text(
+                        state.message,
+                      ),
+                    ));
+                  }
+                },
+                builder: (context, state) {
+                  if (state is ProductosLoaded) {
+                    return ListaProductos(productos: state.productos);
+                  } else if (state is ProductoLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is ProductoError) {
+                    return ListaProductos(
+                      productos: state.productos,
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              )
             ],
           ),
-          const SizedBox(height: 5),
-          Center(
-            child: CustomDropdownButton<String>(
-              value: dropdownValue.value,
-              hint: 'Selecciona Estatus del pedido',
-              styleHint: const TextStyle(fontSize: 15),
-              prefixIcon: const FaIcon(
-                FontAwesomeIcons.bagShopping,
-                color: Colores.secondaryColor,
-              ),
-              onChanged: (value) {
-                dropdownValue.value = value!;
-              },
-              icon: const FaIcon(
-                FontAwesomeIcons.diagramNext,
-                color: Colores.secondaryColor,
-              ),
-              items: list.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: AutoSizeText(
-                    value,
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 20),
-          SearchProducto(
-              estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
-              idCliente: widget.idCliente),
-          const SizedBox(height: 5),
-          BlocConsumer<ProductosBloc, ProductosState>(
-            listener: (context, state) {
-              if (state is ProductoError) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.red,
-                  content: Text(
-                    state.message,
-                  ),
-                ));
-              }
-            },
-            builder: (context, state) {
-              if (state is ProductosLoaded) {
-                return ListaProductos(productos: state.productos);
-              } else if (state is ProductoLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is ProductoError) {
-                return ListaProductos(
-                  productos: state.productos,
-                );
-              } else {
-                return Container();
-              }
-            },
-          )
         ],
       ),
     );
