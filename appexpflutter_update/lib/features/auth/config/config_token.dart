@@ -33,9 +33,7 @@ class ConfigToken {
     if (now.weekday == DateTime.monday && lastCheckedDate != today) {
       await deleteToken();
       await saveLastCheckedDate();
-      print('Token eliminado porque es lunes');
-    } else {
-      print('Hoy no es lunes o ya se verificó hoy');
-    }
+      // print('Token eliminado porque es lunes');
+    } 
   }
 }

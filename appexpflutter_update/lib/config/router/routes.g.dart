@@ -16,6 +16,7 @@ List<RouteBase> get $appRoutes => [
       $clienteNuevoRoute,
       $clienteExistenteRoute,
       $pedidoRoute,
+      $pedidoSesionRoute,
       $generarPedidoRoute,
       $sesionPedidoRoute,
       $cotizaPedidoRoute,
@@ -251,6 +252,37 @@ extension $PedidoRouteExtension on PedidoRoute {
         queryParams: {
           'id-cliente': idCliente.toString(),
           'nombre-cliente': nombreCliente,
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $pedidoSesionRoute => GoRouteData.$route(
+      path: '/pedido_sesion',
+      factory: $PedidoSesionRouteExtension._fromState,
+    );
+
+extension $PedidoSesionRouteExtension on PedidoSesionRoute {
+  static PedidoSesionRoute _fromState(GoRouterState state) => PedidoSesionRoute(
+        idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
+        nombreCliente: state.uri.queryParameters['nombre-cliente']!,
+        estado: int.parse(state.uri.queryParameters['estado']!),
+      );
+
+  String get location => GoRouteData.$location(
+        '/pedido_sesion',
+        queryParams: {
+          'id-cliente': idCliente.toString(),
+          'nombre-cliente': nombreCliente,
+          'estado': estado.toString(),
         },
       );
 

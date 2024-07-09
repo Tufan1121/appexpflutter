@@ -11,6 +11,7 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/client
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cotiza_pedido_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/generar_pedido_screen.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_sesion_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/sesion_pedido_screen.dart';
 
 import 'package:flutter/material.dart';
@@ -146,6 +147,25 @@ class PedidoRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) => PedidoScreen(
         idCliente: idCliente,
         nombreCliente: nombreCliente,
+      );
+}
+
+@TypedGoRoute<PedidoSesionRoute>(
+  path: PedidoSesionRoute.path,
+)
+class PedidoSesionRoute extends GoRouteData {
+  static const path = '/pedido_sesion';
+  final int idCliente;
+  final int estado;
+  final String nombreCliente;
+
+  PedidoSesionRoute({required this.idCliente, required this.nombreCliente, required this.estado});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => PedidoSesionScreen(
+        idCliente: idCliente,
+        nombreCliente: nombreCliente,
+        estado: estado,
       );
 }
 

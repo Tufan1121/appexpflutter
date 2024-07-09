@@ -20,7 +20,7 @@ class PreciosScreen extends StatelessWidget {
       // Permite la navegación hacia atrás nativa
       onPopInvoked: (didPop) async {
         context.read<PreciosBloc>().add(ClearPreciosStateEvent());
-      },
+      }, 
       child: LayoutScreens(
         icon: Icons.price_change,
         titleScreen: 'PRECIOS',

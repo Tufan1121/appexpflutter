@@ -15,6 +15,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 // import 'package:url_launcher/url_launcher.dart';
 import '../../../../config/theme/app_theme.dart';
 import '../../../shared/widgets/layout_screens.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class SesionPedidoScreen extends StatefulHookWidget {
   const SesionPedidoScreen({

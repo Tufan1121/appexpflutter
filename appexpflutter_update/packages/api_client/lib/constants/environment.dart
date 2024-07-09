@@ -5,7 +5,8 @@ class Environment {
     try {
       await dotenv.load(fileName: '.env');
     } catch (e) {
-      print('Error loading .env file: $e');
+      // print('Error loading .env file: $e');
+      throw Exception('Error loading .env file: $e');
     }
   }
 

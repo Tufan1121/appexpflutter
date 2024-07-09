@@ -91,7 +91,7 @@ class FullScreenGallery2 extends StatelessWidget {
                   style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
-                  'hm: ${producto.hm}',
+                  'Existencia: ${producto.hm}',
                   style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
