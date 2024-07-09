@@ -10,13 +10,13 @@ class SesionModel extends SesionEntity
   });
 
   factory SesionModel.fromJson(Map<String, dynamic> json) => SesionModel(
-        idSesion: json["id_pedido"],
+        idSesion: json["id_sesion"],
         pedidos: json["pedidos"],
         idExpo: json["id_expo"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id_pedido": idSesion,
+        "id_sesion": idSesion,
         "pedidos": pedidos,
         "id_expo": idExpo,
       };
