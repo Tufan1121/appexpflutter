@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/features/historial/presentation/screens/historial_screen.dart';
+import 'package:appexpflutter_update/features/historial/presentation/screens/pedido_sesion_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_bodega_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_expo_screen.dart';
@@ -11,7 +12,6 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/client
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cotiza_pedido_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/generar_pedido_screen.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/pedido_sesion_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/sesion_pedido_screen.dart';
 
 import 'package:flutter/material.dart';

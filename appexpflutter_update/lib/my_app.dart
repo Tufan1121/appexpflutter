@@ -1,4 +1,11 @@
-import 'package:appexpflutter_update/features/historial/presentation/bloc/historial_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:appexpflutter_update/main.dart';
+import 'package:appexpflutter_update/config/config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
@@ -6,15 +13,9 @@ import 'package:appexpflutter_update/features/ventas/presentation/blocs/cotiza_p
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:appexpflutter_update/main.dart';
-import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 
 class MyApp extends StatefulWidget {
@@ -58,6 +59,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<BusquedaGlobalBloc>(
             create: (_) => injector<BusquedaGlobalBloc>()),
         BlocProvider<HistorialBloc>(create: (_) => injector<HistorialBloc>()),
+        BlocProvider<DetalleSesionBloc>(
+            create: (_) => injector<DetalleSesionBloc>()),
       ],
       child: FutureBuilder(
         future: _init(),

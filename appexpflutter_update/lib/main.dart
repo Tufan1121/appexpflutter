@@ -7,7 +7,8 @@ import 'package:appexpflutter_update/features/historial/data/data_sources/histor
 import 'package:appexpflutter_update/features/historial/data/repositories/historial_repository_impl.dart';
 import 'package:appexpflutter_update/features/historial/domain/respositories/historial_repository.dart';
 import 'package:appexpflutter_update/features/historial/domain/usecases/historial_usecase.dart';
-import 'package:appexpflutter_update/features/historial/presentation/bloc/historial_bloc.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/data/data_sources/inventario_expo_data_source.dart';
 import 'package:appexpflutter_update/features/inventarios/data/data_sources/inventario_expo_data_source_impl.dart';
 import 'package:appexpflutter_update/features/inventarios/data/repositories/inventario_expo_repository_impl.dart';

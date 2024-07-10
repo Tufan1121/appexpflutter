@@ -10,4 +10,5 @@ abstract interface class PedidoDataSource {
   Future<CotizaModel> addCotizaPedido(Map<String, dynamic> data);
   Future<String> addCotizaDetallePedido(List<Map<String, dynamic>> data);
   Future<String> addIdPedido(int idPedido);
+  Future<String> addIdCotizaPedido(int idCotiza);
 }

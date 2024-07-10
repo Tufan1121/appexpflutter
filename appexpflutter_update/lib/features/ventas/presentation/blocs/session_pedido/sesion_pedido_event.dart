@@ -9,7 +9,7 @@ sealed class SesionPedidoEvent extends Equatable {
 
 class PedidoAddEvent extends SesionPedidoEvent {
   final Map<String, dynamic> data;
-  final List<DetallePedido> products;
+  final List<DetallePedidoEntity> products;
 
   const PedidoAddEvent({required this.data, required this.products});
 
@@ -19,7 +19,7 @@ class PedidoAddEvent extends SesionPedidoEvent {
 
 class PedidoAddDetalleEvent extends SesionPedidoEvent {
   final SesionEntity pedido;
-  final List<DetallePedido> products;
+  final List<DetallePedidoEntity> products;
 
   const PedidoAddDetalleEvent({required this.products, required this.pedido});
 

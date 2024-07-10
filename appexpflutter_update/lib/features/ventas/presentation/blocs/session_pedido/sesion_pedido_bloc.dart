@@ -51,7 +51,6 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
       };
     }).toList();
 
-
     final result = await pedidoUsecase.addSesionDetallePedido(detallesData);
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),

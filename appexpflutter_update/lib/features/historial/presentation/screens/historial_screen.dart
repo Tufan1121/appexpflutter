@@ -1,5 +1,5 @@
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/historial/presentation/bloc/historial_bloc.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/historial_cotiza.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/historial_pedido.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/historial_sesion.dart';

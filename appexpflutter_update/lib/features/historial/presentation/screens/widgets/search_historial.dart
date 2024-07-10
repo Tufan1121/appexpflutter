@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/features/historial/presentation/bloc/historial_bloc.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_dropdownbutton.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';

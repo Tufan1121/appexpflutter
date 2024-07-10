@@ -10,6 +10,8 @@ abstract interface class PedidoRepository {
   Future<Either<NetworkException, String>> addDetallePedido(
       List<Map<String, dynamic>> data);
   Future<Either<NetworkException, String>> addIdPedido(int idPedido);
+
+  Future<Either<NetworkException, String>> addIdCotizaPedido(int idPedido);
   Future<Either<NetworkException, String>> addSesionDetallePedido(
       List<Map<String, dynamic>> data);
 

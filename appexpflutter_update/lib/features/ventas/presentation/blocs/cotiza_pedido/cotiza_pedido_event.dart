@@ -9,7 +9,7 @@ sealed class CotizaPedidoEvent extends Equatable {
 
 class PedidoAddEvent extends CotizaPedidoEvent {
   final Map<String, dynamic> data;
-  final List<DetallePedido> products;
+  final List<DetallePedidoEntity> products;
 
   const PedidoAddEvent({required this.data, required this.products});
 
@@ -19,7 +19,7 @@ class PedidoAddEvent extends CotizaPedidoEvent {
 
 class PedidoAddDetalleEvent extends CotizaPedidoEvent {
   final CotizaEntity pedido;
-  final List<DetallePedido> products;
+  final List<DetallePedidoEntity> products;
 
   const PedidoAddDetalleEvent({required this.products, required this.pedido});
 
@@ -28,7 +28,7 @@ class PedidoAddDetalleEvent extends CotizaPedidoEvent {
 }
 
 class PedidoAddIdPedidoEvent extends CotizaPedidoEvent {
-  final PedidoEntity pedido;
+  final CotizaEntity pedido;
 
   const PedidoAddIdPedidoEvent({required this.pedido});
 

@@ -2,5 +2,5 @@ import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_ped
 
 class UtilsVenta {
   static double total = 0;
-  static List<DetallePedido> listProductsOrder = [];
+  static List<DetallePedidoEntity> listProductsOrder = [];
 }

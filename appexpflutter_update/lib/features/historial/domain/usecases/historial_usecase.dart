@@ -1,4 +1,5 @@
 import 'package:api_client/exceptions/network_exception.dart';
+import 'package:appexpflutter_update/features/historial/domain/entities/detalle_sesion_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_cotiza_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_pedido_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_sesion_entity.dart';
@@ -18,6 +19,11 @@ class HistorialUsecase {
   Future<Either<NetworkException, List<HistorialSesionEntity>>>
       getHistorialSesion(String parameter) async {
     return historialRepository.getHistorialSesion(parameter);
+  }
+
+  Future<Either<NetworkException, List<DetalleSesionEntity>>>
+      getHistorialDetalleSesion(String idSesion) async {
+    return historialRepository.getHistorialDetalleSesion(idSesion);
   }
 
   Future<Either<NetworkException, List<HistorialCotizaEntity>>>

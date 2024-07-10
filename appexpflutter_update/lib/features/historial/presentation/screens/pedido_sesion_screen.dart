@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -6,11 +5,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/search_producto.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos.dart';
-
-import 'widgets/widgets.dart' show CustomDropdownButton;
+import 'package:appexpflutter_update/config/router/routes.dart';
+import 'package:appexpflutter_update/features/historial/domain/entities/detalle_sesion_entity.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
+import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/lista_detalle_productos.dart';
+import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/search_producto_sesion.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_dropdownbutton.dart';
 
 const list = [
   'Pendiente Pago (Anticipo)',
@@ -41,52 +41,36 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
   @override
   Widget build(BuildContext context) {
     final dropdownValue = useState<String>(list[widget.estado - 1]);
-    final productos = context.watch<ProductosBloc>().scannedProducts;
     return LayoutScreens(
       onPressed: () => Navigator.pop(context),
       titleScreen: 'PEDIDO',
-      floatingActionButton: ElevatedButton(
-        onPressed: () {
-          if (productos.isNotEmpty) {
-            GenerarPedidoRoute(
-                    idCliente: widget.idCliente,
-                    estadoPedido: getEstadoPedidoPagoId(dropdownValue.value))
-                .push(context);
-          } else {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Atención'),
-                  content: const Text('Debes agregar algún producto'),
-                  actions: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colores.secondaryColor),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Aceptar',
-                        style:
-                            TextStyle(color: Colores.scaffoldBackgroundColor),
-                      ),
-                    )
-                  ],
-                );
-              },
-            );
+      floatingActionButton: BlocBuilder<DetalleSesionBloc, SesionState>(
+        builder: (context, state) {
+          List<DetalleSesionEntity> detalleProducto = [];
+          if (state is SesionLoaded) {
+            detalleProducto = state.detalleSesion;
           }
+          return ElevatedButton(
+            onPressed: detalleProducto.isNotEmpty
+                ? () {
+                    GenerarPedidoRoute(
+                            idCliente: widget.idCliente,
+                            estadoPedido:
+                                getEstadoPedidoPagoId(dropdownValue.value))
+                        .push(context);
+                  }
+                : null,
+            style: ElevatedButton.styleFrom(
+              elevation: 2,
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(8),
+            ),
+            child: Image.asset(
+              'assets/iconos/generar pedido- rosa.png',
+              scale: 4.5,
+            ),
+          );
         },
-        style: ElevatedButton.styleFrom(
-          elevation: 2,
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(8),
-        ),
-        child: Image.asset(
-          'assets/iconos/generar pedido- rosa.png',
-          scale: 4.5,
-        ),
       ),
       child: Column(
         children: [
@@ -140,33 +124,49 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              SearchProducto(
-                  estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
-                  idCliente: widget.idCliente),
+              // SearchProductoSesion(
+              //     estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
+              //     idCliente: widget.idCliente),
               const SizedBox(height: 5),
-              BlocConsumer<ProductosBloc, ProductosState>(
-                listener: (context, state) {
-                  if (state is ProductoError) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.red,
-                      content: Text(
-                        state.message,
-                      ),
-                    ));
-                  }
-                },
+              BlocBuilder<DetalleSesionBloc, SesionState>(
                 builder: (context, state) {
-                  if (state is ProductosLoaded) {
-                    return ListaProductos(productos: state.productos);
-                  } else if (state is ProductoLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is ProductoError) {
-                    return ListaProductos(
-                      productos: state.productos,
+                  if (state is SesionLoaded) {
+                    return ListaDetalleProductos(
+                        detalleProductos: state.detalleSesion);
+                  } else if (state is SesionLoading) {
+                    return const Column(
+                      children: [
+                        SizedBox(height: 150),
+                        CircularProgressIndicator(
+                          color: Colores.secondaryColor,
+                        ),
+                      ],
                     );
-                  } else {
-                    return Container();
                   }
+                  if (state is SesionError) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 150),
+                        Center(
+                          child: SizedBox(
+                            height: 60,
+                            width: 300,
+                            child: Card(
+                              child: AutoSizeText(
+                                state.message,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                  return Container();
                 },
               )
             ],

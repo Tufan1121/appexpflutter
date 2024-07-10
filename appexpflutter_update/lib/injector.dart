@@ -71,6 +71,8 @@ Future<void> init() async {
         () => CotizaPedidoBloc(pedidoUsecase: injector()))
     ..registerLazySingleton<HistorialBloc>(
         () => HistorialBloc(historialUsecase: injector()))
+    ..registerLazySingleton<DetalleSesionBloc>(
+        () => DetalleSesionBloc(historialUsecase: injector()))
     ..registerLazySingleton<PedidoBloc>(
         () => PedidoBloc(pedidoUsecase: injector()));
 }

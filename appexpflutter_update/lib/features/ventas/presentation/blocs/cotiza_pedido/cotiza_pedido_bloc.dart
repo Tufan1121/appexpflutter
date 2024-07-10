@@ -14,7 +14,7 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
   CotizaPedidoBloc({required this.pedidoUsecase}) : super(PedidoInitial()) {
     on<PedidoAddEvent>(_pedidoAddEvent);
     on<PedidoAddDetalleEvent>(_pedidoAddDetalleEvent);
-    // on<PedidoAddIdPedidoEvent>(_pedidoAddIdPedidoEvent);
+    on<PedidoAddIdPedidoEvent>(_pedidoAddIdPedidoEvent);
     on<ClearPedidoStateEvent>((event, emit) => _clearPedidoState(emit));
   }
 
@@ -55,22 +55,22 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (success) {
-        // add(PedidoAddIdPedidoEvent(pedido: event.pedido));
-        emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
+        add(PedidoAddIdPedidoEvent(pedido: event.pedido));
+        // emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
       },
     );
   }
 
-  // Future<void> _pedidoAddIdPedidoEvent(
-  //     PedidoAddIdPedidoEvent event, Emitter<CotizaPedidoState> emit) async {
-  //   final result = await pedidoUsecase.addIdPedido(event.pedido.idPedido);
-  //   result.fold(
-  //     (failure) => emit(PedidoError(message: failure.message)),
-  //     (success) {
-  //       emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
-  //     },
-  //   );
-  // }
+  Future<void> _pedidoAddIdPedidoEvent(
+      PedidoAddIdPedidoEvent event, Emitter<CotizaPedidoState> emit) async {
+    final result = await pedidoUsecase.addIdCotizaPedido(event.pedido.idCotiza);
+    result.fold(
+      (failure) => emit(PedidoError(message: failure.message)),
+      (success) {
+        emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
+      },
+    );
+  }
 
   void _clearPedidoState(Emitter<CotizaPedidoState> emit) {
     UtilsVenta.listProductsOrder.clear();

@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-class DetallePedido extends Equatable {
+class DetallePedidoEntity extends Equatable {
   final int idPedido;
   final String clave;
   final String clave2;
   final int cantidad;
   final double precio;
 
-  const DetallePedido({
+  const DetallePedidoEntity({
     required this.idPedido,
     required this.clave,
     required this.clave2,

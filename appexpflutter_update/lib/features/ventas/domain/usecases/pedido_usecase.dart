@@ -33,6 +33,9 @@ class PedidoUsecase {
   Future<Either<NetworkException, String>> addIdPedido(int idPedido) {
     return pedidoRepository.addIdPedido(idPedido);
   }
+  Future<Either<NetworkException, String>> addIdCotizaPedido(int idCotiza) {
+    return pedidoRepository.addIdCotizaPedido(idCotiza);
+  }
 
   Future<Either<NetworkException, String>> addCotizaDetallePedido(
       List<Map<String, dynamic>> data) {

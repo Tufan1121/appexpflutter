@@ -2,10 +2,12 @@ import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_sesion_entity.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 // import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/pdf_viewer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -46,12 +48,16 @@ class HistorialListSesion extends StatelessWidget {
             child: Card(
               elevation: 4,
               child: ListTile(
-                onTap: () => PedidoSesionRoute(
-                        idCliente: historial[index].idCliente,
-                        nombreCliente: historial[index].nombre,
-                        estado: historial[index].estatus,
-                        )
-                    .push(context),
+                onTap: () {
+                  PedidoSesionRoute(
+                    idCliente: historial[index].idCliente,
+                    nombreCliente: historial[index].nombre,
+                    estado: historial[index].estatus,
+                  ).push(context);
+
+                  context.read<DetalleSesionBloc>().add(GetDetalleSesionEvent(
+                      idSesion: historial[index].idSesion.toString()));
+                },
                 leading: Container(
                   height: 40,
                   width: 40,

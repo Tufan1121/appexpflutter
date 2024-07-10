@@ -1,5 +1,6 @@
 import 'package:api_client/api_client.dart';
 import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source.dart';
+import 'package:appexpflutter_update/features/historial/data/models/detalle_sesion_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_cotiza_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_pedido_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_sesion_model.dart';
@@ -70,6 +71,27 @@ class HistorialDataSourceImpl implements HistorialDataSource {
       final historial =
           jsonList.map((e) => HistorialSesionModel.fromJson(e)).toList();
       return historial;
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<DetalleSesionModel>> getHistorialDetalleSesion(
+      String idSesion) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioclient.get('/selectfromsesiond/',
+          queryParameters: {
+            'id_sesion': idSesion,
+          },
+          options: Options(headers: {
+            'Authorization': 'Bearer $token',
+          }));
+      List<dynamic> jsonList = result.data;
+      final detalleSesion =
+          jsonList.map((e) => DetalleSesionModel.fromJson(e)).toList();
+      return detalleSesion;
     } catch (_) {
       rethrow;
     }

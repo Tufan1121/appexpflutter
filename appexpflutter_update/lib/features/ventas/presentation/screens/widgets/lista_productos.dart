@@ -54,7 +54,7 @@ class ListaProductos extends HookWidget {
           final subtotal = precioUnitario * count;
           newTotal += subtotal;
           UtilsVenta.listProductsOrder.add(
-            DetallePedido(
+            DetallePedidoEntity(
               idPedido: 0,
               clave: productos[i].producto1,
               clave2: productos[i].producto,

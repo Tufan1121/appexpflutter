@@ -178,4 +178,23 @@ class PedidoDataSourceImpl implements PedidoDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<String> addIdCotizaPedido(int idCotiza) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.post(
+        '/rtoCotiza',
+        queryParameters: {'id_cotiza': idCotiza},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return result.data['success'] as String;
+    } catch (_) {
+      rethrow;
+    }
+  }
 }
