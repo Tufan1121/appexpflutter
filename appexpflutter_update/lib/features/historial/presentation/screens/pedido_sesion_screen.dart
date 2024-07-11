@@ -19,15 +19,16 @@ const list = [
 ];
 
 class PedidoSesionScreen extends StatefulHookWidget {
-  const PedidoSesionScreen({
-    super.key,
-    required this.idCliente,
-    required this.nombreCliente,
-    required this.estado,
-  });
+  const PedidoSesionScreen(
+      {super.key,
+      required this.idCliente,
+      required this.nombreCliente,
+      required this.estado,
+      required this.idSesion});
   final int idCliente;
   final String nombreCliente;
   final int estado;
+  final int idSesion;
 
   @override
   State<PedidoSesionScreen> createState() => _PedidoSesionScreenState();
@@ -54,10 +55,10 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
             onPressed: detalleProducto.isNotEmpty
                 ? () {
                     GenerarPedidoRoute(
-                            idCliente: widget.idCliente,
-                            estadoPedido:
-                                getEstadoPedidoPagoId(dropdownValue.value))
-                        .push(context);
+                      idCliente: widget.idCliente,
+                      estadoPedido: getEstadoPedidoPagoId(dropdownValue.value),
+                      idSesion: widget.idSesion,
+                    ).push(context);
                   }
                 : null,
             style: ElevatedButton.styleFrom(

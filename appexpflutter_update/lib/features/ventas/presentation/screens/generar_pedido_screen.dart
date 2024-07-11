@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
+import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/pdf_viewer.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_entity.dart';
 // import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
@@ -10,7 +11,9 @@ import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/pdf_viewer_pedido.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -20,15 +23,14 @@ import '../../../../config/theme/app_theme.dart';
 import '../../../shared/widgets/layout_screens.dart';
 
 class GenerarPedidoScreen extends StatefulHookWidget {
-  const GenerarPedidoScreen( {
-    super.key,
-    required this.idCliente,
-    required this.estadoPedido,
-    this.sesion,
-  });
+  const GenerarPedidoScreen(
+      {super.key,
+      required this.idCliente,
+      required this.estadoPedido,
+      this.idSesion});
   final int idCliente;
   final int estadoPedido;
-  final SesionEntity? sesion;
+  final int? idSesion;
 
   @override
   State<GenerarPedidoScreen> createState() => _GenerarPedidoScreenState();
@@ -500,6 +502,11 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
 
       context.read<PedidoBloc>().add(
           PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
+      if (widget.idSesion != 0 && widget.idSesion != null) {
+        context
+            .read<SesionPedidoBloc>()
+            .add(PedidoAddIdSesionEvent(idSesion: widget.idSesion!));
+      }
     } else {
       form.markAllAsTouched();
     }
@@ -587,8 +594,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Descargar PDF'),
-          content: Row(
+          title: Row(
             children: [
               const Text('PEDIDO: ', style: TextStyle(fontSize: 15)),
               Text(
@@ -598,40 +604,128 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
               ),
             ],
           ),
+          content: const Text('¿Deseas abrir el PDF? ',
+              style: TextStyle(fontSize: 15)),
           actions: [
-            Center(
-              child: ElevatedButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Colores.secondaryColor,
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text(
-                  'Aceptar',
-                  style: TextStyle(color: Colores.scaffoldBackgroundColor),
-                ),
-                onPressed: () {
-                  FocusScope.of(context).unfocus();
-                  // opcion 1
-                  getpdf.downloadPDF(pdfUrl, nombrePdf);
-                  // opcion 2
-                  // _openPDF(pdfUrl);
-
-                  form.control('metodoDePago1').reset();
-                  form.control('metodoDePago2').reset();
-                  form.control('metodoDePago3').reset();
-                  form.control('observaciones').reset();
-                  form.control('anticipoPago1').reset();
-                  form.control('anticipoPago2').reset();
-                  form.control('anticipoPago3').reset();
-                  form.control('entregado').reset();
-                  Navigator.of(context).pop();
-                  HomeRoute().go(context);
-                },
+            TextButton(
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colores.secondaryColor),
               ),
+              onPressed: () {
+                FocusScope.of(context).unfocus();
+                // opcion 1
+                getpdf.downloadPDF(pdfUrl, nombrePdf);
+                // opcion 2
+                // _openPDF(pdfUrl);
+
+                form.control('metodoDePago1').reset();
+                form.control('metodoDePago2').reset();
+                form.control('metodoDePago3').reset();
+                form.control('observaciones').reset();
+                form.control('anticipoPago1').reset();
+                form.control('anticipoPago2').reset();
+                form.control('anticipoPago3').reset();
+                form.control('entregado').reset();
+                Navigator.of(context).pop();
+                HomeRoute().push(context);
+              },
+            ),
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colores.secondaryColor,
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+              ),
+              onPressed: () {
+                FocusScope.of(context).unfocus();
+                // opcion 1
+
+                // opcion 2
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PdfViewerPedidoScreen(
+                      fileName: nombrePdf,
+                      search: 'Pedido',
+                      url: pdfUrl,
+                    ),
+                  ),
+                );
+
+                form.control('metodoDePago1').reset();
+                form.control('metodoDePago2').reset();
+                form.control('metodoDePago3').reset();
+                form.control('observaciones').reset();
+                form.control('anticipoPago1').reset();
+                form.control('anticipoPago2').reset();
+                form.control('anticipoPago3').reset();
+                form.control('entregado').reset();
+                // HomeRoute().go(context);
+              },
             ),
           ],
         );
       },
     );
   }
+  // void _showDownloadModal(
+  //     BuildContext context, String pdfUrl, String nombrePdf) {
+  //   final getpdf = Getpdf(context: context);
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Descargar PDF'),
+  //         content: Row(
+  //           children: [
+  //             const Text('PEDIDO: ', style: TextStyle(fontSize: 15)),
+  //             Text(
+  //               nombrePdf,
+  //               style:
+  //                   const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+  //             ),
+  //           ],
+  //         ),
+  //         actions: [
+  //           Center(
+  //             child: ElevatedButton(
+  //               style: TextButton.styleFrom(
+  //                 backgroundColor: Colores.secondaryColor,
+  //                 textStyle: Theme.of(context).textTheme.labelLarge,
+  //               ),
+  //               child: const Text(
+  //                 'Aceptar',
+  //                 style: TextStyle(color: Colores.scaffoldBackgroundColor),
+  //               ),
+  //               onPressed: () {
+  //                 FocusScope.of(context).unfocus();
+  //                 // opcion 1
+  //                 getpdf.downloadPDF(pdfUrl, nombrePdf);
+  //                 // opcion 2
+  //                 // _openPDF(pdfUrl);
+
+  //                 form.control('metodoDePago1').reset();
+  //                 form.control('metodoDePago2').reset();
+  //                 form.control('metodoDePago3').reset();
+  //                 form.control('observaciones').reset();
+  //                 form.control('anticipoPago1').reset();
+  //                 form.control('anticipoPago2').reset();
+  //                 form.control('anticipoPago3').reset();
+  //                 form.control('entregado').reset();
+  //                 Navigator.of(context).pop();
+  //                 HomeRoute().go(context);
+  //               },
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }

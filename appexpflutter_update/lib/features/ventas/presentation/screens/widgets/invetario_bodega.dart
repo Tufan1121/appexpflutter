@@ -161,8 +161,9 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                               child: CustomReactiveTextField(
                                                 formControlName: 'mlargo1',
                                                 hint: 'Largo',
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
                                                 hintStyle:
                                                     TextStyle(fontSize: 15),
                                               ),
@@ -172,8 +173,9 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                               child: CustomReactiveTextField(
                                                 formControlName: 'mlargo2',
                                                 hint: 'Largo',
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
                                                 hintStyle:
                                                     TextStyle(fontSize: 15),
                                               ),
@@ -187,8 +189,9 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                               child: CustomReactiveTextField(
                                                 formControlName: 'mancho1',
                                                 hint: 'Ancho',
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
                                                 hintStyle:
                                                     TextStyle(fontSize: 15),
                                               ),
@@ -198,8 +201,9 @@ class _InventarioBodegaState extends State<InventarioBodega> {
                                               child: CustomReactiveTextField(
                                                 formControlName: 'mancho2',
                                                 hint: 'Ancho',
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
                                                 hintStyle:
                                                     TextStyle(fontSize: 15),
                                               ),

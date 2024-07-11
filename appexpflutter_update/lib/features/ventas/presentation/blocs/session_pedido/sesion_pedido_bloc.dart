@@ -14,7 +14,7 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
       : super(PedidoSesionInitial()) {
     on<PedidoAddSesionEvent>(_pedidoAddEvent);
     on<PedidoAddDetalleEvent>(_pedidoAddDetalleEvent);
-    on<PedidoAddIdPedidoEvent>(_pedidoFinalSesionEvent);
+    on<PedidoAddIdSesionEvent>(_pedidoFinalSesionEvent);
     on<ClearPedidoSesionEvent>((event, emit) => _clearPedidoSesionState(emit));
   }
 
@@ -62,12 +62,13 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
   }
 
   Future<void> _pedidoFinalSesionEvent(
-      PedidoAddIdPedidoEvent event, Emitter<SesionPedidoState> emit) async {
-    final result = await pedidoUsecase.finalSesion(event.pedido.idSesion);
+      PedidoAddIdSesionEvent event, Emitter<SesionPedidoState> emit) async {
+    final result = await pedidoUsecase.finalSesion(event.idSesion);
     result.fold(
       (failure) => emit(PedidoSesionError(message: failure.message)),
       (success) {
-        emit(PedidoDetalleSesionLoaded(pedido: event.pedido, message: success));
+        print(success);
+        emit(PedidoFinalSesionLoaded(message: success));
       },
     );
   }

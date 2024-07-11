@@ -27,13 +27,13 @@ class PedidoAddDetalleEvent extends SesionPedidoEvent {
   List<Object> get props => [products];
 }
 
-class PedidoAddIdPedidoEvent extends SesionPedidoEvent {
-  final SesionEntity pedido;
+class PedidoAddIdSesionEvent extends SesionPedidoEvent {
+  final int idSesion;
 
-  const PedidoAddIdPedidoEvent({required this.pedido});
+  const PedidoAddIdSesionEvent({required this.idSesion});
 
   @override
-  List<Object> get props => [pedido];
+  List<Object> get props => [idSesion];
 }
 
 class ClearPedidoSesionEvent extends SesionPedidoEvent {}

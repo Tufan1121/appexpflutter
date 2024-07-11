@@ -31,6 +31,15 @@ class PedidoDetalleSesionLoaded extends SesionPedidoState {
   List<Object> get props => [message];
 }
 
+class PedidoFinalSesionLoaded extends SesionPedidoState {
+  final String message;
+
+  const PedidoFinalSesionLoaded({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
 class PedidoSesionError extends SesionPedidoState {
   final String message;
 

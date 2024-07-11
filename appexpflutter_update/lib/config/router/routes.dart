@@ -159,14 +159,21 @@ class PedidoSesionRoute extends GoRouteData {
   final int idCliente;
   final int estado;
   final String nombreCliente;
+  final int idSesion;
 
-  PedidoSesionRoute({required this.idCliente, required this.nombreCliente, required this.estado});
+  PedidoSesionRoute({
+    required this.idCliente,
+    required this.nombreCliente,
+    required this.estado,
+    required this.idSesion,
+  });
 
   @override
   Widget build(BuildContext context, GoRouterState state) => PedidoSesionScreen(
         idCliente: idCliente,
         nombreCliente: nombreCliente,
         estado: estado,
+        idSesion: idSesion,
       );
 }
 
@@ -177,12 +184,12 @@ class GenerarPedidoRoute extends GoRouteData {
   static const path = '/generar_pedido';
   final int idCliente;
   final int estadoPedido;
-  final SesionEntity? $extra;
+  final int? idSesion;
 
   GenerarPedidoRoute({
     required this.idCliente,
     required this.estadoPedido,
-    this.$extra,
+    this.idSesion,
   });
 
   @override
@@ -190,7 +197,7 @@ class GenerarPedidoRoute extends GoRouteData {
       GenerarPedidoScreen(
         idCliente: idCliente,
         estadoPedido: estadoPedido,
-        sesion: $extra,
+        idSesion: idSesion,
       );
 }
 
@@ -213,6 +220,7 @@ class SesionPedidoRoute extends GoRouteData {
         estadoPedido: estadoPedido,
       );
 }
+
 @TypedGoRoute<CotizaPedidoRoute>(
   path: CotizaPedidoRoute.path,
 )

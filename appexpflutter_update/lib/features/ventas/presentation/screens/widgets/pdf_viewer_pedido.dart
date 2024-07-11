@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +9,12 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 //  import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class PdfViewerScreen extends HookWidget {
+class PdfViewerPedidoScreen extends HookWidget {
   final String fileName;
   final String search;
   final String url;
 
-  const PdfViewerScreen({
+  const PdfViewerPedidoScreen({
     super.key,
     required this.fileName,
     required this.search,
@@ -78,55 +79,70 @@ class PdfViewerScreen extends HookWidget {
       }
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-        title: Text(
-          '$search:  $fileName',
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.bold,
-            color: Colores.scaffoldBackgroundColor,
-            shadows: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(2.0, 5.0),
-              )
-            ],
+    return PopScope(
+      canPop: true,
+      // Permite la navegación hacia atrás nativa
+      onPopInvoked: (didPop) async {
+        HomeRoute().push(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                HomeRoute().push(context);
+              });
+            },
           ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.download),
-            onPressed: downloadPdf,
-          ),
-        ],
-      ),
-      body: isUrlValid.value == null
-          ? const Center(child: CircularProgressIndicator())
-          : isUrlValid.value == true
-              ? SfPdfViewer.network(
-                  url,
-                  key: pdfViewerKey.value,
-                  onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.red,
-                        content:
-                            Text('Error al cargar el PDF: ${details.error}'),
-                      ),
-                    );
-                  },
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Colores.secondaryColor.withOpacity(0.78),
+          title: Text(
+            '$search:  $fileName',
+            style: GoogleFonts.montserrat(
+              fontWeight: FontWeight.bold,
+              color: Colores.scaffoldBackgroundColor,
+              shadows: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 6,
+                  offset: Offset(2.0, 5.0),
                 )
-              : const Center(
-                  child: Text(
-                    'No se pudo acceder al PDF. Verifique la URL e inténtelo nuevamente.',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
-                    textAlign: TextAlign.center,
+              ],
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.download),
+              onPressed: downloadPdf,
+            ),
+          ],
+        ),
+        body: isUrlValid.value == null
+            ? const Center(child: CircularProgressIndicator())
+            : isUrlValid.value == true
+                ? SfPdfViewer.network(
+                    url,
+                    key: pdfViewerKey.value,
+                    onDocumentLoadFailed:
+                        (PdfDocumentLoadFailedDetails details) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          content:
+                              Text('Error al cargar el PDF: ${details.error}'),
+                        ),
+                      );
+                    },
+                  )
+                : const Center(
+                    child: Text(
+                      'No se pudo acceder al PDF. Verifique la URL e inténtelo nuevamente.',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
+      ),
     );
   }
 }

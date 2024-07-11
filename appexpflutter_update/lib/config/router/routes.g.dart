@@ -275,6 +275,7 @@ extension $PedidoSesionRouteExtension on PedidoSesionRoute {
         idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
         nombreCliente: state.uri.queryParameters['nombre-cliente']!,
         estado: int.parse(state.uri.queryParameters['estado']!),
+        idSesion: int.parse(state.uri.queryParameters['id-sesion']!),
       );
 
   String get location => GoRouteData.$location(
@@ -283,6 +284,7 @@ extension $PedidoSesionRouteExtension on PedidoSesionRoute {
           'id-cliente': idCliente.toString(),
           'nombre-cliente': nombreCliente,
           'estado': estado.toString(),
+          'id-sesion': idSesion.toString(),
         },
       );
 
@@ -306,7 +308,8 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
       GenerarPedidoRoute(
         idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
         estadoPedido: int.parse(state.uri.queryParameters['estado-pedido']!),
-        $extra: state.extra as SesionEntity?,
+        idSesion: _$convertMapValue(
+            'id-sesion', state.uri.queryParameters, int.parse),
       );
 
   String get location => GoRouteData.$location(
@@ -314,19 +317,27 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
         queryParams: {
           'id-cliente': idCliente.toString(),
           'estado-pedido': estadoPedido.toString(),
+          if (idSesion != null) 'id-sesion': idSesion!.toString(),
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  void go(BuildContext context) => context.go(location);
 
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location);
 
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+  void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
 }
 
 RouteBase get $sesionPedidoRoute => GoRouteData.$route(

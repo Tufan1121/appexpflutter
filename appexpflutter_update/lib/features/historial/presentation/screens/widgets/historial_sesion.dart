@@ -53,6 +53,7 @@ class HistorialListSesion extends StatelessWidget {
                     idCliente: historial[index].idCliente,
                     nombreCliente: historial[index].nombre,
                     estado: historial[index].estatus,
+                    idSesion: historial[index].idSesion,
                   ).push(context);
 
                   context.read<DetalleSesionBloc>().add(GetDetalleSesionEvent(

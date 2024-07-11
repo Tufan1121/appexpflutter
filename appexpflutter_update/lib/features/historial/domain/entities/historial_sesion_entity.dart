@@ -4,17 +4,17 @@ class HistorialSesionEntity extends Equatable {
   final int idSesion;
   final int idCliente;
   final DateTime fecha;
-  final int idMetodoPago;
+  final int? idMetodoPago;
   final int? idMetodoPago2;
   final int? idMetodoPago3;
-  final String observaciones;
+  final String? observaciones;
   final String usuario;
   final String pedidos;
   final int idExpo;
   final int estatus;
-  final int anticipo;
-  final int anticipo2;
-  final int anticipo3;
+  final int? anticipo;
+  final int? anticipo2;
+  final int? anticipo3;
   final int totalPagar;
   final int? entregado;
   final double saldo;
@@ -30,17 +30,17 @@ class HistorialSesionEntity extends Equatable {
     required this.idSesion,
     required this.idCliente,
     required this.fecha,
-    required this.idMetodoPago,
+    this.idMetodoPago,
     this.idMetodoPago2,
     this.idMetodoPago3,
-    required this.observaciones,
+    this.observaciones,
     required this.usuario,
     required this.pedidos,
     required this.idExpo,
     required this.estatus,
-    required this.anticipo,
-    required this.anticipo2,
-    required this.anticipo3,
+    this.anticipo,
+    this.anticipo2,
+    this.anticipo3,
     required this.totalPagar,
     this.entregado,
     required this.saldo,
