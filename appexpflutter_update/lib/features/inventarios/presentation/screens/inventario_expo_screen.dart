@@ -18,7 +18,9 @@ class InventarioExpoScreen extends StatefulWidget {
 
 class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
   final form = FormGroup({
-    'descripcio': FormControl<String>(),
+    'descripcio': FormControl<String>(validators: [
+      Validators.required,
+    ]),
     'diseno': FormControl<String>(),
     'mlargo1': FormControl<String>(),
     'mlargo2': FormControl<String>(),
@@ -64,7 +66,7 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    const Row(
+                    Row(
                       children: [
                         Expanded(
                           child: Column(
@@ -72,10 +74,16 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
                               CustomReactiveTextField(
                                 formControlName: 'descripcio',
                                 hint: 'Calidad',
-                                hintStyle: TextStyle(fontSize: 15),
+                                hintStyle: const TextStyle(fontSize: 15),
+                                errorStyle: const TextStyle(
+                                    color: Colores.scaffoldBackgroundColor),
+                                validationMessages: {
+                                  ValidationMessage.required: (error) =>
+                                      'Se requiere la descripción',
+                                },
                               ),
-                              SizedBox(height: 10),
-                              CustomReactiveTextField(
+                              const SizedBox(height: 10),
+                              const CustomReactiveTextField(
                                 formControlName: 'diseno',
                                 hint: 'Color',
                                 hintStyle: TextStyle(fontSize: 15),
@@ -83,8 +91,8 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(width: 10),
-                        Expanded(
+                        const SizedBox(width: 10),
+                        const Expanded(
                           child: Column(
                             children: [
                               Row(
@@ -168,6 +176,10 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen> {
                         ),
                         onPressed: () {
                           FocusScope.of(context).unfocus();
+                          if (form.invalid) {
+                            form.markAllAsTouched();
+                            return;
+                          }
                           final String descripcio =
                               form.control('descripcio').value ?? '';
                           final String diseno =

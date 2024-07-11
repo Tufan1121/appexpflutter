@@ -18,6 +18,7 @@ class CustomReactiveTextField extends StatelessWidget {
   final Widget? prefixIcon;
   final bool readOnly;
   final TextStyle? hintStyle;
+  final TextStyle? errorStyle;
 
   const CustomReactiveTextField({
     super.key,
@@ -36,6 +37,7 @@ class CustomReactiveTextField extends StatelessWidget {
     this.suffixText,
     this.readOnly = false,
     this.hintStyle,
+    this.errorStyle,
   });
 
   @override
@@ -83,6 +85,7 @@ class CustomReactiveTextField extends StatelessWidget {
                     fontSize: 18),
                 enabledBorder: border,
                 focusedBorder: border,
+                errorStyle: errorStyle,
                 errorBorder: border.copyWith(
                     borderRadius: const BorderRadius.only(
                         topLeft: borderRadius,
