@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/config/custom_exceptions/not_found_expection.dart';
+import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_entity.dart';
 
 import '../../../../config/mappers/entity_convertable.dart';

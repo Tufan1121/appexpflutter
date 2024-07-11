@@ -36,4 +36,4 @@ class PedidoAddIdPedidoEvent extends CotizaPedidoEvent {
   List<Object> get props => [pedido];
 }
 
-class ClearPedidoStateEvent extends CotizaPedidoEvent {}
+class ClearPedidoCotizaEvent extends CotizaPedidoEvent {}

@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_entity.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,20 +10,21 @@ part 'sesion_pedido_state.dart';
 
 class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
   final PedidoUsecase pedidoUsecase;
-  SesionPedidoBloc({required this.pedidoUsecase}) : super(PedidoInitial()) {
-    on<PedidoAddEvent>(_pedidoAddEvent);
+  SesionPedidoBloc({required this.pedidoUsecase})
+      : super(PedidoSesionInitial()) {
+    on<PedidoAddSesionEvent>(_pedidoAddEvent);
     on<PedidoAddDetalleEvent>(_pedidoAddDetalleEvent);
-    // on<PedidoAddIdPedidoEvent>(_pedidoAddIdPedidoEvent);
-    on<ClearPedidoStateEvent>((event, emit) => _clearPedidoState(emit));
+    on<PedidoAddIdPedidoEvent>(_pedidoFinalSesionEvent);
+    on<ClearPedidoSesionEvent>((event, emit) => _clearPedidoSesionState(emit));
   }
 
   Future<void> _pedidoAddEvent(
-      PedidoAddEvent event, Emitter<SesionPedidoState> emit) async {
-    emit(PedidoLoading());
+      PedidoAddSesionEvent event, Emitter<SesionPedidoState> emit) async {
+    emit(PedidoSesionLoading());
     final result = await pedidoUsecase.addSesionPedido(event.data);
 
     result.fold(
-      (failure) => emit(PedidoError(message: failure.message)),
+      (failure) => emit(PedidoSesionError(message: failure.message)),
       (pedido) {
 //         print('''
 //             Pedido: ${pedido.idPedido}
@@ -53,28 +53,28 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
 
     final result = await pedidoUsecase.addSesionDetallePedido(detallesData);
     result.fold(
-      (failure) => emit(PedidoError(message: failure.message)),
+      (failure) => emit(PedidoSesionError(message: failure.message)),
       (success) {
         // add(PedidoAddIdPedidoEvent(pedido: event.pedido));
-        emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
+        emit(PedidoDetalleSesionLoaded(pedido: event.pedido, message: success));
       },
     );
   }
 
-  // Future<void> _pedidoAddIdPedidoEvent(
-  //     PedidoAddIdPedidoEvent event, Emitter<SesionPedidoState> emit) async {
-  //   final result = await pedidoUsecase.addIdPedido(event.pedido.idPedido);
-  //   result.fold(
-  //     (failure) => emit(PedidoError(message: failure.message)),
-  //     (success) {
-  //       emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
-  //     },
-  //   );
-  // }
+  Future<void> _pedidoFinalSesionEvent(
+      PedidoAddIdPedidoEvent event, Emitter<SesionPedidoState> emit) async {
+    final result = await pedidoUsecase.finalSesion(event.pedido.idSesion);
+    result.fold(
+      (failure) => emit(PedidoSesionError(message: failure.message)),
+      (success) {
+        emit(PedidoDetalleSesionLoaded(pedido: event.pedido, message: success));
+      },
+    );
+  }
 
-  void _clearPedidoState(Emitter<SesionPedidoState> emit) {
+  void _clearPedidoSesionState(Emitter<SesionPedidoState> emit) {
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
-    emit(PedidoInitial());
+    emit(PedidoSesionInitial());
   }
 }

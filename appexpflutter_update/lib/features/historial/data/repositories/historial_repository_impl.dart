@@ -1,3 +1,4 @@
+import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:api_client/exceptions/network_exception.dart';
 import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/detalle_sesion_entity.dart';
@@ -20,6 +21,8 @@ class HistorialRepositoryImpl implements HistorialRepository {
       final historialListEntity =
           result.map((model) => model.toEntity()).toList();
       return Right(historialListEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -33,6 +36,8 @@ class HistorialRepositoryImpl implements HistorialRepository {
       final historialListEntity =
           result.map((model) => model.toEntity()).toList();
       return Right(historialListEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -46,6 +51,8 @@ class HistorialRepositoryImpl implements HistorialRepository {
       final historialListEntity =
           result.map((model) => model.toEntity()).toList();
       return Right(historialListEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -60,6 +67,8 @@ class HistorialRepositoryImpl implements HistorialRepository {
       final historialListEntity =
           result.map((model) => model.toEntity()).toList();
       return Right(historialListEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }

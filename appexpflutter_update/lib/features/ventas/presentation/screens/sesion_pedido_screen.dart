@@ -266,10 +266,10 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                   BlocConsumer<SesionPedidoBloc,
                                       SesionPedidoState>(
                                     listener: (context, state) {
-                                      if (state is PedidoLoading) {
+                                      if (state is PedidoSesionLoading) {
                                         loading.value = true;
                                       }
-                                      if (state is PedidoDetalleLoaded) {
+                                      if (state is PedidoDetalleSesionLoaded) {
                                         loading.value = false;
                                         debePorPagar.value = 0.0;
 
@@ -307,11 +307,11 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                             .add(ClearProductoStateEvent());
                                         context
                                             .read<SesionPedidoBloc>()
-                                            .add(ClearPedidoStateEvent());
+                                            .add(ClearPedidoSesionEvent());
                                         context.read<InventarioBloc>().add(
                                             ClearInventarioProductoEvent());
                                         HomeRoute().go(context);
-                                      } else if (state is PedidoError) {
+                                      } else if (state is PedidoSesionError) {
                                         loading.value = false;
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
@@ -492,8 +492,8 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
         'id_metodopago3': metodo3.toString(),
       };
 
-      context.read<SesionPedidoBloc>().add(
-          PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
+      context.read<SesionPedidoBloc>().add(PedidoAddSesionEvent(
+          data: data, products: UtilsVenta.listProductsOrder));
     } else {
       form.markAllAsTouched();
     }

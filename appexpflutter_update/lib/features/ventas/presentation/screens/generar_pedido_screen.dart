@@ -4,6 +4,7 @@ import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
+import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_entity.dart';
 // import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
@@ -19,13 +20,15 @@ import '../../../../config/theme/app_theme.dart';
 import '../../../shared/widgets/layout_screens.dart';
 
 class GenerarPedidoScreen extends StatefulHookWidget {
-  const GenerarPedidoScreen({
+  const GenerarPedidoScreen( {
     super.key,
     required this.idCliente,
     required this.estadoPedido,
+    this.sesion,
   });
   final int idCliente;
   final int estadoPedido;
+  final SesionEntity? sesion;
 
   @override
   State<GenerarPedidoScreen> createState() => _GenerarPedidoScreenState();

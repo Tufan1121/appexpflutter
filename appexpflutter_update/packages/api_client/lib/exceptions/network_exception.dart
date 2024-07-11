@@ -53,10 +53,13 @@ class NetworkException extends Equatable implements Exception {
             message =
                 'No se encontraron elementos que coincidan con la búsqueda';
           }
+        } else if (statusCode == 500) {
+          message =
+              'Error del servidor. Por favor, inténtelo de nuevo más tarde.';
         } else {
           if (data is Map<String, dynamic>) {
             final model = NetworkErrorModel.fromJson(data);
-            message = model.statusMessage ?? 'Credenciales incorrectas';
+            message = model.statusMessage ?? 'Error inesperado';
           } else {
             message =
                 'Error inesperado: ${dioException.response?.statusMessage ?? 'error desconocido'}';

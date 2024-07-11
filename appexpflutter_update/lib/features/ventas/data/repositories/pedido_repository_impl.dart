@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/config/custom_exceptions/not_found_expection.dart';
+import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/cotiza_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_entity.dart';
@@ -19,6 +19,8 @@ class PedidoRepositoryImpl implements PedidoRepository {
     try {
       final result = await pedidoDataSource.addDetallePedido(data);
       return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -30,6 +32,8 @@ class PedidoRepositoryImpl implements PedidoRepository {
     try {
       final result = await pedidoDataSource.addPedido(data);
       return Right(result.toEntity());
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -40,6 +44,8 @@ class PedidoRepositoryImpl implements PedidoRepository {
     try {
       final result = await pedidoDataSource.addIdPedido(idPedido);
       return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -51,6 +57,8 @@ class PedidoRepositoryImpl implements PedidoRepository {
     try {
       final result = await pedidoDataSource.addSesionDetallePedido(data);
       return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -75,6 +83,8 @@ class PedidoRepositoryImpl implements PedidoRepository {
     try {
       final result = await pedidoDataSource.addCotizaDetallePedido(data);
       return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -86,6 +96,8 @@ class PedidoRepositoryImpl implements PedidoRepository {
     try {
       final result = await pedidoDataSource.addCotizaPedido(data);
       return Right(result.toEntity());
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -97,6 +109,20 @@ class PedidoRepositoryImpl implements PedidoRepository {
     try {
       final result = await pedidoDataSource.addIdCotizaPedido(idCotiza);
       return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, String>> finalSesion(int idSesion) async {
+    try {
+      final result = await pedidoDataSource.finalSesion(idSesion);
+      return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }

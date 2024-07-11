@@ -36,4 +36,6 @@ class PedidoAddIdPedidoEvent extends PedidoEvent {
   List<Object> get props => [pedido];
 }
 
+
+
 class ClearPedidoStateEvent extends PedidoEvent {}

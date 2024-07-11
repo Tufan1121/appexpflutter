@@ -33,6 +33,11 @@ class PedidoUsecase {
   Future<Either<NetworkException, String>> addIdPedido(int idPedido) {
     return pedidoRepository.addIdPedido(idPedido);
   }
+
+  Future<Either<NetworkException, String>> finalSesion(int idSesion) {
+    return pedidoRepository.finalSesion(idSesion);
+  }
+
   Future<Either<NetworkException, String>> addIdCotizaPedido(int idCotiza) {
     return pedidoRepository.addIdCotizaPedido(idCotiza);
   }

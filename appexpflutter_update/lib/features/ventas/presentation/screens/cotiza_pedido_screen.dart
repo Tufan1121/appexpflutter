@@ -268,7 +268,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                       if (state is PedidoLoading) {
                                         loading.value = true;
                                       }
-                                      if (state is PedidoDetalleLoaded) {
+                                      if (state is PedidoDetalleCotizaLoaded) {
                                         loading.value = false;
                                         debePorPagar.value = 0.0;
 
@@ -306,11 +306,11 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                             .add(ClearProductoStateEvent());
                                         context
                                             .read<CotizaPedidoBloc>()
-                                            .add(ClearPedidoStateEvent());
+                                            .add(ClearPedidoCotizaEvent());
                                         context.read<InventarioBloc>().add(
                                             ClearInventarioProductoEvent());
                                         HomeRoute().go(context);
-                                      } else if (state is PedidoError) {
+                                      } else if (state is PedidoCotizaError) {
                                         loading.value = false;
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(

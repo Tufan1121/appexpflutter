@@ -20,7 +20,7 @@ class PreciosScreen extends StatelessWidget {
       // Permite la navegación hacia atrás nativa
       onPopInvoked: (didPop) async {
         context.read<PreciosBloc>().add(ClearPreciosStateEvent());
-      }, 
+      },
       child: LayoutScreens(
         icon: Icons.price_change,
         titleScreen: 'PRECIOS',
@@ -145,11 +145,19 @@ class PreciosScreen extends StatelessWidget {
                                 children: [
                                   const SizedBox(height: 150),
                                   Center(
-                                    child: Text(
-                                      state.message,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          color: Colors.red, fontSize: 16.0),
+                                    child: SizedBox(
+                                      height: 60,
+                                      width: 300,
+                                      child: Card(
+                                        child: AutoSizeText(
+                                          state.message,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],

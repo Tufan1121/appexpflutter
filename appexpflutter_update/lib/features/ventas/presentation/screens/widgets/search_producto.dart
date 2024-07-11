@@ -2,6 +2,9 @@ import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
 import 'package:appexpflutter_update/features/shared/widgets/modals_buttom.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/cotiza_pedido/cotiza_pedido_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -99,24 +102,126 @@ class SearchProducto extends HookWidget {
                     height: 160,
                     child: ListView(
                       children: [
-                        CustomListTile(
-                          text: 'GENERAR SESION',
-                          assetPathIcon:
-                              'assets/iconos/pedidos - rosa gris.png',
-                          onTap: () => SesionPedidoRoute(
-                                  idCliente: idCliente,
-                                  estadoPedido: estatusPedido)
-                              .push(context),
+                        BlocListener<SesionPedidoBloc, SesionPedidoState>(
+                          listener: (context, state) {
+                            if (state is PedidoDetalleSesionLoaded) {
+                              Navigator.of(context).pop();
+                              ClienteExistenteRoute().go(context);
+                              context
+                                  .read<ProductosBloc>()
+                                  .add(ClearProductoStateEvent());
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(state.message),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } else if (state is PedidoSesionError) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(state.message),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          },
+                          child: CustomListTile(
+                            text: 'GENERAR SESION',
+                            assetPathIcon:
+                                'assets/iconos/pedidos - rosa gris.png',
+                            onTap: () {
+                              final data = {
+                                'id_cliente': idCliente,
+                                // 'id_metodopago': metodo1,
+                                // 'observaciones': observaciones,
+                                'estatus': estatusPedido,
+                                // 'anticipo': anticipoPago.toInt(),
+                                // 'anticipo2': anticipoPago2.toInt(),
+                                // 'anticipo3': anticipoPago3.toInt(),
+                                'total_pagar': UtilsVenta.total.toInt(),
+                                // 'entregado': entregado,
+                                // 'id_metodopago2': metodo2,
+                                // 'id_metodopago3': metodo3.toString(),
+                              };
+
+                              context.read<SesionPedidoBloc>().add(
+                                  PedidoAddSesionEvent(
+                                      data: data,
+                                      products: UtilsVenta.listProductsOrder));
+                            },
+                            // onTap: () => SesionPedidoRoute(
+                            //         idCliente: idCliente,
+                            //         estadoPedido: estatusPedido)
+                            //     .go(context),
+                          ),
                         ),
                         const Divider(),
-                        CustomListTile(
-                          text: 'GENERAR COTIZACION',
-                          assetPathIcon:
-                              'assets/iconos/pedidos - rosa gris.png',
-                          onTap: () => CotizaPedidoRoute(
-                                  idCliente: idCliente,
-                                  estadoPedido: estatusPedido)
-                              .push(context),
+                        BlocConsumer<CotizaPedidoBloc, CotizaPedidoState>(
+                          listener: (context, state) {
+                            if (state is PedidoDetalleCotizaLoaded) {
+                              Navigator.pop(context);
+                              ClienteExistenteRoute().go(context);
+                              context
+                                  .read<ProductosBloc>()
+                                  .add(ClearProductoStateEvent());
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(state.message),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } else if (state is PedidoCotizaError) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(state.message),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          },
+                          builder: (context, state) {
+                            // bool loading;
+                            // if (state is PedidoLoading) {
+                            //   loading = true;
+                            // } else if (state is PedidoDetalleLoaded) {
+                            //   loading = false;
+                            // } else if (state is PedidoError) {
+                            //   loading = false;
+                            // }
+                            return CustomListTile(
+                                text: 'GENERAR COTIZACION',
+                                assetPathIcon:
+                                    'assets/iconos/pedidos - rosa gris.png',
+                                onTap: () {
+                                  final data = {
+                                    'id_cliente': idCliente,
+                                    // 'id_metodopago': metodo1,
+                                    // 'observaciones': observaciones,
+                                    'estatus': estatusPedido,
+                                    // 'anticipo': anticipoPago.toInt(),
+                                    // 'anticipo2': anticipoPago2.toInt(),
+                                    // 'anticipo3': anticipoPago3.toInt(),
+                                    'total_pagar': UtilsVenta.total.toInt(),
+                                    // 'entregado': entregado,
+                                    // 'id_metodopago2': metodo2,
+                                    // 'id_metodopago3': metodo3.toString(),
+                                  };
+
+                                  context.read<CotizaPedidoBloc>().add(
+                                      PedidoAddEvent(
+                                          data: data,
+                                          products:
+                                              UtilsVenta.listProductsOrder));
+                                }
+
+                                // onTap: () => CotizaPedidoRoute(
+                                //         idCliente: idCliente,
+                                //         estadoPedido: estatusPedido)
+                                //     .push(context),
+                                );
+                          },
                         ),
                       ],
                     )).homeModalButtom();

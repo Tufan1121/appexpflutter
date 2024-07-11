@@ -9,14 +9,14 @@ class ProductoExpoEntity extends Equatable {
   final int hm;
   final double largo;
   final double ancho;
-  final double precio;
+  final double? precio;
   final String fulldescrip;
   final String almacen;
-  final String compos;
-  final String origen;
-  final String rojo;
+  final String? compos;
+  final String? origen;
+  final String? rojo;
   final String observac;
-  final DateTime hobserva;
+  final DateTime? hobserva;
   final String pathima1;
   final String pathima2;
   final String pathima3;
@@ -43,14 +43,14 @@ class ProductoExpoEntity extends Equatable {
     required this.hm,
     required this.largo,
     required this.ancho,
-    required this.precio,
+    this.precio,
     required this.fulldescrip,
     required this.almacen,
-    required this.compos,
-    required this.origen,
-    required this.rojo,
+    this.compos,
+    this.origen,
+    this.rojo,
     required this.observac,
-    required this.hobserva,
+    this.hobserva,
     required this.pathima1,
     required this.pathima2,
     required this.pathima3,

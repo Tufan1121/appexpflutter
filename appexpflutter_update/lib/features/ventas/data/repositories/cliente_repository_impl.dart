@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:appexpflutter_update/config/custom_exceptions/not_found_expection.dart';
+import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_entity.dart';
 import 'package:api_client/exceptions/network_exception.dart';
@@ -10,7 +10,6 @@ class ClienteRepositoryImpl implements ClienteRepository {
   final ClienteDataSource clienteDataSource;
 
   ClienteRepositoryImpl({required this.clienteDataSource});
-
 
   @override
   Future<Either<NetworkException, List<ClienteEntity>>> getClientes(
@@ -32,6 +31,8 @@ class ClienteRepositoryImpl implements ClienteRepository {
     try {
       final result = await clienteDataSource.createClientes(data);
       return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }
@@ -43,6 +44,8 @@ class ClienteRepositoryImpl implements ClienteRepository {
     try {
       final result = await clienteDataSource.updateClientes(data);
       return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }

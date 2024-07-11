@@ -306,6 +306,7 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
       GenerarPedidoRoute(
         idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
         estadoPedido: int.parse(state.uri.queryParameters['estado-pedido']!),
+        $extra: state.extra as SesionEntity?,
       );
 
   String get location => GoRouteData.$location(
@@ -316,14 +317,16 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
         },
       );
 
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: $extra);
 
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: $extra);
 
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $sesionPedidoRoute => GoRouteData.$route(

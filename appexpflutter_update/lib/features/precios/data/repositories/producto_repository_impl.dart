@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/config/custom_exceptions/not_found_expection.dart';
+import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:api_client/exceptions/network_exception.dart';
@@ -32,6 +32,8 @@ class ProductoRepositoryImpl implements ProductoRepository {
       // Mapear la lista de ProductoModel a ProductoEntity usando toEntity()
       final productosEntity = result.map((model) => model.toEntity()).toList();
       return Right(productosEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     } catch (e) {
@@ -48,6 +50,8 @@ class ProductoRepositoryImpl implements ProductoRepository {
       // Mapear la lista de ProductoModel a ProductoEntity usando toEntity()
       final productosEntity = result.map((model) => model.toEntity()).toList();
       return Right(productosEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     } catch (e) {

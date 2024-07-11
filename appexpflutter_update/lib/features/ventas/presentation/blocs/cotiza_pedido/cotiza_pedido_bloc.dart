@@ -15,7 +15,7 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
     on<PedidoAddEvent>(_pedidoAddEvent);
     on<PedidoAddDetalleEvent>(_pedidoAddDetalleEvent);
     on<PedidoAddIdPedidoEvent>(_pedidoAddIdPedidoEvent);
-    on<ClearPedidoStateEvent>((event, emit) => _clearPedidoState(emit));
+    on<ClearPedidoCotizaEvent>((event, emit) => _clearPedidoCotizaState(emit));
   }
 
   Future<void> _pedidoAddEvent(
@@ -24,7 +24,7 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
     final result = await pedidoUsecase.addCotizaPedido(event.data);
 
     result.fold(
-      (failure) => emit(PedidoError(message: failure.message)),
+      (failure) => emit(PedidoCotizaError(message: failure.message)),
       (pedido) {
 //         print('''
 //             Pedido: ${pedido.idPedido}
@@ -53,7 +53,7 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
 
     final result = await pedidoUsecase.addCotizaDetallePedido(detallesData);
     result.fold(
-      (failure) => emit(PedidoError(message: failure.message)),
+      (failure) => emit(PedidoCotizaError(message: failure.message)),
       (success) {
         add(PedidoAddIdPedidoEvent(pedido: event.pedido));
         // emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
@@ -65,14 +65,14 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
       PedidoAddIdPedidoEvent event, Emitter<CotizaPedidoState> emit) async {
     final result = await pedidoUsecase.addIdCotizaPedido(event.pedido.idCotiza);
     result.fold(
-      (failure) => emit(PedidoError(message: failure.message)),
+      (failure) => emit(PedidoCotizaError(message: failure.message)),
       (success) {
-        emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
+        emit(PedidoDetalleCotizaLoaded(pedido: event.pedido, message: success));
       },
     );
   }
 
-  void _clearPedidoState(Emitter<CotizaPedidoState> emit) {
+  void _clearPedidoCotizaState(Emitter<CotizaPedidoState> emit) {
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
     emit(PedidoInitial());

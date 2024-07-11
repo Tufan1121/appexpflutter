@@ -20,21 +20,24 @@ final class PedidoLoaded extends CotizaPedidoState {
   List<Object> get props => [pedido];
 }
 
-final class PedidoDetalleLoaded extends CotizaPedidoState {
+final class PedidoDetalleCotizaLoaded extends CotizaPedidoState {
   final CotizaEntity pedido;
   final String message;
 
-  const PedidoDetalleLoaded({required this.message, required this.pedido});
+  const PedidoDetalleCotizaLoaded(
+      {required this.message, required this.pedido});
 
   @override
   List<Object> get props => [message];
 }
 
-final class PedidoError extends CotizaPedidoState {
+final class PedidoCotizaError extends CotizaPedidoState {
   final String message;
 
-  const PedidoError({required this.message});
+  const PedidoCotizaError({required this.message});
 
   @override
   List<Object> get props => [message];
 }
+
+final class ClearCotizaStateEvent extends CotizaPedidoState {}

@@ -1,5 +1,5 @@
 import 'package:api_client/api_client.dart';
-import 'package:appexpflutter_update/config/custom_exceptions/not_found_expection.dart';
+import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:appexpflutter_update/features/precios/data/data_sources/producto_data_source.dart';
 import 'package:appexpflutter_update/features/precios/data/models/producto_model.dart';
 import 'package:dio/dio.dart';

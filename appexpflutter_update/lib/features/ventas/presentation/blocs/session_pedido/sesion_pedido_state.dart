@@ -7,12 +7,12 @@ sealed class SesionPedidoState extends Equatable {
   List<Object> get props => [];
 }
 
-final class PedidoInitial extends SesionPedidoState {}
+class PedidoSesionInitial extends SesionPedidoState {}
 
-final class PedidoLoading extends SesionPedidoState {}
+class PedidoSesionLoading extends SesionPedidoState {}
 
 final class PedidoLoaded extends SesionPedidoState {
-  final PedidoEntity pedido;
+  final SesionEntity pedido;
 
   const PedidoLoaded({required this.pedido});
 
@@ -20,20 +20,21 @@ final class PedidoLoaded extends SesionPedidoState {
   List<Object> get props => [pedido];
 }
 
-final class PedidoDetalleLoaded extends SesionPedidoState {
+class PedidoDetalleSesionLoaded extends SesionPedidoState {
   final SesionEntity pedido;
   final String message;
 
-  const PedidoDetalleLoaded({required this.message, required this.pedido});
+  const PedidoDetalleSesionLoaded(
+      {required this.message, required this.pedido});
 
   @override
   List<Object> get props => [message];
 }
 
-final class PedidoError extends SesionPedidoState {
+class PedidoSesionError extends SesionPedidoState {
   final String message;
 
-  const PedidoError({required this.message});
+  const PedidoSesionError({required this.message});
 
   @override
   List<Object> get props => [message];

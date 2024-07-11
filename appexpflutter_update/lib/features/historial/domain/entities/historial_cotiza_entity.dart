@@ -4,15 +4,15 @@ class HistorialCotizaEntity extends Equatable {
   final int idCotiza;
   final int idCliente;
   final DateTime fecha;
-  final int idMetodoPago;
+  final int? idMetodoPago;
   final int? idMetodoPago2;
   final int? idMetodoPago3;
-  final String observaciones;
+  final String? observaciones;
   final int? idUsuario;
   final String pedidos;
   final int idExpo;
   final int estatus;
-  final int anticipo;
+  final int? anticipo;
   final int? anticipo2;
   final int? anticipo3;
   final int totalPagar;
@@ -31,10 +31,10 @@ class HistorialCotizaEntity extends Equatable {
     required this.idCotiza,
     required this.idCliente,
     required this.fecha,
-    required this.idMetodoPago,
+    this.idMetodoPago,
     this.idMetodoPago2,
     this.idMetodoPago3,
-    required this.observaciones,
+    this.observaciones,
     required this.idUsuario,
     required this.pedidos,
     required this.idExpo,
