@@ -41,37 +41,26 @@ class PdfViewerScreen extends HookWidget {
     }, [url]);
 
     Future<void> downloadPdf() async {
-      final status = await Permission.storage.request();
-      if (status.isGranted) {
-        try {
-          final appDownloadsDir =
-              Directory('/storage/emulated/0/Download/TufanApp');
-          if (!await appDownloadsDir.exists()) {
-            await appDownloadsDir.create(recursive: true);
-          }
-          final file = File('${appDownloadsDir.path}/$fileName.pdf');
-          await dio.download(url, file.path);
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('PDF descargado en ${file.path}'),
-              ),
-            );
-          }
-        } catch (e) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error al descargar el PDF: $e'),
-              ),
-            );
-          }
+      try {
+        final appDownloadsDir =
+            Directory('/storage/emulated/0/Download/TufanApp');
+        if (!await appDownloadsDir.exists()) {
+          await appDownloadsDir.create(recursive: true);
         }
-      } else {
+        final file = File('${appDownloadsDir.path}/$fileName.pdf');
+        await dio.download(url, file.path);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Permiso de almacenamiento denegado'),
+            SnackBar(
+              content: Text('PDF descargado en ${file.path}'),
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al descargar el PDF: $e'),
             ),
           );
         }
@@ -80,7 +69,6 @@ class PdfViewerScreen extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
-        
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colores.secondaryColor.withOpacity(0.78),
         title: Text(

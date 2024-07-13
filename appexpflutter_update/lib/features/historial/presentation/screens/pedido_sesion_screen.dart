@@ -128,7 +128,7 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
               // SearchProductoSesion(
               //     estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
               //     idCliente: widget.idCliente),
-              const SizedBox(height: 5),
+              // const SizedBox(height: 5),
               BlocBuilder<DetalleSesionBloc, SesionState>(
                 builder: (context, state) {
                   if (state is SesionLoaded) {

@@ -1,6 +1,7 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/lista_productos_expo.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
@@ -16,11 +17,10 @@ class BusquedaGlobalScreen extends StatefulWidget {
   State<BusquedaGlobalScreen> createState() => _BusquedaGlobalScreenState();
 }
 
-class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen> {
+class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
+    with VerificarCampos {
   final form = FormGroup({
-    'descripcio': FormControl<String>(validators: [
-      Validators.required,
-    ]),
+    'descripcio': FormControl<String>(),
     'diseno': FormControl<String>(),
     'mlargo1': FormControl<String>(),
     'mlargo2': FormControl<String>(),
@@ -66,7 +66,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Row(
+                    const Row(
                       children: [
                         Expanded(
                           child: Column(
@@ -74,16 +74,12 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen> {
                               CustomReactiveTextField(
                                 formControlName: 'descripcio',
                                 hint: 'Calidad',
-                                hintStyle: const TextStyle(fontSize: 15),
-                                errorStyle: const TextStyle(
+                                hintStyle: TextStyle(fontSize: 15),
+                                errorStyle: TextStyle(
                                     color: Colores.scaffoldBackgroundColor),
-                                validationMessages: {
-                                  ValidationMessage.required: (error) =>
-                                      'Se requiere la descripción',
-                                },
                               ),
-                              const SizedBox(height: 10),
-                              const CustomReactiveTextField(
+                              SizedBox(height: 10),
+                              CustomReactiveTextField(
                                 formControlName: 'diseno',
                                 hint: 'Color',
                                 hintStyle: TextStyle(fontSize: 15),
@@ -91,8 +87,8 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        const Expanded(
+                        SizedBox(width: 10),
+                        Expanded(
                           child: Column(
                             children: [
                               Row(
@@ -175,11 +171,6 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen> {
                           ],
                         ),
                         onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          if (form.invalid) {
-                            form.markAllAsTouched();
-                            return;
-                          }
                           final String descripcio =
                               form.control('descripcio').value ?? '';
                           final String diseno =
@@ -196,6 +187,16 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen> {
                           final double mancho2 = double.tryParse(
                                   form.control('mancho2').value ?? '0.0') ??
                               0.0;
+                          FocusScope.of(context).unfocus();
+                          if (!isNotEmptyOrWhitespace(descripcio) &&
+                              !isNotEmptyOrWhitespace(diseno) &&
+                              mlargo1 == 0.0 &&
+                              mlargo2 == 0.0 &&
+                              mancho1 == 0.0 &&
+                              mancho2 == 0.0) {
+                            form.markAllAsTouched();
+                            return;
+                          }
                           Map<String, dynamic> data = {};
 
                           if (mlargo1 > 0.0 && mlargo2 > 0.0) {

@@ -265,7 +265,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                   BlocConsumer<CotizaPedidoBloc,
                                       CotizaPedidoState>(
                                     listener: (context, state) {
-                                      if (state is PedidoLoading) {
+                                      if (state is PedidoCotizaLoading) {
                                         loading.value = true;
                                       }
                                       if (state is PedidoDetalleCotizaLoaded) {

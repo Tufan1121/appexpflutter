@@ -13,7 +13,6 @@ import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/p
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/pdf_viewer_pedido.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -166,12 +165,6 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // const Text(
-                              //   'DM24-7645B',
-                              //   style: TextStyle(
-                              //       color: Colors.pink,
-                              //       fontWeight: FontWeight.bold),
-                              // ),
                               const SizedBox(height: 16.0),
                               Row(
                                 mainAxisAlignment:
@@ -588,13 +581,14 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
 
   void _showDownloadModal(
       BuildContext context, String pdfUrl, String nombrePdf) {
-    final getpdf = Getpdf(context: context);
+    // final getpdf = Getpdf(context: context);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Row(
+          title: const Text('Se genero el pedido exitosamente '),
+          content: Row(
             children: [
               const Text('PEDIDO: ', style: TextStyle(fontSize: 15)),
               Text(
@@ -604,128 +598,40 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
               ),
             ],
           ),
-          content: const Text('¿Deseas abrir el PDF? ',
-              style: TextStyle(fontSize: 15)),
           actions: [
-            TextButton(
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colores.secondaryColor),
-              ),
-              onPressed: () {
-                FocusScope.of(context).unfocus();
-                // opcion 1
-                getpdf.downloadPDF(pdfUrl, nombrePdf);
-                // opcion 2
-                // _openPDF(pdfUrl);
+            Center(
+              child: ElevatedButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colores.secondaryColor,
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text(
+                  'Aceptar',
+                  style: TextStyle(color: Colores.scaffoldBackgroundColor),
+                ),
+                onPressed: () {
+                  FocusScope.of(context).unfocus();
+                  // opcion 1
+                  // getpdf.downloadPDF(pdfUrl, nombrePdf);
+                  // opcion 2
+                  // _openPDF(pdfUrl);
 
-                form.control('metodoDePago1').reset();
-                form.control('metodoDePago2').reset();
-                form.control('metodoDePago3').reset();
-                form.control('observaciones').reset();
-                form.control('anticipoPago1').reset();
-                form.control('anticipoPago2').reset();
-                form.control('anticipoPago3').reset();
-                form.control('entregado').reset();
-                Navigator.of(context).pop();
-                HomeRoute().push(context);
-              },
-            ),
-            ElevatedButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colores.secondaryColor,
-                textStyle: Theme.of(context).textTheme.labelLarge,
+                  form.control('metodoDePago1').reset();
+                  form.control('metodoDePago2').reset();
+                  form.control('metodoDePago3').reset();
+                  form.control('observaciones').reset();
+                  form.control('anticipoPago1').reset();
+                  form.control('anticipoPago2').reset();
+                  form.control('anticipoPago3').reset();
+                  form.control('entregado').reset();
+                  Navigator.of(context).pop();
+                  HomeRoute().go(context);
+                },
               ),
-              child: const Text(
-                'Aceptar',
-                style: TextStyle(color: Colores.scaffoldBackgroundColor),
-              ),
-              onPressed: () {
-                FocusScope.of(context).unfocus();
-                // opcion 1
-
-                // opcion 2
-                Navigator.of(context).pop();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PdfViewerPedidoScreen(
-                      fileName: nombrePdf,
-                      search: 'Pedido',
-                      url: pdfUrl,
-                    ),
-                  ),
-                );
-
-                form.control('metodoDePago1').reset();
-                form.control('metodoDePago2').reset();
-                form.control('metodoDePago3').reset();
-                form.control('observaciones').reset();
-                form.control('anticipoPago1').reset();
-                form.control('anticipoPago2').reset();
-                form.control('anticipoPago3').reset();
-                form.control('entregado').reset();
-                // HomeRoute().go(context);
-              },
             ),
           ],
         );
       },
     );
   }
-  // void _showDownloadModal(
-  //     BuildContext context, String pdfUrl, String nombrePdf) {
-  //   final getpdf = Getpdf(context: context);
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('Descargar PDF'),
-  //         content: Row(
-  //           children: [
-  //             const Text('PEDIDO: ', style: TextStyle(fontSize: 15)),
-  //             Text(
-  //               nombrePdf,
-  //               style:
-  //                   const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-  //             ),
-  //           ],
-  //         ),
-  //         actions: [
-  //           Center(
-  //             child: ElevatedButton(
-  //               style: TextButton.styleFrom(
-  //                 backgroundColor: Colores.secondaryColor,
-  //                 textStyle: Theme.of(context).textTheme.labelLarge,
-  //               ),
-  //               child: const Text(
-  //                 'Aceptar',
-  //                 style: TextStyle(color: Colores.scaffoldBackgroundColor),
-  //               ),
-  //               onPressed: () {
-  //                 FocusScope.of(context).unfocus();
-  //                 // opcion 1
-  //                 getpdf.downloadPDF(pdfUrl, nombrePdf);
-  //                 // opcion 2
-  //                 // _openPDF(pdfUrl);
-
-  //                 form.control('metodoDePago1').reset();
-  //                 form.control('metodoDePago2').reset();
-  //                 form.control('metodoDePago3').reset();
-  //                 form.control('observaciones').reset();
-  //                 form.control('anticipoPago1').reset();
-  //                 form.control('anticipoPago2').reset();
-  //                 form.control('anticipoPago3').reset();
-  //                 form.control('entregado').reset();
-  //                 Navigator.of(context).pop();
-  //                 HomeRoute().go(context);
-  //               },
-  //             ),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 }

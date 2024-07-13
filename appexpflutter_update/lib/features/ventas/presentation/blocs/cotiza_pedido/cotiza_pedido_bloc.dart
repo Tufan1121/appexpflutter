@@ -20,7 +20,7 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
 
   Future<void> _pedidoAddEvent(
       PedidoAddEvent event, Emitter<CotizaPedidoState> emit) async {
-    emit(PedidoLoading());
+    emit(PedidoCotizaLoading());
     final result = await pedidoUsecase.addCotizaPedido(event.data);
 
     result.fold(

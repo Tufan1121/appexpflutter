@@ -9,7 +9,7 @@ sealed class CotizaPedidoState extends Equatable {
 
 final class PedidoInitial extends CotizaPedidoState {}
 
-final class PedidoLoading extends CotizaPedidoState {}
+final class PedidoCotizaLoading extends CotizaPedidoState {}
 
 final class PedidoLoaded extends CotizaPedidoState {
   final PedidoEntity pedido;

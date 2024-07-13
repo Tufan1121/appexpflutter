@@ -2,9 +2,11 @@ import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
 import 'package:appexpflutter_update/features/shared/widgets/modals_buttom.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cotiza_pedido/cotiza_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/pdf_viewer_pedido.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -27,6 +29,7 @@ class SearchProducto extends HookWidget {
     final scanResult = useState<String>('');
     final textFieldValue = useState<String>('');
     final productos = context.watch<ProductosBloc>().scannedProducts;
+    bool loading = false;
 
     useEffect(() {
       controller.addListener(() {
@@ -102,14 +105,17 @@ class SearchProducto extends HookWidget {
                     height: 160,
                     child: ListView(
                       children: [
-                        BlocListener<SesionPedidoBloc, SesionPedidoState>(
+                        BlocConsumer<SesionPedidoBloc, SesionPedidoState>(
                           listener: (context, state) {
                             if (state is PedidoDetalleSesionLoaded) {
                               Navigator.of(context).pop();
-                              ClienteExistenteRoute().go(context);
+                              HomeRoute().push(context);
                               context
                                   .read<ProductosBloc>()
                                   .add(ClearProductoStateEvent());
+                              context
+                                  .read<ClienteBloc>()
+                                  .add(ClearClienteStateEvent());
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(state.message),
@@ -126,51 +132,79 @@ class SearchProducto extends HookWidget {
                               );
                             }
                           },
-                          child: CustomListTile(
-                            text: 'GENERAR SESION',
-                            assetPathIcon:
-                                'assets/iconos/pedidos - rosa gris.png',
-                            onTap: () {
-                              final data = {
-                                'id_cliente': idCliente,
-                                // 'id_metodopago': metodo1,
-                                // 'observaciones': observaciones,
-                                'estatus': estatusPedido,
-                                // 'anticipo': anticipoPago.toInt(),
-                                // 'anticipo2': anticipoPago2.toInt(),
-                                // 'anticipo3': anticipoPago3.toInt(),
-                                'total_pagar': UtilsVenta.total.toInt(),
-                                // 'entregado': entregado,
-                                // 'id_metodopago2': metodo2,
-                                // 'id_metodopago3': metodo3.toString(),
-                              };
+                          builder: (context, state) {
+                            if (state is PedidoSesionLoading) {
+                              loading = true;
+                            } else if (state is PedidoDetalleSesionLoaded) {
+                              loading = false;
+                            } else if (state is PedidoSesionError) {
+                              loading = false;
+                            }
+                            return CustomListTile(
+                              text: loading ? 'GENERANDO...' : 'GENERAR SESION',
+                              assetPathIcon:
+                                  'assets/iconos/pedidos - rosa gris.png',
+                              onTap: loading
+                                  ? null
+                                  : () {
+                                      final data = {
+                                        'id_cliente': idCliente,
+                                        // 'id_metodopago': metodo1,
+                                        // 'observaciones': observaciones,
+                                        'estatus': estatusPedido,
+                                        // 'anticipo': anticipoPago.toInt(),
+                                        // 'anticipo2': anticipoPago2.toInt(),
+                                        // 'anticipo3': anticipoPago3.toInt(),
+                                        'total_pagar': UtilsVenta.total.toInt(),
+                                        // 'entregado': entregado,
+                                        // 'id_metodopago2': metodo2,
+                                        // 'id_metodopago3': metodo3.toString(),
+                                      };
 
-                              context.read<SesionPedidoBloc>().add(
-                                  PedidoAddSesionEvent(
-                                      data: data,
-                                      products: UtilsVenta.listProductsOrder));
-                            },
-                            // onTap: () => SesionPedidoRoute(
-                            //         idCliente: idCliente,
-                            //         estadoPedido: estatusPedido)
-                            //     .go(context),
-                          ),
+                                      context.read<SesionPedidoBloc>().add(
+                                          PedidoAddSesionEvent(
+                                              data: data,
+                                              products: UtilsVenta
+                                                  .listProductsOrder));
+                                    },
+                              // onTap: () => SesionPedidoRoute(
+                              //         idCliente: idCliente,
+                              //         estadoPedido: estatusPedido)
+                              //     .go(context),
+                            );
+                          },
                         ),
                         const Divider(),
                         BlocConsumer<CotizaPedidoBloc, CotizaPedidoState>(
                           listener: (context, state) {
                             if (state is PedidoDetalleCotizaLoaded) {
-                              Navigator.pop(context);
-                              ClienteExistenteRoute().go(context);
+                              Navigator.of(context).pop();
+
+                              String pdfUrl =
+                                  'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf';
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PdfViewerPedidoScreen(
+                                    fileName: state.pedido.pedidos,
+                                    search: 'Cotización',
+                                    url: pdfUrl,
+                                  ),
+                                ),
+                              );
                               context
                                   .read<ProductosBloc>()
                                   .add(ClearProductoStateEvent());
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(state.message),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
+                              context
+                                  .read<ClienteBloc>()
+                                  .add(ClearClienteStateEvent());
+
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //   SnackBar(
+                              //     content: Text(state.message),
+                              //     backgroundColor: Colors.green,
+                              //   ),
+                              // );
                             } else if (state is PedidoCotizaError) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -182,39 +216,43 @@ class SearchProducto extends HookWidget {
                             }
                           },
                           builder: (context, state) {
-                            // bool loading;
-                            // if (state is PedidoLoading) {
-                            //   loading = true;
-                            // } else if (state is PedidoDetalleLoaded) {
-                            //   loading = false;
-                            // } else if (state is PedidoError) {
-                            //   loading = false;
-                            // }
+                            if (state is PedidoCotizaLoading) {
+                              loading = true;
+                            } else if (state is PedidoDetalleCotizaLoaded) {
+                              loading = false;
+                            } else if (state is PedidoCotizaError) {
+                              loading = false;
+                            }
                             return CustomListTile(
-                                text: 'GENERAR COTIZACION',
+                                text: loading
+                                    ? 'GENERANDO...'
+                                    : 'GENERAR COTIZACION',
                                 assetPathIcon:
                                     'assets/iconos/pedidos - rosa gris.png',
-                                onTap: () {
-                                  final data = {
-                                    'id_cliente': idCliente,
-                                    // 'id_metodopago': metodo1,
-                                    // 'observaciones': observaciones,
-                                    'estatus': estatusPedido,
-                                    // 'anticipo': anticipoPago.toInt(),
-                                    // 'anticipo2': anticipoPago2.toInt(),
-                                    // 'anticipo3': anticipoPago3.toInt(),
-                                    'total_pagar': UtilsVenta.total.toInt(),
-                                    // 'entregado': entregado,
-                                    // 'id_metodopago2': metodo2,
-                                    // 'id_metodopago3': metodo3.toString(),
-                                  };
+                                onTap: loading
+                                    ? null
+                                    : () {
+                                        final data = {
+                                          'id_cliente': idCliente,
+                                          // 'id_metodopago': metodo1,
+                                          // 'observaciones': observaciones,
+                                          'estatus': estatusPedido,
+                                          // 'anticipo': anticipoPago.toInt(),
+                                          // 'anticipo2': anticipoPago2.toInt(),
+                                          // 'anticipo3': anticipoPago3.toInt(),
+                                          'total_pagar':
+                                              UtilsVenta.total.toInt(),
+                                          // 'entregado': entregado,
+                                          // 'id_metodopago2': metodo2,
+                                          // 'id_metodopago3': metodo3.toString(),
+                                        };
 
-                                  context.read<CotizaPedidoBloc>().add(
-                                      PedidoAddEvent(
-                                          data: data,
-                                          products:
-                                              UtilsVenta.listProductsOrder));
-                                }
+                                        context.read<CotizaPedidoBloc>().add(
+                                            PedidoAddEvent(
+                                                data: data,
+                                                products: UtilsVenta
+                                                    .listProductsOrder));
+                                      }
 
                                 // onTap: () => CotizaPedidoRoute(
                                 //         idCliente: idCliente,

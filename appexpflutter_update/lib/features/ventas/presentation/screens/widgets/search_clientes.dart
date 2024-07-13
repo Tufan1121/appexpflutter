@@ -17,9 +17,9 @@ class SearchClientes extends StatelessWidget {
           Expanded(
             child: CustomSearch(
               hintText: 'Cliente',
-              onChanged: (value) {
-                context.read<ClienteBloc>().add(GetClientesEvent(name: value));
-              },
+              // onChanged: (value) {
+              //   context.read<ClienteBloc>().add(GetClientesEvent(name: value));
+              // },
               onSubmitted: (value) => context
                   .read<ClienteBloc>()
                   .add(GetClientesEvent(name: value)),
