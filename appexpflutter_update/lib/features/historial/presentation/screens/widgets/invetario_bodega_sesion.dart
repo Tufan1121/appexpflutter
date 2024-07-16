@@ -1,3 +1,5 @@
+import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
+import 'package:appexpflutter_update/features/historial/presentation/screens/mixin_products.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
@@ -6,20 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class InventarioBodega extends StatefulWidget {
-  const InventarioBodega({super.key});
+class InventarioBodega2 extends StatefulWidget {
+  const InventarioBodega2({super.key});
 
   @override
-  State<InventarioBodega> createState() => _InventarioBodegaState();
+  State<InventarioBodega2> createState() => _InventarioBodega2State();
 }
 
-class _InventarioBodegaState extends State<InventarioBodega>
-    with VerificarCampos {
+class _InventarioBodega2State extends State<InventarioBodega2>
+    with VerificarCampos, ProductoSesion {
   bool isMultiSelectMode = false;
   final form = FormGroup({
     'descripcio': FormControl<String>(),
@@ -75,9 +76,15 @@ class _InventarioBodegaState extends State<InventarioBodega>
                                 return IconButton(
                                   icon: const Icon(Icons.check),
                                   onPressed: () {
-                                    context.read<ProductosBloc>().add(
-                                        AddSelectedProductsToScannedEvent(
-                                            state.selectedProducts));
+                                    context.read<DetalleSesionBloc>().add(
+                                          AddSelectedProductsEvent(
+                                            state.selectedProducts
+                                                .map((producto) =>
+                                                    convertToDetalleSesionEntity(
+                                                        producto))
+                                                .toList(),
+                                          ),
+                                        );
 
                                     _showModal(
                                       context: context,
@@ -366,9 +373,11 @@ class _InventarioBodegaState extends State<InventarioBodega>
                                               ToggleProductSelectionEvent(
                                                   producto));
                                         } else {
-                                          context.read<ProductosBloc>().add(
-                                              AddProductToScannedEvent(
-                                                  producto));
+                                          context.read<DetalleSesionBloc>().add(
+                                                AddProductEvent(
+                                                    convertToDetalleSesionEntity(
+                                                        producto)),
+                                              );
 
                                           _showModal(
                                             context: context,

@@ -19,8 +19,9 @@ class SesionLoaded extends SesionState {
 }
 
 class SesionError extends SesionState {
+  final List<DetalleSesionEntity>? detalleSesion;
   final String message;
-  const SesionError({required this.message});
+  const SesionError({required this.message, this.detalleSesion});
   @override
   List<Object> get props => [message];
 }

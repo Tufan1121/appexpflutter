@@ -6,6 +6,7 @@ import 'package:appexpflutter_update/features/historial/domain/entities/historia
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_pedido_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_sesion_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/respositories/historial_repository.dart';
+import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -67,6 +68,19 @@ class HistorialRepositoryImpl implements HistorialRepository {
       final historialListEntity =
           result.map((model) => model.toEntity()).toList();
       return Right(historialListEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, ProductoEntity>> getProductInfo(
+      String productKey) async {
+    try {
+      final result = await historialDataSource.getProductInfo(productKey);
+      return Right(result);
     } on NotFoundException catch (e) {
       return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {

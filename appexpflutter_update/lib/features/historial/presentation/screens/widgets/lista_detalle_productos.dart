@@ -1,64 +1,70 @@
 import 'package:appexpflutter_update/features/historial/domain/entities/detalle_sesion_entity.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 
 class ListaDetalleProductos extends HookWidget {
-  const ListaDetalleProductos({super.key, required this.detalleProductos});
-  final List<DetalleSesionEntity> detalleProductos;
+  const ListaDetalleProductos({super.key, required this.productos});
+  final List<DetalleSesionEntity> productos;
 
   @override
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
 
-    // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
-    final countList =
-        useState<List<int>>(List.filled(detalleProductos.length, 1));
-    final selectedPriceList =
-        useState<List<int>>(List.filled(detalleProductos.length, 1));
+    final countList = useState<List<int>>(
+        productos.map((p) => p.cantidad > 0 ? p.cantidad.toInt() : 1).toList());
+    final selectedPriceList = useState<List<int>>(productos.map((p) {
+      if (p.precio == p.precio1) {
+        return 1;
+      } else if (p.precio == p.precio2) {
+        return 2;
+      } else if (p.precio == p.precio3) {
+        return 3;
+      }
+      return 1;
+    }).toList());
 
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
-      for (var i = 0; i < detalleProductos.length; i++) {
+      for (var i = 0; i < productos.length; i++) {
         if (i >= countList.value.length ||
             i >= selectedPriceList.value.length) {
-          continue; // Evita acceder fuera de los límites de las listas
+          continue;
         }
 
-        // final count = countList.value[i];
-        final count = detalleProductos[i].cantidad.toInt();
-        // final selectedPrice = selectedPriceList.value[i];
-        // print('Producto ${productos[i].producto}: count = $count, selectedPrice = $selectedPrice');
+        final count = countList.value[i];
+        final selectedPrice = selectedPriceList.value[i];
 
         if (count > 0) {
           double precioUnitario = 0.0;
-          precioUnitario = detalleProductos[i].precio.toDouble();
-          // switch (selectedPrice) {
-          //   case 1:
-          //     precioUnitario = detalleProductos[i].precio.toDouble();
-          //     break;
-          //   case 2:
-          //     precioUnitario = detalleProductos[i].precio2.toDouble();
-          //     break;
-          //   case 3:
-          //     precioUnitario = detalleProductos[i].precio3.toDouble();
-          //     break;
-          //   default:
-          //     break;
-          // }
+          switch (selectedPrice) {
+            case 1:
+              precioUnitario = productos[i].precio1.toDouble();
+              break;
+            case 2:
+              precioUnitario = productos[i].precio2.toDouble();
+              break;
+            case 3:
+              precioUnitario = productos[i].precio3.toDouble();
+              break;
+            default:
+              break;
+          }
           final subtotal = precioUnitario * count;
           newTotal += subtotal;
           UtilsVenta.listProductsOrder.add(
             DetallePedidoEntity(
               idPedido: 0,
-              clave: detalleProductos[i].clave,
-              clave2: detalleProductos[i].clave2,
+              clave: productos[i].clave,
+              clave2: productos[i].clave2,
               cantidad: count,
               precio: precioUnitario,
             ),
@@ -70,32 +76,31 @@ class ListaDetalleProductos extends HookWidget {
     }
 
     useEffect(() {
-      updateTotal(); // Initial calculation
-      return null; // No cleanup needed
+      updateTotal();
+      return null;
     }, [countList.value, selectedPriceList.value]);
 
     useEffect(() {
-      // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
       final newCountList = List<int>.from(countList.value);
       final newSelectedPriceList = List<int>.from(selectedPriceList.value);
 
-      // Ajusta la longitud de las listas
-      if (newCountList.length < detalleProductos.length) {
-        newCountList.addAll(
-            List<int>.filled(detalleProductos.length - newCountList.length, 1));
+      if (newCountList.length < productos.length) {
+        newCountList.addAll(productos
+            .sublist(newCountList.length)
+            .map((p) => p.cantidad > 0 ? p.cantidad.toInt() : 1));
         newSelectedPriceList.addAll(List<int>.filled(
-            detalleProductos.length - newSelectedPriceList.length, 1));
-      } else if (newCountList.length > detalleProductos.length) {
-        newCountList.removeRange(detalleProductos.length, newCountList.length);
+            productos.length - newSelectedPriceList.length, 1));
+      } else if (newCountList.length > productos.length) {
+        newCountList.removeRange(productos.length, newCountList.length);
         newSelectedPriceList.removeRange(
-            detalleProductos.length, newSelectedPriceList.length);
+            productos.length, newSelectedPriceList.length);
       }
 
       countList.value = newCountList;
       selectedPriceList.value = newSelectedPriceList;
       updateTotal();
       return null;
-    }, [detalleProductos.length]);
+    }, [productos.length]);
 
     return Column(
       children: [
@@ -114,22 +119,22 @@ class ListaDetalleProductos extends HookWidget {
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.66,
           child: ListView.builder(
-            itemCount: detalleProductos.length,
+            itemCount: productos.length,
             itemBuilder: (context, index) {
-              final producto = detalleProductos[index];
-              // final existencia = detalleProductos[index].bodega1 +
-              //     detalleProductos[index].bodega2 +
-              //     detalleProductos[index].bodega3 +
-              //     detalleProductos[index].bodega4;
+              final producto = productos[index];
+              final existencia = productos[index].bodega1 +
+                  productos[index].bodega2 +
+                  productos[index].bodega3 +
+                  productos[index].bodega4;
 
               return HookBuilder(
                 builder: (context) {
-                  // final count = useState(countList.value[index]);
+                  final count = useState(countList.value[index]);
                   final selectedPrice =
                       useState<int>(selectedPriceList.value[index]);
-                  // final customPrice = useState<double?>(null);
-                  // final customPriceController = useTextEditingController(
-                  //     text: producto.precio.toString());
+                  final customPrice = useState<double?>(null);
+                  final customPriceController = useTextEditingController(
+                      text: producto.precio3.toString());
 
                   return ClipRect(
                     child: Card(
@@ -137,102 +142,203 @@ class ListaDetalleProductos extends HookWidget {
                       margin: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 15),
                       clipBehavior: Clip.hardEdge,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                // Image.network(
-                                //   'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
-                                //   width: 60,
-                                //   height: 60,
-                                //   fit: BoxFit.cover,
-                                // ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AutoSizeText(
-                                        producto.clave2,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                      child: Dismissible(
+                        key: Key(producto.producto1),
+                        onDismissed: (direction) {
+                          context
+                              .read<DetalleSesionBloc>()
+                              .add(RemoveProductEvent(producto));
+                        },
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Image.network(
+                                    'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          producto.producto,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
                                         ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Clave: ${producto.producto1}',
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Existencia: ${existencia.toInt()}',
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () {
+                                          if (count.value <
+                                              existencia.toInt()) {
+                                            count.value++;
+                                            countList.value[index] =
+                                                count.value;
+                                            updateTotal();
+                                          }
+                                        },
                                       ),
-                                      const SizedBox(height: 4),
-                                      AutoSizeText(
-                                        'Clave: ${producto.clave}',
-                                        style: const TextStyle(fontSize: 14),
+                                      Text('${count.value}'),
+                                      IconButton(
+                                        icon: const Icon(Icons.remove),
+                                        onPressed: () {
+                                          if (count.value > 1) {
+                                            count.value--;
+                                            countList.value[index] =
+                                                count.value;
+                                            updateTotal();
+                                          }
+                                        },
                                       ),
-                                      const SizedBox(height: 4),
-                                      AutoSizeText(
-                                        'Pedidos: ${producto.pedidos}',
-                                        style: const TextStyle(fontSize: 14),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Scrollbar(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildPriceCheckbox(
+                                        context: context,
+                                        label: 'Precio de Lista',
+                                        price: producto.precio1.toDouble(),
+                                        value: selectedPrice.value == 1,
+                                        onChanged: (bool? value) {
+                                          selectedPrice.value = 1;
+                                          selectedPriceList.value[index] =
+                                              selectedPrice.value;
+                                          updateTotal();
+                                        },
                                       ),
-                                      const SizedBox(height: 4),
+                                      _buildPriceCheckbox(
+                                        context: context,
+                                        label: 'Precio de Expo',
+                                        price: producto.precio2.toDouble(),
+                                        value: selectedPrice.value == 2,
+                                        onChanged: (bool? value) {
+                                          selectedPrice.value = 2;
+                                          selectedPriceList.value[index] =
+                                              selectedPrice.value;
+                                          updateTotal();
+                                        },
+                                      ),
+                                      _buildPriceCheckbox(
+                                        context: context,
+                                        label: 'Precio Mayoreo',
+                                        price: producto.precio3.toDouble(),
+                                        value: selectedPrice.value == 3,
+                                        onChanged: (bool? value) {
+                                          selectedPrice.value = 3;
+                                          selectedPriceList.value[index] =
+                                              selectedPrice.value;
+                                          updateTotal();
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(width: 10),
-
+                              ),
+                              if (selectedPrice.value == 3)
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    const AutoSizeText('Cantidad: ',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold)),
-                                    const SizedBox(width: 2),
-                                    Text('${producto.cantidad.toInt()}'),
+                                    SizedBox(
+                                      width: 80,
+                                      height: 32,
+                                      child: TextField(
+                                        controller: customPriceController,
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          customPrice.value =
+                                              double.tryParse(value);
+                                        },
+                                        onSubmitted: (value) {
+                                          if (customPrice.value != null) {
+                                            selectedPriceList.value[index] =
+                                                3; // Precio personalizado
+                                            updateTotal();
+                                          }
+                                        },
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 0),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    SizedBox(
+                                      height: 33,
+                                      width: 110,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colores.secondaryColor),
+                                        onPressed: customPrice.value != null
+                                            ? () {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                                final price = double.parse(
+                                                    customPriceController.text);
+                                                final updatedProduct =
+                                                    producto.copyWith(
+                                                        precio3: price.toInt());
+                                                context
+                                                    .read<DetalleSesionBloc>()
+                                                    .add(UpdateProductEvent(
+                                                        updatedProduct));
+                                                updateTotal();
+                                              }
+                                            : null,
+                                        child: const AutoSizeText(
+                                          'APLICAR DESCUENTO',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colores
+                                                  .scaffoldBackgroundColor),
+                                          minFontSize: 8,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
-                                // Row(
-                                //   children: [
-                                //     IconButton(
-                                //       icon: const Icon(Icons.add),
-                                //       onPressed: () {
-                                //         if (count.value <
-                                //             existencia.toInt()) {
-                                //           count.value++;
-                                //           countList.value[index] =
-                                //               count.value;
-                                //           updateTotal();
-                                //         }
-                                //       },
-                                //     ),
-                                //     Text('${count.value}'),
-                                //     IconButton(
-                                //       icon: const Icon(Icons.remove),
-                                //       onPressed: () {
-                                //         if (count.value > 1) {
-                                //           count.value--;
-                                //           countList.value[index] =
-                                //               count.value;
-                                //           updateTotal();
-                                //         }
-                                //       },
-                                //     ),
-                                //   ],
-                                // ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            _buildPriceCheckbox(
-                              context: context,
-                              label: 'Precio',
-                              price: producto.precio.toDouble(),
-                              value: selectedPrice.value == 1,
-                              onChanged: (bool? value) {
-                                selectedPrice.value = 1;
-                                selectedPriceList.value[index] =
-                                    selectedPrice.value;
-                                updateTotal();
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -254,13 +360,12 @@ class ListaDetalleProductos extends HookWidget {
     required Function(bool?) onChanged,
   }) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AutoSizeText(label,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         const SizedBox(width: 2),
         Row(
-          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Checkbox(
               value: value,
@@ -269,7 +374,7 @@ class ListaDetalleProductos extends HookWidget {
             ),
             const SizedBox(width: 5),
             AutoSizeText(Utils.formatPrice(price),
-                style: const TextStyle(fontSize: 15)),
+                style: const TextStyle(fontSize: 12)),
           ],
         ),
       ],

@@ -4,6 +4,7 @@ import 'package:appexpflutter_update/features/historial/domain/entities/historia
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_pedido_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_sesion_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/respositories/historial_repository.dart';
+import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:fpdart/fpdart.dart';
 
 class HistorialUsecase {
@@ -29,5 +30,10 @@ class HistorialUsecase {
   Future<Either<NetworkException, List<HistorialCotizaEntity>>>
       getHistorialCotiza(String parameter) async {
     return historialRepository.getHistorialCotiza(parameter);
+  }
+
+  Future<Either<NetworkException, ProductoEntity>> getProductInfo(
+      String productKey) async {
+    return await historialRepository.getProductInfo(productKey);
   }
 }

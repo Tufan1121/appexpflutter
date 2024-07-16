@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-//  import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 class PdfViewerScreen extends HookWidget {
   final String fileName;
@@ -28,6 +29,7 @@ class PdfViewerScreen extends HookWidget {
 
     useEffect(() {
       Future<void> checkUrlValidity() async {
+        // await Future.delayed(Duration(seconds: 3));  // Añadimos el delay de 3 segundos
         try {
           final response = await dio.head(url);
           isUrlValid.value = response.statusCode == 200;
@@ -42,11 +44,20 @@ class PdfViewerScreen extends HookWidget {
 
     Future<void> downloadPdf() async {
       try {
-        final appDownloadsDir =
-            Directory('/storage/emulated/0/Download/TufanApp');
+        Directory appDownloadsDir;
+        if (Platform.isAndroid) {
+          appDownloadsDir = Directory('/storage/emulated/0/Download/TufanApp');
+        } else if (Platform.isIOS) {
+          final downloadsDir = await getDownloadsDirectory();
+          appDownloadsDir = Directory('${downloadsDir!.path}/TufanApp');
+        } else {
+          throw Exception('Unsupported platform');
+        }
+
         if (!await appDownloadsDir.exists()) {
           await appDownloadsDir.create(recursive: true);
         }
+
         final file = File('${appDownloadsDir.path}/$fileName.pdf');
         await dio.download(url, file.path);
         if (context.mounted) {
@@ -60,7 +71,29 @@ class PdfViewerScreen extends HookWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error al descargar el PDF: $e'),
+              content: Text(
+                  'Error al descargar el PDF: $e. Intentando compartir...'),
+            ),
+          );
+        }
+      }
+    }
+
+    Future<void> sharePdf() async {
+      try {
+        // Descargar el PDF a una ubicación temporal
+        final tempDir = await getTemporaryDirectory();
+        final tempFile = File('${tempDir.path}/$fileName.pdf');
+        await dio.download(url, tempFile.path);
+
+        // Compartir el PDF
+        await Share.shareXFiles([XFile(tempFile.path)],
+            text: 'Compartiendo $fileName.pdf');
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al compartir el PDF: $e'),
             ),
           );
         }
@@ -68,6 +101,8 @@ class PdfViewerScreen extends HookWidget {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset:
+          false, // Desactiva el ajuste del contenido al abrir el teclado o modal
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colores.secondaryColor.withOpacity(0.78),
@@ -89,6 +124,10 @@ class PdfViewerScreen extends HookWidget {
           IconButton(
             icon: const Icon(Icons.download),
             onPressed: downloadPdf,
+          ),
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: sharePdf,
           ),
         ],
       ),

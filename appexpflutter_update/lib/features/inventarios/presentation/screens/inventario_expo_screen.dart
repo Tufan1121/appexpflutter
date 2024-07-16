@@ -199,29 +199,42 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen>
                           }
                           Map<String, dynamic> data = {};
 
-                          if (mlargo1 > 0.0 && mlargo2 > 0.0) {
+                          if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
+                              (mancho1 == 0.0 && mancho2 == 0.0)) {
                             data = {
                               'descripcio': descripcio,
                               'diseno': diseno,
-                              'mlargo1': mlargo1 - 0.01,
-                              'mlargo2': mlargo2 + 0.01,
+                              'mlargo1': mlargo1,
+                              'mlargo2': mlargo2,
+                              // 'mlargo1': mlargo1 - 0.01,
+                              // 'mlargo2': mlargo2 + 0.01,
                             };
-                          } else if (mancho1 > 0.0 && mancho2 > 0.0) {
+                          } else if ((mancho1 > 0.0 && mancho2 > 0.0) &&
+                              (mlargo1 == 0.0 && mlargo2 == 0.0)) {
                             data = {
                               'descripcio': descripcio,
                               'diseno': diseno,
-                              'mancho1': mancho1 - 0.01,
-                              'mancho2': mancho2 + 0.01,
+                              'mancho1': mancho1,
+                              'mancho2': mancho2,
+                              // 'mancho1': mancho1 - 0.01,
+                              // 'mancho2': mancho2 + 0.01,
                             };
                           } else if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
                               (mlargo1 > 0.0 && mlargo2 > 0.0)) {
                             data = {
                               'descripcio': descripcio,
                               'diseno': diseno,
-                              'mlargo1': mlargo1 - 0.01,
-                              'mlargo2': mlargo2 + 0.01,
-                              'mancho1': mancho1 - 0.01,
-                              'mancho2': mancho2 + 0.01,
+                              'mlargo1': mlargo1,
+                              'mlargo2': mlargo2,
+                              'mancho1': mancho1,
+                              'mancho2': mancho2,
+
+                              // 'descripcio': descripcio,
+                              // 'diseno': diseno,
+                              // 'mlargo1': mlargo1 - 0.01,
+                              // 'mlargo2': mlargo2 + 0.01,
+                              // 'mancho1': mancho1 - 0.01,
+                              // 'mancho2': mancho2 + 0.01,
                             };
                           } else {
                             data = {

@@ -17,7 +17,8 @@ class InventarioBodegaScreen extends StatefulWidget {
   State<InventarioBodegaScreen> createState() => _InventarioBodegaScreenState();
 }
 
-class _InventarioBodegaScreenState extends State<InventarioBodegaScreen> with VerificarCampos{
+class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
+    with VerificarCampos {
   final form = FormGroup({
     'descripcio': FormControl<String>(),
     'diseno': FormControl<String>(),
@@ -26,8 +27,6 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen> with Ve
     'mancho1': FormControl<String>(),
     'mancho2': FormControl<String>(),
   });
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -202,30 +201,42 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen> with Ve
                             return;
                           }
                           Map<String, dynamic> data = {};
-
-                          if (mlargo1 > 0.0 && mlargo2 > 0.0) {
+                          if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
+                              (mancho1 == 0.0 && mancho2 == 0.0)) {
                             data = {
                               'descripcio': descripcio,
                               'diseno': diseno,
-                              'mlargo1': mlargo1 - 0.01,
-                              'mlargo2': mlargo2 + 0.01,
+                              'mlargo1': mlargo1,
+                              'mlargo2': mlargo2,
+                              // 'mlargo1': mlargo1 - 0.01,
+                              // 'mlargo2': mlargo2 + 0.01,
                             };
-                          } else if (mancho1 > 0.0 && mancho2 > 0.0) {
+                          } else if ((mancho1 > 0.0 && mancho2 > 0.0) &&
+                              (mlargo1 == 0.0 && mlargo2 == 0.0)) {
                             data = {
                               'descripcio': descripcio,
                               'diseno': diseno,
-                              'mancho1': mancho1 - 0.01,
-                              'mancho2': mancho2 + 0.01,
+                              'mancho1': mancho1,
+                              'mancho2': mancho2,
+                              // 'mancho1': mancho1 - 0.01,
+                              // 'mancho2': mancho2 + 0.01,
                             };
                           } else if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
                               (mlargo1 > 0.0 && mlargo2 > 0.0)) {
                             data = {
                               'descripcio': descripcio,
                               'diseno': diseno,
-                              'mlargo1': mlargo1 - 0.01,
-                              'mlargo2': mlargo2 + 0.01,
-                              'mancho1': mancho1 - 0.01,
-                              'mancho2': mancho2 + 0.01,
+                              'mlargo1': mlargo1,
+                              'mlargo2': mlargo2,
+                              'mancho1': mancho1,
+                              'mancho2': mancho2,
+
+                              // 'descripcio': descripcio,
+                              // 'diseno': diseno,
+                              // 'mlargo1': mlargo1 - 0.01,
+                              // 'mlargo2': mlargo2 + 0.01,
+                              // 'mancho1': mancho1 - 0.01,
+                              // 'mancho2': mancho2 + 0.01,
                             };
                           } else {
                             data = {
