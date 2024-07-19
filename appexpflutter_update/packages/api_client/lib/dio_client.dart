@@ -3,7 +3,6 @@ library api_client;
 import 'dart:io';
 import 'package:api_client/constants/environment.dart';
 import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
-import 'package:api_client/exceptions/network_exception.dart';
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 

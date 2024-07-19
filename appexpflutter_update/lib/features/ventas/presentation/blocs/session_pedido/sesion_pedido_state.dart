@@ -23,9 +23,10 @@ final class PedidoLoaded extends SesionPedidoState {
 class PedidoDetalleSesionLoaded extends SesionPedidoState {
   final SesionEntity pedido;
   final String message;
+  final String username;
 
   const PedidoDetalleSesionLoaded(
-      {required this.message, required this.pedido});
+      {required this.message, required this.pedido, required this.username});
 
   @override
   List<Object> get props => [message];

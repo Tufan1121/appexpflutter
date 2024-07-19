@@ -1,14 +1,14 @@
+import 'package:appexpflutter_update/features/auth/data/models/auth_user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:api_client/api_client.dart';
 import 'package:appexpflutter_update/features/auth/data/data_sources/auth_data_source.dart';
 
 class AuthDataSourceImpl implements AuthDatasource {
   final DioClient _dioClient;
-  
 
   AuthDataSourceImpl({required DioClient dioClient}) : _dioClient = dioClient;
   @override
-  Future<String> login(String email, String password) async {
+  Future<AuthUserModel> login(String email, String password) async {
     final Map<String, dynamic> body = {
       'grant_type': '',
       'username': email,
@@ -24,14 +24,12 @@ class AuthDataSourceImpl implements AuthDatasource {
         data: body,
         options: Options(headers: headers),
       );
-      final token = response.data['access_token'] as String;
 
-   
-      return token;
+      final authUserModel = AuthUserModel.fromJson(response.data);
+      // final token = response.data['access_token'] as String;
+      return authUserModel;
     } catch (_) {
       rethrow;
     }
   }
-
-  
 }

@@ -30,9 +30,10 @@ class _MyAppState extends State<MyApp> {
   final storage = const FlutterSecureStorage();
 
   Future<void> _init() async {
+
     final token = await storage.read(key: 'accessToken');
     // _router =
-    //     GoRouter(initialLocation: GenerarPedidoRoute.path, routes: $appRoutes);
+    //     GoRouter(initialLocation: PruebsRoute.path, routes: $appRoutes);
     _router = GoRouter(
         initialLocation: token != null ? HomeRoute.path : LoginRoute.path,
         routes: $appRoutes);

@@ -3,9 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  Future<String> username() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username') ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +51,33 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Center(
-                      child: Image.asset(
-                        'assets/images/logo_tufan.png',
-                        scale: 12,
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            'assets/images/logo_tufan.png',
+                            scale: 12,
+                          ),
+                          const SizedBox(height: 5),
+                          FutureBuilder<String>(
+                              future: username(),
+                              builder: (context, snapshot) {
+                                return Text('Bienvenido ${snapshot.data}',
+                                    style: GoogleFonts.montserrat(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colores.scaffoldBackgroundColor,
+                                      shadows: const [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 6,
+                                          offset: Offset(2.0, 5.0),
+                                        )
+                                      ],
+                                    ));
+                              }),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),

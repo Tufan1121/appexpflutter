@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'sesion_pedido_event.dart';
 part 'sesion_pedido_state.dart';
@@ -41,6 +42,7 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
 
   Future<void> _pedidoAddDetalleEvent(
       PedidoAddDetalleEvent event, Emitter<SesionPedidoState> emit) async {
+        final prefs = await SharedPreferences.getInstance();
     List<Map<String, dynamic>> detallesData = event.products.map((producto) {
       return {
         'id_sesion': event.pedido.idSesion,
@@ -56,7 +58,7 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
       (failure) => emit(PedidoSesionError(message: failure.message)),
       (success) {
         // add(PedidoAddIdPedidoEvent(pedido: event.pedido));
-        emit(PedidoDetalleSesionLoaded(pedido: event.pedido, message: success));
+        emit(PedidoDetalleSesionLoaded(username: prefs.getString('username')! , pedido: event.pedido, message: success));
       },
     );
   }

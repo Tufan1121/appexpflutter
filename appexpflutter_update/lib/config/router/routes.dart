@@ -7,7 +7,6 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/i
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery2.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery_ibodega.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
-import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cotiza_pedido_screen.dart';
@@ -39,9 +38,10 @@ class LoginRoute extends GoRouteData {
   path: HomeRoute.path,
 )
 class HomeRoute extends GoRouteData {
+  HomeRoute();
   static const path = '/home';
   @override
-  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
+  Widget build(BuildContext context, GoRouterState state) =>  HomeScreen();
 }
 
 @TypedGoRoute<PreciosRoute>(
@@ -200,6 +200,21 @@ class GenerarPedidoRoute extends GoRouteData {
         idSesion: idSesion,
       );
 }
+// @TypedGoRoute<PruebsRoute>(
+//   path: PruebsRoute.path,
+// )
+// class PruebsRoute extends GoRouteData {
+//   static const path = '/generar_pedido_prueba';
+  
+
+//   PruebsRoute(
+//   );
+
+//   @override
+//   Widget build(BuildContext context, GoRouterState state) =>
+//       const GenerarPedidoScreen(
+//       );
+// }
 
 @TypedGoRoute<SesionPedidoRoute>(
   path: SesionPedidoRoute.path,

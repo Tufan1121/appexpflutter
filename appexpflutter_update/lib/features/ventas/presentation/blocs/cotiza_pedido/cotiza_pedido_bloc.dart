@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'cotiza_pedido_event.dart';
 part 'cotiza_pedido_state.dart';
@@ -63,11 +64,12 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
 
   Future<void> _pedidoAddIdPedidoEvent(
       PedidoAddIdPedidoEvent event, Emitter<CotizaPedidoState> emit) async {
+        final prefs = await SharedPreferences.getInstance();
     final result = await pedidoUsecase.addIdCotizaPedido(event.pedido.idCotiza);
     result.fold(
       (failure) => emit(PedidoCotizaError(message: failure.message)),
       (success) {
-        emit(PedidoDetalleCotizaLoaded(pedido: event.pedido, message: success));
+        emit(PedidoDetalleCotizaLoaded(username: prefs.getString('username')!, pedido: event.pedido, message: success));
       },
     );
   }

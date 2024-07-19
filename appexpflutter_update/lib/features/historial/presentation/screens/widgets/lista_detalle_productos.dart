@@ -322,6 +322,12 @@ class ListaDetalleProductos extends HookWidget {
                                                     .read<DetalleSesionBloc>()
                                                     .add(UpdateProductEvent(
                                                         updatedProduct));
+                                                // Actualiza el producto en la lista
+                                                productos[index] =
+                                                    updatedProduct;
+                                                // Refleja el nuevo precio en la lista de precios seleccionados
+                                                selectedPriceList.value[index] =
+                                                    3;
                                                 updateTotal();
                                               }
                                             : null,

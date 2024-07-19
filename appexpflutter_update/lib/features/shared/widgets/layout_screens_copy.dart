@@ -1,5 +1,4 @@
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/config/theme/responsive.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,7 +12,6 @@ class LayoutScreens extends StatelessWidget {
     this.child,
     required this.onPressed,
     this.floatingActionButton,
-    this.resizeToAvoidBottomInset = false,
   });
   final IconData? icon;
   final IconData? faIcon;
@@ -21,12 +19,11 @@ class LayoutScreens extends StatelessWidget {
   final Widget? child;
   final void Function()? onPressed;
   final Widget? floatingActionButton;
-  final bool? resizeToAvoidBottomInset; //resizeToAvoidBottomInset
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           CustomPaint(
@@ -62,7 +59,7 @@ class LayoutScreens extends StatelessWidget {
           ),
           Column(
             children: [
-              SizedBox(height: Responsive.of(context).hp(8)),
+              const SizedBox(height: 75),
               child ?? Container(),
             ],
           ),

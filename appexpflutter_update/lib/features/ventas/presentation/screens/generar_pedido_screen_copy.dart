@@ -1,9 +1,9 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
+// import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+// import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/pedido_bloc.dart';
@@ -13,10 +13,10 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-
+// import 'package:url_launcher/url_launcher.dart';
 import '../../../../config/theme/app_theme.dart';
+import '../../../shared/widgets/layout_screens.dart';
 
 class GenerarPedidoScreen extends StatefulHookWidget {
   const GenerarPedidoScreen(
@@ -65,13 +65,31 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
   }
 
   final totalAPagar = UtilsVenta.total;
-  final String username = '';
+
+  // Future<void> _openPDF(String pdfUrl) async {
+  //   try {
+  //     // Lanzar la URL en un visor de PDF externo
+  //     await launchUrl(Uri.parse(pdfUrl), mode: LaunchMode.externalApplication);
+  //   } catch (e) {
+  //     // Manejar errores si la URL no se puede abrir
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('No se pudo abrir el PDF'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     final isEntregado = useState(false);
     final loading = useState(false);
+
     final isPendienteFinDeExpo = useState(true);
+    final size = MediaQuery.of(context).size;
     final debePorPagar = useState(totalAPagar);
     final scrollController = useScrollController();
 
@@ -113,265 +131,244 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
 
       return null;
     }, []);
-
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_rounded),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-        title: Text(
-          'GENERAR PEDIDO',
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.bold,
-            color: Colores.scaffoldBackgroundColor,
-            shadows: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(2.0, 5.0),
-              )
-            ],
-          ),
-        ),
-      ),
-      body: Stack(
+    return LayoutScreens(
+      onPressed: () => Navigator.pop(context),
+      titleScreen: 'GENERAR PEDIDO',
+      child: Column(
         children: [
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height),
-            painter: BackgroundPainter(),
+          const SizedBox(
+            height: 5,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
               height: 700, // 80 los dos sizebox
               width: double.infinity,
+
               child: Card(
                 elevation: 4.0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: Column(
-                  children: [
-                    Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ReactiveForm(
+                    formGroup: form,
+                    child: Scrollbar(
                       child: SingleChildScrollView(
                         controller: scrollController,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ReactiveForm(
-                            formGroup: form,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 16.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text('Total a pagar'),
-                                        Text(
-                                          Utils.formatPrice(UtilsVenta.total),
-                                          style: const TextStyle(
-                                              color: Colors.purple,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        const Text('Debe por pagar'),
-                                        Text(
-                                          Utils.formatPrice(debePorPagar.value),
-                                          style: const TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10.0),
-                                buildDropdownAndTextField(
-                                    context: context,
-                                    hintText: 'Selecciona Método de Pago 1',
-                                    controlNameDropdown: 'metodoDePago1',
-                                    controlNameTextField: 'anticipoPago1',
-                                    validationMessages: {
-                                      ValidationMessage.required: (error) =>
-                                          'Este campo es requerido'
-                                    }),
-                                const SizedBox(height: 10.0),
-                                buildDropdownAndTextField(
+                        child: SizedBox(
+                          height: size.height * 0.95,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16.0),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Total a pagar'),
+                                      Text(
+                                        Utils.formatPrice(UtilsVenta.total),
+                                        style: const TextStyle(
+                                            color: Colors.purple,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      const Text('Debe por pagar'),
+                                      Text(
+                                        Utils.formatPrice(debePorPagar.value),
+                                        style: const TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10.0),
+                              buildDropdownAndTextField(
                                   context: context,
-                                  hintText: 'Selecciona Método de Pago 2',
-                                  controlNameDropdown: 'metodoDePago2',
-                                  controlNameTextField: 'anticipoPago2',
-                                ),
-                                const SizedBox(height: 10.0),
-                                buildDropdownAndTextField(
-                                  context: context,
-                                  hintText: 'Selecciona Método de Pago 3',
-                                  controlNameDropdown: 'metodoDePago3',
-                                  controlNameTextField: 'anticipoPago3',
-                                ),
-                                const SizedBox(height: 10.0),
-                                ReactiveTextField(
-                                  formControlName: 'observaciones',
-                                  decoration: const InputDecoration(
-                                      labelText: 'Observaciones'),
-                                  maxLines: 3, // Permitir múltiples líneas
-                                  keyboardType: TextInputType.multiline,
-                                  onTapOutside: (event) {
-                                    FocusScope.of(context)
-                                        .requestFocus(FocusNode());
-                                  },
+                                  hintText: 'Selecciona Método de Pago 1',
+                                  controlNameDropdown: 'metodoDePago1',
+                                  controlNameTextField: 'anticipoPago1',
                                   validationMessages: {
                                     ValidationMessage.required: (error) =>
                                         'Este campo es requerido'
-                                  },
-                                ),
-                                const SizedBox(height: 16.0),
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                      value: isEntregado.value,
-                                      activeColor: Colores.secondaryColor,
-                                      onChanged: (value) =>
-                                          toggleCheckbox('entregado'),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                      ),
+                                  }),
+                              const SizedBox(height: 10.0),
+                              buildDropdownAndTextField(
+                                context: context,
+                                hintText: 'Selecciona Método de Pago 2',
+                                controlNameDropdown: 'metodoDePago2',
+                                controlNameTextField: 'anticipoPago2',
+                              ),
+                              const SizedBox(height: 10.0),
+                              buildDropdownAndTextField(
+                                context: context,
+                                hintText: 'Selecciona Método de Pago 3',
+                                controlNameDropdown: 'metodoDePago3',
+                                controlNameTextField: 'anticipoPago3',
+                              ),
+                              const SizedBox(height: 10.0),
+                              ReactiveTextField(
+                                formControlName: 'observaciones',
+                                decoration: const InputDecoration(
+                                    labelText: 'Observaciones'),
+                                maxLines: 3, // Permitir múltiples líneas
+                                keyboardType: TextInputType.multiline,
+                                onTapOutside: (event) {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                },
+                                validationMessages: {
+                                  ValidationMessage.required: (error) =>
+                                      'Este campo es requerido',
+                                },
+                              ),
+                              const SizedBox(height: 16.0),
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: isEntregado.value,
+                                    activeColor: Colores.secondaryColor,
+                                    onChanged: (value) =>
+                                        toggleCheckbox('entregado'),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
                                     ),
-                                    const Text('Entregado'),
-                                    const SizedBox(width: 20.0),
-                                    Checkbox(
-                                      value: isPendienteFinDeExpo.value,
-                                      activeColor: Colores.secondaryColor,
-                                      onChanged: (value) =>
-                                          toggleCheckbox('pendienteFinDeExpo'),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                      ),
+                                  ),
+                                  const Text('Entregado'),
+                                  const SizedBox(width: 20.0),
+                                  Checkbox(
+                                    value: isPendienteFinDeExpo.value,
+                                    activeColor: Colores.secondaryColor,
+                                    onChanged: (value) =>
+                                        toggleCheckbox('pendienteFinDeExpo'),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
                                     ),
-                                    const Text('Pendiente fin de expo'),
-                                  ],
-                                ),
-                                const SizedBox(height: 32.0),
-                              ],
-                            ),
+                                  ),
+                                  const Text('Pendiente fin de expo'),
+                                ],
+                              ),
+                              const SizedBox(height: 32.0),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  BlocConsumer<PedidoBloc, PedidoState>(
+                                    listener: (context, state) {
+                                      if (state is PedidoLoading) {
+                                        loading.value = true;
+                                      }
+                                      if (state is PedidoDetalleLoaded) {
+                                        loading.value = false;
+                                        debePorPagar.value = 0.0;
+
+                                        ScaffoldMessenger.of(context)
+                                            .removeCurrentSnackBar();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(state.message),
+                                          backgroundColor: Colors.green,
+                                        ));
+
+                                        // Aquí  la URL donde está ubicado el PDF
+                                        String pdfUrl =
+                                            'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
+                                        // _openPDF(pdfUrl);
+
+                                        _showDownloadModal(context, pdfUrl,
+                                            state.pedido.pedidos);
+
+                                        //  form.reset();
+                                        context
+                                            .read<ClienteBloc>()
+                                            .add(ClearClienteStateEvent());
+                                        context
+                                            .read<ProductosBloc>()
+                                            .add(ClearProductoStateEvent());
+                                        context
+                                            .read<PedidoBloc>()
+                                            .add(ClearPedidoStateEvent());
+                                        context.read<InventarioBloc>().add(
+                                            ClearInventarioProductoEvent());
+
+                                        context
+                                            .read<DetalleSesionBloc>()
+                                            .add(ClearSesionEvent());
+                                        context
+                                            .read<HistorialBloc>()
+                                            .add(ClearHistorialEvent());
+                                      } else if (state is PedidoError) {
+                                        loading.value = false;
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(state.message),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    builder: (context, state) {
+                                      return ElevatedButton.icon(
+                                        onPressed:
+                                            loading.value ? null : _submitForm,
+                                        icon: const Icon(
+                                          Icons.save,
+                                          color:
+                                              Colores.scaffoldBackgroundColor,
+                                        ),
+                                        label: Text(
+                                          loading.value
+                                              ? 'ESPERE..'
+                                              : 'GUARDAR',
+                                          style: TextStyle(
+                                              color: loading.value
+                                                  ? Colores.secondaryColor
+                                                  : Colores
+                                                      .scaffoldBackgroundColor),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colores.secondaryColor),
+                                      );
+                                    },
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: _dialogCancel,
+                                    icon: const Icon(Icons.close,
+                                        color: Colores.secondaryColor),
+                                    label: const Text(
+                                      'CANCELAR',
+                                      style: TextStyle(
+                                          color: Colores.secondaryColor),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          BlocConsumer<PedidoBloc, PedidoState>(
-                            listener: (context, state) {
-                              if (state is PedidoLoading) {
-                                loading.value = true;
-                              }
-                              if (state is PedidoDetalleLoaded) {
-                                loading.value = false;
-                                debePorPagar.value = 0.0;
-
-                                ScaffoldMessenger.of(context)
-                                    .removeCurrentSnackBar();
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text(state.message),
-                                  backgroundColor: Colors.green,
-                                ));
-
-                                // Aquí  la URL donde está ubicado el PDF
-                                String pdfUrl =
-                                    'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
-                                // _openPDF(pdfUrl);
-
-                                _showDownloadModal(
-                                    context, pdfUrl, state.pedido.pedidos);
-
-                                //  form.reset();
-                                context
-                                    .read<ClienteBloc>()
-                                    .add(ClearClienteStateEvent());
-                                context
-                                    .read<ProductosBloc>()
-                                    .add(ClearProductoStateEvent());
-                                context
-                                    .read<PedidoBloc>()
-                                    .add(ClearPedidoStateEvent());
-                                context
-                                    .read<InventarioBloc>()
-                                    .add(ClearInventarioProductoEvent());
-
-                                context
-                                    .read<DetalleSesionBloc>()
-                                    .add(ClearSesionEvent());
-                                context
-                                    .read<HistorialBloc>()
-                                    .add(ClearHistorialEvent());
-                              } else if (state is PedidoError) {
-                                loading.value = false;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(state.message),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                            builder: (context, state) {
-                              return ElevatedButton.icon(
-                                onPressed: loading.value ? null : _submitForm,
-                                icon: const Icon(
-                                  Icons.save,
-                                  color: Colores.scaffoldBackgroundColor,
-                                ),
-                                label: Text(
-                                  loading.value ? 'ESPERE..' : 'GUARDAR',
-                                  style: TextStyle(
-                                      color: loading.value
-                                          ? Colores.secondaryColor
-                                          : Colores.scaffoldBackgroundColor),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colores.secondaryColor),
-                              );
-                            },
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: _dialogCancel,
-                            icon: const Icon(Icons.close,
-                                color: Colores.secondaryColor),
-                            label: const Text(
-                              'CANCELAR',
-                              style: TextStyle(color: Colores.secondaryColor),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );
@@ -569,7 +566,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                 context
                     .read<InventarioBloc>()
                     .add(ClearInventarioProductoEvent());
-                HomeRoute().go(context);
+                // HomeRoute().go(context);
                 Navigator.of(context).pop();
               },
             ),
@@ -625,7 +622,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                   form.control('anticipoPago3').reset();
                   form.control('entregado').reset();
                   Navigator.of(context).pop();
-                  HomeRoute().go(context);
+                  // HomeRoute().go(context);
                 },
               ),
             ),

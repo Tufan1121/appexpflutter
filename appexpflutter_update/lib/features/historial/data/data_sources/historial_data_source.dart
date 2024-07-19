@@ -1,10 +1,8 @@
-import 'package:api_client/exceptions/network_exception.dart';
 import 'package:appexpflutter_update/features/historial/data/models/detalle_sesion_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_cotiza_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_pedido_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_sesion_model.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
-import 'package:fpdart/fpdart.dart';
 
 abstract interface class HistorialDataSource {
   Future<List<HistorialPedidoModel>> getHistorialPedido(String parameter);

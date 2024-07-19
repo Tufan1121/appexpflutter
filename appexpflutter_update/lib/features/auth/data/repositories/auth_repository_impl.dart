@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/auth/domain/entities/auth_user_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:api_client/exceptions/network_exception.dart';
@@ -9,11 +10,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
   AuthRepositoryImpl({required this.authDatasource});
   @override
-  Future<Either<NetworkException, String>> login(
+  Future<Either<NetworkException, AuthUserEntity>> login(
       String email, String password) async {
     try {
       final result = await authDatasource.login(email, password);
-      return Right(result);
+      return Right(result.toEntity());
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }

@@ -23,9 +23,10 @@ final class PedidoLoaded extends CotizaPedidoState {
 final class PedidoDetalleCotizaLoaded extends CotizaPedidoState {
   final CotizaEntity pedido;
   final String message;
+  final String username;
 
   const PedidoDetalleCotizaLoaded(
-      {required this.message, required this.pedido});
+      {required this.message, required this.pedido, required this.username});
 
   @override
   List<Object> get props => [message];
