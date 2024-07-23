@@ -26,16 +26,20 @@ class PdfViewerPedidoScreen extends HookWidget {
   Widget build(BuildContext context) {
     final pdfViewerKey = useState(GlobalKey<SfPdfViewerState>());
     final isUrlValid = useState<bool?>(null);
+    final isLoading = useState<bool>(true);
     final dio = useMemoized(() => Dio());
 
     useEffect(() {
       Future<void> checkUrlValidity() async {
-        // await Future.delayed(Duration(seconds: 3));  // Añadimos el delay de 3 segundos
+        await Future.delayed(
+            const Duration(seconds: 3)); // delay de 3 segundos
         try {
           final response = await dio.head(url);
           isUrlValid.value = response.statusCode == 200;
         } catch (e) {
           isUrlValid.value = false;
+        } finally {
+          isLoading.value = false;
         }
       }
 
@@ -146,30 +150,29 @@ class PdfViewerPedidoScreen extends HookWidget {
             ),
           ],
         ),
-        body: isUrlValid.value == null
-            ? const Center(child: CircularProgressIndicator())
-            : isUrlValid.value == true
-                ? SfPdfViewer.network(
-                    url,
-                    key: pdfViewerKey.value,
-                    onDocumentLoadFailed:
-                        (PdfDocumentLoadFailedDetails details) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.red,
-                          content:
-                              Text('Error al cargar el PDF: ${details.error}'),
-                        ),
-                      );
-                    },
-                  )
-                : const Center(
-                    child: Text(
-                      'No se pudo acceder al PDF. Verifique la URL e inténtelo nuevamente.',
-                      style: TextStyle(color: Colors.red, fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
+        body: isLoading.value
+          ? const Center(child: CircularProgressIndicator())
+          : isUrlValid.value == true
+              ? SfPdfViewer.network(
+                  url,
+                  key: pdfViewerKey.value,
+                  onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.red,
+                        content:
+                            Text('Error al cargar el PDF: ${details.error}'),
+                      ),
+                    );
+                  },
+                )
+              : const Center(
+                  child: Text(
+                    'No se pudo acceder al PDF. Verifique la URL e inténtelo nuevamente.',
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                    textAlign: TextAlign.center,
                   ),
+                ),
       ),
     );
   }
