@@ -20,9 +20,13 @@ const list = [
 
 class PedidoScreen extends StatefulHookWidget {
   const PedidoScreen(
-      {super.key, required this.idCliente, required this.nombreCliente});
+      {super.key,
+      required this.idCliente,
+      required this.nombreCliente,
+      required this.telefonoCliente});
   final int idCliente;
   final String nombreCliente;
+  final String telefonoCliente;
 
   @override
   State<PedidoScreen> createState() => _PedidoScreenState();
@@ -45,7 +49,8 @@ class _PedidoScreenState extends State<PedidoScreen> {
           if (productos.isNotEmpty) {
             GenerarPedidoRoute(
                     idCliente: widget.idCliente,
-                    estadoPedido: getEstadoPedidoPagoId(dropdownValue.value))
+                    estadoPedido: getEstadoPedidoPagoId(dropdownValue.value),
+                    telefonoCliente: widget.telefonoCliente)
                 .push(context);
           } else {
             showDialog(
@@ -136,8 +141,10 @@ class _PedidoScreenState extends State<PedidoScreen> {
               ),
               const SizedBox(height: 20),
               SearchProducto(
-                  estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
-                  idCliente: widget.idCliente),
+                estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
+                idCliente: widget.idCliente,
+                telefonoCliente: widget.telefonoCliente,
+              ),
               const SizedBox(height: 5),
               BlocConsumer<ProductosBloc, ProductosState>(
                 listener: (context, state) {

@@ -28,6 +28,8 @@ class HistorialSesionModel extends HistorialSesionEntity
     super.nomCliente,
     required super.nombre,
     required super.apellido,
+    required super.telefono,
+
   });
 
   factory HistorialSesionModel.fromJson(Map<String, dynamic> json) =>
@@ -56,6 +58,7 @@ class HistorialSesionModel extends HistorialSesionEntity
         nomCliente: json['nomcliente'],
         nombre: json['nombre'],
         apellido: json['apellido'],
+        telefono: json['telefono'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -111,5 +114,6 @@ class HistorialSesionModel extends HistorialSesionEntity
         nomCliente: nomCliente,
         nombre: nombre,
         apellido: apellido,
+        telefono: telefono,
       );
 }

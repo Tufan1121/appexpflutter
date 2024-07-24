@@ -107,7 +107,9 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                                         idCliente:
                                             state.clientes[index].idCliente,
                                         nombreCliente:
-                                            state.clientes[index].nombre)
+                                            state.clientes[index].nombre,
+                                            telefonoCliente:  state.clientes[index].telefono,
+                                            )
                                     .push(context);
                               },
                               leading: Container(

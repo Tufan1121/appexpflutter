@@ -144,10 +144,9 @@ class ListaDetalleProductos extends HookWidget {
                       clipBehavior: Clip.hardEdge,
                       child: Dismissible(
                         key: Key(producto.producto1),
-                        onDismissed: (direction) {
-                          context
-                              .read<DetalleSesionBloc>()
-                              .add(RemoveProductEvent(producto));
+                        direction: DismissDirection.startToEnd,
+                        confirmDismiss: (direction) async {
+                          return await _dialogEliminar(context, producto);
                         },
                         background: Container(
                           color: Colors.red,
@@ -355,6 +354,54 @@ class ListaDetalleProductos extends HookWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<bool?> _dialogEliminar(
+      BuildContext context, DetalleSesionEntity producto) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          icon: const Icon(
+            Icons.warning,
+            color: Colors.red,
+          ),
+          title: const Text(
+            'Confirmar eliminación',
+            style: TextStyle(color: Colors.red),
+          ),
+          content:
+              Text('¿Está seguro de que desea eliminar ${producto.producto}?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Cancelar la eliminación
+              },
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colores.secondaryColor),
+              ),
+            ),
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colores.secondaryColor,
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+              ),
+              onPressed: () {
+                context
+                    .read<DetalleSesionBloc>()
+                    .add(RemoveProductEvent(producto));
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -76,10 +76,16 @@ class PhotoGalleryIBodegasRoute extends GoRouteData {
   final List<String> imageUrls;
   final int initialIndex;
   final ProductoEntity $extra;
+  final String? userName;
+  final String? clientPhoneNumber;
+
   PhotoGalleryIBodegasRoute(
       {required this.imageUrls,
       required this.initialIndex,
-      required this.$extra});
+      required this.$extra, 
+      this.userName,
+      this.clientPhoneNumber
+      });
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
@@ -87,6 +93,8 @@ class PhotoGalleryIBodegasRoute extends GoRouteData {
         imageUrls: imageUrls,
         initialIndex: initialIndex,
         producto: $extra,
+        userName: userName,
+        clientPhoneNumber: clientPhoneNumber,
       );
 }
 
@@ -141,13 +149,15 @@ class PedidoRoute extends GoRouteData {
   static const path = '/pedido';
   final int idCliente;
   final String nombreCliente;
+  final String telefonoCliente;
 
-  PedidoRoute({required this.idCliente, required this.nombreCliente});
+  PedidoRoute({required this.idCliente, required this.nombreCliente, required this.telefonoCliente});
 
   @override
   Widget build(BuildContext context, GoRouterState state) => PedidoScreen(
         idCliente: idCliente,
         nombreCliente: nombreCliente,
+        telefonoCliente: telefonoCliente,
       );
 }
 
@@ -159,6 +169,7 @@ class PedidoSesionRoute extends GoRouteData {
   final int idCliente;
   final int estado;
   final String nombreCliente;
+  final String telefonoCliente;
   final int idSesion;
 
   PedidoSesionRoute({
@@ -166,6 +177,7 @@ class PedidoSesionRoute extends GoRouteData {
     required this.nombreCliente,
     required this.estado,
     required this.idSesion,
+    required this.telefonoCliente
   });
 
   @override
@@ -174,6 +186,7 @@ class PedidoSesionRoute extends GoRouteData {
         nombreCliente: nombreCliente,
         estado: estado,
         idSesion: idSesion,
+        telefonoCliente: telefonoCliente,
       );
 }
 
@@ -185,11 +198,13 @@ class GenerarPedidoRoute extends GoRouteData {
   final int idCliente;
   final int estadoPedido;
   final int? idSesion;
+  final String telefonoCliente;
 
   GenerarPedidoRoute({
     required this.idCliente,
     required this.estadoPedido,
     this.idSesion,
+    required this.telefonoCliente
   });
 
   @override
@@ -198,6 +213,7 @@ class GenerarPedidoRoute extends GoRouteData {
         idCliente: idCliente,
         estadoPedido: estadoPedido,
         idSesion: idSesion,
+        telefonoCliente: telefonoCliente,
       );
 }
 // @TypedGoRoute<PruebsRoute>(

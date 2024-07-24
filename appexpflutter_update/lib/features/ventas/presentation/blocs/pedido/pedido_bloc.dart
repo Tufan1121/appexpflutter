@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'pedido_event.dart';
 part 'pedido_state.dart';
@@ -63,11 +64,15 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
 
   Future<void> _pedidoAddIdPedidoEvent(
       PedidoAddIdPedidoEvent event, Emitter<PedidoState> emit) async {
+    final prefs = await SharedPreferences.getInstance();
     final result = await pedidoUsecase.addIdPedido(event.pedido.idPedido);
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (success) {
-        emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
+        emit(PedidoDetalleLoaded(
+            username: prefs.getString('username') ?? '',
+            pedido: event.pedido,
+            message: success));
       },
     );
   }

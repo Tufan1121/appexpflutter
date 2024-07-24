@@ -24,11 +24,13 @@ class PedidoSesionScreen extends StatefulHookWidget {
       required this.idCliente,
       required this.nombreCliente,
       required this.estado,
-      required this.idSesion});
+      required this.idSesion,
+      required this.telefonoCliente});
   final int idCliente;
   final String nombreCliente;
   final int estado;
   final int idSesion;
+  final String telefonoCliente;
 
   @override
   State<PedidoSesionScreen> createState() => _PedidoSesionScreenState();
@@ -69,6 +71,7 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                         estadoPedido:
                             getEstadoPedidoPagoId(dropdownValue.value),
                         idSesion: widget.idSesion,
+                        telefonoCliente: widget.telefonoCliente,
                       ).push(context);
                     }
                   : null,
@@ -137,8 +140,10 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                 ),
                 const SizedBox(height: 20),
                 SearchProductoSesion(
-                    estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
-                    idCliente: widget.idCliente),
+                  estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
+                  idCliente: widget.idCliente,
+                  telefonoCliente: widget.telefonoCliente,
+                ),
                 const SizedBox(height: 5),
                 BlocBuilder<DetalleSesionBloc, SesionState>(
                   builder: (context, state) {

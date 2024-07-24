@@ -18,10 +18,12 @@ class SearchProducto extends HookWidget {
   const SearchProducto({
     required this.estatusPedido,
     required this.idCliente,
+    required this.telefonoCliente,
     super.key,
   });
   final int estatusPedido;
   final int idCliente;
+  final String telefonoCliente;
 
   @override
   Widget build(BuildContext context) {
@@ -189,6 +191,8 @@ class SearchProducto extends HookWidget {
                                     fileName: state.pedido.pedidos,
                                     search: 'Cotización',
                                     url: pdfUrl,
+                                    userName: state.username,
+                                    clientPhoneNumber: telefonoCliente,
                                   ),
                                 ),
                               );

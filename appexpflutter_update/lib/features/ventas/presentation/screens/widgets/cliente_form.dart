@@ -121,8 +121,9 @@ class _LoginFormState extends State<ClienteForm> {
                   form.control('telefono').reset();
                   form.control('email').reset();
                   nombre = form.control('nombre').value!;
+                  telefono = form.control('telefono').value!;
                   factura.value = false;
-                  PedidoRoute(idCliente: state.idCliente, nombreCliente: nombre).push(context);
+                  PedidoRoute(idCliente: state.idCliente, nombreCliente: nombre, telefonoCliente: telefono).push(context);
                   form.control('nombre').reset();
                   
                 } else if (state is ClienteError) {

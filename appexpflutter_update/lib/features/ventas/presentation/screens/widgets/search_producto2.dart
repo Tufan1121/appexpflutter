@@ -108,9 +108,9 @@ class SearchProducto extends HookWidget {
             ElevatedButton(
               onPressed: () {
                 if (estatusPedido != 0) {
-                  GenerarPedidoRoute(
-                          idCliente: idCliente, estadoPedido: estatusPedido)
-                      .push(context);
+                  // GenerarPedidoRoute(
+                  //         idCliente: idCliente, estadoPedido: estatusPedido)
+                  //     .push(context);
                 } else {
                   showDialog(
                     context: context,

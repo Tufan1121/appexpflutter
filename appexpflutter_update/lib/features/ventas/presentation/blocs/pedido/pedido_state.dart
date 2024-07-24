@@ -23,8 +23,9 @@ final class PedidoLoaded extends PedidoState {
 final class PedidoDetalleLoaded extends PedidoState {
   final PedidoEntity pedido;
   final String message;
+  final String username;
 
-  const PedidoDetalleLoaded({required this.message, required this.pedido});
+  const PedidoDetalleLoaded({required this.message, required this.pedido, required this.username});
 
   @override
   List<Object> get props => [message];

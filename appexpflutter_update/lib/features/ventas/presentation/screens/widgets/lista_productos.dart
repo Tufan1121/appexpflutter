@@ -137,11 +137,10 @@ class ListaProductos extends HookWidget {
                           vertical: 10, horizontal: 15),
                       clipBehavior: Clip.hardEdge,
                       child: Dismissible(
+                        direction: DismissDirection.startToEnd,
                         key: Key(producto.producto1),
-                        onDismissed: (direction) {
-                          context
-                              .read<ProductosBloc>()
-                              .add(RemoveProductEvent(producto));
+                        confirmDismiss: (direction) async {
+                          return await _dialogEliminar(context, producto);
                         },
                         background: Container(
                           color: Colors.red,
@@ -380,6 +379,51 @@ class ListaProductos extends HookWidget {
           ],
         ),
       ],
+    );
+  }
+
+  Future<bool?> _dialogEliminar(BuildContext context, ProductoEntity producto) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          icon: const Icon(
+            Icons.warning,
+            color: Colors.red,
+          ),
+          title: const Text(
+            'Confirmar eliminación',
+            style: TextStyle(color: Colors.red),
+          ),
+          content:
+              Text('¿Está seguro de que desea eliminar ${producto.producto}?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Cancelar la eliminación
+              },
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colores.secondaryColor),
+              ),
+            ),
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colores.secondaryColor,
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+              ),
+              onPressed: () {
+                context.read<ProductosBloc>().add(RemoveProductEvent(producto));
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

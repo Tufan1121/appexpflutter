@@ -25,6 +25,7 @@ class HistorialSesionEntity extends Equatable {
   final String? nomCliente;
   final String nombre;
   final String apellido;
+  final String telefono;
 
   const HistorialSesionEntity({
     required this.idSesion,
@@ -51,6 +52,7 @@ class HistorialSesionEntity extends Equatable {
     this.nomCliente,
     required this.nombre,
     required this.apellido,
+    required this.telefono,
   });
 
   @override

@@ -100,7 +100,7 @@ RouteBase get $photoGalleryRoute => GoRouteData.$route(
 extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
   static PhotoGalleryRoute _fromState(GoRouterState state) => PhotoGalleryRoute(
         imageUrls:
-            state.uri.queryParametersAll['image-urls']!.map((e) => e).toList(),
+            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
       );
 
@@ -131,8 +131,10 @@ extension $PhotoGalleryIBodegasRouteExtension on PhotoGalleryIBodegasRoute {
   static PhotoGalleryIBodegasRoute _fromState(GoRouterState state) =>
       PhotoGalleryIBodegasRoute(
         imageUrls:
-            state.uri.queryParametersAll['image-urls']!.map((e) => e).toList(),
+            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
+        userName: state.uri.queryParameters['user-name'],
+        clientPhoneNumber: state.uri.queryParameters['client-phone-number'],
         $extra: state.extra as ProductoEntity,
       );
 
@@ -141,6 +143,9 @@ extension $PhotoGalleryIBodegasRouteExtension on PhotoGalleryIBodegasRoute {
         queryParams: {
           'image-urls': imageUrls.map((e) => e).toList(),
           'initial-index': initialIndex.toString(),
+          if (userName != null) 'user-name': userName,
+          if (clientPhoneNumber != null)
+            'client-phone-number': clientPhoneNumber,
         },
       );
 
@@ -165,7 +170,7 @@ extension $PhotoGalleryRoute2Extension on PhotoGalleryRoute2 {
   static PhotoGalleryRoute2 _fromState(GoRouterState state) =>
       PhotoGalleryRoute2(
         imageUrls:
-            state.uri.queryParametersAll['image-urls']!.map((e) => e).toList(),
+            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         $extra: state.extra as ProductoExpoEntity,
       );
@@ -245,6 +250,7 @@ extension $PedidoRouteExtension on PedidoRoute {
   static PedidoRoute _fromState(GoRouterState state) => PedidoRoute(
         idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
         nombreCliente: state.uri.queryParameters['nombre-cliente']!,
+        telefonoCliente: state.uri.queryParameters['telefono-cliente']!,
       );
 
   String get location => GoRouteData.$location(
@@ -252,6 +258,7 @@ extension $PedidoRouteExtension on PedidoRoute {
         queryParams: {
           'id-cliente': idCliente.toString(),
           'nombre-cliente': nombreCliente,
+          'telefono-cliente': telefonoCliente,
         },
       );
 
@@ -276,6 +283,7 @@ extension $PedidoSesionRouteExtension on PedidoSesionRoute {
         nombreCliente: state.uri.queryParameters['nombre-cliente']!,
         estado: int.parse(state.uri.queryParameters['estado']!),
         idSesion: int.parse(state.uri.queryParameters['id-sesion']!),
+        telefonoCliente: state.uri.queryParameters['telefono-cliente']!,
       );
 
   String get location => GoRouteData.$location(
@@ -285,6 +293,7 @@ extension $PedidoSesionRouteExtension on PedidoSesionRoute {
           'nombre-cliente': nombreCliente,
           'estado': estado.toString(),
           'id-sesion': idSesion.toString(),
+          'telefono-cliente': telefonoCliente,
         },
       );
 
@@ -310,6 +319,7 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
         estadoPedido: int.parse(state.uri.queryParameters['estado-pedido']!),
         idSesion: _$convertMapValue(
             'id-sesion', state.uri.queryParameters, int.parse),
+        telefonoCliente: state.uri.queryParameters['telefono-cliente']!,
       );
 
   String get location => GoRouteData.$location(
@@ -318,6 +328,7 @@ extension $GenerarPedidoRouteExtension on GenerarPedidoRoute {
           'id-cliente': idCliente.toString(),
           'estado-pedido': estadoPedido.toString(),
           if (idSesion != null) 'id-sesion': idSesion!.toString(),
+          'telefono-cliente': telefonoCliente,
         },
       );
 

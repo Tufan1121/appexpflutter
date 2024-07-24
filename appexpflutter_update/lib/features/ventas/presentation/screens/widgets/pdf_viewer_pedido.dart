@@ -4,22 +4,28 @@ import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 //  import 'package:path_provider/path_provider.dart';
 
 class PdfViewerPedidoScreen extends HookWidget {
   final String fileName;
   final String search;
   final String url;
+  final String userName;
+  final String clientPhoneNumber;
 
   const PdfViewerPedidoScreen({
     super.key,
     required this.fileName,
     required this.search,
     required this.url,
+    required this.userName,
+    required this.clientPhoneNumber,
   });
 
   @override
@@ -31,8 +37,7 @@ class PdfViewerPedidoScreen extends HookWidget {
 
     useEffect(() {
       Future<void> checkUrlValidity() async {
-        await Future.delayed(
-            const Duration(seconds: 3)); // delay de 3 segundos
+        await Future.delayed(const Duration(seconds: 3)); // delay de 3 segundos
         try {
           final response = await dio.head(url);
           isUrlValid.value = response.statusCode == 200;
@@ -105,6 +110,36 @@ class PdfViewerPedidoScreen extends HookWidget {
       }
     }
 
+    Future<void> sendToWhatsApp() async {
+      try {
+        final appDownloadsDir = await getTemporaryDirectory();
+        final file = File('${appDownloadsDir.path}/$fileName.pdf');
+        await dio.download(url, file.path);
+
+        final whatsappUrl = Uri.parse(
+            'whatsapp://send?phone=$clientPhoneNumber&text=Hola Soy $userName, te comparto el link del pedido $fileName. $url');
+        if (await canLaunchUrl(whatsappUrl)) {
+          await launchUrl(whatsappUrl);
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No se pudo abrir WhatsApp.'),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al enviar a WhatsApp: $e'),
+            ),
+          );
+        }
+      }
+    }
+
     return PopScope(
       canPop: true,
       // Permite la navegación hacia atrás nativa
@@ -148,31 +183,36 @@ class PdfViewerPedidoScreen extends HookWidget {
               icon: const Icon(Icons.share),
               onPressed: sharePdf,
             ),
+            IconButton(
+              icon: const FaIcon(FontAwesomeIcons.whatsapp),
+              onPressed: sendToWhatsApp,
+            ),
           ],
         ),
         body: isLoading.value
-          ? const Center(child: CircularProgressIndicator())
-          : isUrlValid.value == true
-              ? SfPdfViewer.network(
-                  url,
-                  key: pdfViewerKey.value,
-                  onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.red,
-                        content:
-                            Text('Error al cargar el PDF: ${details.error}'),
-                      ),
-                    );
-                  },
-                )
-              : const Center(
-                  child: Text(
-                    'No se pudo acceder al PDF. Verifique la URL e inténtelo nuevamente.',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
-                    textAlign: TextAlign.center,
+            ? const Center(child: CircularProgressIndicator())
+            : isUrlValid.value == true
+                ? SfPdfViewer.network(
+                    url,
+                    key: pdfViewerKey.value,
+                    onDocumentLoadFailed:
+                        (PdfDocumentLoadFailedDetails details) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          content:
+                              Text('Error al cargar el PDF: ${details.error}'),
+                        ),
+                      );
+                    },
+                  )
+                : const Center(
+                    child: Text(
+                      'No se pudo acceder al PDF. Verifique la URL e inténtelo nuevamente.',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
       ),
     );
   }
