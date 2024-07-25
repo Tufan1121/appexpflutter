@@ -26,6 +26,8 @@ class HistorialCotizaEntity extends Equatable {
   final String? nomCliente;
   final String nombre;
   final String apellido;
+  final String telefono;
+ 
 
   const HistorialCotizaEntity({
     required this.idCotiza,
@@ -53,6 +55,7 @@ class HistorialCotizaEntity extends Equatable {
     this.nomCliente,
     required this.nombre,
     required this.apellido,
+    required this.telefono
   });
 
   @override
@@ -81,6 +84,7 @@ class HistorialCotizaEntity extends Equatable {
         usuario,
         nomCliente,
         nombre,
-        apellido
+        apellido,
+        telefono
       ];
 }

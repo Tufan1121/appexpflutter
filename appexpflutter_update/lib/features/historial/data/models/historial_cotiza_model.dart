@@ -29,6 +29,7 @@ class HistorialCotizaModel extends HistorialCotizaEntity
     super.nomCliente,
     required super.nombre,
     required super.apellido,
+    required super.telefono,
   });
 
   factory HistorialCotizaModel.fromJson(Map<String, dynamic> json) =>
@@ -58,6 +59,7 @@ class HistorialCotizaModel extends HistorialCotizaEntity
         nomCliente: json['nomcliente'],
         nombre: json['nombre'],
         apellido: json['apellido'],
+        telefono: json['telefono'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -86,6 +88,7 @@ class HistorialCotizaModel extends HistorialCotizaEntity
         'nomcliente': nomCliente,
         'nombre': nombre,
         'apellido': apellido,
+        'telefono': telefono,
       };
 
   @override
@@ -115,5 +118,6 @@ class HistorialCotizaModel extends HistorialCotizaEntity
         nomCliente: nomCliente,
         nombre: nombre,
         apellido: apellido,
+        telefono: telefono,
       );
 }

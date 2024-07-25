@@ -3,22 +3,28 @@ import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:permission_handler/permission_handler.dart';
 
 class PdfViewerScreen extends HookWidget {
   final String fileName;
   final String search;
   final String url;
+  final String userName;
+  final String clientPhoneNumber;
 
   const PdfViewerScreen({
     super.key,
     required this.fileName,
     required this.search,
     required this.url,
+    required this.userName,
+    required this.clientPhoneNumber,
   });
 
   @override
@@ -100,6 +106,36 @@ class PdfViewerScreen extends HookWidget {
       }
     }
 
+    Future<void> sendToWhatsApp() async {
+      try {
+        final appDownloadsDir = await getTemporaryDirectory();
+        final file = File('${appDownloadsDir.path}/$fileName.pdf');
+        await dio.download(url, file.path);
+
+        final whatsappUrl = Uri.parse(
+            'whatsapp://send?phone=$clientPhoneNumber&text=Hola Soy $userName, te comparto el link del $search $fileName. $url');
+        if (await canLaunchUrl(whatsappUrl)) {
+          await launchUrl(whatsappUrl);
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No se pudo abrir WhatsApp.'),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al enviar a WhatsApp: $e'),
+            ),
+          );
+        }
+      }
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // Desactiva el ajuste del contenido al abrir el teclado o modal
@@ -128,6 +164,10 @@ class PdfViewerScreen extends HookWidget {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: sharePdf,
+          ),
+          IconButton(
+            icon: const FaIcon(FontAwesomeIcons.whatsapp),
+            onPressed: sendToWhatsApp,
           ),
         ],
       ),

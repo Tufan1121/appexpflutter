@@ -30,6 +30,7 @@ class HistorialPedidoModel extends HistorialPedidoEntity
     required super.rtop,
     required super.nombre,
     required super.apellido,
+    required super.telefonoCliente,
   });
 
   factory HistorialPedidoModel.fromJson(Map<String, dynamic> json) =>
@@ -60,6 +61,7 @@ class HistorialPedidoModel extends HistorialPedidoEntity
         rtop: json['rtop'],
         nombre: json['nombre'],
         apellido: json['apellido'],
+        telefonoCliente: json['telefono'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -89,6 +91,7 @@ class HistorialPedidoModel extends HistorialPedidoEntity
         'rtop': rtop,
         'nombre': nombre,
         'apellido': apellido,
+        'telefono': telefonoCliente
       };
 
   @override
@@ -119,5 +122,6 @@ class HistorialPedidoModel extends HistorialPedidoEntity
         rtop: rtop,
         nombre: nombre,
         apellido: apellido,
+        telefonoCliente: telefonoCliente
       );
 }

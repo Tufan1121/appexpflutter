@@ -54,6 +54,8 @@ class HistorialListPedido extends StatelessWidget {
                       builder: (context) => PdfViewerScreen(
                         fileName: historial[index].pedidos,
                         search: search,
+                        userName:  historial[index].usuario,
+                        clientPhoneNumber:  historial[index].telefonoCliente,
                         url: pdfUrl,
                       ),
                     ),

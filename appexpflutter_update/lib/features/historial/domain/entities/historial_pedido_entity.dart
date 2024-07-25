@@ -27,6 +27,7 @@ class HistorialPedidoEntity extends Equatable {
   final int rtop;
   final String nombre;
   final String apellido;
+   final String telefonoCliente;
 
   const HistorialPedidoEntity({
     required this.idPedido,
@@ -55,6 +56,7 @@ class HistorialPedidoEntity extends Equatable {
     required this.rtop,
     required this.nombre,
     required this.apellido,
+    required this.telefonoCliente
   });
 
   @override
@@ -84,6 +86,7 @@ class HistorialPedidoEntity extends Equatable {
         pdf,
         rtop,
         nombre,
-        apellido
+        apellido,
+        telefonoCliente
       ];
 }
