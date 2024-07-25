@@ -117,14 +117,15 @@ class _LoginFormState extends State<ClienteForm> {
                       backgroundColor: Colors.green,
                     ),
                   );
-                  form.control('apellido').reset();
-                  form.control('telefono').reset();
-                  form.control('email').reset();
+                 
                   nombre = form.control('nombre').value!;
                   telefono = form.control('telefono').value!;
                   factura.value = false;
                   PedidoRoute(idCliente: state.idCliente, nombreCliente: nombre, telefonoCliente: telefono).push(context);
                   form.control('nombre').reset();
+                  form.control('apellido').reset();
+                  form.control('telefono').reset();
+                  form.control('email').reset();
                   
                 } else if (state is ClienteError) {
                   ScaffoldMessenger.of(context).showSnackBar(

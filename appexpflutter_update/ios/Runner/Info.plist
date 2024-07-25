@@ -47,5 +47,9 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
     <string>Esta aplicación necesita acceso a la cámara para permitir a los usuarios escanear codigos de barra 2d y QR.</string>
+	<key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>whatsapp</string>
+    </array>
 </dict>
 </plist>

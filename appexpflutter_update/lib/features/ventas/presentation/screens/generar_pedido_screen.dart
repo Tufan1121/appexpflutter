@@ -155,25 +155,28 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     }, []);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_rounded),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-        title: Text(
-          'GENERAR PEDIDO',
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.bold,
-            color: Colores.scaffoldBackgroundColor,
-            shadows: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(2.0, 5.0),
-              )
-            ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(40.0),
+        child: AppBar(
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_rounded),
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Colores.secondaryColor.withOpacity(0.78),
+          title: Text(
+            'GENERAR PEDIDO',
+            style: GoogleFonts.montserrat(
+              fontWeight: FontWeight.bold,
+              color: Colores.scaffoldBackgroundColor,
+              shadows: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 6,
+                  offset: Offset(2.0, 5.0),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -342,7 +345,11 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                 // _openPDF(pdfUrl);
 
                                 _showDownloadModal(
-                                    context, pdfUrl, state.pedido.pedidos, state.username,sendToWhatsApp);
+                                    context,
+                                    pdfUrl,
+                                    state.pedido.pedidos,
+                                    state.username,
+                                    sendToWhatsApp);
 
                                 //  form.reset();
                                 context
@@ -620,8 +627,13 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
   }
 
   void _showDownloadModal(
-      BuildContext context, String pdfUrl, String nombrePdf, String userName, Function(String url, String clientPhoneNumber,
-        String userName, String fileName) sendToWhatsApp ) {
+      BuildContext context,
+      String pdfUrl,
+      String nombrePdf,
+      String userName,
+      Function(String url, String clientPhoneNumber, String userName,
+              String fileName)
+          sendToWhatsApp) {
     // final getpdf = Getpdf(context: context);
     showDialog(
       context: context,
@@ -656,7 +668,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                   // getpdf.downloadPDF(pdfUrl, nombrePdf);
                   // opcion 2
                   // _openPDF(pdfUrl);
-                  sendToWhatsApp( pdfUrl ,widget.telefonoCliente,userName, nombrePdf );
+                  sendToWhatsApp(
+                      pdfUrl, widget.telefonoCliente, userName, nombrePdf);
                   form.control('metodoDePago1').reset();
                   form.control('metodoDePago2').reset();
                   form.control('metodoDePago3').reset();

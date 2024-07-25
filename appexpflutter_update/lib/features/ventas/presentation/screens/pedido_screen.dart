@@ -1,14 +1,15 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
+import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/shared/widgets/layout_screens.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/search_producto.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'widgets/widgets.dart' show CustomDropdownButton;
 
@@ -41,9 +42,32 @@ class _PedidoScreenState extends State<PedidoScreen> {
   Widget build(BuildContext context) {
     final dropdownValue = useState<String>(list.first);
     final productos = context.watch<ProductosBloc>().scannedProducts;
-    return LayoutScreens(
-      onPressed: () => Navigator.pop(context),
-      titleScreen: 'PEDIDO',
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(40.0),
+        child: AppBar(
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_rounded),
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Colores.secondaryColor.withOpacity(0.78),
+          title: Text(
+            'PEDIDO',
+            style: GoogleFonts.montserrat(
+              fontWeight: FontWeight.bold,
+              color: Colores.scaffoldBackgroundColor,
+              shadows: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 6,
+                  offset: Offset(2.0, 5.0),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
       floatingActionButton: ElevatedButton(
         onPressed: () {
           if (productos.isNotEmpty) {
@@ -88,90 +112,104 @@ class _PedidoScreenState extends State<PedidoScreen> {
           scale: 4.5,
         ),
       ),
-      child: Column(
+      body: Stack(
         children: [
-          const SizedBox(height: 5),
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Cliente: ',
-                    style: TextStyle(
-                        color: Colores.scaffoldBackgroundColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
-                  AutoSizeText(
-                    maxLines: 2,
-                    widget.nombreCliente,
-                    style: const TextStyle(
-                        color: Colores.scaffoldBackgroundColor, fontSize: 20),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 5),
-              Center(
-                child: CustomDropdownButton<String>(
-                  value: dropdownValue.value,
-                  hint: 'Selecciona Estatus del pedido',
-                  styleHint: const TextStyle(fontSize: 15),
-                  prefixIcon: const FaIcon(
-                    FontAwesomeIcons.bagShopping,
-                    color: Colores.secondaryColor,
-                  ),
-                  onChanged: (value) {
-                    dropdownValue.value = value!;
-                  },
-                  icon: const FaIcon(
-                    FontAwesomeIcons.diagramNext,
-                    color: Colores.secondaryColor,
-                  ),
-                  items: list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: AutoSizeText(
-                        value,
-                        style: const TextStyle(fontSize: 15),
+          CustomPaint(
+            size: Size(MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height),
+            painter: BackgroundPainter(),
+          ),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 5),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Cliente: ',
+                          style: TextStyle(
+                              color: Colores.scaffoldBackgroundColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
+                        AutoSizeText(
+                          maxLines: 2,
+                          widget.nombreCliente,
+                          style: const TextStyle(
+                              color: Colores.scaffoldBackgroundColor,
+                              fontSize: 20),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Center(
+                      child: CustomDropdownButton<String>(
+                        value: dropdownValue.value,
+                        hint: 'Selecciona Estatus del pedido',
+                        styleHint: const TextStyle(fontSize: 15),
+                        prefixIcon: const FaIcon(
+                          FontAwesomeIcons.bagShopping,
+                          color: Colores.secondaryColor,
+                        ),
+                        onChanged: (value) {
+                          dropdownValue.value = value!;
+                        },
+                        icon: const FaIcon(
+                          FontAwesomeIcons.diagramNext,
+                          color: Colores.secondaryColor,
+                        ),
+                        items:
+                            list.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: AutoSizeText(
+                              value,
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    SearchProducto(
+                      estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
+                      idCliente: widget.idCliente,
+                      telefonoCliente: widget.telefonoCliente,
+                    ),
+                    const SizedBox(height: 5),
+                    BlocConsumer<ProductosBloc, ProductosState>(
+                      listener: (context, state) {
+                        if (state is ProductoError) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.red,
+                            content: Text(
+                              state.message,
+                            ),
+                          ));
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is ProductosLoaded) {
+                          return ListaProductos(productos: state.productos);
+                        } else if (state is ProductoLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (state is ProductoError) {
+                          return ListaProductos(
+                            productos: state.productos,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                    )
+                  ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              SearchProducto(
-                estatusPedido: getEstadoPedidoPagoId(dropdownValue.value),
-                idCliente: widget.idCliente,
-                telefonoCliente: widget.telefonoCliente,
-              ),
-              const SizedBox(height: 5),
-              BlocConsumer<ProductosBloc, ProductosState>(
-                listener: (context, state) {
-                  if (state is ProductoError) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.red,
-                      content: Text(
-                        state.message,
-                      ),
-                    ));
-                  }
-                },
-                builder: (context, state) {
-                  if (state is ProductosLoaded) {
-                    return ListaProductos(productos: state.productos);
-                  } else if (state is ProductoLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is ProductoError) {
-                    return ListaProductos(
-                      productos: state.productos,
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-              )
-            ],
+              ],
+            ),
           ),
         ],
       ),
