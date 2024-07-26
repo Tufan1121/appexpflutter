@@ -117,7 +117,7 @@ class PdfViewerPedidoScreen extends HookWidget {
         await dio.download(url, file.path);
 
         final whatsappUrl = Uri.parse(
-            'whatsapp://send?phone=$clientPhoneNumber&text=Hola Soy $userName, te comparto el link del pedido $fileName. $url');
+            'whatsapp://send?phone=$clientPhoneNumber&text=Hola Soy $userName, te comparto el link de la $search $fileName. $url');
         if (await canLaunchUrl(whatsappUrl)) {
           await launchUrl(whatsappUrl);
         } else {
