@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HistorialListCotiza extends StatelessWidget {
   const HistorialListCotiza(
@@ -46,20 +47,24 @@ class HistorialListCotiza extends StatelessWidget {
               elevation: 4,
               child: ListTile(
                 onTap: () async {
+                  final prefs = await SharedPreferences.getInstance();
                   String pdfUrl =
                       'https://tapetestufan.mx/expo/${historial[index].idExpo}/pdf/${historial[index].pedidos}.pdf';
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PdfViewerScreen(
-                        fileName: historial[index].pedidos,
-                        search: search,
-                        userName:  historial[index].usuario!,
-                        clientPhoneNumber:  historial[index].telefono,
-                        url: pdfUrl,
+                  if (context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PdfViewerScreen(
+                          fileName: historial[index].pedidos,
+                          search: search,
+                          userName: prefs.getString('username') ??
+                              historial[index].nombre,
+                          clientPhoneNumber: historial[index].telefono,
+                          url: pdfUrl,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
                 leading: Container(
                   height: 40,
