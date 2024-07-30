@@ -144,6 +144,7 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
     //             content: Text('No se pudo abrir WhatsApp.'),
     //           ),
     //         );
+    
     //       }
     //     }
     //   } catch (e) {
