@@ -13,11 +13,13 @@ import 'package:share_plus/share_plus.dart';
 class FullScreenGallery extends StatefulWidget {
   final List<String> imageUrls;
   final int initialIndex;
+  final String medidas;
 
   const FullScreenGallery({
     super.key,
     required this.imageUrls,
     required this.initialIndex,
+    required this.medidas,
   });
 
   @override
@@ -25,7 +27,7 @@ class FullScreenGallery extends StatefulWidget {
 }
 
 class _FullScreenGalleryState extends State<FullScreenGallery> {
-   final dio = Dio();
+  final dio = Dio();
   late PageController _pageController;
   late int _currentIndex;
 
@@ -47,7 +49,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
             'https://tapetestufan.mx:446/imagen/_web/$imageUrl', file.path);
         await Share.shareXFiles([XFile(file.path)],
             text:
-                'te comparto la imagen del producto ${imageUrl.split('/').first}');
+                'Te comparto la imagen del producto ${imageUrl.split('/').first} medidas: ${widget.medidas}');
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

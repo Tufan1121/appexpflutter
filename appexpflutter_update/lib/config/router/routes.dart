@@ -41,7 +41,7 @@ class HomeRoute extends GoRouteData {
   HomeRoute();
   static const path = '/home';
   @override
-  Widget build(BuildContext context, GoRouterState state) =>  HomeScreen();
+  Widget build(BuildContext context, GoRouterState state) => HomeScreen();
 }
 
 @TypedGoRoute<PreciosRoute>(
@@ -61,11 +61,12 @@ class PhotoGalleryRoute extends GoRouteData {
   static const path = '/galeria';
   final List<String> imageUrls;
   final int initialIndex;
-  PhotoGalleryRoute({required this.imageUrls, required this.initialIndex});
+  final String medidas;
+  PhotoGalleryRoute({required this.imageUrls, required this.initialIndex, required this.medidas});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      FullScreenGallery(imageUrls: imageUrls, initialIndex: initialIndex);
+      FullScreenGallery(imageUrls: imageUrls, initialIndex: initialIndex, medidas: medidas);
 }
 
 @TypedGoRoute<PhotoGalleryIBodegasRoute>(
@@ -82,10 +83,9 @@ class PhotoGalleryIBodegasRoute extends GoRouteData {
   PhotoGalleryIBodegasRoute(
       {required this.imageUrls,
       required this.initialIndex,
-      required this.$extra, 
+      required this.$extra,
       this.userName,
-      this.clientPhoneNumber
-      });
+      this.clientPhoneNumber});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
@@ -151,7 +151,10 @@ class PedidoRoute extends GoRouteData {
   final String nombreCliente;
   final String telefonoCliente;
 
-  PedidoRoute({required this.idCliente, required this.nombreCliente, required this.telefonoCliente});
+  PedidoRoute(
+      {required this.idCliente,
+      required this.nombreCliente,
+      required this.telefonoCliente});
 
   @override
   Widget build(BuildContext context, GoRouterState state) => PedidoScreen(
@@ -172,13 +175,12 @@ class PedidoSesionRoute extends GoRouteData {
   final String telefonoCliente;
   final int idSesion;
 
-  PedidoSesionRoute({
-    required this.idCliente,
-    required this.nombreCliente,
-    required this.estado,
-    required this.idSesion,
-    required this.telefonoCliente
-  });
+  PedidoSesionRoute(
+      {required this.idCliente,
+      required this.nombreCliente,
+      required this.estado,
+      required this.idSesion,
+      required this.telefonoCliente});
 
   @override
   Widget build(BuildContext context, GoRouterState state) => PedidoSesionScreen(
@@ -200,12 +202,11 @@ class GenerarPedidoRoute extends GoRouteData {
   final int? idSesion;
   final String telefonoCliente;
 
-  GenerarPedidoRoute({
-    required this.idCliente,
-    required this.estadoPedido,
-    this.idSesion,
-    required this.telefonoCliente
-  });
+  GenerarPedidoRoute(
+      {required this.idCliente,
+      required this.estadoPedido,
+      this.idSesion,
+      required this.telefonoCliente});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
@@ -221,7 +222,6 @@ class GenerarPedidoRoute extends GoRouteData {
 // )
 // class PruebsRoute extends GoRouteData {
 //   static const path = '/generar_pedido_prueba';
-  
 
 //   PruebsRoute(
 //   );

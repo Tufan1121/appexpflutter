@@ -79,6 +79,7 @@ class PreciosScreen extends StatelessWidget {
                                     existencia: existencia.toInt(),
                                     onTap: () => PhotoGalleryRoute(
                                             imageUrls: imagePaths,
+                                            medidas: state.producto.medidas,
                                             initialIndex: 0)
                                         .push(context),
                                   ),
@@ -124,6 +125,7 @@ class PreciosScreen extends StatelessWidget {
                                     existencia: existencia.toInt(),
                                     onTap: () => PhotoGalleryRoute(
                                             imageUrls: imagePaths,
+                                            medidas: state.producto.medidas,
                                             initialIndex: 0)
                                         .push(context),
                                   ),

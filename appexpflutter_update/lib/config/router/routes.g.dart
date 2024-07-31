@@ -102,6 +102,7 @@ extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
         imageUrls:
             state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
+        medidas: state.uri.queryParameters['medidas']!,
       );
 
   String get location => GoRouteData.$location(
@@ -109,6 +110,7 @@ extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
         queryParams: {
           'image-urls': imageUrls.map((e) => e).toList(),
           'initial-index': initialIndex.toString(),
+          'medidas': medidas,
         },
       );
 
