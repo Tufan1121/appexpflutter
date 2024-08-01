@@ -8,6 +8,7 @@ mixin Modal {
   Future<void> modalEditarCliente(
       Size size, BuildContext context, ClienteEntity cliente) {
     FocusScope.of(context).unfocus();
+    ValueNotifier<bool> factura = ValueNotifier(cliente.factura == 1 ? true : false);
     return showDialog(
       builder: (context) => AlertDialog(
         title: Column(
@@ -43,7 +44,7 @@ mixin Modal {
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
               child: SizedBox(
-                height: size.height * 0.60,
+                height: factura.value ? size.height * 0.70 : size.height * 0.60,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -52,6 +53,7 @@ mixin Modal {
                         flex: 1,
                         child: ClienteFormEdit(
                           cliente: cliente,
+                          factura: factura,
                         )),
                   ],
                 ),

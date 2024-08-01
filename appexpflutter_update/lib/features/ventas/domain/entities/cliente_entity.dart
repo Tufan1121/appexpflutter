@@ -7,7 +7,7 @@ class ClienteEntity extends Equatable {
   final String? direccion;
   final String telefono;
   final String correo;
-  // final String? rfc;
+  final String? rfc;
   // final String? tipoPersona;
   // final String? usoCfdi;
   // final String? empresa;
@@ -25,7 +25,7 @@ class ClienteEntity extends Equatable {
     this.direccion,
     required this.telefono,
     required this.correo,
-    // this.rfc,
+    this.rfc,
     // this.tipoPersona,
     // this.usoCfdi,
     // this.empresa,
@@ -45,7 +45,7 @@ class ClienteEntity extends Equatable {
         direccion,
         telefono,
         correo,
-        // rfc,
+        rfc,
         // tipoPersona,
         // usoCfdi,
         // empresa,

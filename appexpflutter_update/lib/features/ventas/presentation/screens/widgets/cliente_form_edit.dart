@@ -10,9 +10,11 @@ import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/
 import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 
+// ignore: must_be_immutable
 class ClienteFormEdit extends StatefulHookWidget {
-  const ClienteFormEdit({required this.cliente, super.key});
+  ClienteFormEdit({required this.cliente, super.key, required this.factura});
   final ClienteEntity cliente;
+  ValueNotifier<bool> factura;
 
   @override
   State<ClienteFormEdit> createState() => _ClienteFormState();
@@ -23,7 +25,8 @@ class _ClienteFormState extends State<ClienteFormEdit> {
   late String apellido;
   late String telefono;
   late String correo;
-  late ValueNotifier<bool> factura;
+
+  late String rfc;
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +37,13 @@ class _ClienteFormState extends State<ClienteFormEdit> {
           validators: [Validators.required], value: widget.cliente.apellido),
       'telefono': FormControl<String>(
           validators: [Validators.required], value: widget.cliente.telefono),
+      'rfc': FormControl<String>(value: widget.cliente.rfc),
       'email': FormControl<String>(validators: [
         Validators.required,
         Validators.email,
       ], value: widget.cliente.correo),
     });
-    factura = useState(false);
+    widget.factura = useState(widget.cliente.factura == 1 ? true : false);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -103,14 +107,26 @@ class _ClienteFormState extends State<ClienteFormEdit> {
             ),
             SwitchListTile(
               activeColor: Colores.secondaryColor,
-              title: Text(factura.value
+              title: Text(widget.factura.value
                   ? 'Requiere Factura: Sí'
                   : 'Requiere Factura: No'),
-              value: factura.value,
+              value: widget.factura.value,
               onChanged: (bool value) {
-                factura.value = value;
+                widget.factura.value = value;
               },
             ),
+            if (widget.factura.value)
+              CustomReactiveTextField(
+                formControlName: 'rfc',
+                label: 'RFC',
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^[a-zA-Z0-9]+$'),
+                  ),
+                  UpperCaseTextFormatter(),
+                  LengthLimitingTextInputFormatter(13),
+                ],
+              ),
             const SizedBox(height: 20),
             SizedBox(
                 width: double.infinity,
@@ -135,14 +151,15 @@ class _ClienteFormState extends State<ClienteFormEdit> {
     apellido = form.control('apellido').value!;
     telefono = form.control('telefono').value!;
     correo = form.control('email').value!;
-
+    rfc = form.control('rfc').value!;
     final data = {
       'id_cliente': widget.cliente.idCliente,
       'nombre': nombre,
       'apellido': apellido,
       'telefono': telefono,
       'correo': correo,
-      'factura': factura.value == false ? 0 : 1
+      'factura': widget.factura.value == false ? 0 : 1,
+      'rfc': widget.factura.value == false ? '' : rfc
     };
 
     context.read<ClienteBloc>().add(UpdateClientesEvent(data: data));
@@ -150,5 +167,3 @@ class _ClienteFormState extends State<ClienteFormEdit> {
     FocusScope.of(context).unfocus();
   }
 }
-
-
