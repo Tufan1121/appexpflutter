@@ -21,12 +21,15 @@ class _LoginFormState extends State<ClienteForm> {
   late String apellido;
   late String telefono;
   late String correo;
+  late String rfc;
   late ValueNotifier<bool> factura;
+  bool isEnabled = false;
 
   final form = FormGroup({
     'nombre': FormControl<String>(validators: [Validators.required]),
     'apellido': FormControl<String>(validators: [Validators.required]),
     'telefono': FormControl<String>(validators: [Validators.required]),
+    'rfc': FormControl<String>(),
     'email': FormControl<String>(validators: [
       Validators.required,
       Validators.email,
@@ -50,7 +53,6 @@ class _LoginFormState extends State<ClienteForm> {
                 FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
                 UpperCaseTextFormatter(),
               ],
-              keyboardType: TextInputType.emailAddress,
               validationMessages: {
                 ValidationMessage.required: (error) =>
                     'Este campo es requerido',
@@ -90,7 +92,7 @@ class _LoginFormState extends State<ClienteForm> {
               formControlName: 'email',
               label: 'Correo',
               keyboardType: TextInputType.emailAddress,
-              onSubmitted: (p0) => _submitForm(),
+              onSubmitted: (p0) => _submitForm(form),
               validationMessages: {
                 ValidationMessage.required: (error) =>
                     'Este campo es requerido',
@@ -107,6 +109,18 @@ class _LoginFormState extends State<ClienteForm> {
                 factura.value = value;
               },
             ),
+            if (factura.value)
+              CustomReactiveTextField(
+                formControlName: 'rfc',
+                label: 'RFC',
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^[a-zA-Z0-9]+$'),
+                  ),
+                  UpperCaseTextFormatter(),
+                  LengthLimitingTextInputFormatter(13),
+                ],
+              ),
             const SizedBox(height: 20),
             BlocConsumer<ClienteBloc, ClienteState>(
               listener: (context, state) {
@@ -117,16 +131,20 @@ class _LoginFormState extends State<ClienteForm> {
                       backgroundColor: Colors.green,
                     ),
                   );
-                 
+
                   nombre = form.control('nombre').value!;
                   telefono = form.control('telefono').value!;
                   factura.value = false;
-                  PedidoRoute(idCliente: state.idCliente, nombreCliente: nombre, telefonoCliente: telefono).push(context);
+                  PedidoRoute(
+                          idCliente: state.idCliente,
+                          nombreCliente: nombre,
+                          telefonoCliente: telefono)
+                      .push(context);
                   form.control('nombre').reset();
                   form.control('apellido').reset();
                   form.control('telefono').reset();
                   form.control('email').reset();
-                  
+                  form.control('rfc').reset();
                 } else if (state is ClienteError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -143,7 +161,7 @@ class _LoginFormState extends State<ClienteForm> {
                     child: CustomFilledButton(
                         text: 'Guardar',
                         buttonColor: Colores.secondaryColor,
-                        onPressed: _submitForm));
+                        onPressed: () => _submitForm(form)));
               },
             ),
             const Spacer(flex: 1),
@@ -153,7 +171,7 @@ class _LoginFormState extends State<ClienteForm> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm(FormGroup form) {
     FocusScope.of(context).unfocus();
     if (form.invalid) {
       form.markAllAsTouched();
@@ -163,13 +181,15 @@ class _LoginFormState extends State<ClienteForm> {
     apellido = form.control('apellido').value!;
     telefono = form.control('telefono').value!;
     correo = form.control('email').value!;
+    rfc = form.control('rfc').value!;
 
     final data = {
       'nombre': nombre,
       'apellido': apellido,
       'telefono': telefono,
       'correo': correo,
-      'factura': factura.value == false ? 0 : 1
+      'factura': factura.value == false ? 0 : 1,
+      'rfc': factura.value == false ? '' : rfc
     };
 
     context.read<ClienteBloc>().add(CreateClientesEvent(data: data));

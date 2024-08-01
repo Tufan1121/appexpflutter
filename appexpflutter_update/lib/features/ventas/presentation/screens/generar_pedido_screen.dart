@@ -65,7 +65,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     '01 Efectivo',
     '02 Cheque Nominativo',
     '03 Transferencia Electrónica',
-    '04 Tarjeta de Crédito o Débito'
+    '04 Tarjeta de Crédito',
+    '28 Tarjeta de débito'
   ];
 
   int getMetodoDePagoId(String metodo) {
