@@ -67,12 +67,23 @@ class ReportesScreen extends HookWidget {
                   decimalDigits: 0,
                 );
 
+                // Calcula la suma total de cada serie
+                final totalPedidos =
+                    listaPedidos.fold<int>(0, (sum, item) => sum + item.gtotal);
+                final totalTickets = listaTickets.fold<int>(
+                    0, (sum, item) => sum + item.gtotal.toInt());
+
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
                     child: SfCartesianChart(
-                      primaryXAxis: const CategoryAxis(
-                        
+                      primaryXAxis: const CategoryAxis(),
+                      primaryYAxis: NumericAxis(
+                        numberFormat: NumberFormat.currency(
+                          locale: 'en_US',
+                          symbol: '\$',
+                          decimalDigits: 0,
+                        ),
                       ),
                       title: const ChartTitle(
                           text: 'Sales Pedidos y Tickets',
@@ -90,10 +101,9 @@ class ReportesScreen extends HookWidget {
                               data.fecham,
                           yValueMapper: (SalesPedidosEntity data, _) =>
                               data.gtotal,
-                          name: 'Pedidos',
+                          name:
+                              'Pedidos \ntotal: ${currencyFormat.format(totalPedidos)}',
                           color: Colors.blue,
-                          dataLabelMapper: (SalesPedidosEntity data, _) =>
-                              currencyFormat.format(data.gtotal),
                         ),
                         ColumnSeries<SalesTicketsEntity, String>(
                           dataSource: listaTickets,
@@ -101,7 +111,8 @@ class ReportesScreen extends HookWidget {
                               data.fecham,
                           yValueMapper: (SalesTicketsEntity data, _) =>
                               data.gtotal,
-                          name: 'Tickets',
+                          name:
+                              'Tickets \ntotal: ${currencyFormat.format(totalTickets)}',
                           color: Colors.green,
                         )
                       ],
