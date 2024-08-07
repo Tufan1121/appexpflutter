@@ -17,6 +17,12 @@ import 'package:appexpflutter_update/features/inventarios/domain/usecases/invent
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
+import 'package:appexpflutter_update/features/reportes/data/data_sources/sales_datasource.dart';
+import 'package:appexpflutter_update/features/reportes/data/data_sources/sales_datasource_imp.dart';
+import 'package:appexpflutter_update/features/reportes/data/repositories/sales_repository_imp.dart';
+import 'package:appexpflutter_update/features/reportes/domain/repositories/sales_repository.dart';
+import 'package:appexpflutter_update/features/reportes/domain/usecases/sales_usecase.dart';
+import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source_impl.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/pedido_data_source.dart';

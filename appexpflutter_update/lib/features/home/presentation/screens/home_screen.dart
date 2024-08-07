@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/config/config.dart';
+import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
@@ -157,9 +158,13 @@ class HomeScreen extends StatelessWidget {
                       label: 'Historial',
                       onTap: () => HistorialRoute().push(context),
                     ),
-                    const CardItem(
+                    CardItem(
                       icon: Icons.document_scanner_rounded,
                       label: 'Reportes',
+                      onTap: () {
+                        ReportesScreenRoute().push(context);
+                        context.read<ReportesBloc>().add(GetReportesPedidosEvent());
+                      },
                     ),
                     const CardItem(
                       icon: Icons.point_of_sale_sharp,

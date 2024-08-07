@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,7 +31,6 @@ class _MyAppState extends State<MyApp> {
   final storage = const FlutterSecureStorage();
 
   Future<void> _init() async {
-
     final token = await storage.read(key: 'accessToken');
     // _router =
     //     GoRouter(initialLocation: PruebsRoute.path, routes: $appRoutes);
@@ -62,6 +62,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<HistorialBloc>(create: (_) => injector<HistorialBloc>()),
         BlocProvider<DetalleSesionBloc>(
             create: (_) => injector<DetalleSesionBloc>()),
+        BlocProvider<ReportesBloc>(create: (_) => injector<ReportesBloc>()),
       ],
       child: FutureBuilder(
         future: _init(),

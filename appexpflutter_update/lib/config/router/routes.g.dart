@@ -24,6 +24,7 @@ List<RouteBase> get $appRoutes => [
       $invetarioBodegaRoute,
       $busquedaGlobalRoute,
       $historialRoute,
+      $reportesScreenRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -172,7 +173,7 @@ extension $PhotoGalleryRoute2Extension on PhotoGalleryRoute2 {
   static PhotoGalleryRoute2 _fromState(GoRouterState state) =>
       PhotoGalleryRoute2(
         imageUrls:
-            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
+            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList()  ?? [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         $extra: state.extra as ProductoExpoEntity,
       );
@@ -490,6 +491,29 @@ extension $HistorialRouteExtension on HistorialRoute {
 
   String get location => GoRouteData.$location(
         '/historial',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $reportesScreenRoute => GoRouteData.$route(
+      path: '/reportes',
+      factory: $ReportesScreenRouteExtension._fromState,
+    );
+
+extension $ReportesScreenRouteExtension on ReportesScreenRoute {
+  static ReportesScreenRoute _fromState(GoRouterState state) =>
+      ReportesScreenRoute();
+
+  String get location => GoRouteData.$location(
+        '/reportes',
       );
 
   void go(BuildContext context) => context.go(location);

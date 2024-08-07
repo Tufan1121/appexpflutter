@@ -7,6 +7,7 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/i
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery2.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery_ibodega.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
+import 'package:appexpflutter_update/features/reportes/presentation/screen/reportes_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cotiza_pedido_screen.dart';
@@ -41,7 +42,7 @@ class HomeRoute extends GoRouteData {
   HomeRoute();
   static const path = '/home';
   @override
-  Widget build(BuildContext context, GoRouterState state) => HomeScreen();
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
 @TypedGoRoute<PreciosRoute>(
@@ -62,11 +63,14 @@ class PhotoGalleryRoute extends GoRouteData {
   final List<String> imageUrls;
   final int initialIndex;
   final String medidas;
-  PhotoGalleryRoute({required this.imageUrls, required this.initialIndex, required this.medidas});
+  PhotoGalleryRoute(
+      {required this.imageUrls,
+      required this.initialIndex,
+      required this.medidas});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      FullScreenGallery(imageUrls: imageUrls, initialIndex: initialIndex, medidas: medidas);
+  Widget build(BuildContext context, GoRouterState state) => FullScreenGallery(
+      imageUrls: imageUrls, initialIndex: initialIndex, medidas: medidas);
 }
 
 @TypedGoRoute<PhotoGalleryIBodegasRoute>(
@@ -324,21 +328,15 @@ class HistorialRoute extends GoRouteData {
       const HistorialScreen();
 }
 
+@TypedGoRoute<ReportesScreenRoute>(
+  path: ReportesScreenRoute.path,
+)
+class ReportesScreenRoute extends GoRouteData {
+  static const path = '/reportes';
 
-// @TypedGoRoute<GenerarPedidoRoute>(
-//   path: GenerarPedidoRoute.path,
-// )
-// class GenerarPedidoRoute extends GoRouteData {
-//   static const path = '/generar_pedido';
+  ReportesScreenRoute();
 
-//   GenerarPedidoRoute(
-//   );
-
-//   @override
-
-//   Widget build(BuildContext context, GoRouterState state) =>
-//       const GenerarPedidoScreen2(
-//       );
-// }
-
-
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ReportesScreen();
+}
