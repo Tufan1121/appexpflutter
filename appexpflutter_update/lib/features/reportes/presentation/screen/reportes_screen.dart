@@ -85,9 +85,11 @@ class ReportesScreen extends HookWidget {
                           decimalDigits: 0,
                         ),
                       ),
-                      title: const ChartTitle(
-                          text: 'Sales Pedidos y Tickets',
-                          textStyle: TextStyle(color: Colores.secondaryColor)),
+                      title: ChartTitle(
+                          text:
+                              'Sales Pedidos y Tickets \n total: ${currencyFormat.format(totalPedidos + totalTickets)}',
+                          textStyle:
+                              const TextStyle(color: Colores.secondaryColor)),
                       legend: const Legend(isVisible: true),
                       onTooltipRender: (TooltipArgs args) {
                         args.text =
