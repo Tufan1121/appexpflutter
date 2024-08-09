@@ -37,13 +37,13 @@ class _MovilForm extends State<MovilForm> {
           children: [
             const SizedBox(height: 50),
             Text(
-              'Ingresa tu Código Movil',
+              'Ingresa tu Código Móvil',
               style: textStyles.titleLarge,
             ),
             const SizedBox(height: 90),
             CustomReactiveTextField(
               formControlName: 'movil',
-              label: 'Código Movil',
+              label: 'Código Móvil',
               obscureText: showPassword.value,
               keyboardType: TextInputType.number,
               onSubmitted: (p0) => _submitForm(),
