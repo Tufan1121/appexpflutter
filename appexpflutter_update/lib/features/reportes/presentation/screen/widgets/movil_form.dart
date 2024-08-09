@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -50,6 +51,11 @@ class _MovilForm extends State<MovilForm> {
                 ValidationMessage.required: (error) =>
                     'Este campo es requerido',
               },
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^[0-9]*$'),
+                ),
+              ],
               suffixIcon: IconButton(
                 icon: Icon(
                   Icons.remove_red_eye_outlined,
@@ -68,6 +74,7 @@ class _MovilForm extends State<MovilForm> {
                 }
                 if (state is AuthMovil) {
                   if (state.isAuthMovil == false) {
+                    isLoading.value = false;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         duration: const Duration(seconds: 2),
@@ -106,6 +113,7 @@ class _MovilForm extends State<MovilForm> {
   }
 
   void _submitForm() {
+    FocusScope.of(context).unfocus();
     if (form.invalid) {
       form.markAllAsTouched();
       return;

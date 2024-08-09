@@ -164,9 +164,6 @@ class HomeScreen extends StatelessWidget {
                       onTap: () {
                         // ReportesScreenRoute().push(context);
                         AuthReportesScreenRoute().push(context);
-                        context
-                            .read<ReportesBloc>()
-                            .add(GetReportesPedidosEvent());
                       },
                     ),
                     const CardItem(

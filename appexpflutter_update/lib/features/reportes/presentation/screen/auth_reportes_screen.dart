@@ -49,18 +49,7 @@ class AuthReportesScreen extends StatelessWidget {
                 borderRadius:
                     const BorderRadius.only(topRight: Radius.circular(100)),
               ),
-              child: BlocConsumer<ReportesBloc, ReportesState>(
-                listener: (context, state) {
-                  if (state is ReportesLoaded) {
-                    return;
-                  } else {
-                    ReportesScreenRoute().push(context);
-                  }
-                },
-                builder: (context, state) {
-                  return const MovilForm();
-                },
-              ),
+              child: const MovilForm(),
             )
           ],
         ),
