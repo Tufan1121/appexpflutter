@@ -16,14 +16,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _getToken(LoginEvent event, Emitter<AuthState> emit) async {
-      final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     emit(AuthLoading());
     final result = await authUsecase.login(event.email, event.password);
     await result.fold((error) async => emit(AuthError(message: error.message)),
         (user) async {
       // Guarda el accessToken en el almacenamiento seguro
       await storage.write(key: 'accessToken', value: user.accessToken);
-      await prefs.setString( 'username', user.nombre);
+      await prefs.setString('username', user.nombre);
+      await prefs.setString('movil', user.movil);
       emit(AuthAuthenticated(username: user.nombre));
     });
   }

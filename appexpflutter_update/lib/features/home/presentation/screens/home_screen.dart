@@ -162,8 +162,11 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.document_scanner_rounded,
                       label: 'Reportes',
                       onTap: () {
-                        ReportesScreenRoute().push(context);
-                        context.read<ReportesBloc>().add(GetReportesPedidosEvent());
+                        // ReportesScreenRoute().push(context);
+                        AuthReportesScreenRoute().push(context);
+                        context
+                            .read<ReportesBloc>()
+                            .add(GetReportesPedidosEvent());
                       },
                     ),
                     const CardItem(

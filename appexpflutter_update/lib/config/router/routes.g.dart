@@ -25,6 +25,7 @@ List<RouteBase> get $appRoutes => [
       $busquedaGlobalRoute,
       $historialRoute,
       $reportesScreenRoute,
+      $authReportesScreenRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -100,8 +101,10 @@ RouteBase get $photoGalleryRoute => GoRouteData.$route(
 
 extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
   static PhotoGalleryRoute _fromState(GoRouterState state) => PhotoGalleryRoute(
-        imageUrls:
-            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
+        imageUrls: state.uri.queryParametersAll['image-urls']
+                ?.map((e) => e)
+                .toList() ??
+            [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         medidas: state.uri.queryParameters['medidas']!,
       );
@@ -133,8 +136,10 @@ RouteBase get $photoGalleryIBodegasRoute => GoRouteData.$route(
 extension $PhotoGalleryIBodegasRouteExtension on PhotoGalleryIBodegasRoute {
   static PhotoGalleryIBodegasRoute _fromState(GoRouterState state) =>
       PhotoGalleryIBodegasRoute(
-        imageUrls:
-            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
+        imageUrls: state.uri.queryParametersAll['image-urls']
+                ?.map((e) => e)
+                .toList() ??
+            [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         userName: state.uri.queryParameters['user-name'],
         clientPhoneNumber: state.uri.queryParameters['client-phone-number'],
@@ -172,8 +177,11 @@ RouteBase get $photoGalleryRoute2 => GoRouteData.$route(
 extension $PhotoGalleryRoute2Extension on PhotoGalleryRoute2 {
   static PhotoGalleryRoute2 _fromState(GoRouterState state) =>
       PhotoGalleryRoute2(
-        imageUrls:
-            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList()  ?? [],
+        imageUrls: state.uri.queryParametersAll['image-urls']
+                ?.map((e) => e)
+                .toList() ??
+            [],
+            
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         $extra: state.extra as ProductoExpoEntity,
       );
@@ -514,6 +522,29 @@ extension $ReportesScreenRouteExtension on ReportesScreenRoute {
 
   String get location => GoRouteData.$location(
         '/reportes',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $authReportesScreenRoute => GoRouteData.$route(
+      path: '/auth_reportes',
+      factory: $AuthReportesScreenRouteExtension._fromState,
+    );
+
+extension $AuthReportesScreenRouteExtension on AuthReportesScreenRoute {
+  static AuthReportesScreenRoute _fromState(GoRouterState state) =>
+      AuthReportesScreenRoute();
+
+  String get location => GoRouteData.$location(
+        '/auth_reportes',
       );
 
   void go(BuildContext context) => context.go(location);

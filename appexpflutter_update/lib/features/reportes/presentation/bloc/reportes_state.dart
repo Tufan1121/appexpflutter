@@ -22,6 +22,14 @@ class ReportesLoaded extends ReportesState {
   List<Object> get props => [salesPedidos, salesTickets];
 }
 
+class AuthMovil extends ReportesState {
+  final bool isAuthMovil;
+  const AuthMovil({required this.isAuthMovil});
+
+  @override
+  List<Object> get props => [isAuthMovil];
+}
+
 class ReportesError extends ReportesState {
   final String message;
   const ReportesError({required this.message});

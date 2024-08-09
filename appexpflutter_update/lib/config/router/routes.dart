@@ -7,6 +7,7 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/i
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery2.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery_ibodega.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
+import 'package:appexpflutter_update/features/reportes/presentation/screen/auth_reportes_screen.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/screen/reportes_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
@@ -339,4 +340,17 @@ class ReportesScreenRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ReportesScreen();
+}
+
+@TypedGoRoute<AuthReportesScreenRoute>(
+  path: AuthReportesScreenRoute.path,
+)
+class AuthReportesScreenRoute extends GoRouteData {
+  static const path = '/auth_reportes';
+
+  AuthReportesScreenRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const AuthReportesScreen();
 }

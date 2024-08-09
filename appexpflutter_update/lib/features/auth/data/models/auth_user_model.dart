@@ -9,6 +9,7 @@ class AuthUserModel extends AuthUserEntity
     required super.nombre,
     required super.digsig,
     required super.regg,
+    required super.movil,
   });
 
     factory AuthUserModel.fromJson(Map<String, dynamic> json) => AuthUserModel(
@@ -17,6 +18,7 @@ class AuthUserModel extends AuthUserEntity
         nombre: json["nombre"],
         digsig: json["digsig"],
         regg: json["regg"],
+        movil: json["movil"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -25,6 +27,7 @@ class AuthUserModel extends AuthUserEntity
         "nombre": nombre,
         "digsig": digsig,
         "regg": regg,
+        "movil": movil,
     };
 
   @override
@@ -34,5 +37,6 @@ class AuthUserModel extends AuthUserEntity
         nombre: nombre,
         digsig: digsig,
         regg: regg,
+        movil: movil,
       );
 }

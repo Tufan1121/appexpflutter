@@ -6,6 +6,7 @@ class AuthUserEntity extends Equatable {
   final String nombre;
   final String digsig;
   final int regg;
+  final String movil;
 
   const AuthUserEntity({
     required this.accessToken,
@@ -13,8 +14,9 @@ class AuthUserEntity extends Equatable {
     required this.nombre,
     required this.digsig,
     required this.regg,
+    required this.movil,
   });
 
   @override
-  List<Object> get props => [accessToken, tokenType, nombre, digsig, regg];
+  List<Object> get props => [accessToken, tokenType, nombre, digsig, regg, movil];
 }

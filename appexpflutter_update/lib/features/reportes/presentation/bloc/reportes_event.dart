@@ -17,3 +17,12 @@ class GetReportesTicketsEvent extends ReportesEvent {
   @override
   List<Object> get props => [salesPedidos];
 }
+
+class AuthMovilEvent extends ReportesEvent {
+  final String movil;
+
+  const AuthMovilEvent({required this.movil});
+
+  @override
+  List<Object> get props => [movil];
+}
