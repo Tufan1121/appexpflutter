@@ -20,13 +20,15 @@ class SalesDatasourceImp implements SalesDatasource {
             },
           ));
       List<dynamic> jsonList = result.data;
-      final salesPedidos = jsonList.map( (salesPedidos) => SalesPedidosModel.fromJson(salesPedidos)).toList();
+      final salesPedidos = jsonList
+          .map((salesPedidos) => SalesPedidosModel.fromJson(salesPedidos))
+          .toList();
       return salesPedidos;
     } catch (_) {
       rethrow;
     }
   }
-  
+
   @override
   Future<List<SalesTicketsModel>> getSalesTickets() async {
     final token = await storage.read(key: 'accessToken');
@@ -38,7 +40,9 @@ class SalesDatasourceImp implements SalesDatasource {
             },
           ));
       List<dynamic> jsonList = result.data;
-      final salesTickets = jsonList.map( (salesPedidos) => SalesTicketsModel.fromJson(salesPedidos)).toList();
+      final salesTickets = jsonList
+          .map((salesPedidos) => SalesTicketsModel.fromJson(salesPedidos))
+          .toList();
       return salesTickets;
     } catch (_) {
       rethrow;

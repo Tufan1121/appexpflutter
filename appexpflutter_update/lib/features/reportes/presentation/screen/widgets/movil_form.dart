@@ -89,6 +89,7 @@ class _MovilForm extends State<MovilForm> {
                   } else {
                     isLoading.value = false;
                     context.read<ReportesBloc>().add(GetReportesPedidosEvent());
+                    context.read<ReportesBloc>().add(GetReportesTicketsEvent());
                     ReportesScreenRoute().push(context);
                   }
                 }

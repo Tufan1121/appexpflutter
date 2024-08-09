@@ -22,6 +22,29 @@ class ReportesLoaded extends ReportesState {
   List<Object> get props => [salesPedidos, salesTickets];
 }
 
+class ReportesTicketsLoaded extends ReportesState {
+  final List<SalesTicketsEntity> salesPedidos;
+
+  const ReportesTicketsLoaded(
+      {required this.salesPedidos});
+
+  @override
+  List<Object> get props => [salesPedidos];
+}
+
+
+class ReportesPedidosLoaded extends ReportesState {
+  final List<SalesPedidosEntity> salesPedidos;    
+
+  const ReportesPedidosLoaded(
+      {required this.salesPedidos});    
+
+  @override
+  List<Object> get props => [salesPedidos];
+}
+
+
+
 class AuthMovil extends ReportesState {
   final bool isAuthMovil;
   const AuthMovil({required this.isAuthMovil});

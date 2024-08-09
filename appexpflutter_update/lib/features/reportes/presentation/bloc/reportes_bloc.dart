@@ -15,6 +15,8 @@ class ReportesBloc extends Bloc<ReportesEvent, ReportesState> {
     on<GetReportesTicketsEvent>(_getReportesTicketsEvent);
     on<AuthMovilEvent>(_authMovilEvent);
   }
+  List<SalesPedidosEntity> _pedidos = [];
+  List<SalesTicketsEntity> _tickets = [];
 
   Future<void> _getReportesPedidosEvent(
       GetReportesPedidosEvent event, Emitter<ReportesState> emit) async {
@@ -23,7 +25,8 @@ class ReportesBloc extends Bloc<ReportesEvent, ReportesState> {
     result.fold(
       (failure) => emit(ReportesError(message: failure.message)),
       (salesPedidos) {
-        add(GetReportesTicketsEvent(salesPedidos: salesPedidos));
+        _pedidos = salesPedidos;
+        emit(ReportesLoaded(salesPedidos: _pedidos, salesTickets: _tickets));
       },
     );
   }
@@ -33,9 +36,9 @@ class ReportesBloc extends Bloc<ReportesEvent, ReportesState> {
     emit(ReportesLoading());
     final result = await salesUsecase.getSalesTickets();
     result.fold((failure) => emit(ReportesError(message: failure.message)),
-        (salesPedidos) {
-      emit(ReportesLoaded(
-          salesPedidos: event.salesPedidos, salesTickets: salesPedidos));
+        (salesTickets) {
+      _tickets = salesTickets;
+      emit(ReportesLoaded(salesPedidos: _pedidos, salesTickets: _tickets));
     });
   }
 
@@ -49,6 +52,5 @@ class ReportesBloc extends Bloc<ReportesEvent, ReportesState> {
     } else {
       emit(const AuthMovil(isAuthMovil: false));
     }
-
   }
 }

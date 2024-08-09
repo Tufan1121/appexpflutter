@@ -9,14 +9,9 @@ sealed class ReportesEvent extends Equatable {
 
 class GetReportesPedidosEvent extends ReportesEvent {}
 
-class GetReportesTicketsEvent extends ReportesEvent {
-  final List<SalesPedidosEntity> salesPedidos;
+class GetReportesTicketsEvent extends ReportesEvent {}
 
-  const GetReportesTicketsEvent({required this.salesPedidos});
 
-  @override
-  List<Object> get props => [salesPedidos];
-}
 
 class AuthMovilEvent extends ReportesEvent {
   final String movil;

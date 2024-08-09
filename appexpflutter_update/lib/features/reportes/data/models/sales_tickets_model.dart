@@ -10,13 +10,13 @@ class SalesTicketsModel extends SalesTicketsEntity
 
   factory SalesTicketsModel.fromJson(Map<String, dynamic> json) =>
       SalesTicketsModel(
-        gtotal: json["gtotal"],
+        gtotal: json["gtotal"] as double,
         fecham: json["fecham"],
       );
 
   @override
   SalesTicketsEntity toEntity() => SalesTicketsEntity(
-        gtotal: gtotal,
+        gtotal: (gtotal),
         fecham: fecham,
       );
 }
