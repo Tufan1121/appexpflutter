@@ -181,15 +181,15 @@ class _LoginFormState extends State<ClienteForm> {
     apellido = form.control('apellido').value!;
     telefono = form.control('telefono').value!;
     correo = form.control('email').value!;
-    rfc = form.control('rfc').value!;
-
+    rfc = form.control('rfc').value ?? '';
+    
     final data = {
       'nombre': nombre,
       'apellido': apellido,
       'telefono': telefono,
       'correo': correo,
       'factura': factura.value == false ? 0 : 1,
-      'rfc': factura.value == false ? '' : rfc
+      'rfc': rfc
     };
 
     context.read<ClienteBloc>().add(CreateClientesEvent(data: data));
