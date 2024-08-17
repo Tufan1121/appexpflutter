@@ -1,7 +1,6 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
-import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
@@ -566,61 +565,6 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                 // HomeRoute().go(context);
                 Navigator.of(context).pop();
               },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showDownloadModal(
-      BuildContext context, String pdfUrl, String nombrePdf) {
-    final getpdf = Getpdf(context: context);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Descargar PDF'),
-          content: Row(
-            children: [
-              const Text('PEDIDO: ', style: TextStyle(fontSize: 15)),
-              Text(
-                nombrePdf,
-                style:
-                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          actions: [
-            Center(
-              child: ElevatedButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Colores.secondaryColor,
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text(
-                  'Aceptar',
-                  style: TextStyle(color: Colores.scaffoldBackgroundColor),
-                ),
-                onPressed: () {
-                  FocusScope.of(context).unfocus();
-                  // opcion 1
-                  getpdf.downloadPDF(pdfUrl, nombrePdf);
-                  // opcion 2
-                  // _openPDF(pdfUrl);
-
-                  form.control('metodoDePago1').reset();
-                  form.control('metodoDePago2').reset();
-                  form.control('metodoDePago3').reset();
-                  form.control('observaciones').reset();
-                  form.control('anticipoPago1').reset();
-                  form.control('anticipoPago2').reset();
-                  form.control('anticipoPago3').reset();
-                  form.control('entregado').reset();
-                  Navigator.of(context).pop();
-                },
-              ),
             ),
           ],
         );

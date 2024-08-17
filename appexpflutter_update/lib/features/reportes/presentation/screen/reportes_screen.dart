@@ -1,5 +1,4 @@
 import 'package:appexpflutter_update/config/config.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_pedidos_entity.dart';
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_tickets_entity.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
@@ -68,6 +67,34 @@ class ReportesScreen extends HookWidget {
                 final listaPedidos = state.salesPedidos;
                 final listaTickets = state.salesTickets;
 
+                final allDates = <String>{};
+                for (var pedido in listaPedidos) {
+                  allDates.add(pedido.fecham);
+                }
+                for (var ticket in listaTickets) {
+                  allDates.add(ticket.fecham);
+                }
+
+                // Ordena las fechas
+                final orderedDates = allDates.toList()..sort();
+
+                // Genera las listas con datos alineados
+                final alignedPedidos = orderedDates.map((date) {
+                  final pedido = listaPedidos.firstWhere(
+                      (p) => p.fecham == date,
+                      orElse: () =>
+                          SalesPedidosEntity(fecham: date, gtotal: 0));
+                  return pedido;
+                }).toList();
+
+                final alignedTickets = orderedDates.map((date) {
+                  final ticket = listaTickets.firstWhere(
+                      (t) => t.fecham == date,
+                      orElse: () =>
+                          SalesTicketsEntity(fecham: date, gtotal: 0));
+                  return ticket;
+                }).toList();
+
                 // Calcula la suma total de cada serie
                 final totalPedidos =
                     listaPedidos.fold<int>(0, (sum, item) => sum + item.gtotal);
@@ -90,6 +117,8 @@ class ReportesScreen extends HookWidget {
                   }
                 }
 
+                final totalGlobal = totalPedidos + totalTickets;
+
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
@@ -101,7 +130,8 @@ class ReportesScreen extends HookWidget {
                           symbol: '\$',
                           decimalDigits: 0,
                         ),
-                        maximum: 400000,
+                        maximum:
+                            totalGlobal > 400000 ? (totalGlobal * 0.5) : 400000,
                       ),
                       title: ChartTitle(
                           text:
@@ -124,7 +154,7 @@ class ReportesScreen extends HookWidget {
                       ),
                       series: [
                         ColumnSeries<SalesPedidosEntity, String>(
-                          dataSource: listaPedidos,
+                          dataSource: alignedPedidos,
                           xValueMapper: (SalesPedidosEntity data, _) =>
                               data.fecham,
                           yValueMapper: (SalesPedidosEntity data, _) =>
@@ -134,7 +164,7 @@ class ReportesScreen extends HookWidget {
                           color: Colors.blue,
                         ),
                         ColumnSeries<SalesTicketsEntity, String>(
-                          dataSource: listaTickets,
+                          dataSource: alignedTickets,
                           xValueMapper: (SalesTicketsEntity data, _) =>
                               data.fecham,
                           yValueMapper: (SalesTicketsEntity data, _) =>

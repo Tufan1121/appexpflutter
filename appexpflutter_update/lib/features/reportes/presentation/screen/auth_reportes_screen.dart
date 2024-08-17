@@ -1,9 +1,6 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
-import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/screen/widgets/movil_form.dart';
 import 'package:flutter/material.dart';
 import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthReportesScreen extends StatelessWidget {
   const AuthReportesScreen({super.key});

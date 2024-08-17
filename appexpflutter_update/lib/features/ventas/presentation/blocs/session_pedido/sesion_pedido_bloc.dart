@@ -72,7 +72,6 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
     result.fold(
       (failure) => emit(PedidoSesionError(message: failure.message)),
       (success) {
-        print(success);
         emit(PedidoFinalSesionLoaded(message: success));
       },
     );

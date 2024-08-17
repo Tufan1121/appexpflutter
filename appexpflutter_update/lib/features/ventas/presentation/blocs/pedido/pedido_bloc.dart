@@ -26,15 +26,7 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (pedido) {
-        print('''
-            Pedido: ${pedido.idPedido}
-            Pedidos: ${pedido.pedidos}
-            expo: ${pedido.idExpo}
-            anticipo: ${event.data['anticipo']}
-            total: ${event.data['total_pagar']}
-''');
         add(PedidoAddDetalleEvent(pedido: pedido, products: event.products));
-        // emit(PedidoLoaded(pedido: pedido));
       },
     );
   }
@@ -50,8 +42,6 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
         'precio': producto.precio,
       };
     }).toList();
-
-    print(detallesData);
 
     final result = await pedidoUsecase.addDetallePedido(detallesData);
     result.fold(
