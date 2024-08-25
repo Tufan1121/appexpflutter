@@ -2,6 +2,14 @@ import 'dart:io';
 
 import 'package:appexpflutter_update/config/my_http_overrides.dart';
 import 'package:appexpflutter_update/features/auth/config/config_token.dart';
+import 'package:appexpflutter_update/features/galeria/data/data_sources/galerIa_data_source_impl.dart';
+import 'package:appexpflutter_update/features/galeria/data/data_sources/galeria_data_source.dart';
+import 'package:appexpflutter_update/features/galeria/data/repositories/galeria_repository_impl.dart';
+import 'package:appexpflutter_update/features/galeria/domain/repositories/galeria_repository.dart';
+import 'package:appexpflutter_update/features/galeria/domain/usecase/galeria_usecases.dart';
+import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
+import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
+import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
 import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source.dart';
 import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source_impl.dart';
 import 'package:appexpflutter_update/features/historial/data/repositories/historial_repository_impl.dart';

@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.2.3
   syncfusion_flutter_charts: ^26.2.8
   syncfusion_flutter_pdfviewer: ^26.1.40
+  syncfusion_flutter_datagrid: ^26.2.10
   url_launcher: ^6.3.0
 
 dev_dependencies:

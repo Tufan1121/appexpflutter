@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_screen.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/historial_screen.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/pedido_sesion_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
@@ -222,20 +223,6 @@ class GenerarPedidoRoute extends GoRouteData {
         telefonoCliente: telefonoCliente,
       );
 }
-// @TypedGoRoute<PruebsRoute>(
-//   path: PruebsRoute.path,
-// )
-// class PruebsRoute extends GoRouteData {
-//   static const path = '/generar_pedido_prueba';
-
-//   PruebsRoute(
-//   );
-
-//   @override
-//   Widget build(BuildContext context, GoRouterState state) =>
-//       const GenerarPedidoScreen(
-//       );
-// }
 
 @TypedGoRoute<SesionPedidoRoute>(
   path: SesionPedidoRoute.path,
@@ -353,4 +340,15 @@ class AuthReportesScreenRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const AuthReportesScreen();
+}
+
+@TypedGoRoute<GaleriaRoute>(
+  path: GaleriaRoute.path,
+)
+class GaleriaRoute extends GoRouteData {
+  static const path = '/galeria_global';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const GaleriaScreen();
 }

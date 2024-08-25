@@ -1,3 +1,6 @@
+import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
+import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
+import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -63,6 +66,11 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<DetalleSesionBloc>(
             create: (_) => injector<DetalleSesionBloc>()),
         BlocProvider<ReportesBloc>(create: (_) => injector<ReportesBloc>()),
+        BlocProvider<GaleriaBloc>(create: (_) => injector<GaleriaBloc>()),
+        BlocProvider<DetalleGaleriaBloc>(
+            create: (_) => injector<DetalleGaleriaBloc>()),
+        BlocProvider<DetalleProductoBloc>(
+            create: (_) => injector<DetalleProductoBloc>()),
       ],
       child: FutureBuilder(
         future: _init(),

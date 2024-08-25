@@ -22,6 +22,8 @@ Future<void> init() async {
         () => HistorialDataSourceImpl(dioclient: injector()))
     ..registerLazySingleton<SalesDatasource>(
         () => SalesDatasourceImp(dioClient: injector()))
+    ..registerLazySingleton<GaleriaDataSource>(
+        () => GaleriaDataSourceImpl(dioClient: injector()))
 
     //* Repositories
     ..registerLazySingleton<AuthRepository>(
@@ -38,6 +40,8 @@ Future<void> init() async {
         () => HistorialRepositoryImpl(historialDataSource: injector()))
     ..registerLazySingleton<SalesRepository>(
         () => SalesRepositoryImp(salesDatasource: injector()))
+    ..registerLazySingleton<GaleriaRepository>(
+        () => GaleriaRepositoryImpl(galeriaDataSource: injector()))
 
     //* Usecases
     ..registerLazySingleton<AuthUsecase>(
@@ -54,6 +58,8 @@ Future<void> init() async {
         () => HistorialUsecase(historialRepository: injector()))
     ..registerLazySingleton<SalesUsecase>(
         () => SalesUsecase(salesRepository: injector()))
+    ..registerLazySingleton<GaleriaUsecase>(
+        () => GaleriaUsecase(galeriaRepository: injector()))
 
     //* Blocs
     ..registerLazySingleton<AuthBloc>(() => AuthBloc(authUsecase: injector()))
@@ -81,6 +87,12 @@ Future<void> init() async {
         () => DetalleSesionBloc(historialUsecase: injector()))
     ..registerLazySingleton<ReportesBloc>(
         () => ReportesBloc(salesUsecase: injector()))
+    ..registerLazySingleton<GaleriaBloc>(
+        () => GaleriaBloc(galeriaUsecases: injector()))
+    ..registerLazySingleton<DetalleGaleriaBloc>(
+        () => DetalleGaleriaBloc(galeriaUsecases: injector()))
+      ..registerLazySingleton<DetalleProductoBloc>(
+        () => DetalleProductoBloc(galeriaUsecases: injector()))
     ..registerLazySingleton<PedidoBloc>(
         () => PedidoBloc(pedidoUsecase: injector()));
 }
