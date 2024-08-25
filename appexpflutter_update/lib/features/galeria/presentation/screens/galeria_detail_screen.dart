@@ -34,6 +34,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
   final GlobalKey _detalleKey =
       GlobalKey(); // Key para la sección a la que queremos desplazarnos
   bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -104,7 +105,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                   .read<DetalleProductoBloc>()
                   .add(ResetDetalleProductoEvent());
             },
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: const Icon(Icons.arrow_back),
           ),
           title: Text(
             'Galería',
@@ -359,6 +360,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                   key:
                                       _detalleKey, // Añade la key a la sección que quieres desplazar
                                   children: [
+                                    const SizedBox(height: 10),
                                     SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
@@ -368,20 +370,14 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
-                                            child: PhotoViewGallery.builder(
-                                              key: Key(imageUrls.hashCode
-                                                  .toString()),
-                                              scrollPhysics:
-                                                  const BouncingScrollPhysics(),
+                                            child: PageView.builder(
+                                              controller: _pageController,
                                               itemCount: imageUrls.length,
-                                              builder: (context, index) {
-                                                return PhotoViewGalleryPageOptions(
+                                              itemBuilder: (context, index) {
+                                                return PhotoView(
                                                   imageProvider: NetworkImage(
                                                     'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(imageUrls[index])}',
                                                   ),
-                                                  initialScale:
-                                                      PhotoViewComputedScale
-                                                          .contained,
                                                   minScale:
                                                       PhotoViewComputedScale
                                                           .contained,
@@ -395,12 +391,6 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                   ),
                                                 );
                                               },
-                                              backgroundDecoration:
-                                                  const BoxDecoration(
-                                                color: Colores
-                                                    .scaffoldBackgroundColor,
-                                              ),
-                                              pageController: _pageController,
                                               onPageChanged: (index) {
                                                 setState(() {
                                                   _currentIndex = index;
@@ -409,7 +399,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                             ),
                                           ),
                                           Positioned(
-                                            bottom: 50,
+                                            bottom: 30,
                                             left: 300,
                                             right: 15,
                                             child: IconButton(
@@ -679,7 +669,6 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                           style: GoogleFonts
                                                               .montserrat(),
                                                         ),
-
                                                         // Agrega más detalles del producto según sea necesario
                                                       ],
                                                     ),
