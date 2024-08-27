@@ -1,5 +1,4 @@
 import 'package:appexpflutter_update/config/config.dart';
-import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
@@ -170,7 +169,7 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.photo_library,
                       label: 'Galería',
                       onTap: () {
-                        context.read<GaleriaBloc>().add(const GetGaleriaEvent());
+                        // context.read<GaleriaBloc>().add(const GetGaleriaEvent(regg: 0));
                         GaleriaRoute().push(context);
                       },
                     ),

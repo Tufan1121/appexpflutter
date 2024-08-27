@@ -23,12 +23,16 @@ class DetalleProductoBloc
     // Emite el estado de carga antes de empezar a procesar
     emit(DetalleProductoLoading());
 
-    final result = await galeriaUsecases.getgalinventario(event.producto.descripcio, event.producto.diseno);
-  result.fold(
-      (failure) async => emit(DetalleProductoError(message: failure.message)),
+    final result = await galeriaUsecases.getgalinventario(
+        event.producto.descripcio, event.producto.diseno);
+    result.fold(
+      (failure) async {
+        emit(DetalleProductoError(message: failure.message));
+      },
       (producto) async {
         // las operaciones asíncronas han finalizado antes de emitir el estado final
-       final productosConExistencias = ProductoConExistencias(producto:event.producto, existencias: producto);
+        final productosConExistencias = ProductoConExistencias(
+            producto: event.producto, existencias: producto);
         if (!emit.isDone) {
           emit(DetalleProductoLoaded(
               productosConExistencias: productosConExistencias));

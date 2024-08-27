@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:api_client/api_client.dart';
-import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:appexpflutter_update/features/galeria/data/data_sources/galeria_data_source.dart';
 import 'package:appexpflutter_update/features/galeria/data/model/galeria_model.dart';
 import 'package:appexpflutter_update/features/galeria/data/model/medidas_model.dart';
@@ -46,12 +45,20 @@ class GaleriaDataSourceImpl implements GaleriaDataSource {
   Future<List<GaleriaModel>> getgallery(
       {String? descripcion, int? regg}) async {
     final token = await storage.read(key: 'accessToken');
+
+    final queryParameters = <String, dynamic>{};
+    if (regg != null && descripcion!.isEmpty) {
+      queryParameters['regg'] = regg;
+    } else if (descripcion!.isNotEmpty && regg == null) {
+      queryParameters['descripcio'] = descripcion;
+    } else if (descripcion.isNotEmpty && regg != null) {
+      queryParameters['descripcio'] = descripcion;
+      queryParameters['regg'] = regg;
+    }
+
     try {
       final result = await _dioClient.post('/getgallery',
-          queryParameters: {
-            'regg': regg ?? 0,
-            'descripcio': descripcion ?? '',
-          },
+          queryParameters: queryParameters,
           options: Options(
             headers: {
               'Authorization': 'Bearer $token',

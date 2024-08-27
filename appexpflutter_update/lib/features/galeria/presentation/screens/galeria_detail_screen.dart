@@ -8,7 +8,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
@@ -31,9 +30,11 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
   late MedidasDataSource _medidasDataSource;
 
   final ScrollController _scrollController = ScrollController();
-  final GlobalKey _detalleKey =
-      GlobalKey(); // Key para la sección a la que queremos desplazarnos
-  bool isLoading = false;
+  final GlobalKey _detalleKey = GlobalKey();
+
+  List<bool> isLoadingList = [];
+
+  int? activeLoadingIndex; // Índice del botón actualmente en estado de carga
 
   @override
   void initState() {
@@ -85,618 +86,570 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
 
     return PopScope(
       canPop: true,
-      // Permite la navegación hacia atrás nativa
       onPopInvoked: (didPop) async {
         context.read<DetalleGaleriaBloc>().add(ResetDetalleGaleriaEvent());
         context.read<DetalleProductoBloc>().add(ResetDetalleProductoEvent());
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context
-                  .read<DetalleGaleriaBloc>()
-                  .add(ResetDetalleGaleriaEvent());
-              context
-                  .read<DetalleProductoBloc>()
-                  .add(ResetDetalleProductoEvent());
-            },
-            icon: const Icon(Icons.arrow_back),
-          ),
           title: Text(
             'Galería',
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.bold,
               color: Colores.scaffoldBackgroundColor,
-              shadows: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  offset: Offset(2.0, 5.0),
-                )
-              ],
             ),
           ),
         ),
-        body: BlocListener<DetalleProductoBloc, DetalleProductoState>(
-          listener: (context, state) {
-            if (state is DetalleProductoLoaded) {
-              _scrollToDetalle(); // Desplaza a la sección cuando se carga la información
-            }
-          },
-          child: BlocBuilder<DetalleGaleriaBloc, DetalleGaleriaState>(
-            builder: (context, state) {
-              if (state is DetalleGaleriaLoading) {
-                return const Column(
-                  children: [
-                    SizedBox(height: 150),
-                    Center(
-                      child: CircularProgressIndicator(
-                        color: Colores.secondaryColor,
-                      ),
-                    ),
-                  ],
-                );
+        body: BlocBuilder<DetalleGaleriaBloc, DetalleGaleriaState>(
+          builder: (context, state) {
+            if (state is DetalleGaleriaLoaded) {
+              // Inicializar la lista de carga si aún no está inicializada
+              if (isLoadingList.isEmpty) {
+                isLoadingList =
+                    List<bool>.filled(state.productosConMedidas.length, false);
               }
-              if (state is DetalleGaleriaError) {
-                return Center(
-                  child: Text(state.message),
-                );
-              }
-              if (state is DetalleGaleriaLoaded) {
-                return Scrollbar(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0), // Padding global
-                      child: Column(
-                        children: [
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: state.productosConMedidas.length,
-                            itemBuilder: (context, index) {
-                              final productoConMedidas =
-                                  state.productosConMedidas[index];
-                              return Card(
-                                clipBehavior: Clip.antiAlias,
-                                margin: const EdgeInsets.symmetric(
-                                    vertical:
-                                        10.0), // Espaciado entre las cards
-                                elevation: 3.0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                child: Padding(
-                                  // Padding dentro de la tarjeta
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(12.0)),
-                                        child: FadeInImage(
-                                          image: NetworkImage(
-                                              'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(productoConMedidas.producto.pathima1)}'),
-                                          placeholder: const AssetImage(
-                                              'assets/loaders/loading.gif'),
-                                          width: double.infinity,
-                                          height: 140, // Altura de la imagen
-                                          fadeInDuration:
-                                              const Duration(milliseconds: 300),
-                                          fit: BoxFit.cover,
-                                          imageErrorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                              'assets/images/no-image.jpg',
-                                              width: 60,
-                                              height: 60,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10.0, bottom: 6.0),
-                                        child: Text(
-                                          '${productoConMedidas.producto.descripcio} - ${productoConMedidas.producto.diseno}',
-                                          style: GoogleFonts.montserrat(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colores.secondaryColor,
-                                          ),
-                                        ),
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.only(bottom: 6.0),
-                                        child: Text('Medidas disponibles',
-                                            style: TextStyle(fontSize: 12)),
-                                      ),
-                                      Wrap(
-                                        spacing:
-                                            4.0, // Espaciado horizontal entre los chips
-                                        runSpacing:
-                                            2.0, // Espaciado vertical entre los chips
-                                        children: productoConMedidas.medidas
-                                            .map((medida) {
-                                          return Chip(
-                                            label: Text(
-                                              medida.medidas,
-                                              style: GoogleFonts.montserrat(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize:
-                                                    11, // Tamaño de fuente del chip reducido
-                                                color: Colores.secondaryColor,
-                                              ),
-                                            ),
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0, vertical: 2.0),
-                                            backgroundColor: Colores
-                                                .scaffoldBackgroundColor
-                                                .withOpacity(0.1),
-                                          );
-                                        }).toList(),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: BlocListener<DetalleProductoBloc,
-                                            DetalleProductoState>(
-                                          listener: (context, state) {
-                                            if (state
-                                                is DetalleProductoLoading) {
-                                              isLoading = true;
-                                              setState(() {});
-                                            }
 
-                                            if (state
-                                                is DetalleProductoLoaded) {
-                                              isLoading = false;
-                                              setState(() {});
+              return Scrollbar(
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: state.productosConMedidas.length,
+                          itemBuilder: (context, index) {
+                            final productoConMedidas =
+                                state.productosConMedidas[index];
+                            return Card(
+                              margin:
+                                  const EdgeInsets.symmetric(vertical: 10.0),
+                              elevation: 3.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      child: FadeInImage(
+                                        image: NetworkImage(
+                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(productoConMedidas.producto.pathima1)}'),
+                                        placeholder: const AssetImage(
+                                            'assets/loaders/loading.gif'),
+                                        width: double.infinity,
+                                        height: 140,
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 300),
+                                        fit: BoxFit.cover,
+                                        imageErrorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Image.asset(
+                                            'assets/images/no-image.jpg',
+                                            width: 60,
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10.0, bottom: 6.0),
+                                      child: Text(
+                                        '${productoConMedidas.producto.descripcio} - ${productoConMedidas.producto.diseno}',
+                                        style: GoogleFonts.montserrat(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                          color: Colores.secondaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                    Wrap(
+                                      spacing: 4.0,
+                                      runSpacing: 2.0,
+                                      children: productoConMedidas.medidas
+                                          .map((medida) {
+                                        return Chip(
+                                          label: Text(
+                                            medida.medidas,
+                                            style: GoogleFonts.montserrat(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 11,
+                                              color: Colores.secondaryColor,
+                                            ),
+                                          ),
+                                          backgroundColor: Colores
+                                              .scaffoldBackgroundColor
+                                              .withOpacity(0.1),
+                                        );
+                                      }).toList(),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: BlocListener<DetalleProductoBloc,
+                                          DetalleProductoState>(
+                                        listener: (context, state) {
+                                          if (state is DetalleProductoLoaded ||
+                                              state is DetalleProductoError) {
+                                            _scrollToDetalle();
+                                            // Restablece el estado de carga solo del botón que estaba cargando
+                                            if (activeLoadingIndex != null) {
+                                              setState(() {
+                                                isLoadingList[
+                                                        activeLoadingIndex!] =
+                                                    false;
+                                                activeLoadingIndex =
+                                                    null; // Restablecer el índice activo
+                                              });
                                             }
-                                          },
-                                          child: TextButton(
-                                            onPressed: isLoading
-                                                ? null
-                                                : () {
-                                                    context
-                                                        .read<
-                                                            DetalleProductoBloc>()
-                                                        .add(
-                                                          GetProductsEvent(
+                                          }
+                                        },
+                                        child: TextButton(
+                                          onPressed: isLoadingList[index]
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    isLoadingList[index] = true;
+                                                    activeLoadingIndex =
+                                                        index; // Guarda el índice activo
+                                                  });
+
+                                                  context
+                                                      .read<
+                                                          DetalleProductoBloc>()
+                                                      .add(
+                                                        GetProductsEvent(
                                                             producto:
                                                                 productoConMedidas
-                                                                    .producto,
-                                                          ),
-                                                        );
-                                                  },
-                                            style: TextButton.styleFrom(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0,
-                                                      vertical: 6.0),
-                                              backgroundColor: Colores
-                                                  .secondaryColor
-                                                  .withOpacity(0.1),
-                                            ),
-                                            child: Text(
-                                              isLoading
-                                                  ? 'Cargando...'
-                                                  : 'Ver Detalles',
-                                              style: GoogleFonts.montserrat(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize:
-                                                    13, // Tamaño de fuente reducido
-                                                color: Colores.secondaryColor,
-                                              ),
+                                                                    .producto),
+                                                      );
+                                                },
+                                          style: TextButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0,
+                                                vertical: 6.0),
+                                            backgroundColor: Colores
+                                                .secondaryColor
+                                                .withOpacity(0.1),
+                                          ),
+                                          child: Text(
+                                            isLoadingList[index]
+                                                ? 'Cargando...'
+                                                : 'Ver Detalles',
+                                            style: GoogleFonts.montserrat(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                              color: Colores.secondaryColor,
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          // Otros widgets que quieras agregar
-                          BlocBuilder<DetalleProductoBloc,
-                              DetalleProductoState>(
-                            builder: (context, state) {
-                              if (state is DetalleProductoLoading) {
-                                return const Column(
-                                  children: [
-                                    SizedBox(height: 100),
-                                    Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colores.secondaryColor,
                                       ),
                                     ),
                                   ],
-                                );
-                              }
-
-                              if (state is DetalleProductoError) {
-                                return Center(
-                                  child: Text(state.message),
-                                );
-                              }
-
-                              if (state is DetalleProductoLoaded) {
-                                final imageUrls = [
-                                  state.productosConExistencias.producto
-                                      .pathima1,
-                                  state.productosConExistencias.producto
-                                      .pathima2,
-                                  state
-                                      .productosConExistencias.producto.pathima3
-                                ];
-
-                                final getMedidas = state
-                                    .productosConExistencias.existencias
-                                    .map((e) {
-                                  return Medidas(
-                                    e.medidas,
-                                    Utils.formatPrice(e.precio1.toDouble()),
-                                    Utils.formatPrice(e.precio8.toDouble()),
-                                    Utils.formatPrice(e.precio4.toDouble()),
-                                    Utils.formatPrice(e.precio5.toDouble()),
-                                    Utils.formatPrice(e.precio6.toDouble()),
-                                  );
-                                }).toList();
-                                _medidasDataSource =
-                                    MedidasDataSource(getMedidas);
-
-                                return Column(
-                                  key:
-                                      _detalleKey, // Añade la key a la sección que quieres desplazar
-                                  children: [
-                                    const SizedBox(height: 10),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.7,
-                                      child: Stack(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: PageView.builder(
-                                              controller: _pageController,
-                                              itemCount: imageUrls.length,
-                                              itemBuilder: (context, index) {
-                                                return PhotoView(
-                                                  imageProvider: NetworkImage(
-                                                    'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(imageUrls[index])}',
-                                                  ),
-                                                  minScale:
-                                                      PhotoViewComputedScale
-                                                          .contained,
-                                                  maxScale:
-                                                      PhotoViewComputedScale
-                                                              .covered *
-                                                          2,
-                                                  heroAttributes:
-                                                      PhotoViewHeroAttributes(
-                                                    tag: imageUrls[index],
-                                                  ),
-                                                );
-                                              },
-                                              onPageChanged: (index) {
-                                                setState(() {
-                                                  _currentIndex = index;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          Positioned(
-                                            bottom: 30,
-                                            left: 300,
-                                            right: 15,
-                                            child: IconButton(
-                                                style: ButtonStyle(
-                                                  backgroundColor:
-                                                      WidgetStateProperty
-                                                          .all<Color>(Colores
-                                                              .secondaryColor),
-                                                  shape: WidgetStateProperty.all(
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      0.0))),
-                                                ),
-                                                onPressed: () => shareImage(
-                                                    imageUrls[_currentIndex]),
-                                                icon: const FaIcon(
-                                                    FontAwesomeIcons.shareNodes,
-                                                    color: Colores
-                                                        .scaffoldBackgroundColor,
-                                                    size: 30)),
-                                          ),
-                                        ],
-                                      ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        BlocBuilder<DetalleProductoBloc, DetalleProductoState>(
+                          builder: (context, state) {
+                            if (state is DetalleProductoLoading) {
+                              return const Column(
+                                children: [
+                                  SizedBox(height: 100),
+                                  Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colores.secondaryColor,
                                     ),
-                                    ListTile(
-                                      title: Text(
-                                        state.productosConExistencias.producto
-                                            .descripcio,
-                                        style: GoogleFonts.montserrat(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colores.secondaryColor,
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        state.productosConExistencias.producto
-                                            .diseno,
-                                        style: GoogleFonts.montserrat(
-                                          fontWeight: FontWeight.w500,
-                                          color: Colores.secondaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                    Column(
+                                  ),
+                                ],
+                              );
+                            }
+
+                            if (state is DetalleProductoError) {
+                              return Center(
+                                child: Text(state.message),
+                              );
+                            }
+
+                            if (state is DetalleProductoLoaded) {
+                              final imageUrls = [
+                                state.productosConExistencias.producto.pathima1,
+                                state.productosConExistencias.producto.pathima2,
+                                state.productosConExistencias.producto.pathima3
+                              ];
+
+                              final getMedidas = state
+                                  .productosConExistencias.existencias
+                                  .map((e) {
+                                return Medidas(
+                                  e.medidas,
+                                  Utils.formatPrice(e.precio1.toDouble()),
+                                  Utils.formatPrice(e.precio8.toDouble()),
+                                  Utils.formatPrice(e.precio4.toDouble()),
+                                  Utils.formatPrice(e.precio5.toDouble()),
+                                  Utils.formatPrice(e.precio6.toDouble()),
+                                );
+                              }).toList();
+                              _medidasDataSource =
+                                  MedidasDataSource(getMedidas);
+
+                              return Column(
+                                key: _detalleKey,
+                                children: [
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.7,
+                                    child: Stack(
                                       children: [
-                                        const Divider(
-                                          color: Colores.secondaryColor,
-                                          thickness: 1.0,
-                                        ),
-                                        ListTile(
-                                          title: const Text(
-                                            'Origen:',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colores.secondaryColor,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            state.productosConExistencias
-                                                .producto.origenn,
-                                            style: GoogleFonts.montserrat(
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                        ListTile(
-                                          title: const Text(
-                                            'Composición:',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colores.secondaryColor,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            '${state.productosConExistencias.producto.compo1}, ${state.productosConExistencias.producto.compo2}.',
-                                            style: GoogleFonts.montserrat(
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                        ListTile(
-                                          title: const Text(
-                                            'Lavado:',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colores.secondaryColor,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            '${state.productosConExistencias.producto.lava1}, ${state.productosConExistencias.producto.lava2}.',
-                                            style: GoogleFonts.montserrat(
-                                              color: Colors.black,
-                                            ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: PageView.builder(
+                                            controller: _pageController,
+                                            itemCount: imageUrls.length,
+                                            itemBuilder: (context, index) {
+                                              return PhotoView(
+                                                backgroundDecoration:
+                                                    const BoxDecoration(
+                                                  color: Colores
+                                                      .scaffoldBackgroundColor,
+                                                ),
+                                                imageProvider: NetworkImage(
+                                                  'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(imageUrls[index])}',
+                                                ),
+                                                minScale: PhotoViewComputedScale
+                                                    .contained,
+                                                maxScale: PhotoViewComputedScale
+                                                        .covered *
+                                                    2,
+                                                heroAttributes:
+                                                    PhotoViewHeroAttributes(
+                                                  tag: imageUrls[index],
+                                                ),
+                                              );
+                                            },
+                                            onPageChanged: (index) {
+                                              setState(() {
+                                                _currentIndex = index;
+                                              });
+                                            },
                                           ),
                                         ),
-                                        const Divider(
-                                          color: Colores.secondaryColor,
-                                          thickness: 1.0,
-                                        ),
-                                        // Añadir la tabla aquí con Syncfusion DataGrid
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                'Medidas y Precios en Existencia',
-                                                style: GoogleFonts.montserrat(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colores.secondaryColor,
-                                                )),
-                                            const SizedBox(height: 10),
-                                            SizedBox(
-                                              height: 250,
-                                              child: SfDataGrid(
-                                                source: _medidasDataSource,
-                                                columns: <GridColumn>[
-                                                  GridColumn(
-                                                    columnName: 'medida',
-                                                    label: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: const Text(
-                                                        'Medidas',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colores
-                                                                .secondaryColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  GridColumn(
-                                                    columnName: 'precioNormal',
-                                                    label: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: const Text(
-                                                        'Precio Normal',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colores
-                                                                .secondaryColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  GridColumn(
-                                                    columnName: 'descuento20',
-                                                    label: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: const Text(
-                                                        '-20%',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colores
-                                                                .secondaryColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  GridColumn(
-                                                    columnName: 'descuento30',
-                                                    label: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: const Text(
-                                                        '-30%',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colores
-                                                                .secondaryColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  GridColumn(
-                                                    columnName: 'descuento40',
-                                                    label: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: const Text(
-                                                        '-40%',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colores
-                                                                .secondaryColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  GridColumn(
-                                                    columnName: 'descuento50',
-                                                    label: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: const Text(
-                                                        '-50%',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colores
-                                                                .secondaryColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                        Positioned(
+                                          bottom: 30,
+                                          left: 300,
+                                          right: 15,
+                                          child: IconButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  WidgetStateProperty.all<
+                                                          Color>(
+                                                      Colores.secondaryColor),
+                                              shape: WidgetStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          0.0),
+                                                ),
                                               ),
                                             ),
-                                            const Divider(
-                                              color: Colores.secondaryColor,
-                                              thickness: 1.0,
+                                            onPressed: () => shareImage(
+                                                imageUrls[_currentIndex]),
+                                            icon: const FaIcon(
+                                              FontAwesomeIcons.shareNodes,
+                                              color: Colores
+                                                  .scaffoldBackgroundColor,
+                                              size: 30,
                                             ),
-                                            // Lista de ExpansionTile para los datos de existencias
-                                            ...state.productosConExistencias
-                                                .existencias
-                                                .map((existencia) {
-                                              return ExpansionTile(
-                                                expandedCrossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start, // Alineación de los elementos dentro del ExpansionTile
-                                                title: Text(
-                                                  'Medida: ${existencia.medidas} \nPrecio: ${Utils.formatPrice(existencia.precio1.toDouble())}',
-                                                  style: GoogleFonts.montserrat(
-                                                    fontWeight: FontWeight.bold,
-                                                    color:
-                                                        Colores.secondaryColor,
-                                                  ),
-                                                ),
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 16.0,
-                                                        vertical: 8.0),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          'Almacen: ${existencia.almacen}',
-                                                          style: GoogleFonts
-                                                              .montserrat(),
-                                                        ),
-                                                        Text(
-                                                          'Existencia: ${existencia.hm}',
-                                                          style: GoogleFonts
-                                                              .montserrat(),
-                                                        ),
-                                                        // Agrega más detalles del producto según sea necesario
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            }),
-                                          ],
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ],
-                                );
-                              } else {
-                                return const SizedBox();
-                              }
-                            },
-                          ),
-                        ],
-                      ),
+                                  ),
+                                  ListTile(
+                                    title: Text(
+                                      state.productosConExistencias.producto
+                                          .descripcio,
+                                      style: GoogleFonts.montserrat(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colores.secondaryColor,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      state.productosConExistencias.producto
+                                          .diseno,
+                                      style: GoogleFonts.montserrat(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colores.secondaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      const Divider(
+                                        color: Colores.secondaryColor,
+                                        thickness: 1.0,
+                                      ),
+                                      ListTile(
+                                        title: const Text(
+                                          'Origen:',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colores.secondaryColor,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          state.productosConExistencias.producto
+                                              .origenn,
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      ListTile(
+                                        title: const Text(
+                                          'Composición:',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colores.secondaryColor,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          '${state.productosConExistencias.producto.compo1}, ${state.productosConExistencias.producto.compo2}.',
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      ListTile(
+                                        title: const Text(
+                                          'Lavado:',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colores.secondaryColor,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          '${state.productosConExistencias.producto.lava1}, ${state.productosConExistencias.producto.lava2}.',
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colores.secondaryColor,
+                                        thickness: 1.0,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Medidas y Precios en Existencia',
+                                            style: GoogleFonts.montserrat(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colores.secondaryColor,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          SizedBox(
+                                            height: 250,
+                                            child: SfDataGrid(
+                                              source: _medidasDataSource,
+                                              columns: <GridColumn>[
+                                                GridColumn(
+                                                  columnName: 'medida',
+                                                  label: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    alignment: Alignment.center,
+                                                    child: const Text(
+                                                      'Medidas',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colores
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                GridColumn(
+                                                  columnName: 'precioNormal',
+                                                  label: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    alignment: Alignment.center,
+                                                    child: const Text(
+                                                      'Precio Normal',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colores
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                GridColumn(
+                                                  columnName: 'descuento20',
+                                                  label: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    alignment: Alignment.center,
+                                                    child: const Text(
+                                                      '-20%',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colores
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                GridColumn(
+                                                  columnName: 'descuento30',
+                                                  label: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    alignment: Alignment.center,
+                                                    child: const Text(
+                                                      '-30%',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colores
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                GridColumn(
+                                                  columnName: 'descuento40',
+                                                  label: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    alignment: Alignment.center,
+                                                    child: const Text(
+                                                      '-40%',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colores
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                GridColumn(
+                                                  columnName: 'descuento50',
+                                                  label: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    alignment: Alignment.center,
+                                                    child: const Text(
+                                                      '-50%',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colores
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const Divider(
+                                            color: Colores.secondaryColor,
+                                            thickness: 1.0,
+                                          ),
+                                          ...state.productosConExistencias
+                                              .existencias
+                                              .map((existencia) {
+                                            return ExpansionTile(
+                                              expandedCrossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              title: Text(
+                                                'Medida: ${existencia.medidas} \nPrecio: ${Utils.formatPrice(existencia.precio1.toDouble())}',
+                                                style: GoogleFonts.montserrat(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colores.secondaryColor,
+                                                ),
+                                              ),
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16.0,
+                                                      vertical: 8.0),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Almacen: ${existencia.almacen}',
+                                                        style: GoogleFonts
+                                                            .montserrat(),
+                                                      ),
+                                                      Text(
+                                                        'Existencia: ${existencia.hm}',
+                                                        style: GoogleFonts
+                                                            .montserrat(),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          ),
+                ),
+              );
+            } else if (state is DetalleGaleriaLoading) {
+              return const Center(
+                  child: CircularProgressIndicator(
+                color: Colores.secondaryColor,
+              ));
+            } else if (state is DetalleGaleriaError) {
+              return Center(child: Text(state.message));
+            } else {
+              return const SizedBox();
+            }
+          },
         ),
       ),
     );

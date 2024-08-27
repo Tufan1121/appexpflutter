@@ -28,6 +28,7 @@ class GaleriaRepositoryImpl implements GaleriaRepository {
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     } catch (e) {
+      print(e);
       return Left(
           NetworkException.customMessage('Ocurrió un error inesperado. '));
     }
