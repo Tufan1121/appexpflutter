@@ -161,7 +161,6 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.document_scanner_rounded,
                       label: 'Reportes',
                       onTap: () {
-                        // ReportesScreenRoute().push(context);
                         AuthReportesScreenRoute().push(context);
                       },
                     ),
@@ -169,7 +168,6 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.photo_library,
                       label: 'Galería',
                       onTap: () {
-                        // context.read<GaleriaBloc>().add(const GetGaleriaEvent(regg: 0));
                         GaleriaRoute().push(context);
                       },
                     ),
