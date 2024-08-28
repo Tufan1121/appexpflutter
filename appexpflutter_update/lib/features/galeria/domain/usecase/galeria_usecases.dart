@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/features/galeria/domain/entities/galeria_en
 import 'package:appexpflutter_update/features/galeria/domain/entities/medidas_entity.dart';
 import 'package:appexpflutter_update/features/galeria/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/galeria/domain/entities/producto_inv_entity.dart';
+import 'package:appexpflutter_update/features/galeria/domain/entities/tabla_precio_entity.dart';
 import 'package:appexpflutter_update/features/galeria/domain/repositories/galeria_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -31,5 +32,10 @@ class GaleriaUsecase {
   Future<Either<NetworkException, List<ProductoInvEntity>>> getgalinventario(
       String descripcion, String diseno) async {
     return await _galeriaRepository.getgalinventario(descripcion, diseno);
+  }
+
+  Future<Either<NetworkException, List<TablaPreciosEntity>>> getTablaPrecio(
+      String descripcion, String diseno) async {
+    return await _galeriaRepository.getTablaPrecio(descripcion, diseno);
   }
 }

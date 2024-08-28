@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/utils/utils.dart';
+import 'package:appexpflutter_update/features/galeria/domain/entities/producto_inv_entity.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:collection/collection.dart';
 
 class GaleriaDetailScreen extends StatefulWidget {
   final String? userName;
@@ -110,7 +112,6 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                 isLoadingList =
                     List<bool>.filled(state.productosConMedidas.length, false);
               }
-
               return Scrollbar(
                 child: SingleChildScrollView(
                   controller: _scrollController,
@@ -289,7 +290,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                               ];
 
                               final getMedidas = state
-                                  .productosConExistencias.existencias
+                                  .productosConExistencias.tablaPrecios
                                   .map((e) {
                                 return Medidas(
                                   e.medidas,
@@ -298,6 +299,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                   Utils.formatPrice(e.precio4.toDouble()),
                                   Utils.formatPrice(e.precio5.toDouble()),
                                   Utils.formatPrice(e.precio6.toDouble()),
+                                  Utils.formatPrice(e.precio7.toDouble()),
                                 );
                               }).toList();
                               _medidasDataSource =
@@ -576,6 +578,24 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                     ),
                                                   ),
                                                 ),
+                                                GridColumn(
+                                                  columnName: 'descuento70',
+                                                  label: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    alignment: Alignment.center,
+                                                    child: const Text(
+                                                      '-70%',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colores
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -585,42 +605,47 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                           ),
                                           ...state.productosConExistencias
                                               .existencias
-                                              .map((existencia) {
-                                            return ExpansionTile(
-                                              expandedCrossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              title: Text(
-                                                'Medida: ${existencia.medidas} \nPrecio: ${Utils.formatPrice(existencia.precio1.toDouble())}',
-                                                style: GoogleFonts.montserrat(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colores.secondaryColor,
-                                                ),
+                                              // Agrupa las existencias por medidas
+                                              .groupListsBy((existencia) =>
+                                                  existencia.medidas)
+                                              .entries
+                                              .map((entry) {
+                                            final medida = entry.key;
+                                            final existencias = entry
+                                                .value; // Existencias agrupadas por medida
+
+                                            return Card(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10.0),
+                                              elevation: 3.0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0),
                                               ),
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 16.0,
-                                                      vertical: 8.0),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'Almacen: ${existencia.almacen}',
-                                                        style: GoogleFonts
-                                                            .montserrat(),
-                                                      ),
-                                                      Text(
-                                                        'Existencia: ${existencia.hm}',
-                                                        style: GoogleFonts
-                                                            .montserrat(),
-                                                      ),
-                                                    ],
+                                              child: ExpansionTile(
+                                                expandedCrossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                title: Text(
+                                                  'Medida: $medida',
+                                                  style: GoogleFonts.montserrat(
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        Colores.secondaryColor,
                                                   ),
                                                 ),
-                                              ],
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 16.0,
+                                                        vertical: 8.0),
+                                                    child:
+                                                        _buildExistenciasTable(
+                                                            existencias),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           }),
                                         ],
@@ -654,12 +679,39 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
       ),
     );
   }
+  // Método para construir la tabla de existencias
+Widget _buildExistenciasTable(List<ProductoInvEntity> existencias) {
+  return DataTable(
+    columns: const [
+      DataColumn(
+        label: Text(
+          'Almacén',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      DataColumn(
+        label: Text(
+          'Existencias',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    ],
+    rows: existencias.map((existencia) {
+      return DataRow(
+        cells: [
+          DataCell(Text(existencia.desalmacen)),
+          DataCell(Text(existencia.hm.toString())),
+        ],
+      );
+    }).toList(),
+  );
+}
 }
 
 // Clase para representar los datos de la tabla
 class Medidas {
   Medidas(this.medida, this.precioNormal, this.descuento20, this.descuento30,
-      this.descuento40, this.descuento50);
+      this.descuento40, this.descuento50, this.descuento70);
 
   final String medida;
   final String precioNormal;
@@ -667,6 +719,7 @@ class Medidas {
   final String descuento30;
   final String descuento40;
   final String descuento50;
+  final String descuento70;
 }
 
 // Fuente de datos para el DataGrid
@@ -680,6 +733,7 @@ class MedidasDataSource extends DataGridSource {
         DataGridCell<String>(columnName: 'descuento30', value: e.descuento30),
         DataGridCell<String>(columnName: 'descuento40', value: e.descuento40),
         DataGridCell<String>(columnName: 'descuento50', value: e.descuento50),
+        DataGridCell<String>(columnName: 'descuento70', value: e.descuento70),
       ]);
     }).toList();
   }

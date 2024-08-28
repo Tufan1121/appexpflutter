@@ -25,14 +25,30 @@ class DetalleProductoBloc
 
     final result = await galeriaUsecases.getgalinventario(
         event.producto.descripcio, event.producto.diseno);
-    result.fold(
+    await result.fold(
       (failure) async {
         emit(DetalleProductoError(message: failure.message));
       },
       (producto) async {
+        ProductoConExistencias productosConExistencias = ProductoConExistencias(
+            producto: event.producto, existencias: producto, tablaPrecios: []);
+
+        final tablaPreciosResult = await galeriaUsecases.getTablaPrecio(
+            event.producto.descripcio, event.producto.diseno);
+
+        tablaPreciosResult.fold((failure) {
+          // Emitir un error si falla la obtención de medidas
+          emit(DetalleProductoError(message: failure.message));
+        }, (tablaPrecios) {
+          // Agrega el producto con sus medidas a la lista
+          productosConExistencias = ProductoConExistencias(
+              producto: event.producto,
+              existencias: producto,
+              tablaPrecios: tablaPrecios);
+          emit(DetalleProductoLoaded(
+              productosConExistencias: productosConExistencias));
+        });
         // las operaciones asíncronas han finalizado antes de emitir el estado final
-        final productosConExistencias = ProductoConExistencias(
-            producto: event.producto, existencias: producto);
         if (!emit.isDone) {
           emit(DetalleProductoLoaded(
               productosConExistencias: productosConExistencias));

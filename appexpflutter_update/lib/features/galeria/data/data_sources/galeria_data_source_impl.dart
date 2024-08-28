@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/galeria/data/model/tabla_precio_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:api_client/api_client.dart';
@@ -123,6 +124,33 @@ class GaleriaDataSourceImpl implements GaleriaDataSource {
           )
           .toList();
       return medidas;
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<TablaPrecioModel>> getTablaPrecio(
+      String descripcion, String diseno) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.post('/gettablaprecios',
+          queryParameters: {
+            'descripcio': descripcion,
+            'diseno': diseno,
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ));
+      final List<dynamic> jsonList = result.data;
+      final tabla = jsonList
+          .map(
+            (json) => TablaPrecioModel.fromJson(json),
+          )
+          .toList();
+      return tabla;
     } catch (_) {
       rethrow;
     }

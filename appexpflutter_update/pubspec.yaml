@@ -14,6 +14,7 @@ dependencies:
   auto_size_text: ^3.0.0
   carousel_slider: ^4.2.1
   change_app_package_name: ^1.2.0
+  collection: ^1.18.0
   connectivity_plus: ^6.0.3
   cupertino_icons: ^1.0.6
   dio: ^5.4.3+1
@@ -40,8 +41,8 @@ dependencies:
   share_plus: ^9.0.0
   shared_preferences: ^2.2.3
   syncfusion_flutter_charts: ^26.2.8
-  syncfusion_flutter_pdfviewer: ^26.1.40
   syncfusion_flutter_datagrid: ^26.2.10
+  syncfusion_flutter_pdfviewer: ^26.1.40
   url_launcher: ^6.3.0
 
 dev_dependencies:

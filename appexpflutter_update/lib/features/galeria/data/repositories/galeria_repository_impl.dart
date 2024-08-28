@@ -5,6 +5,7 @@ import 'package:appexpflutter_update/features/galeria/domain/entities/galeria_en
 import 'package:appexpflutter_update/features/galeria/domain/entities/medidas_entity.dart';
 import 'package:appexpflutter_update/features/galeria/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/galeria/domain/entities/producto_inv_entity.dart';
+import 'package:appexpflutter_update/features/galeria/domain/entities/tabla_precio_entity.dart';
 import 'package:appexpflutter_update/features/galeria/domain/repositories/galeria_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
@@ -75,6 +76,23 @@ class GaleriaRepositoryImpl implements GaleriaRepository {
       // Mapear la lista de MedidasModel a MedidasEntity usando toEntity()
       final medidasEntity = result.map((model) => model.toEntity()).toList();
       return Right(medidasEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    } catch (e) {
+      return Left(
+          NetworkException.customMessage('Ocurrió un error inesperado. '));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, List<TablaPreciosEntity>>> getTablaPrecio(String descripcion, String diseno) async {
+    try {
+      final result = await galeriaDataSource.getTablaPrecio(descripcion, diseno);
+      // Mapear la lista de TablaPrecioModel a TablaPreciosEntity usando toEntity()
+      final tablaPrecioEntity = result.map((model) => model.toEntity()).toList();
+      return Right(tablaPrecioEntity);
     } on NotFoundException catch (e) {
       return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {
