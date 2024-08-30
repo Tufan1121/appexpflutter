@@ -350,8 +350,14 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                         ),
                                         Positioned(
                                           bottom: 30,
-                                          left: 300,
-                                          right: 15,
+                                          left: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.7, // Ajusta la posición horizontal
+                                          right: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.05, // Ajusta el margen derecho
                                           child: IconButton(
                                             style: ButtonStyle(
                                               backgroundColor:
@@ -679,33 +685,34 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
       ),
     );
   }
+
   // Método para construir la tabla de existencias
-Widget _buildExistenciasTable(List<ProductoInvEntity> existencias) {
-  return DataTable(
-    columns: const [
-      DataColumn(
-        label: Text(
-          'Almacén',
-          style: TextStyle(fontWeight: FontWeight.bold),
+  Widget _buildExistenciasTable(List<ProductoInvEntity> existencias) {
+    return DataTable(
+      columns: const [
+        DataColumn(
+          label: Text(
+            'Almacén',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-      DataColumn(
-        label: Text(
-          'Existencias',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        DataColumn(
+          label: Text(
+            'Existencias',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-    ],
-    rows: existencias.map((existencia) {
-      return DataRow(
-        cells: [
-          DataCell(Text(existencia.desalmacen)),
-          DataCell(Text(existencia.hm.toString())),
-        ],
-      );
-    }).toList(),
-  );
-}
+      ],
+      rows: existencias.map((existencia) {
+        return DataRow(
+          cells: [
+            DataCell(Text(existencia.desalmacen)),
+            DataCell(Text(existencia.hm.toString())),
+          ],
+        );
+      }).toList(),
+    );
+  }
 }
 
 // Clase para representar los datos de la tabla
