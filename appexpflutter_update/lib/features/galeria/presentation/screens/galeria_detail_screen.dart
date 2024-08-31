@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
@@ -314,39 +315,38 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                         0.7,
                                     child: Stack(
                                       children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8.0),
-                                          child: PageView.builder(
-                                            controller: _pageController,
-                                            itemCount: imageUrls.length,
-                                            itemBuilder: (context, index) {
-                                              return PhotoView(
-                                                backgroundDecoration:
-                                                    const BoxDecoration(
-                                                  color: Colores
-                                                      .scaffoldBackgroundColor,
-                                                ),
-                                                imageProvider: NetworkImage(
-                                                  'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(imageUrls[index])}',
-                                                ),
-                                                minScale: PhotoViewComputedScale
-                                                    .contained,
-                                                maxScale: PhotoViewComputedScale
-                                                        .covered *
-                                                    2,
-                                                heroAttributes:
-                                                    PhotoViewHeroAttributes(
-                                                  tag: imageUrls[index],
-                                                ),
-                                              );
-                                            },
-                                            onPageChanged: (index) {
-                                              setState(() {
-                                                _currentIndex = index;
-                                              });
-                                            },
+                                        PhotoViewGallery.builder(
+                                          pageController: _pageController,
+                                          itemCount: imageUrls.length,
+                                          builder: (context, index) {
+                                            return PhotoViewGalleryPageOptions(
+                                              imageProvider: NetworkImage(
+                                                'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(imageUrls[index])}',
+                                              ),
+                                              initialScale:
+                                                  PhotoViewComputedScale
+                                                      .contained,
+                                              minScale: PhotoViewComputedScale
+                                                  .contained,
+                                              maxScale: PhotoViewComputedScale
+                                                      .covered *
+                                                  2,
+                                              heroAttributes:
+                                                  PhotoViewHeroAttributes(
+                                                tag: imageUrls[index],
+                                              ),
+                                            );
+                                          },
+                                          backgroundDecoration:
+                                              const BoxDecoration(
+                                            color:
+                                                Colores.scaffoldBackgroundColor,
                                           ),
+                                          onPageChanged: (index) {
+                                            setState(() {
+                                              _currentIndex = index;
+                                            });
+                                          },
                                         ),
                                         Positioned(
                                           bottom: 30,
