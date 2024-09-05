@@ -146,7 +146,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                             controller: _scrollController,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
+                              crossAxisCount: 1,
                               crossAxisSpacing: 30,
                               mainAxisSpacing: 20,
                             ),
