@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:appexpflutter_update/config/config.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/invetario_bodega.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/inventario_bodega.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';

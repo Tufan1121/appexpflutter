@@ -1,5 +1,6 @@
 import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:appexpflutter_update/features/inventarios/data/data_sources/inventario_expo_data_source.dart';
+import 'package:appexpflutter_update/features/inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
@@ -38,6 +39,23 @@ class InventarioExpoRepositoryImpl implements InventarioExpoRepository {
       final productosExpoEntity =
           result.map((model) => model.toEntity()).toList();
       return Right(productosExpoEntity);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    } catch (e) {
+      return Left(
+          NetworkException.customMessage('Ocurrió un error inesperado. '));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, List<MedidasEntityInv>>> getMedidas() async {
+    try {
+      final result = await inventarioExpoDataSource.getMedidas();
+      // Mapear la lista de MedidasModelInv a MedidasEntityInv usando toEntity()
+      final medidasEntity = result.map((model) => model.toEntity()).toList();
+      return Right(medidasEntity);
     } on NotFoundException catch (e) {
       return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {

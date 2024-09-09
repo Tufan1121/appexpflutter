@@ -61,6 +61,10 @@ Future<void> init() async {
     ..registerLazySingleton<GaleriaUsecase>(
         () => GaleriaUsecase(galeriaRepository: injector()))
 
+    //* Cubits
+    ..registerLazySingleton<MedidasCubit>(
+        () => MedidasCubit(inventarioExpoDataSource: injector()))
+
     //* Blocs
     ..registerLazySingleton<AuthBloc>(() => AuthBloc(authUsecase: injector()))
     ..registerLazySingleton<PreciosBloc>(

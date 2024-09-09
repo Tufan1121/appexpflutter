@@ -1,6 +1,8 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/lista_productos_expo.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
@@ -28,6 +30,21 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
     'mancho2': FormControl<String>(),
   });
 
+  final List<MedidasEntityInv> medidas = [];
+  late String descripcio;
+  late String diseno;
+  late double mlargo1;
+  late double mlargo2;
+  late double mancho1;
+  late double mancho2;
+  String? selectedMedida;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<MedidasCubit>().getMedidas();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -54,6 +71,92 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                 formGroup: form,
                 child: Column(
                   children: [
+                    const SizedBox(height: 3),
+                    BlocBuilder<MedidasCubit, MedidasState>(
+                      builder: (context, state) {
+                        if (state is MedidasLoaded) {
+                          medidas.clear();
+                          medidas.addAll(state.medidas);
+                        } else if (state is MedidasError) {
+                          medidas.clear();
+                          medidas.add(MedidasEntityInv(
+                              medida: 'Error al cargar medidas',
+                              largo: 0,
+                              cm: 0,
+                              ancho: 0));
+                        }
+
+                        // Asegurar de que no haya duplicados
+                        // Asegurar de que no haya duplicados
+                        final uniqueMedidas = medidas.toSet().toList();
+
+                        // Asegurar de que el valor seleccionado esté en la lista
+                        if (selectedMedida != null &&
+                            !uniqueMedidas.any(
+                                (medida) => medida.medida == selectedMedida)) {
+                          selectedMedida = null;
+                        }
+
+                        return Container(
+                          width: size.width * 0.9,
+                          height: 45,
+                          padding: const EdgeInsets.symmetric(horizontal: 45),
+                          child: DropdownButtonFormField<String>(
+                            value: selectedMedida,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              labelText: "Seleccione una medida",
+                              labelStyle: const TextStyle(
+                                  fontSize: 15, color: Colors.black),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[400]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[400]!),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
+                              ),
+                            ),
+                            items: uniqueMedidas.map((medida) {
+                              return DropdownMenuItem<String>(
+                                value: medida.medida,
+                                child: Text(
+                                  medida.medida,
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Colors.black),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedMedida = newValue;
+                                // Buscar la medida seleccionada y actualizar los campos
+                                final selected = medidas.firstWhere(
+                                    (medida) => medida.medida == newValue);
+                                form.control('mlargo1').value =
+                                    '${selected.largo - selected.cm}';
+                                form.control('mlargo2').value =
+                                    '${selected.largo + selected.cm}';
+                                form.control('mancho1').value =
+                                    '${selected.ancho - selected.cm}';
+                                form.control('mancho2').value =
+                                    '${selected.ancho + selected.cm}';
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
                     const Row(
                       children: [
                         Spacer(
@@ -171,20 +274,18 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                           ],
                         ),
                         onPressed: () {
-                          final String descripcio =
-                              form.control('descripcio').value ?? '';
-                          final String diseno =
-                              form.control('diseno').value ?? '';
-                          final double mlargo1 = double.tryParse(
+                          descripcio = form.control('descripcio').value ?? '';
+                          diseno = form.control('diseno').value ?? '';
+                          mlargo1 = double.tryParse(
                                   form.control('mlargo1').value ?? '0.0') ??
                               0.0;
-                          final double mlargo2 = double.tryParse(
+                          mlargo2 = double.tryParse(
                                   form.control('mlargo2').value ?? '0.0') ??
                               0.0;
-                          final double mancho1 = double.tryParse(
+                          mancho1 = double.tryParse(
                                   form.control('mancho1').value ?? '0.0') ??
                               0.0;
-                          final double mancho2 = double.tryParse(
+                          mancho2 = double.tryParse(
                                   form.control('mancho2').value ?? '0.0') ??
                               0.0;
                           FocusScope.of(context).unfocus();
@@ -269,7 +370,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                   final productos = state.productos;
 
                   return SizedBox(
-                    height: size.height * 0.58,
+                    height: size.height * 0.56,
                     child: ListView.builder(
                       itemCount: productos.length,
                       itemBuilder: (context, index) {

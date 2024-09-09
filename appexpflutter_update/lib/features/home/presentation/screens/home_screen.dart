@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/config/config.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
@@ -135,12 +136,12 @@ class HomeScreen extends StatelessWidget {
                               ),
                               const Divider(),
                               CustomListTile(
-                                text: 'INVENTARIO BODEGAS',
-                                assetPathIcon:
-                                    'assets/iconos/inventario bodegas - rosa2.png',
-                                onTap: () =>
-                                    InvetarioBodegaRoute().push(context),
-                              ),
+                                  text: 'INVENTARIO BODEGAS',
+                                  assetPathIcon:
+                                      'assets/iconos/inventario bodegas - rosa2.png',
+                                  onTap: () {
+                                    InvetarioBodegaRoute().push(context);
+                                  }),
                               const Divider(),
                               CustomListTile(
                                 text: 'BUSQUEDA GLOBAL',
