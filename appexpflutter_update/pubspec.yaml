@@ -40,7 +40,7 @@ dependencies:
   rxdart: ^0.27.7
   share_plus: ^9.0.0
   shared_preferences: ^2.2.3
-  syncfusion_flutter_charts: ^26.2.8
+  syncfusion_flutter_charts: ^26.2.14
   syncfusion_flutter_datagrid: ^26.2.10
   syncfusion_flutter_pdfviewer: ^26.1.40
   url_launcher: ^6.3.0

@@ -106,6 +106,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
               ),
               Column(
                 children: [
+                  const SizedBox(height: 5),
                   const SearchGallery(),
                   const SizedBox(height: 10),
                   BlocBuilder<GaleriaBloc, GaleriaState>(

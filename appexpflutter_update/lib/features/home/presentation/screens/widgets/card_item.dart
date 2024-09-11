@@ -53,7 +53,8 @@ class CardItem extends StatelessWidget {
               const SizedBox(height: 10),
               AutoSizeText(label,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold)),
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                  maxLines: 2),
               const SizedBox(height: 10),
             ],
           ),

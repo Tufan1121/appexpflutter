@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/features/reportes/domain/entities/sales_ped
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_tickets_entity.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -24,27 +25,9 @@ class ReportesScreen extends HookWidget {
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(40.0),
-        child: AppBar(
-          leading: IconButton(
-            onPressed: () => HomeRoute().push(context),
-            icon: const Icon(Icons.arrow_back_rounded),
-          ),
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-          title: Text(
-            'REPORTES',
-            style: GoogleFonts.montserrat(
-              fontWeight: FontWeight.bold,
-              color: Colores.scaffoldBackgroundColor,
-              shadows: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  offset: Offset(2.0, 5.0),
-                )
-              ],
-            ),
-          ),
+        child: CustomAppBar(
+          onPressed: () => HomeRoute().push(context),
+          title: 'REPORTES',
         ),
       ),
       body: Stack(

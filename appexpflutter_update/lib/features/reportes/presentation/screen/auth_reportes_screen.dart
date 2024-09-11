@@ -16,39 +16,41 @@ class AuthReportesScreen extends StatelessWidget {
           body: GeometricalBackground(
               child: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-                color: Colors.white,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: Colors.white,
+                ),
+                iconSize: 30,
               ),
-              iconSize: 30,
-            ),
-            const SizedBox(height: 30),
-            // Icon Banner
-            Center(
-              child: Image.asset(
-                'assets/images/logo_tufan.png',
-                scale: 10,
+              const SizedBox(height: 30),
+              // Icon Banner
+              Center(
+                child: Image.asset(
+                  'assets/images/logo_tufan.png',
+                  scale: 10,
+                ),
               ),
-            ),
-            const SizedBox(height: 80),
+              const SizedBox(height: 80),
 
-            Container(
-              height: size.height - 260, // 80 los dos sizebox y 100 el ícono
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: scaffoldBackgroundColor,
-                borderRadius:
-                    const BorderRadius.only(topRight: Radius.circular(100)),
-              ),
-              child: const MovilForm(),
-            )
-          ],
+              Container(
+                height: size.height - 260, // 80 los dos sizebox y 100 el ícono
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: scaffoldBackgroundColor,
+                  borderRadius:
+                      const BorderRadius.only(topRight: Radius.circular(100)),
+                ),
+                child: const MovilForm(),
+              )
+            ],
+          ),
         ),
       ))),
     );
