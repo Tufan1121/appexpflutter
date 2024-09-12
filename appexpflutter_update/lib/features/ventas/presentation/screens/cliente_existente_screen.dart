@@ -11,7 +11,6 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/mixins
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/popover.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/config.dart';
 import 'widgets/widgets.dart' show SearchClientes;
 

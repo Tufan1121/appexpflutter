@@ -10,7 +10,6 @@ import 'package:appexpflutter_update/features/precios/presentation/screens/widge
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/shared/widgets/widgets.dart'
     show CustomFilledButton2;
-import 'package:google_fonts/google_fonts.dart';
 
 class PreciosScreen extends StatelessWidget {
   const PreciosScreen({super.key});
