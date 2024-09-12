@@ -1,11 +1,12 @@
 import 'package:api_client/api_client.dart';
 import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
+
 import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source.dart';
 import 'package:appexpflutter_update/features/historial/data/models/detalle_sesion_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_cotiza_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_pedido_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_sesion_model.dart';
-import 'package:appexpflutter_update/features/precios/data/models/producto_model.dart';
+import 'package:appexpflutter_update/features/historial/data/models/producto_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 

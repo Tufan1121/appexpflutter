@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
-
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
+import 'package:precios/domain/entities/producto_entity.dart';
 
 class ListaProductosBodegaCard extends HookWidget {
   const ListaProductosBodegaCard(

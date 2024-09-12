@@ -1,4 +1,5 @@
-import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
+
+import 'package:sesion_ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,8 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
+import 'package:precios/domain/entities/producto_entity.dart';
+
 
 class ListaProductos extends HookWidget {
   const ListaProductos({super.key, required this.productos});

@@ -7,7 +7,6 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/i
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_global_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery2.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery_ibodega.dart';
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/screen/auth_reportes_screen.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/screen/reportes_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
@@ -21,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/home_screen.dart';
 import 'package:appexpflutter_update/features/precios/presentation/screens/precios_screen.dart';
+import 'package:precios/domain/entities/producto_entity.dart';
 import '../../features/auth/presentation/screens/auth/login_screen.dart';
 import '../../features/precios/presentation/screens/widgets/screen_gallery.dart';
 

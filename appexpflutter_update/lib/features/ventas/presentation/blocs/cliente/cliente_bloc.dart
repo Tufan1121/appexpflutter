@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_entity.dart';
-import 'package:appexpflutter_update/features/ventas/domain/usecases/cliente_usecase.dart';
+import 'package:sesion_ventas/domain/entities/cliente_entity.dart';
+import 'package:sesion_ventas/domain/usecases/cliente_usecase.dart';
 
 part 'cliente_event.dart';
 part 'cliente_state.dart';

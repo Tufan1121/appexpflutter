@@ -1,6 +1,6 @@
 import 'package:appexpflutter_update/features/historial/domain/entities/detalle_sesion_entity.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
+import 'package:sesion_ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';

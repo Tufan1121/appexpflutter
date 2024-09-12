@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:api_client/api_client.dart';
 import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
-import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/pedido_data_source.dart';
-import 'package:appexpflutter_update/features/ventas/data/models/cotiza_model.dart';
-import 'package:appexpflutter_update/features/ventas/data/models/pedido_model.dart';
-import 'package:appexpflutter_update/features/ventas/data/models/sesion_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:sesion_ventas/data/data_sources/pedido/pedido_data_source.dart';
+import 'package:sesion_ventas/data/models/cotiza_model.dart';
+import 'package:sesion_ventas/data/models/pedido_model.dart';
+import 'package:sesion_ventas/data/models/sesion_model.dart';
 
 class PedidoDataSourceImpl implements PedidoDataSource {
   final DioClient _dioClient;

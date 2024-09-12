@@ -1,11 +1,12 @@
-import 'package:appexpflutter_update/features/ventas/domain/entities/cotiza_entity.dart';
-import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_entity.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
-import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
-import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
+import 'package:sesion_ventas/domain/entities/pedido_entity.dart';
+import 'package:sesion_ventas/domain/entities/detalle_pedido_entity.dart';
+import 'package:sesion_ventas/domain/entities/cotiza_entity.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sesion_ventas/domain/usecases/pedido_usecase.dart';
 
 part 'cotiza_pedido_event.dart';
 part 'cotiza_pedido_state.dart';
@@ -42,11 +43,11 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
 
   Future<void> _pedidoAddDetalleEvent(
       PedidoAddDetalleEvent event, Emitter<CotizaPedidoState> emit) async {
-    List<Map<String, dynamic>> detallesData = event.products.map((producto) {
+    List<Map<String, dynamic>> detallesData = event.products.map((dynamic producto) {
       return {
         'id_cotiza': event.pedido.idCotiza,
-        'clave': producto.clave,
-        'clave2': producto.clave2,
+        'clave': producto?.clave,
+        'clave2': producto!.clave2,
         'cantidad': producto.cantidad,
         'precio': producto.precio,
       };

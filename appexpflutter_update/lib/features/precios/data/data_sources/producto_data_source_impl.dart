@@ -1,9 +1,9 @@
 import 'package:api_client/api_client.dart';
-import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
-import 'package:appexpflutter_update/features/precios/data/data_sources/producto_data_source.dart';
-import 'package:appexpflutter_update/features/precios/data/models/producto_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:precios/config/exceptions/not_found_expection.dart';
+import 'package:precios/data/data_sources/producto_data_source.dart';
+import 'package:precios/data/models/producto_model.dart';
 
 class ProductoDataSourceImpl implements ProductoDataSource {
   final DioClient _dioClient;

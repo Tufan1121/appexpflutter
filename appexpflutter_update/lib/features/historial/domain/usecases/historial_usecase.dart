@@ -3,8 +3,9 @@ import 'package:appexpflutter_update/features/historial/domain/entities/detalle_
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_cotiza_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_pedido_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_sesion_entity.dart';
+import 'package:appexpflutter_update/features/historial/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/respositories/historial_repository.dart';
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
+
 import 'package:fpdart/fpdart.dart';
 
 class HistorialUsecase {

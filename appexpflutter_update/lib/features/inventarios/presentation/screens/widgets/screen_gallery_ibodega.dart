@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/utils/utils.dart';
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:precios/domain/entities/producto_entity.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';

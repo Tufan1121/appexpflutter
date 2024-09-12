@@ -11,6 +11,10 @@ environment:
 dependencies:
   api_client:
     path: packages/api_client
+  precios:
+    path: packages/precios
+  sesion_ventas:
+    path: packages/sesion_ventas
   auto_size_text: ^3.0.0
   carousel_slider: ^4.2.1
   change_app_package_name: ^1.2.0

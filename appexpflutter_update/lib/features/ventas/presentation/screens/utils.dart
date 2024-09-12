@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
+import 'package:sesion_ventas/domain/entities/detalle_pedido_entity.dart';
 
 class UtilsVenta {
   static double total = 0;

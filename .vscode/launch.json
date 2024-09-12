@@ -1,0 +1,108 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "appexpflutter_update",
+            "cwd": "appexpflutter_update",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "appexpflutter_update (profile mode)",
+            "cwd": "appexpflutter_update",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "appexpflutter_update (release mode)",
+            "cwd": "appexpflutter_update",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "api_client",
+            "cwd": "appexpflutter_update/packages/api_client",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "api_client (profile mode)",
+            "cwd": "appexpflutter_update/packages/api_client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "api_client (release mode)",
+            "cwd": "appexpflutter_update/packages/api_client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "galeria",
+            "cwd": "appexpflutter_update/packages/galeria",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "galeria (profile mode)",
+            "cwd": "appexpflutter_update/packages/galeria",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "galeria (release mode)",
+            "cwd": "appexpflutter_update/packages/galeria",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "precios",
+            "cwd": "appexpflutter_update/packages/precios",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "precios (profile mode)",
+            "cwd": "appexpflutter_update/packages/precios",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "precios (release mode)",
+            "cwd": "appexpflutter_update/packages/precios",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "sesion_ventas",
+            "cwd": "appexpflutter_update/packages/sesion_ventas",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "sesion_ventas (profile mode)",
+            "cwd": "appexpflutter_update/packages/sesion_ventas",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "sesion_ventas (release mode)",
+            "cwd": "appexpflutter_update/packages/sesion_ventas",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

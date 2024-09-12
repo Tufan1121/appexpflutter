@@ -1,7 +1,6 @@
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'widgets/widgets.dart';
 
 class ClienteNuevoScreen extends StatelessWidget {

@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/historial/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/mixin_products.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
@@ -81,7 +82,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                                             state.selectedProducts
                                                 .map((producto) =>
                                                     convertToDetalleSesionEntity(
-                                                        producto))
+                                                        producto as ProductoEntity))
                                                 .toList(),
                                           ),
                                         );
@@ -376,7 +377,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                                           context.read<DetalleSesionBloc>().add(
                                                 AddProductEvent(
                                                     convertToDetalleSesionEntity(
-                                                        producto)),
+                                                        producto as ProductoEntity)),
                                               );
 
                                           _showModal(

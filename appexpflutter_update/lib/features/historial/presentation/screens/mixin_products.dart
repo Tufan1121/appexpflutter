@@ -1,5 +1,5 @@
 import 'package:appexpflutter_update/features/historial/domain/entities/detalle_sesion_entity.dart';
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
+import 'package:appexpflutter_update/features/historial/domain/entities/producto_entity.dart';
 
 mixin ProductoSesion {
   DetalleSesionEntity convertToDetalleSesionEntity(ProductoEntity producto) {

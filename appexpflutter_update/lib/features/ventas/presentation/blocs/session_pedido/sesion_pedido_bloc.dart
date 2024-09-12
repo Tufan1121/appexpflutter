@@ -1,9 +1,9 @@
-import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_entity.dart';
+import 'package:sesion_ventas/domain/entities/sesion_entity.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
-import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
-import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
+import 'package:sesion_ventas/domain/entities/detalle_pedido_entity.dart';
+import 'package:sesion_ventas/domain/usecases/pedido_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'sesion_pedido_event.dart';

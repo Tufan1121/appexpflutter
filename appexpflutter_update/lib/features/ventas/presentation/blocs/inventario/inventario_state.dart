@@ -2,7 +2,7 @@ part of 'inventario_bloc.dart';
 
 sealed class InventarioState extends Equatable {
   const InventarioState();
-  
+
   @override
   List<Object> get props => [];
 }
@@ -36,7 +36,7 @@ class MultiSelectState extends InventarioState {
 class InventarioError extends InventarioState {
   final String message;
 
-  const InventarioError({required this.message });
+  const InventarioError({required this.message});
 
   @override
   List<Object> get props => [message];
