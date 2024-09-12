@@ -159,13 +159,17 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                                     final selected = medidas.firstWhere(
                                         (medida) => medida.medida == newValue);
                                     form.control('mlargo1').value =
-                                        '${selected.largo - selected.cm}';
+                                        (selected.largo - selected.cm)
+                                            .toStringAsFixed(2);
                                     form.control('mlargo2').value =
-                                        '${selected.largo + selected.cm}';
+                                        (selected.largo + selected.cm)
+                                            .toStringAsFixed(2);
                                     form.control('mancho1').value =
-                                        '${selected.ancho - selected.cm}';
+                                        (selected.ancho - selected.cm)
+                                            .toStringAsFixed(2);
                                     form.control('mancho2').value =
-                                        '${selected.ancho + selected.cm}';
+                                        (selected.ancho + selected.cm)
+                                            .toStringAsFixed(2);
                                   });
                                 },
                               ),
