@@ -15,6 +15,13 @@ dependencies:
     path: packages/precios
   sesion_ventas:
     path: packages/sesion_ventas
+  galeria:
+    path: packages/galeria
+  inventarios:
+    path: packages/inventarios
+  login:
+    path: packages/login
+    
   auto_size_text: ^3.0.0
   carousel_slider: ^4.2.1
   change_app_package_name: ^1.2.0

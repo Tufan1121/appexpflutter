@@ -1,7 +1,7 @@
-import 'package:appexpflutter_update/features/inventarios/domain/entities/medidas_entity_inv.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/usecases/inventario_expo_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventarios/domain/entities/medidas_entity_inv.dart';
+import 'package:inventarios/domain/usecases/inventario_expo_usecase.dart';
 
 part 'medidas_state.dart';
 

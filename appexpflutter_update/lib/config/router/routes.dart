@@ -1,7 +1,7 @@
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_screen.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/historial_screen.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/pedido_sesion_screen.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
+import 'package:inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_bodega_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_expo_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_global_screen.dart';

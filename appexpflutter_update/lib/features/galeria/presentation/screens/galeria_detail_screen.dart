@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/utils/utils.dart';
-import 'package:appexpflutter_update/features/galeria/domain/entities/producto_inv_entity.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:galeria/domain/entities/producto_inv_entity.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:photo_view/photo_view.dart';
@@ -14,7 +16,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:collection/collection.dart';
 
 class GaleriaDetailScreen extends StatefulWidget {
   final String? userName;
@@ -757,7 +758,7 @@ class MedidasDataSource extends DataGridSource {
         return Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(8.0),
-          child: Text(dataGridCell.value.toString()),
+          child: AutoSizeText(dataGridCell.value.toString(), maxLines: 1),
         );
       }).toList(),
     );

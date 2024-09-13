@@ -1,8 +1,8 @@
-import 'package:appexpflutter_update/features/galeria/domain/entities/producto_con_medidas.dart';
-import 'package:appexpflutter_update/features/galeria/domain/entities/producto_entity.dart';
-import 'package:appexpflutter_update/features/galeria/domain/usecase/galeria_usecases.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:galeria/domain/entities/producto_con_medidas.dart';
+import 'package:galeria/domain/entities/producto_entity.dart';
+import 'package:galeria/domain/usecase/galeria_usecases.dart';
 
 part 'detalle_galeria_event.dart';
 part 'detalle_galeria_state.dart';

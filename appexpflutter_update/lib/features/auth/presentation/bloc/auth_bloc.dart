@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:appexpflutter_update/features/auth/domain/usecases/auth_usecase.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:login/domain/usecases/auth_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_event.dart';

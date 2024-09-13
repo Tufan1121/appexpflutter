@@ -1,8 +1,8 @@
-import 'package:appexpflutter_update/features/galeria/domain/entities/producto_con_existencias.dart';
-import 'package:appexpflutter_update/features/galeria/domain/entities/producto_entity.dart';
-import 'package:appexpflutter_update/features/galeria/domain/usecase/galeria_usecases.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:galeria/domain/entities/producto_con_existencias.dart';
+import 'package:galeria/domain/entities/producto_entity.dart';
+import 'package:galeria/domain/usecase/galeria_usecases.dart';
 
 part 'detalle_producto_event.dart';
 part 'detalle_producto_state.dart';

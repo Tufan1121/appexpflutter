@@ -476,6 +476,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  galeria:
+    dependency: "direct main"
+    description:
+      path: "packages/galeria"
+      relative: true
+    source: path
+    version: "0.0.1"
   get_it:
     dependency: "direct main"
     description:
@@ -564,6 +571,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.19.0"
+  inventarios:
+    dependency: "direct main"
+    description:
+      path: "packages/inventarios"
+      relative: true
+    source: path
+    version: "0.0.1"
   io:
     dependency: transitive
     description:
@@ -628,6 +642,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  login:
+    dependency: "direct main"
+    description:
+      path: "packages/login"
+      relative: true
+    source: path
+    version: "0.0.1"
   matcher:
     dependency: transitive
     description:

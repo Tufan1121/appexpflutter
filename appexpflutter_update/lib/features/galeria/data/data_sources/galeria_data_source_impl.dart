@@ -1,12 +1,13 @@
-import 'package:appexpflutter_update/features/galeria/data/model/tabla_precio_model.dart';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:api_client/api_client.dart';
-import 'package:appexpflutter_update/features/galeria/data/data_sources/galeria_data_source.dart';
-import 'package:appexpflutter_update/features/galeria/data/model/galeria_model.dart';
-import 'package:appexpflutter_update/features/galeria/data/model/medidas_model.dart';
-import 'package:appexpflutter_update/features/galeria/data/model/producto_inv_model.dart';
-import 'package:appexpflutter_update/features/galeria/data/model/producto_model.dart';
+import 'package:galeria/data/data_sources/galeria_data_source.dart';
+import 'package:galeria/data/model/galeria_model.dart';
+import 'package:galeria/data/model/medidas_model.dart';
+import 'package:galeria/data/model/producto_inv_model.dart';
+import 'package:galeria/data/model/producto_model.dart';
+import 'package:galeria/data/model/tabla_precio_model.dart';
 
 class GaleriaDataSourceImpl implements GaleriaDataSource {
   final DioClient _dioClient;

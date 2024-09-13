@@ -1,7 +1,7 @@
-import 'package:appexpflutter_update/features/galeria/domain/entities/galeria_entity.dart';
-import 'package:appexpflutter_update/features/galeria/domain/usecase/galeria_usecases.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:galeria/domain/entities/galeria_entity.dart';
+import 'package:galeria/domain/usecase/galeria_usecases.dart';
 
 part 'galeria_event.dart';
 part 'galeria_state.dart';

@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:appexpflutter_update/config/utils/utils.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';

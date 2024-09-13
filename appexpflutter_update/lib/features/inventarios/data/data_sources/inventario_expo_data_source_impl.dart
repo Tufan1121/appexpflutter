@@ -1,9 +1,9 @@
 import 'package:api_client/api_client.dart';
-import 'package:appexpflutter_update/features/inventarios/data/data_sources/inventario_expo_data_source.dart';
-import 'package:appexpflutter_update/features/inventarios/data/models/medidas_model.dart';
-import 'package:appexpflutter_update/features/inventarios/data/models/producto_expo_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:inventarios/data/data_sources/inventario_expo_data_source.dart';
+import 'package:inventarios/data/models/medidas_model.dart';
+import 'package:inventarios/data/models/producto_expo_model.dart';
 
 class InventarioExpoDataSourceImpl implements InventarioExpoDataSource {
   final DioClient _dioClient;

@@ -1,7 +1,8 @@
-import 'package:appexpflutter_update/features/auth/data/models/auth_user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:api_client/api_client.dart';
-import 'package:appexpflutter_update/features/auth/data/data_sources/auth_data_source.dart';
+import 'package:login/data/data_sources/auth_data_source.dart';
+import 'package:login/data/models/auth_user_model.dart';
+
 
 class AuthDataSourceImpl implements AuthDatasource {
   final DioClient _dioClient;

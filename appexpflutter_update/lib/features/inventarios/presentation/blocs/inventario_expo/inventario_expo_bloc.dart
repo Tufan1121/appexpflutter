@@ -1,7 +1,7 @@
-import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/usecases/inventario_expo_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:inventarios/domain/entities/producto_expo_entity.dart';
+import 'package:inventarios/domain/usecases/inventario_expo_usecase.dart';
 
 part 'inventario_expo_event.dart';
 part 'inventario_expo_state.dart';

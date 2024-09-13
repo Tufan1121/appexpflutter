@@ -1,6 +1,5 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
@@ -11,6 +10,7 @@ import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_fi
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class BusquedaGlobalScreen extends StatefulWidget {

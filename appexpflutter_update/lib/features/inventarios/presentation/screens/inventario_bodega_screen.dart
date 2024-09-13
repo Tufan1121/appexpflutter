@@ -1,6 +1,5 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
@@ -11,6 +10,7 @@ import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_fi
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class InventarioBodegaScreen extends StatefulWidget {
@@ -93,7 +93,7 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                               medidas.addAll(state.medidas);
                             } else if (state is MedidasError) {
                               medidas.clear();
-                              medidas.add(MedidasEntityInv(
+                              medidas.add(const MedidasEntityInv(
                                   medida: 'Error al cargar medidas',
                                   largo: 0,
                                   cm: 0,
