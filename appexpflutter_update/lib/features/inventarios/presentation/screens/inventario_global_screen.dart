@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/inventarios/domain/entities/medidas_entity_inv.dart';
@@ -137,9 +138,14 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide:
-                                        const BorderSide(color: Colors.blue),
+                                    borderSide: const BorderSide(
+                                        color: Colores.secondaryColor,
+                                        width: 2.0),
                                   ),
+                                  floatingLabelStyle: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 items: uniqueMedidas.map((medida) {
                                   return DropdownMenuItem<String>(
