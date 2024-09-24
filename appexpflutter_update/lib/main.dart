@@ -26,6 +26,8 @@ import 'package:appexpflutter_update/features/inventarios/presentation/blocs/bus
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/reportes/data/data_sources/sales_datasource.dart';
 import 'package:appexpflutter_update/features/reportes/data/data_sources/sales_datasource_imp.dart';
 import 'package:appexpflutter_update/features/reportes/data/repositories/sales_repository_imp.dart';

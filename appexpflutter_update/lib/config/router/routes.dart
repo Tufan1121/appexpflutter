@@ -8,6 +8,9 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/i
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery2.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery_ibodega.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/screens/historial_punto_screen.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/screens/punto_venta_screen.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/screens/tickets_screen.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/screen/auth_reportes_screen.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/screen/reportes_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
@@ -351,4 +354,37 @@ class GaleriaRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const GaleriaScreen();
+}
+
+@TypedGoRoute<PuntoVentaRoute>(
+  path: PuntoVentaRoute.path,
+)
+class PuntoVentaRoute extends GoRouteData {
+  static const path = '/punto_venta_global';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const PuntoVentaScreen();
+}
+
+@TypedGoRoute<TicketsRoute>(
+  path: TicketsRoute.path,
+)
+class TicketsRoute extends GoRouteData {
+  static const path = '/tickets';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const TicketsScreen();
+}
+
+@TypedGoRoute<PuntoVentaHistoryRoute>(
+  path: PuntoVentaHistoryRoute.path,
+)
+class PuntoVentaHistoryRoute extends GoRouteData {
+  static const path = '/historial_punto_venta';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const PuntoVentaHistoryScreen();
 }

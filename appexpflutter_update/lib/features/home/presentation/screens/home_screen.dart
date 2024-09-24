@@ -171,9 +171,10 @@ class HomeScreen extends StatelessWidget {
                         GaleriaRoute().push(context);
                       },
                     ),
-                    const CardItem(
+                    CardItem(
                       icon: Icons.point_of_sale_sharp,
                       label: 'Punto de Venta',
+                      onTap: () => PuntoVentaRoute().push(context),
                     ),
                   ],
                 ),
