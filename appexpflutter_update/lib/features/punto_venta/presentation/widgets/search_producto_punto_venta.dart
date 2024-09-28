@@ -57,7 +57,7 @@ class PuntoVentaProductSearch extends HookWidget {
                       .add(GetQRProductEvent(clave: scanResult.value));
 
                   Navigator.of(context)
-                      .popUntil(ModalRoute.withName('/pedido'));
+                      .popUntil(ModalRoute.withName('/tickets'));
                 },
               ),
             ),
@@ -161,11 +161,11 @@ class PuntoVentaProductSearch extends HookWidget {
                                         // 'id_metodopago3': metodo3.toString(),
                                       };
 
-                                      context.read<SesionPedidoBloc>().add(
+                                      /*    context.read<SesionPedidoBloc>().add(
                                           PedidoAddSesionEvent(
                                               data: data,
                                               products: UtilsVenta
-                                                  .listProductsOrder));
+                                                  .listProductsOrder)); */
                                     },
                               // onTap: () => SesionPedidoRoute(
                               //         idCliente: idCliente,
@@ -249,11 +249,11 @@ class PuntoVentaProductSearch extends HookWidget {
                                           // 'id_metodopago3': metodo3.toString(),
                                         };
 
-                                        context.read<CotizaPedidoBloc>().add(
+                                        /*     context.read<CotizaPedidoBloc>().add(
                                             PedidoAddEvent(
                                                 data: data,
                                                 products: UtilsVenta
-                                                    .listProductsOrder));
+                                                    .listProductsOrder)); */
                                       }
 
                                 // onTap: () => CotizaPedidoRoute(

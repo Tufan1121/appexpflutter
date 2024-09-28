@@ -2,7 +2,6 @@ import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
-import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
@@ -55,8 +54,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<PreciosBloc>(create: (_) => injector<PreciosBloc>()),
         BlocProvider<ProductosBloc>(create: (_) => injector<ProductosBloc>()),
         BlocProvider<ClienteBloc>(create: (_) => injector<ClienteBloc>()),
-        BlocProvider<ClienteVentaBloc>(
-            create: (_) => injector<ClienteVentaBloc>()),
         BlocProvider<PedidoBloc>(create: (_) => injector<PedidoBloc>()),
         BlocProvider<PedidoVentaBloc>(
             create: (_) => injector<PedidoVentaBloc>()),

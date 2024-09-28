@@ -5,7 +5,6 @@ import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
-import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
@@ -302,28 +301,25 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
 
                                 ScaffoldMessenger.of(context)
                                     .removeCurrentSnackBar();
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text(state.message),
-                                  backgroundColor: Colors.green,
-                                ));
+                                // ScaffoldMessenger.of(context)
+                                //     .showSnackBar(SnackBar(
+                                //   content: Text(state.message),
+                                //   backgroundColor: Colors.green,
+                                // ));
 
                                 // Aquí  la URL donde está ubicado el PDF
                                 // String pdfUrl =
                                 //     'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
                                 // // _openPDF(pdfUrl);
 
-                                // _showDownloadModal(
-                                //     context,
-                                //     pdfUrl,
-                                //     state.pedido.pedidos,
-                                //     state.username,
-                                //     sendToWhatsApp);
+                                _showDownloadModal(
+                                  context,
+                                  state.pedido.pedidos,
+                                  state.pedido.pedidos,
+                                  state.username,
+                                );
 
-                                //  form.reset();
-                                context
-                                    .read<ClienteVentaBloc>()
-                                    .add(ClearClienteStateEvent());
+                                //  form.reset();;
                                 context
                                     .read<ProductosTiendaBloc>()
                                     .add(ClearProductoStateEvent());
@@ -582,7 +578,6 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
               ),
               onPressed: () {
                 FocusScope.of(context).unfocus();
-                context.read<ClienteVentaBloc>().add(ClearClienteStateEvent());
                 context
                     .read<ProductosTiendaBloc>()
                     .add(ClearProductoStateEvent());
@@ -602,12 +597,11 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
 
   void _showDownloadModal(
       BuildContext context,
-      String pdfUrl,
-      String nombrePdf,
+      String pedido,
       String userName,
-      Function(String url, String clientPhoneNumber, String userName,
-              String fileName)
-          sendToWhatsApp) {
+      // Function(String url, String clientPhoneNumber, String userName,
+      //         String fileName)
+      sendToWhatsApp) {
     // final getpdf = Getpdf(context: context);
     showDialog(
       context: context,
@@ -619,7 +613,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
             children: [
               const Text('PEDIDO: ', style: TextStyle(fontSize: 15)),
               Text(
-                nombrePdf,
+                pedido,
                 style:
                     const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
@@ -642,8 +636,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                   // getpdf.downloadPDF(pdfUrl, nombrePdf);
                   // opcion 2
                   // _openPDF(pdfUrl);
-                  sendToWhatsApp(pdfUrl, widget.dataCliente['telefono'],
-                      userName, nombrePdf);
+                  // sendToWhatsApp(pdfUrl, widget.dataCliente['telefono'],
+                  //     userName, nombrePdf);
                   form.control('metodoDePago1').reset();
                   form.control('metodoDePago2').reset();
                   form.control('metodoDePago3').reset();

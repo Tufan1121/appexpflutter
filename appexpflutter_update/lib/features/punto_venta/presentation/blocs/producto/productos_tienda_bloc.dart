@@ -43,15 +43,39 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
   Future<void> _getQRProductEvent(
       GetQRProductEvent event, Emitter<ProductosState> emit) async {
     emit(ProductoLoading());
+    late bool? existencia;
 
     final result =
         await productoUsecase.getProductoExpo({'producto': event.clave});
     result.fold(
-      (failure) => emit(
-          ProductoError(productos: scannedProducts, message: failure.message)),
+      (failure) {
+        if (scannedProducts.any((p) => event.clave == p.producto1.trim())) {
+          existencia = false;
+          emit(ProductoError(
+              productos: scannedProducts,
+              message: "No existe o no está disponible",
+              existencia: existencia));
+          scannedProducts.remove(scannedProducts
+              .firstWhere((p) => event.clave == p.producto1.trim()));
+          return;
+        } else {
+          existencia = false;
+          emit(ProductoError(
+              productos: scannedProducts,
+              message: failure.message,
+              existencia: existencia));
+          return;
+        }
+      },
       (producto) {
-        if (!scannedProducts.any((p) => p.producto1 == producto.producto1)) {
-          scannedProducts.add(producto);
+        if (scannedProducts
+            .any((p) => p.producto1.trim() == producto.producto1.trim())) {
+          existencia = true;
+        } else {
+          if (!scannedProducts.any((p) => p.producto1 == producto.producto1)) {
+            scannedProducts.add(producto);
+            existencia = true;
+          }
         }
         emit(ProductosLoaded(productos: List.from(scannedProducts)));
       },

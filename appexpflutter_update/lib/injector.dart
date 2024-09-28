@@ -16,10 +16,10 @@ Future<void> init() async {
         () => ClienteDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<PedidoDataSource>(
         () => PedidoDataSourceImpl(dioClient: injector()))
-    ..registerLazySingleton<PedidoDataVentaSource>(() =>
-        PedidoDataVentaSourceImpl(dioClient: injector()))
-    ..registerLazySingleton<InventarioExpoVentaDataSource>(() =>
-        InventarioExpoVentaDataSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<PedidoDataVentaSource>(
+        () => PedidoDataVentaSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<InventarioExpoVentaDataSource>(
+        () => InventarioExpoVentaDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<InventarioExpoDataSource>(
         () => InventarioExpoDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<HistorialDataSource>(
@@ -38,8 +38,8 @@ Future<void> init() async {
         () => ClienteRepositoryImpl(clienteDataSource: injector()))
     ..registerLazySingleton<PedidoRepository>(
         () => PedidoRepositoryImpl(pedidoDataSource: injector()))
-    ..registerLazySingleton<PedidoVentaRepository>(() =>
-        PedidoVentaRepositoryImpl(pedidoDataSource: injector()))
+    ..registerLazySingleton<PedidoVentaRepository>(
+        () => PedidoVentaRepositoryImpl(pedidoDataSource: injector()))
     ..registerLazySingleton<InventarioExpoVentaRepository>(() =>
         InventarioExpoVentaRepositoryImpl(inventarioExpoDataSource: injector()))
     ..registerLazySingleton<InventarioExpoRepository>(() =>
@@ -58,6 +58,8 @@ Future<void> init() async {
         () => ProductoUsecase(productoRepository: injector()))
     ..registerLazySingleton<ClienteUsecase>(
         () => ClienteUsecase(clienteRepository: injector()))
+    ..registerLazySingleton<ClienteVentaUsecase>(
+        () => ClienteVentaUsecase(clienteRepository: injector()))
     ..registerLazySingleton<PedidoUsecase>(
         () => PedidoUsecase(pedidoRepository: injector()))
     ..registerLazySingleton<PedidoVentaUsecase>(
@@ -85,8 +87,6 @@ Future<void> init() async {
         () => ProductosBloc(productoUsecase: injector()))
     ..registerLazySingleton<ClienteBloc>(
         () => ClienteBloc(clienteUsecase: injector()))
-    ..registerLazySingleton<ClienteVentaBloc>(
-        () => ClienteVentaBloc(clienteUsecase: injector()))
     ..registerLazySingleton<InventarioBloc>(
         () => InventarioBloc(productoUsecase: injector()))
     ..registerLazySingleton<InventarioTiendaBloc>(

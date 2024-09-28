@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/usecases/pedido_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'pedido_event.dart';
 part 'pedido_state.dart';
@@ -32,22 +33,28 @@ class PedidoVentaBloc extends Bloc<PedidoEvent, PedidoState> {
 
   Future<void> _pedidoAddDetalleEvent(
       PedidoAddDetalleEvent event, Emitter<PedidoState> emit) async {
-    List<Map<String, dynamic>> detallesData = event.products.map((producto) {
-      return {
+    final prefs = await SharedPreferences.getInstance();
+    List<Map<String, dynamic>> detallesData = [];
+    for (int i = 0; i < event.products.length; i++) {
+      final producto = event.products[i];
+      detallesData.add({
         'id_pedido': event.pedido.idPedido,
         'clave': producto.clave,
         'clave2': producto.clave2,
         'cantidad': producto.cantidad,
         'precio': producto.precio,
-        'cerrado': 1,
-      };
-    }).toList();
+        'cerrado': i == event.products.length - 1 ? 1 : 0,
+      });
+    }
 
     final result = await pedidoUsecase.addDetallePedido(detallesData);
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (success) {
-        add(PedidoAddIdPedidoEvent(pedido: event.pedido));
+        emit(PedidoDetalleLoaded(
+            username: prefs.getString('username') ?? '',
+            pedido: event.pedido,
+            message: success));
       },
     );
   }

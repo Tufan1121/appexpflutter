@@ -34,9 +34,9 @@ import 'package:appexpflutter_update/features/punto_venta/data/repositories/inve
 import 'package:appexpflutter_update/features/punto_venta/data/repositories/pedido_repository_impl.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/repositories/inventario_expo_repository.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/repositories/pedido_repository.dart';
+import 'package:appexpflutter_update/features/punto_venta/domain/usecases/cliente_usecase.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/usecases/inventario_expo_usecase.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/usecases/pedido_usecase.dart';
-import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';

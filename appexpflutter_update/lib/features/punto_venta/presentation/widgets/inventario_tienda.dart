@@ -63,8 +63,8 @@ class _InventarioTiendaState extends State<InventarioTienda>
       builder: (BuildContext context) {
         return AlertDialog(
           icon: icon,
-          title: AutoSizeText(title),
-          content: AutoSizeText(
+          title: Text(title),
+          content: Text(
             menssage,
             style: const TextStyle(fontSize: 15),
           ),
@@ -575,7 +575,7 @@ class _InventarioTiendaState extends State<InventarioTienda>
                                           size: 100,
                                         ),
                                         const SizedBox(height: 20),
-                                        Text(
+                                        AutoSizeText(
                                           state.message,
                                           style: const TextStyle(fontSize: 18),
                                           textAlign: TextAlign.center,
