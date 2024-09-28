@@ -61,7 +61,7 @@ class PuntoVentaScreen extends HookWidget {
                 CardItem(
                   icon: Icons.point_of_sale_sharp,
                   label: 'TICKETS',
-                  onTap: () => TicketsRoute().push(context),
+                  onTap: () => ClienteNuevoVentaRoute().push(context),
                 ),
                 CardItem(
                   icon: Icons.history_rounded,

@@ -7,32 +7,32 @@ class ProductoExpoEntity extends Equatable {
   final String diseno;
   final String medidas;
   final int hm;
-  final double largo;
-  final double ancho;
+  final double? largo;
+  final double? ancho;
   final double? precio;
-  final String fulldescrip;
-  final String almacen;
+  final String? fulldescrip;
+  final String? almacen;
   final String? compos;
   final String? origen;
   final String? rojo;
   final String observac;
   final DateTime? hobserva;
-  final String pathima1;
-  final String pathima2;
-  final String pathima3;
-  final String pathima4;
-  final String pathima5;
-  final String pathima6;
-  final String video1;
+  final String? pathima1;
+  final String? pathima2;
+  final String? pathima3;
+  final String? pathima4;
+  final String? pathima5;
+  final String? pathima6;
+  final String? video1;
   final String color1;
   final String color2;
-  final String color3;
-  final String lava1;
-  final String lava2;
+  final String? color3;
+  final String? lava1;
+  final String? lava2;
   final int precio1;
-  final int precio2;
-  final int precio3;
-  final String desalmacen;
+  final int? precio2;
+  final int? precio3;
+  final String? desalmacen;
 
   const ProductoExpoEntity({
     required this.producto,
@@ -41,32 +41,32 @@ class ProductoExpoEntity extends Equatable {
     required this.diseno,
     required this.medidas,
     required this.hm,
-    required this.largo,
-    required this.ancho,
+    this.largo,
+    this.ancho,
     this.precio,
-    required this.fulldescrip,
-    required this.almacen,
+    this.fulldescrip,
+    this.almacen,
     this.compos,
     this.origen,
     this.rojo,
     required this.observac,
     this.hobserva,
-    required this.pathima1,
-    required this.pathima2,
-    required this.pathima3,
-    required this.pathima4,
-    required this.pathima5,
-    required this.pathima6,
-    required this.video1,
+    this.pathima1,
+    this.pathima2,
+    this.pathima3,
+    this.pathima4,
+    this.pathima5,
+    this.pathima6,
+    this.video1,
     required this.color1,
     required this.color2,
-    required this.color3,
-    required this.lava1,
-    required this.lava2,
+    this.color3,
+    this.lava1,
+    this.lava2,
     required this.precio1,
-    required this.precio2,
-    required this.precio3,
-    required this.desalmacen,
+    this.precio2,
+    this.precio3,
+    this.desalmacen,
   });
 
   ProductoExpoEntity copyWith({

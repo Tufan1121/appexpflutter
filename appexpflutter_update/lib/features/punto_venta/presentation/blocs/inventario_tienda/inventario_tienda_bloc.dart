@@ -1,5 +1,5 @@
-import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/usecases/inventario_expo_usecase.dart';
+import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
+import 'package:appexpflutter_update/features/punto_venta/domain/usecases/inventario_expo_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -8,7 +8,7 @@ part 'inventario_tienda_state.dart';
 
 class InventarioTiendaBloc
     extends Bloc<InventarioTiendaEvent, InventarioTiendaState> {
-  final InventarioExpoUsecase productoUsecase;
+  final InventarioExpoVentaUsecase productoUsecase;
   InventarioTiendaBloc({required this.productoUsecase})
       : super(InventarioTiendaInitial()) {
     on<StartMultiSelectEvent>(_startMultiSelectEvent);
@@ -16,13 +16,13 @@ class InventarioTiendaBloc
     on<GetInventarioProductEvent>(_getIbodegaProductEvent);
     on<ClearInventarioProductoEvent>(
         (event, emit) => _clearProductsIBodegaState(emit));
-  } 
+  }
 
-  Future<void> _getIbodegaProductEvent(
-      GetInventarioProductEvent event, Emitter<InventarioTiendaState> emit) async {
+  Future<void> _getIbodegaProductEvent(GetInventarioProductEvent event,
+      Emitter<InventarioTiendaState> emit) async {
     emit(InventarioLoading());
 
-    final result = await productoUsecase.getProductoExpo(event.data);
+    final result = await productoUsecase.getProductosExpo(event.data);
     result.fold(
       (failure) => emit(InventarioError(message: failure.message)),
       (producto) {
@@ -41,8 +41,8 @@ class InventarioTiendaBloc
     }
   }
 
-  Future<void> _toggleProductSelectionEvent(
-      ToggleProductSelectionEvent event, Emitter<InventarioTiendaState> emit) async {
+  Future<void> _toggleProductSelectionEvent(ToggleProductSelectionEvent event,
+      Emitter<InventarioTiendaState> emit) async {
     if (state is InventarioProductosLoaded) {
       final currentState = state as InventarioProductosLoaded;
       final selectedProducts =

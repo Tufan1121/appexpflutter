@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
+import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/search_producto_punto_venta.dart';
@@ -35,6 +36,21 @@ class _PedidoScreenState extends State<TicketsScreen> {
     return list.indexOf(metodo) + 1;
   }
 
+  bool validarProductos(
+      List<ProductoExpoEntity> productos, BuildContext context) {
+    for (var producto in productos) {
+      // Aquí puedes agregar las condiciones de validación para cada producto
+      if (producto.producto1.isEmpty) {
+        return false;
+      }
+      // Anexar la clave al evento GetProductEvent
+      context
+          .read<ProductosTiendaBloc>()
+          .add(GetProductEvent(clave: producto.producto1));
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = useTextEditingController();
@@ -69,10 +85,28 @@ class _PedidoScreenState extends State<TicketsScreen> {
       floatingActionButton: ElevatedButton(
         onPressed: () {
           if (productos.isNotEmpty) {
-            GenerarPedidoVentaRoute(
-                    estadoPedido: getEstadoPedidoPagoId(dropdownValue.value),
-                    $extra: widget.data)
-                .push(context);
+            if (validarProductos(productos, context)) {
+              GenerarPedidoVentaRoute(
+                      estadoPedido: getEstadoPedidoPagoId(dropdownValue.value),
+                      $extra: widget.data)
+                  .push(context);
+            } else {
+              _showModal(
+                context: context,
+                icon: const Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.circleXmark,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                ),
+                title: 'Error',
+                menssage: 'Uno o más productos no son válidos.',
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              );
+            }
           } else {
             showDialog(
               context: context,

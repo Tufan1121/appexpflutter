@@ -8,7 +8,9 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/i
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery2.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/screen_gallery_ibodega.dart';
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
-import 'package:appexpflutter_update/features/punto_venta/presentation/screens/historial_punto_screen.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/screens/cliente_nuevo_screen.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/screens/generar_pedido_venta_screen.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/screens/consulta_punto_screen.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/screens/punto_venta_screen.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/screens/tickets_screen.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/screen/auth_reportes_screen.dart';
@@ -140,6 +142,17 @@ class ClienteNuevoRoute extends GoRouteData {
       const ClienteNuevoScreen();
 }
 
+@TypedGoRoute<ClienteNuevoVentaRoute>(
+  path: ClienteNuevoVentaRoute.path,
+)
+class ClienteNuevoVentaRoute extends GoRouteData {
+  static const path = '/cliente_nuevo_venta';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ClienteNuevoVentaScreen();
+}
+
 @TypedGoRoute<ClienteExistenteRoute>(
   path: ClienteExistenteRoute.path,
 )
@@ -224,6 +237,33 @@ class GenerarPedidoRoute extends GoRouteData {
         estadoPedido: estadoPedido,
         idSesion: idSesion,
         telefonoCliente: telefonoCliente,
+      );
+}
+
+@TypedGoRoute<GenerarPedidoVentaRoute>(
+  path: GenerarPedidoVentaRoute.path,
+)
+class GenerarPedidoVentaRoute extends GoRouteData {
+  static const path = '/generar_pedido_venta';
+  // final int idCliente;
+  final int estadoPedido;
+  final int? idSesion;
+ final Map<String, dynamic> $extra;
+
+  GenerarPedidoVentaRoute({
+    // required this.idCliente,
+    required this.estadoPedido,
+    this.idSesion,
+    required this.$extra,
+  });
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      GenerarPedidoVentaScreen(
+        // idCliente: idCliente,
+        estadoPedido: estadoPedido,
+        idSesion: idSesion,
+        dataCliente: $extra,
       );
 }
 
@@ -372,10 +412,13 @@ class PuntoVentaRoute extends GoRouteData {
 )
 class TicketsRoute extends GoRouteData {
   static const path = '/tickets';
+  final Map<String, dynamic> $extra ;
+
+  TicketsRoute({required this.$extra});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const TicketsScreen();
+      TicketsScreen(data: $extra);
 }
 
 @TypedGoRoute<PuntoVentaHistoryRoute>(
@@ -386,5 +429,5 @@ class PuntoVentaHistoryRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const PuntoVentaHistoryScreen();
+      const PuntoVentaConsultaScreen();
 }

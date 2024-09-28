@@ -14,10 +14,12 @@ List<RouteBase> get $appRoutes => [
       $photoGalleryIBodegasRoute,
       $photoGalleryRoute2,
       $clienteNuevoRoute,
+      $clienteNuevoVentaRoute,
       $clienteExistenteRoute,
       $pedidoRoute,
       $pedidoSesionRoute,
       $generarPedidoRoute,
+      $generarPedidoVentaRoute,
       $sesionPedidoRoute,
       $cotizaPedidoRoute,
       $invetarioExpoRoute,
@@ -232,6 +234,29 @@ extension $ClienteNuevoRouteExtension on ClienteNuevoRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
+RouteBase get $clienteNuevoVentaRoute => GoRouteData.$route(
+      path: '/cliente_nuevo_venta',
+      factory: $ClienteNuevoVentaRouteExtension._fromState,
+    );
+
+extension $ClienteNuevoVentaRouteExtension on ClienteNuevoVentaRoute {
+  static ClienteNuevoVentaRoute _fromState(GoRouterState state) =>
+      ClienteNuevoVentaRoute();
+
+  String get location => GoRouteData.$location(
+        '/cliente_nuevo_venta',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
 RouteBase get $clienteExistenteRoute => GoRouteData.$route(
       path: '/cliente_existente',
       factory: $ClienteExistenteRouteExtension._fromState,
@@ -363,6 +388,40 @@ T? _$convertMapValue<T>(
 ) {
   final value = map[key];
   return value == null ? null : converter(value);
+}
+
+RouteBase get $generarPedidoVentaRoute => GoRouteData.$route(
+      path: '/generar_pedido_venta',
+      factory: $GenerarPedidoVentaRouteExtension._fromState,
+    );
+
+extension $GenerarPedidoVentaRouteExtension on GenerarPedidoVentaRoute {
+  static GenerarPedidoVentaRoute _fromState(GoRouterState state) =>
+      GenerarPedidoVentaRoute(
+        estadoPedido: int.parse(state.uri.queryParameters['estado-pedido']!),
+        idSesion: _$convertMapValue(
+            'id-sesion', state.uri.queryParameters, int.parse),
+        $extra: state.extra as Map<String, dynamic>,
+      );
+
+  String get location => GoRouteData.$location(
+        '/generar_pedido_venta',
+        queryParams: {
+          'estado-pedido': estadoPedido.toString(),
+          if (idSesion != null) 'id-sesion': idSesion!.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $sesionPedidoRoute => GoRouteData.$route(
@@ -610,20 +669,24 @@ RouteBase get $ticketsRoute => GoRouteData.$route(
     );
 
 extension $TicketsRouteExtension on TicketsRoute {
-  static TicketsRoute _fromState(GoRouterState state) => TicketsRoute();
+  static TicketsRoute _fromState(GoRouterState state) => TicketsRoute(
+        $extra: state.extra as Map<String, dynamic>,
+      );
 
   String get location => GoRouteData.$location(
         '/tickets',
       );
 
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: $extra);
 
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: $extra);
 
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $puntoVentaHistoryRoute => GoRouteData.$route(

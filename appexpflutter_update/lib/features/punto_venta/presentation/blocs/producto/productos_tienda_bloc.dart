@@ -1,26 +1,24 @@
 // productos_bloc.dart
 
-import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/usecases/inventario_expo_usecase.dart';
+import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
+import 'package:appexpflutter_update/features/punto_venta/domain/usecases/inventario_expo_usecase.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 
 part 'productos_event.dart';
 part 'productos_state.dart';
 
 class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
-  final InventarioExpoUsecase productoUsecase;
+  final InventarioExpoVentaUsecase productoUsecase;
   List<ProductoExpoEntity> scannedProducts = [];
 
   ProductosTiendaBloc({required this.productoUsecase})
       : super(ProductoInitial()) {
-    /*
     on<GetQRProductEvent>(_getQRProductEvent);
     on<GetProductEvent>(_getProductEvent
         // transformer: debounce(const Duration(milliseconds: 500)),
-        ); */
+        );
     on<AddSelectedProductsToScannedEvent>(_addSelectedProductsToScannedEvent);
     on<RemoveProductEvent>(_removeProductEvent);
     on<ClearProductoStateEvent>((event, emit) => _clearProductsState(emit));
@@ -41,12 +39,13 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
     // }
     emit(ProductosLoaded(productos: List.from(scannedProducts)));
   }
-/*
+
   Future<void> _getQRProductEvent(
       GetQRProductEvent event, Emitter<ProductosState> emit) async {
     emit(ProductoLoading());
 
-    final result = await productoUsecase.getProductoExpo({event.clave});
+    final result =
+        await productoUsecase.getProductoExpo({'producto': event.clave});
     result.fold(
       (failure) => emit(
           ProductoError(productos: scannedProducts, message: failure.message)),
@@ -58,23 +57,49 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
       },
     );
   }
-*/
 
-/*
   Future<void> _getProductEvent(
       GetProductEvent event, Emitter<ProductosState> emit) async {
     emit(ProductoLoading());
+    late bool? existencia;
 
-    final result = await productoUsecase.getProductoExpo();
+    final result =
+        await productoUsecase.getProductoExpo({'producto': event.clave});
     result.fold(
-      (failure) => emit(
-          ProductoError(productos: scannedProducts, message: failure.message)),
+      (failure) {
+        if (scannedProducts.any((p) => event.clave == p.producto1.trim())) {
+          existencia = false;
+          emit(ProductoError(
+              productos: scannedProducts,
+              message: "No existe o no está disponible",
+              existencia: existencia));
+          scannedProducts.remove(scannedProducts
+              .firstWhere((p) => event.clave == p.producto1.trim()));
+          return;
+        } else {
+          existencia = false;
+          emit(ProductoError(
+              productos: scannedProducts,
+              message: failure.message,
+              existencia: existencia));
+          return;
+        }
+      },
       (producto) {
-        scannedProducts.add(producto);
-        emit(ProductosLoaded(productos: List.from(scannedProducts)));
+        if (scannedProducts
+            .any((p) => p.producto1.trim() == producto.producto1.trim())) {
+          existencia = true;
+        } else {
+          if (!scannedProducts.any((p) => p.producto1 == producto.producto1)) {
+            scannedProducts.add(producto);
+            existencia = true;
+          }
+        }
+        emit(ProductosLoaded(
+            productos: List.from(scannedProducts), existencia: existencia));
       },
     );
-  } */
+  }
 
   Future<void> _addProductToScannedEvent(
       AddProductToScannedEvent event, Emitter<ProductosState> emit) async {
@@ -116,7 +141,7 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
     }).toList();
 
     // Actualiza la lista de productos escaneados con la lista de productos actualizada.
-    scannedProducts = updatedProducts as List<ProductoExpoEntity>;
+    scannedProducts = updatedProducts;
 
     // Emite un nuevo estado con la lista de productos actualizada.
     emit(ProductosLoaded(productos: List.from(scannedProducts)));

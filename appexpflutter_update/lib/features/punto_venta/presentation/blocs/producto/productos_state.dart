@@ -13,10 +13,11 @@ class ProductoLoading extends ProductosState {}
 
 class ProductosLoaded extends ProductosState {
   final List<ProductoExpoEntity> productos;
-  const ProductosLoaded({required this.productos});
+  final bool? existencia;
+  const ProductosLoaded({required this.productos, this.existencia});
 
   @override
-  List<Object> get props => [productos];
+  List<Object> get props => [productos, existencia ?? 0.0];
 }
 
 class ProductosCountUpdated extends ProductosState {
@@ -40,9 +41,11 @@ class ProductosPriceUpdated extends ProductosState {
 class ProductoError extends ProductosState {
   final List<ProductoExpoEntity> productos;
   final String message;
+  final bool? existencia;
 
-  const ProductoError({required this.message, required this.productos});
+  const ProductoError(
+      {required this.message, required this.productos, this.existencia});
 
   @override
-  List<Object> get props => [message, productos];
+  List<Object> get props => [message, productos, existencia ?? false];
 }

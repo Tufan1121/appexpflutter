@@ -31,7 +31,7 @@ class DetalleProductoBloc
       },
       (producto) async {
         ProductoConExistencias productosConExistencias = ProductoConExistencias(
-            producto: event.producto, existencias: producto, tablaPrecios: []);
+            producto: event.producto, existencias: producto, tablaPrecios: const []);
 
         final tablaPreciosResult = await galeriaUsecases.getTablaPrecio(
             event.producto.descripcio, event.producto.diseno);

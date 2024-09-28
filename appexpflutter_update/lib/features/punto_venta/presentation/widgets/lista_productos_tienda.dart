@@ -1,5 +1,5 @@
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/inventarios/domain/entities/producto_expo_entity.dart';
+import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -7,16 +7,22 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 
 class ListaProductosTiendaCard extends HookWidget {
-  const ListaProductosTiendaCard(
-      {super.key,
-      required this.producto,
-      this.isSelected,
-      this.existencia,
-      this.isMultiSelectMode});
+  const ListaProductosTiendaCard({
+    super.key,
+    required this.producto,
+    this.isSelected,
+    this.existencia,
+    this.isMultiSelectMode,
+    required this.onLongPress,
+    required this.onTap,
+  });
+
   final ProductoExpoEntity producto;
   final bool? isSelected;
   final int? existencia;
   final bool? isMultiSelectMode;
+  final Function(ProductoExpoEntity) onLongPress;
+  final Function(ProductoExpoEntity) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -29,80 +35,75 @@ class ListaProductosTiendaCard extends HookWidget {
                 ? Colores.secondaryColor.withOpacity(0.5)
                 : null
             : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  FadeInImage.assetNetwork(
-                    placeholder: 'assets/loaders/loading.gif',
-                    image:
-                        'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
-                    width: 70,
-                    height: 70,
-                    fit: BoxFit.cover,
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/images/no-image.jpg',
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          producto.producto,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Clave: ${producto.producto1}',
-                          style: const TextStyle(
-                              fontSize: 14, color: Colors.black),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Existencia: $existencia',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Medidas: ${producto.medidas}',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  ' Existencia: ${producto.hm.toInt()}',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+        child: InkWell(
+          onLongPress: () => onLongPress(producto),
+          onTap: () => onTap(producto),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    FadeInImage(
+                      placeholder:
+                          const AssetImage('assets/loaders/loading.gif'),
+                      image: producto.pathima1 != null &&
+                              producto.pathima1!.isNotEmpty
+                          ? NetworkImage(
+                              'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1 ?? '')}',
+                            )
+                          : const AssetImage('assets/images/no-image.jpg')
+                              as ImageProvider,
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 300),
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/no-image.jpg',
+                          width: 70,
+                          height: 70,
+                          fit: BoxFit.cover,
+                        );
+                      },
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Scrollbar(
-                child: Scrollbar(
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            producto.producto,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Clave: ${producto.producto1}',
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.black),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Existencia: $existencia',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Medidas: ${producto.medidas}',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Scrollbar(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -117,20 +118,20 @@ class ListaProductosTiendaCard extends HookWidget {
                         _buildPriceCheckbox(
                           context: context,
                           label: 'Precio de Expo',
-                          price: producto.precio2.toDouble(),
+                          price: producto.precio2?.toDouble() ?? 0.0,
                         ),
                         const SizedBox(width: 10),
                         _buildPriceCheckbox(
                           context: context,
                           label: 'Precio Mayoreo',
-                          price: producto.precio3.toDouble(),
+                          price: producto.precio3?.toDouble() ?? 0.0,
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

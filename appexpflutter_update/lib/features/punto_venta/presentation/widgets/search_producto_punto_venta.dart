@@ -1,6 +1,7 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/inventario_tienda.dart';
 import 'package:appexpflutter_update/features/shared/widgets/modals_buttom.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
@@ -11,8 +12,6 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/widget
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/inventario_bodega.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
 
 class PuntoVentaProductSearch extends HookWidget {
@@ -29,7 +28,7 @@ class PuntoVentaProductSearch extends HookWidget {
     final controller = useTextEditingController();
     final scanResult = useState<String>('');
     final textFieldValue = useState<String>('');
-    final productos = context.watch<ProductosBloc>().scannedProducts;
+    final productos = context.watch<ProductosTiendaBloc>().scannedProducts;
     bool loading = false;
 
     useEffect(() {
@@ -54,7 +53,7 @@ class PuntoVentaProductSearch extends HookWidget {
                   scanResult.value = barcode.barcodes.first.rawValue ?? '';
 
                   context
-                      .read<ProductosBloc>()
+                      .read<ProductosTiendaBloc>()
                       .add(GetQRProductEvent(clave: scanResult.value));
 
                   Navigator.of(context)
@@ -112,7 +111,7 @@ class PuntoVentaProductSearch extends HookWidget {
                               Navigator.of(context).pop();
                               HomeRoute().push(context);
                               context
-                                  .read<ProductosBloc>()
+                                  .read<ProductosTiendaBloc>()
                                   .add(ClearProductoStateEvent());
                               context
                                   .read<ClienteBloc>()
@@ -196,7 +195,7 @@ class PuntoVentaProductSearch extends HookWidget {
                                 ),
                               );
                               context
-                                  .read<ProductosBloc>()
+                                  .read<ProductosTiendaBloc>()
                                   .add(ClearProductoStateEvent());
                               context
                                   .read<ClienteBloc>()
