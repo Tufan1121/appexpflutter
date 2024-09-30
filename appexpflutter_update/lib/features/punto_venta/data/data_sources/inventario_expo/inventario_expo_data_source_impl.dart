@@ -47,9 +47,9 @@ class InventarioExpoVentaDataSourceImpl
               'Authorization': 'Bearer $token',
             },
           ));
-      final List<dynamic> jsonList = result.data;
+      final jsonList = result.data;
       if (jsonList.isNotEmpty) {
-        final reducedJson = jsonList.first as Map<String, dynamic>;
+        final reducedJson = jsonList as Map<String, dynamic>;
         final fullJson = convertReducedJsonToFullJson(reducedJson);
         final productoExpo = ProductoExpoModel.fromJson(fullJson);
         return productoExpo;

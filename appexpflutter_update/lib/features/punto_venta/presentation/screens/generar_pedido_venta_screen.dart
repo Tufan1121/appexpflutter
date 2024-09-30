@@ -162,7 +162,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colores.secondaryColor.withOpacity(0.78),
           title: Text(
-            'GENERAR PEDIDO',
+            'GENERAR TICKET',
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.bold,
               color: Colores.scaffoldBackgroundColor,
@@ -608,10 +608,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Se genero el pedido exitosamente '),
+          title: const Text('Se genero el Ticket exitosamente '),
           content: Row(
             children: [
-              const Text('PEDIDO: ', style: TextStyle(fontSize: 15)),
+              const Text('TICKET: ', style: TextStyle(fontSize: 15)),
               Text(
                 pedido,
                 style:

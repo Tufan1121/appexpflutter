@@ -66,7 +66,7 @@ class PuntoVentaScreen extends HookWidget {
                 CardItem(
                   icon: Icons.history_rounded,
                   label: 'CONSULTA',
-                  onTap: () => HistorialRoute().push(context),
+                  onTap: () => PuntoVentaHistoryRoute().push(context),
                 ),
               ],
             ),
