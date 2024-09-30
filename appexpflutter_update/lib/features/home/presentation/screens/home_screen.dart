@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/config/config.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
@@ -9,9 +10,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  Future<String> username() async {
+  Future<(String, String)> username() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('username') ?? '';
+    return (
+      prefs.getString('username') ?? '',
+      prefs.getString('almacen') ?? ''
+    );
   }
 
   @override
@@ -58,21 +62,49 @@ class HomeScreen extends StatelessWidget {
                             scale: 12,
                           ),
                           const SizedBox(height: 5),
-                          FutureBuilder<String>(
+                          FutureBuilder<(String, String)>(
                               future: username(),
                               builder: (context, snapshot) {
-                                return Text('Bienvenido ${snapshot.data}',
-                                    style: GoogleFonts.montserrat(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colores.scaffoldBackgroundColor,
-                                      shadows: const [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 6,
-                                          offset: Offset(2.0, 5.0),
-                                        )
-                                      ],
-                                    ));
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else if (snapshot.hasData) {
+                                  final (username, almacen) = snapshot.data!;
+                                  return Column(
+                                    children: [
+                                      AutoSizeText('Bienvenido $username',
+                                          style: GoogleFonts.montserrat(
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Colores.scaffoldBackgroundColor,
+                                            shadows: const [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 6,
+                                                offset: Offset(2.0, 5.0),
+                                              )
+                                            ],
+                                          )),
+                                      AutoSizeText('Almacen: $almacen',
+                                          style: GoogleFonts.montserrat(
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Colores.scaffoldBackgroundColor,
+                                            shadows: const [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 6,
+                                                offset: Offset(2.0, 5.0),
+                                              )
+                                            ],
+                                          )),
+                                    ],
+                                  );
+                                } else {
+                                  return const Text('No data');
+                                }
                               }),
                         ],
                       ),

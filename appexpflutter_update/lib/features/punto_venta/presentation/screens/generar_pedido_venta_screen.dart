@@ -112,20 +112,6 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       }
     }
 
-    // void toggleCheckbox(String controlName) {
-    //   if (controlName == 'entregado') {
-    //     isEntregado.value = true;
-    //     isPendienteFinDeExpo.value = false;
-    //     form.control('entregado').value = isEntregado.value;
-    //     form.control('pendienteFinDeExpo').value = isPendienteFinDeExpo.value;
-    //   } else if (controlName == 'pendienteFinDeExpo') {
-    //     isEntregado.value = false;
-    //     isPendienteFinDeExpo.value = true;
-    //     form.control('entregado').value = isEntregado.value;
-    //     form.control('pendienteFinDeExpo').value = isPendienteFinDeExpo.value;
-    //   }
-    // }
-
     void updateDebePorPagar() {
       final anticipoPago1 = form.control('anticipoPago1').value ?? 0.0;
       final anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;

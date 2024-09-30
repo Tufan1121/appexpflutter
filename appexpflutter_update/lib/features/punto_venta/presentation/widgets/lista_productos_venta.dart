@@ -227,7 +227,7 @@ class ListaProductosVenta extends HookWidget {
                                     children: [
                                       _buildPriceCheckbox(
                                         context: context,
-                                        label: 'Precio de Lista',
+                                        label: 'Precio Expo',
                                         price: producto.precio1.toDouble(),
                                         value: showCustomPrice.value,
                                         onChanged: (bool? value) {

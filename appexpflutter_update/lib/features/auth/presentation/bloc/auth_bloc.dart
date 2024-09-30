@@ -25,6 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await storage.write(key: 'accessToken', value: user.accessToken);
       await prefs.setString('username', user.nombre);
       await prefs.setString('movil', user.movil);
+      await prefs.setString('almacen', user.descripcio);
       emit(AuthAuthenticated(username: user.nombre));
     });
   }

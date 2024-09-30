@@ -4,7 +4,6 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pro
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/search_producto_punto_venta.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
-import 'package:appexpflutter_update/features/shared/widgets/custom_dropdownbutton.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -159,7 +158,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 5),
+                      /* const SizedBox(height: 5),
                       Center(
                         child: CustomDropdownButton<String>(
                           value: dropdownValue.value,
@@ -187,7 +186,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                             );
                           }).toList(),
                         ),
-                      ),
+                      ), */
                       const SizedBox(height: 8),
                       BlocConsumer<ProductosTiendaBloc, ProductosState>(
                         listener: (context, state) {
@@ -282,17 +281,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                         telefonoCliente: ' telefonoCliente ',
                       ),
                       const SizedBox(height: 5),
-                      BlocConsumer<ProductosTiendaBloc, ProductosState>(
-                        listener: (context, state) {
-                          if (state is ProductoError) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Colors.red,
-                              content: Text(
-                                state.message,
-                              ),
-                            ));
-                          }
-                        },
+                      BlocBuilder<ProductosTiendaBloc, ProductosState>(
                         builder: (context, state) {
                           if (state is ProductosLoaded) {
                             return ListaProductosVenta(
