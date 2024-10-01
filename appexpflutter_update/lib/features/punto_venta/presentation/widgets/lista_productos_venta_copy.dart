@@ -20,46 +20,31 @@ class ListaProductosVenta extends HookWidget {
 
     // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
     final countList = useState<List<int>>(List.filled(productos.length, 1));
-    final selectedPriceList =
-        useState<List<int>>(List.filled(productos.length, 1));
+    final customPriceList =
+        useState<List<double?>>(List.filled(productos.length, null));
 
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
       for (var i = 0; i < productos.length; i++) {
-        if (i >= countList.value.length ||
-            i >= selectedPriceList.value.length) {
+        if (i >= countList.value.length || i >= customPriceList.value.length) {
           continue; // Evita acceder fuera de los límites de las listas
         }
 
         final count = countList.value[i];
-        final selectedPrice = selectedPriceList.value[i];
-        // print('Producto ${productos[i].producto}: count = $count, selectedPrice = $selectedPrice');
-
-        if (count > 0) {
-          double precioUnitario = 0.0;
-          switch (selectedPrice) {
-            case 1:
-              precioUnitario = productos[i].precio1.toDouble();
-              break;
-            case 2:
-              precioUnitario = productos[i].precio2?.toDouble() ?? 0.0;
-              break;
-            default:
-              break;
-          }
-          final subtotal = precioUnitario * count;
-          newTotal += subtotal;
-          UtilsVenta.listProductsOrder.add(
-            DetallePedidoEntity(
-              idPedido: 0,
-              clave: productos[i].producto1,
-              clave2: productos[i].producto,
-              cantidad: count,
-              precio: precioUnitario,
-            ),
-          );
-        }
+        final customPrice = customPriceList.value[i];
+        double precioUnitario = customPrice ?? productos[i].precio1.toDouble();
+        final subtotal = precioUnitario * count;
+        newTotal += subtotal;
+        UtilsVenta.listProductsOrder.add(
+          DetallePedidoEntity(
+            idPedido: 0,
+            clave: productos[i].producto1,
+            clave2: productos[i].producto,
+            cantidad: count,
+            precio: precioUnitario,
+          ),
+        );
       }
       total.value = newTotal;
       UtilsVenta.total = total.value;
@@ -68,27 +53,27 @@ class ListaProductosVenta extends HookWidget {
     useEffect(() {
       updateTotal(); // Initial calculation
       return null; // No cleanup needed
-    }, [countList.value, selectedPriceList.value]);
+    }, [countList.value, customPriceList.value]);
 
     useEffect(() {
-      // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
+      // Actualizar countList y customPriceList cuando cambia la longitud de los productos
       final newCountList = List<int>.from(countList.value);
-      final newSelectedPriceList = List<int>.from(selectedPriceList.value);
+      final newCustomPriceList = List<double?>.from(customPriceList.value);
 
       // Ajusta la longitud de las listas
       if (newCountList.length < productos.length) {
         newCountList.addAll(
             List<int>.filled(productos.length - newCountList.length, 1));
-        newSelectedPriceList.addAll(List<int>.filled(
-            productos.length - newSelectedPriceList.length, 1));
+        newCustomPriceList.addAll(List<double?>.filled(
+            productos.length - newCustomPriceList.length, null));
       } else if (newCountList.length > productos.length) {
         newCountList.removeRange(productos.length, newCountList.length);
-        newSelectedPriceList.removeRange(
-            productos.length, newSelectedPriceList.length);
+        newCustomPriceList.removeRange(
+            productos.length, newCustomPriceList.length);
       }
 
       countList.value = newCountList;
-      selectedPriceList.value = newSelectedPriceList;
+      customPriceList.value = newCustomPriceList;
       updateTotal();
       return null;
     }, [productos.length]);
@@ -114,15 +99,15 @@ class ListaProductosVenta extends HookWidget {
             itemBuilder: (context, index) {
               final producto = productos[index];
               final existencia = producto.hm;
-
               return HookBuilder(
                 builder: (context) {
                   final count = useState(countList.value[index]);
-                  final selectedPrice =
-                      useState<int>(selectedPriceList.value[index]);
-                  final customPrice = useState<double?>(null);
+                  final showCustomPrice = useState<bool>(false);
+                  final customPrice =
+                      useState<double?>(customPriceList.value[index]);
                   final customPriceController = useTextEditingController(
-                      text: producto.precio2.toString());
+                      text: customPrice.value?.toString() ??
+                          producto.precio1.toString());
 
                   return ClipRect(
                     child: Card(
@@ -145,7 +130,7 @@ class ListaProductosVenta extends HookWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
@@ -238,40 +223,36 @@ class ListaProductosVenta extends HookWidget {
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       _buildPriceCheckbox(
                                         context: context,
-                                        label: 'Precio de Lista',
+                                        label: 'Precio Normal',
                                         price: producto.precio1.toDouble(),
-                                        value: selectedPrice.value == 1,
+                                        value: showCustomPrice.value,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 1;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal();
+                                          showCustomPrice.value =
+                                              value ?? false;
                                         },
                                       ),
                                       _buildPriceCheckbox(
                                         context: context,
-                                        label: 'Precio de Expo',
+                                        label: 'Precio Expo',
                                         price:
                                             producto.precio2?.toDouble() ?? 0.0,
-                                        value: selectedPrice.value == 2,
+                                        value: showCustomPrice.value,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 2;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal();
+                                          showCustomPrice.value =
+                                              value ?? false;
                                         },
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                              if (selectedPrice.value == 2)
+                              if (showCustomPrice.value)
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
                                       width: 80,
@@ -285,8 +266,8 @@ class ListaProductosVenta extends HookWidget {
                                         },
                                         onSubmitted: (value) {
                                           if (customPrice.value != null) {
-                                            selectedPriceList.value[index] =
-                                                2; // Precio personalizado
+                                            customPriceList.value[index] =
+                                                customPrice.value;
                                             updateTotal();
                                           }
                                         },
@@ -314,7 +295,7 @@ class ListaProductosVenta extends HookWidget {
 
                                                 final updatedProduct =
                                                     producto.copyWith(
-                                                        precio2: price.toInt());
+                                                        precio1: price.toInt());
 
                                                 context
                                                     .read<ProductosTiendaBloc>()
