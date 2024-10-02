@@ -41,8 +41,8 @@ Map<String, dynamic> convertReducedJsonToFullJson(
     "lava1": normalizedJson["lava1"] ?? "",
     "lava2": normalizedJson["lava2"] ?? "",
     "precio1": (normalizedJson["precio1"] as double?)?.toInt() ?? 0,
-    "precio2": (normalizedJson["precio2"] as double?)?.toInt() ?? 0,
-    "precio3": (normalizedJson["precio3"] as double?)?.toInt() ?? 0,
+    "precio2": (normalizedJson["precio2"]) ?? 0,
+    "precio3": (normalizedJson["precio3"]) ?? 0,
     "desalmacen": normalizedJson["desalmacen"] ?? "",
   };
 }
