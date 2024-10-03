@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
+import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
@@ -192,6 +193,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                         listener: (context, state) {
                           if (state is ProductosLoaded) {
                             if (state.existencia == true) {
+                              controller.clear();
                               _showModal(
                                 context: context,
                                 icon: const Center(
@@ -238,6 +240,9 @@ class _PedidoScreenState extends State<TicketsScreen> {
                                 Expanded(
                                   child: CustomSearch(
                                     controller: controller,
+                                    inputFormatters: [
+                                      UpperCaseTextFormatter(),
+                                    ],
                                     hintText: 'Validar Clave',
                                     onSubmitted: (value) {
                                       context

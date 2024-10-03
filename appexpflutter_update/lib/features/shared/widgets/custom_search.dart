@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomSearch extends StatelessWidget {
@@ -10,12 +11,14 @@ class CustomSearch extends StatelessWidget {
     this.hintText,
     this.controller,
     this.validator,
+    this.inputFormatters,
   });
   final void Function(String)? onChanged;
   final void Function(String) onSubmitted;
   final String? hintText;
   final TextEditingController? controller;
   final Function(String)? validator;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +42,7 @@ class CustomSearch extends StatelessWidget {
           fontSize: 16,
         ),
         obscureText: false,
+        inputFormatters: inputFormatters,
         keyboardType: TextInputType.text,
         controller: controller,
         onChanged: onChanged,

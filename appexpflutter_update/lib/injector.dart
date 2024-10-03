@@ -28,6 +28,8 @@ Future<void> init() async {
         () => SalesDatasourceImp(dioClient: injector()))
     ..registerLazySingleton<GaleriaDataSource>(
         () => GaleriaDataSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<ConsultaDatasource>(
+        () => ConsultaDatasourceImp(dioClient: injector()))
 
     //* Repositories
     ..registerLazySingleton<AuthRepository>(
@@ -50,6 +52,8 @@ Future<void> init() async {
         () => SalesRepositoryImp(salesDatasource: injector()))
     ..registerLazySingleton<GaleriaRepository>(
         () => GaleriaRepositoryImpl(galeriaDataSource: injector()))
+    ..registerLazySingleton<TicketsRepository>(
+        () => TicketsRepositoryImpl(ticketsDataSource: injector()))
 
     //* Usecases
     ..registerLazySingleton<AuthUsecase>(
@@ -74,6 +78,8 @@ Future<void> init() async {
         () => SalesUsecase(salesRepository: injector()))
     ..registerLazySingleton<GaleriaUsecase>(
         () => GaleriaUsecase(galeriaRepository: injector()))
+    ..registerLazySingleton<TicketsUsecase>(
+        () => TicketsUsecase(repository: injector()))
 
     //* Cubits
     ..registerLazySingleton<MedidasCubit>(
@@ -117,6 +123,8 @@ Future<void> init() async {
         () => ProductosTiendaBloc(productoUsecase: injector()))
     ..registerLazySingleton<PedidoVentaBloc>(
         () => PedidoVentaBloc(pedidoUsecase: injector()))
+    ..registerLazySingleton<ConsultaBloc>(
+        () => ConsultaBloc(ticketsUsecase: injector()))
     ..registerLazySingleton<PedidoBloc>(
         () => PedidoBloc(pedidoUsecase: injector()));
 }
