@@ -8,6 +8,7 @@ import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class PuntoVentaConsultaScreen extends HookWidget {
@@ -19,11 +20,24 @@ class PuntoVentaConsultaScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    // final size = MediaQuery.of(context).size;
     final dateControllerDesde = useTextEditingController();
     final dateControllerHasta = useTextEditingController();
     final selectedDateDesde = useState<DateTime>(DateTime.now());
     final selectedDateHasta = useState<DateTime>(DateTime.now());
+    final totalTickets = useState<double>(0.0);
+
+    useEffect(() {
+      // Listener para actualizar el total de tickets después de la construcción del widget
+      context.read<ConsultaBloc>().stream.listen((state) {
+        if (state is ConsultaLoaded) {
+          double total =
+              state.tickets.fold(0.0, (sum, ticket) => sum + ticket.total);
+          totalTickets.value = total;
+        }
+      });
+      return null;
+    }, []);
 
     return PopScope(
       canPop: true,
@@ -55,6 +69,24 @@ class PuntoVentaConsultaScreen extends HookWidget {
                 ),
                 _fechaTextField(dateControllerDesde, dateControllerHasta,
                     context, selectedDateDesde, selectedDateHasta),
+                const SizedBox(height: 10),
+                ValueListenableBuilder<double>(
+                  valueListenable: totalTickets,
+                  builder: (context, value, child) {
+                    return Text('Total: ${Utils.formatPrice(value)}',
+                        style: GoogleFonts.montserrat(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colores.scaffoldBackgroundColor,
+                            shadows: [
+                              const BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 6,
+                                offset: Offset(2.0, 5.0),
+                              )
+                            ]));
+                  },
+                ),
                 Expanded(
                   child: BlocBuilder<ConsultaBloc, ConsultaState>(
                     builder: (context, state) {
@@ -85,14 +117,12 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                       children: [
                                         CustomListTile(
                                             text: 'VISUALIZAR',
-                                            assetPathIcon:
-                                                'assets/iconos/cliente nuevo - rosa gris.png',
+                                            icon: Icons.remove_red_eye,
                                             onTap: () {}),
                                         const Divider(),
                                         CustomListTile(
                                             text: 'CANCELAR',
-                                            assetPathIcon:
-                                                'assets/iconos/cliente existente - rosa gris.png',
+                                            icon: Icons.cancel,
                                             onTap: () {})
                                       ],
                                     ),
@@ -151,7 +181,8 @@ class PuntoVentaConsultaScreen extends HookWidget {
         initialDate: selectedDate.value,
         firstDate: DateTime(1900),
         lastDate: DateTime.now(),
-        initialEntryMode: DatePickerEntryMode.calendarOnly,
+        initialEntryMode:
+            DatePickerEntryMode.calendarOnly, // Establece el idioma español
       );
       if (picked != null) {
         selectedDate.value = picked;

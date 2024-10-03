@@ -6,8 +6,8 @@ class TicketsEntity extends Equatable {
   final String descripcio;
   final String vendedor;
   final DateTime crea;
-  final String factura;
-  final String rfc;
+  final String? factura;
+  final String? rfc;
   final String? telefono;
   final String? direccion;
   final double total;
