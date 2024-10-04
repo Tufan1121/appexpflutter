@@ -23,6 +23,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
     // final size = MediaQuery.of(context).size;
     final dateControllerDesde = useTextEditingController();
     final dateControllerHasta = useTextEditingController();
+    final textController = useTextEditingController();
     final selectedDateDesde = useState<DateTime>(DateTime.now());
     final selectedDateHasta = useState<DateTime>(DateTime.now());
     final totalTickets = useState<double>(0.0);
@@ -118,12 +119,16 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                         CustomListTile(
                                             text: 'VISUALIZAR',
                                             icon: Icons.remove_red_eye,
-                                            onTap: () {}),
+                                            onTap: () {
+                                              //TODO: Lógica para visualizar el ticket
+                                            }),
                                         const Divider(),
                                         CustomListTile(
-                                            text: 'CANCELAR',
-                                            icon: Icons.cancel,
-                                            onTap: () {})
+                                          text: 'CANCELAR',
+                                          icon: Icons.cancel,
+                                          onTap: () => _cancelacionInput(
+                                              context, textController),
+                                        )
                                       ],
                                     ),
                                   ),
@@ -165,6 +170,107 @@ class PuntoVentaConsultaScreen extends HookWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<dynamic> _cancelacionInput(
+      BuildContext context, TextEditingController textController) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Motivo de cancelación'),
+          content: TextField(
+            controller: textController,
+            maxLines: 5, // Permite múltiples líneas
+            decoration: const InputDecoration(
+              hintText: 'Ingrese el motivo de la cancelación',
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide: BorderSide(
+                  color: Colors.grey,
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide: BorderSide(
+                  color: Colores.secondaryColor,
+                  width: 2.0,
+                ),
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+            ),
+            style: const TextStyle(
+              fontSize: 16.0,
+              color: Colors.black,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                textController.clear();
+              },
+              child: const Text('Cancelar',
+                  style: TextStyle(color: Colores.secondaryColor)),
+            ),
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colores.secondaryColor,
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text(
+                'Pedir Autorización',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+              ),
+              onPressed: () {
+                if (textController.text.isEmpty) {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Error',
+                              style: TextStyle(color: Colors.red)),
+                          content: const Text(
+                              'Por favor, ingrese el motivo de la cancelación.'),
+                          actions: [
+                            ElevatedButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colores.secondaryColor,
+                                textStyle:
+                                    Theme.of(context).textTheme.labelLarge,
+                              ),
+                              child: const Text(
+                                'Aceptar',
+                                style: TextStyle(
+                                    color: Colores.scaffoldBackgroundColor),
+                              ),
+                              onPressed: () {
+                                // opcion 1
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                } else {
+                  //TODO: Lógica para cancelar el ticket
+                  Navigator.pop(context);
+                  textController.clear();
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
