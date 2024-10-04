@@ -35,6 +35,8 @@ class PuntoVentaConsultaScreen extends HookWidget {
           double total =
               state.tickets.fold(0.0, (sum, ticket) => sum + ticket.total);
           totalTickets.value = total;
+        } else if (state is ConsultaError) {
+          totalTickets.value = 0.0;
         }
       });
       return null;
