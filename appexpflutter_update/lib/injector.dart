@@ -16,6 +16,10 @@ Future<void> init() async {
         () => ClienteDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<PedidoDataSource>(
         () => PedidoDataSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<PedidoDataVentaSource>(
+        () => PedidoDataVentaSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<InventarioExpoVentaDataSource>(
+        () => InventarioExpoVentaDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<InventarioExpoDataSource>(
         () => InventarioExpoDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<HistorialDataSource>(
@@ -24,6 +28,8 @@ Future<void> init() async {
         () => SalesDatasourceImp(dioClient: injector()))
     ..registerLazySingleton<GaleriaDataSource>(
         () => GaleriaDataSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<ConsultaDatasource>(
+        () => ConsultaDatasourceImp(dioClient: injector()))
 
     //* Repositories
     ..registerLazySingleton<AuthRepository>(
@@ -34,6 +40,10 @@ Future<void> init() async {
         () => ClienteRepositoryImpl(clienteDataSource: injector()))
     ..registerLazySingleton<PedidoRepository>(
         () => PedidoRepositoryImpl(pedidoDataSource: injector()))
+    ..registerLazySingleton<PedidoVentaRepository>(
+        () => PedidoVentaRepositoryImpl(pedidoDataSource: injector()))
+    ..registerLazySingleton<InventarioExpoVentaRepository>(() =>
+        InventarioExpoVentaRepositoryImpl(inventarioExpoDataSource: injector()))
     ..registerLazySingleton<InventarioExpoRepository>(() =>
         InventarioExpoRepositoryImpl(inventarioExpoDataSource: injector()))
     ..registerLazySingleton<HistorialRepository>(
@@ -42,6 +52,8 @@ Future<void> init() async {
         () => SalesRepositoryImp(salesDatasource: injector()))
     ..registerLazySingleton<GaleriaRepository>(
         () => GaleriaRepositoryImpl(galeriaDataSource: injector()))
+    ..registerLazySingleton<TicketsRepository>(
+        () => TicketsRepositoryImpl(ticketsDataSource: injector()))
 
     //* Usecases
     ..registerLazySingleton<AuthUsecase>(
@@ -50,8 +62,14 @@ Future<void> init() async {
         () => ProductoUsecase(productoRepository: injector()))
     ..registerLazySingleton<ClienteUsecase>(
         () => ClienteUsecase(clienteRepository: injector()))
+    ..registerLazySingleton<ClienteVentaUsecase>(
+        () => ClienteVentaUsecase(clienteRepository: injector()))
     ..registerLazySingleton<PedidoUsecase>(
         () => PedidoUsecase(pedidoRepository: injector()))
+    ..registerLazySingleton<PedidoVentaUsecase>(
+        () => PedidoVentaUsecase(pedidoRepository: injector()))
+    ..registerLazySingleton<InventarioExpoVentaUsecase>(
+        () => InventarioExpoVentaUsecase(inventarioExpoRepository: injector()))
     ..registerLazySingleton<InventarioExpoUsecase>(
         () => InventarioExpoUsecase(inventarioExpoRepository: injector()))
     ..registerLazySingleton<HistorialUsecase>(
@@ -60,6 +78,8 @@ Future<void> init() async {
         () => SalesUsecase(salesRepository: injector()))
     ..registerLazySingleton<GaleriaUsecase>(
         () => GaleriaUsecase(galeriaRepository: injector()))
+    ..registerLazySingleton<TicketsUsecase>(
+        () => TicketsUsecase(repository: injector()))
 
     //* Cubits
     ..registerLazySingleton<MedidasCubit>(
@@ -75,6 +95,8 @@ Future<void> init() async {
         () => ClienteBloc(clienteUsecase: injector()))
     ..registerLazySingleton<InventarioBloc>(
         () => InventarioBloc(productoUsecase: injector()))
+    ..registerLazySingleton<InventarioTiendaBloc>(
+        () => InventarioTiendaBloc(productoUsecase: injector()))
     ..registerLazySingleton<InventarioBodegaBloc>(
         () => InventarioBodegaBloc(productoUsecase: injector()))
     ..registerLazySingleton<InventarioExpoBloc>(
@@ -95,8 +117,14 @@ Future<void> init() async {
         () => GaleriaBloc(galeriaUsecases: injector()))
     ..registerLazySingleton<DetalleGaleriaBloc>(
         () => DetalleGaleriaBloc(galeriaUsecases: injector()))
-      ..registerLazySingleton<DetalleProductoBloc>(
+    ..registerLazySingleton<DetalleProductoBloc>(
         () => DetalleProductoBloc(galeriaUsecases: injector()))
+    ..registerLazySingleton<ProductosTiendaBloc>(
+        () => ProductosTiendaBloc(productoUsecase: injector()))
+    ..registerLazySingleton<PedidoVentaBloc>(
+        () => PedidoVentaBloc(pedidoUsecase: injector()))
+    ..registerLazySingleton<ConsultaBloc>(
+        () => ConsultaBloc(ticketsUsecase: injector()))
     ..registerLazySingleton<PedidoBloc>(
         () => PedidoBloc(pedidoUsecase: injector()));
 }

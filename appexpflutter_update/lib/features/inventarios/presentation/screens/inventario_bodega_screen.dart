@@ -138,9 +138,14 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide:
-                                        const BorderSide(color: Colors.blue),
+                                    borderSide: const BorderSide(
+                                        color: Colores.secondaryColor,
+                                        width: 2),
                                   ),
+                                  floatingLabelStyle: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 items: uniqueMedidas.map((medida) {
                                   return DropdownMenuItem<String>(

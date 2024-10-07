@@ -758,7 +758,8 @@ class MedidasDataSource extends DataGridSource {
         return Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(8.0),
-          child: AutoSizeText(dataGridCell.value.toString(), maxLines: 1),
+          child:
+              AutoSizeText(dataGridCell.value.toString().trim(), maxLines: 1),
         );
       }).toList(),
     );

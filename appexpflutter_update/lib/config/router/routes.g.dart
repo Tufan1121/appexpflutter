@@ -14,10 +14,12 @@ List<RouteBase> get $appRoutes => [
       $photoGalleryIBodegasRoute,
       $photoGalleryRoute2,
       $clienteNuevoRoute,
+      $clienteNuevoVentaRoute,
       $clienteExistenteRoute,
       $pedidoRoute,
       $pedidoSesionRoute,
       $generarPedidoRoute,
+      $generarPedidoVentaRoute,
       $sesionPedidoRoute,
       $cotizaPedidoRoute,
       $invetarioExpoRoute,
@@ -27,6 +29,9 @@ List<RouteBase> get $appRoutes => [
       $reportesScreenRoute,
       $authReportesScreenRoute,
       $galeriaRoute,
+      $puntoVentaRoute,
+      $ticketsRoute,
+      $puntoVentaHistoryRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -102,8 +107,10 @@ RouteBase get $photoGalleryRoute => GoRouteData.$route(
 
 extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
   static PhotoGalleryRoute _fromState(GoRouterState state) => PhotoGalleryRoute(
-        imageUrls:
-            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList()  ?? [],
+        imageUrls: state.uri.queryParametersAll['image-urls']
+                ?.map((e) => e)
+                .toList() ??
+            [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         medidas: state.uri.queryParameters['medidas']!,
       );
@@ -135,8 +142,10 @@ RouteBase get $photoGalleryIBodegasRoute => GoRouteData.$route(
 extension $PhotoGalleryIBodegasRouteExtension on PhotoGalleryIBodegasRoute {
   static PhotoGalleryIBodegasRoute _fromState(GoRouterState state) =>
       PhotoGalleryIBodegasRoute(
-        imageUrls:
-            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
+        imageUrls: state.uri.queryParametersAll['image-urls']
+                ?.map((e) => e)
+                .toList() ??
+            [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         userName: state.uri.queryParameters['user-name'],
         clientPhoneNumber: state.uri.queryParameters['client-phone-number'],
@@ -174,8 +183,10 @@ RouteBase get $photoGalleryRoute2 => GoRouteData.$route(
 extension $PhotoGalleryRoute2Extension on PhotoGalleryRoute2 {
   static PhotoGalleryRoute2 _fromState(GoRouterState state) =>
       PhotoGalleryRoute2(
-        imageUrls:
-            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ?? [],
+        imageUrls: state.uri.queryParametersAll['image-urls']
+                ?.map((e) => e)
+                .toList() ??
+            [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         $extra: state.extra as ProductoExpoEntity,
       );
@@ -211,6 +222,29 @@ extension $ClienteNuevoRouteExtension on ClienteNuevoRoute {
 
   String get location => GoRouteData.$location(
         '/cliente_nuevo',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $clienteNuevoVentaRoute => GoRouteData.$route(
+      path: '/cliente_nuevo_venta',
+      factory: $ClienteNuevoVentaRouteExtension._fromState,
+    );
+
+extension $ClienteNuevoVentaRouteExtension on ClienteNuevoVentaRoute {
+  static ClienteNuevoVentaRoute _fromState(GoRouterState state) =>
+      ClienteNuevoVentaRoute();
+
+  String get location => GoRouteData.$location(
+        '/cliente_nuevo_venta',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -354,6 +388,40 @@ T? _$convertMapValue<T>(
 ) {
   final value = map[key];
   return value == null ? null : converter(value);
+}
+
+RouteBase get $generarPedidoVentaRoute => GoRouteData.$route(
+      path: '/generar_pedido_venta',
+      factory: $GenerarPedidoVentaRouteExtension._fromState,
+    );
+
+extension $GenerarPedidoVentaRouteExtension on GenerarPedidoVentaRoute {
+  static GenerarPedidoVentaRoute _fromState(GoRouterState state) =>
+      GenerarPedidoVentaRoute(
+        estadoPedido: int.parse(state.uri.queryParameters['estado-pedido']!),
+        idSesion: _$convertMapValue(
+            'id-sesion', state.uri.queryParameters, int.parse),
+        $extra: state.extra as Map<String, dynamic>,
+      );
+
+  String get location => GoRouteData.$location(
+        '/generar_pedido_venta',
+        queryParams: {
+          'estado-pedido': estadoPedido.toString(),
+          if (idSesion != null) 'id-sesion': idSesion!.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $sesionPedidoRoute => GoRouteData.$route(
@@ -561,6 +629,77 @@ extension $GaleriaRouteExtension on GaleriaRoute {
 
   String get location => GoRouteData.$location(
         '/galeria_global',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $puntoVentaRoute => GoRouteData.$route(
+      path: '/punto_venta_global',
+      factory: $PuntoVentaRouteExtension._fromState,
+    );
+
+extension $PuntoVentaRouteExtension on PuntoVentaRoute {
+  static PuntoVentaRoute _fromState(GoRouterState state) => PuntoVentaRoute();
+
+  String get location => GoRouteData.$location(
+        '/punto_venta_global',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $ticketsRoute => GoRouteData.$route(
+      path: '/tickets',
+      factory: $TicketsRouteExtension._fromState,
+    );
+
+extension $TicketsRouteExtension on TicketsRoute {
+  static TicketsRoute _fromState(GoRouterState state) => TicketsRoute(
+        $extra: state.extra as Map<String, dynamic>,
+      );
+
+  String get location => GoRouteData.$location(
+        '/tickets',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
+RouteBase get $puntoVentaHistoryRoute => GoRouteData.$route(
+      path: '/historial_punto_venta',
+      factory: $PuntoVentaHistoryRouteExtension._fromState,
+    );
+
+extension $PuntoVentaHistoryRouteExtension on PuntoVentaHistoryRoute {
+  static PuntoVentaHistoryRoute _fromState(GoRouterState state) =>
+      PuntoVentaHistoryRoute();
+
+  String get location => GoRouteData.$location(
+        '/historial_punto_venta',
       );
 
   void go(BuildContext context) => context.go(location);

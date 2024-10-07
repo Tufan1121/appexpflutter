@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomListTile extends StatelessWidget {
-  const CustomListTile({
+  const CustomListTile( {
     super.key,
     this.text,
     this.onTap,

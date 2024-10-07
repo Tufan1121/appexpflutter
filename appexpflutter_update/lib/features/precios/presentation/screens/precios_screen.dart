@@ -9,7 +9,6 @@ import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_
 import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/search_prices.dart';
 import 'package:appexpflutter_update/features/shared/widgets/widgets.dart'
     show CustomFilledButton2;
-import 'package:precios/domain/entities/producto_entity.dart';
 
 class PreciosScreen extends StatelessWidget {
   const PreciosScreen({super.key});

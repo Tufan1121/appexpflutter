@@ -1,5 +1,4 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
@@ -92,7 +91,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                               medidas.addAll(state.medidas);
                             } else if (state is MedidasError) {
                               medidas.clear();
-                              medidas.add(MedidasEntityInv(
+                              medidas.add(const MedidasEntityInv(
                                   medida: 'Error al cargar medidas',
                                   largo: 0,
                                   cm: 0,
@@ -137,9 +136,14 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide:
-                                        const BorderSide(color: Colors.blue),
+                                    borderSide: const BorderSide(
+                                        color: Colores.secondaryColor,
+                                        width: 2.0),
                                   ),
+                                  floatingLabelStyle: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 items: uniqueMedidas.map((medida) {
                                   return DropdownMenuItem<String>(

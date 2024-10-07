@@ -146,8 +146,6 @@ class _InventarioBodegaState extends State<InventarioBodega>
                                         cm: 0,
                                         ancho: 0));
                                   }
-
-                                  // Asegurar de que no haya duplicados
                                   // Asegurar de que no haya duplicados
                                   final uniqueMedidas =
                                       medidas.toSet().toList();
@@ -191,8 +189,12 @@ class _InventarioBodegaState extends State<InventarioBodega>
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           borderSide: const BorderSide(
-                                              color: Colors.blue),
+                                              color: Colores.secondaryColor),
                                         ),
+                                        floatingLabelStyle: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       items: uniqueMedidas.map((medida) {
                                         return DropdownMenuItem<String>(
