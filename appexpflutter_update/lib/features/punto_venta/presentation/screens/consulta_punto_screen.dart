@@ -114,7 +114,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                 ),
                                 child: ListTile(
                                   onLongPress: () => homeModalButtom(
-                                    height: 160,
+                                    height: 85,
                                     context: context,
                                     child: ListView(
                                       children: [
@@ -124,13 +124,6 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                             onTap: () {
                                               //TODO: Lógica para visualizar el ticket
                                             }),
-                                        const Divider(),
-                                        CustomListTile(
-                                          text: 'CANCELAR',
-                                          icon: Icons.cancel,
-                                          onTap: () => _cancelacionInput(
-                                              context, textController),
-                                        )
                                       ],
                                     ),
                                   ),

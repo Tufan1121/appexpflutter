@@ -1,14 +1,5 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/inventario_tienda.dart';
-import 'package:appexpflutter_update/features/shared/widgets/modals_buttom.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/cotiza_pedido/cotiza_pedido_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/pdf_viewer_pedido.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -28,8 +19,6 @@ class PuntoVentaProductSearch extends HookWidget {
     final controller = useTextEditingController();
     final scanResult = useState<String>('');
     final textFieldValue = useState<String>('');
-    final productos = context.watch<ProductosTiendaBloc>().scannedProducts;
-    bool loading = false;
 
     useEffect(() {
       controller.addListener(() {
