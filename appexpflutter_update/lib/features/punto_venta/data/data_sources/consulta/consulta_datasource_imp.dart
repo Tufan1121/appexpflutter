@@ -1,6 +1,6 @@
 import 'package:api_client/dio_client.dart';
-import 'package:appexpflutter_update/features/punto_venta/data/data_sources/consulta/consulta_datasource.dart';
-import 'package:appexpflutter_update/features/punto_venta/data/models/tickets_model.dart';
+import 'package:punto_venta/data/data_sources/consulta/consulta_datasource.dart';
+import 'package:punto_venta/data/models/tickets_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 

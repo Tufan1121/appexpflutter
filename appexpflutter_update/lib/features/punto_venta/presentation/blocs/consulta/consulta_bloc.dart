@@ -1,5 +1,5 @@
-import 'package:appexpflutter_update/features/punto_venta/domain/entities/tickets_entity.dart';
-import 'package:appexpflutter_update/features/punto_venta/domain/usecases/tickets_usecase.dart';
+import 'package:punto_venta/domain/entities/tickets_entity.dart';
+import 'package:punto_venta/domain/usecases/tickets_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

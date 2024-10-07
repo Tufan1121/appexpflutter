@@ -1,7 +1,7 @@
 // productos_bloc.dart
 
-import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
-import 'package:appexpflutter_update/features/punto_venta/domain/usecases/inventario_expo_usecase.dart';
+import 'package:punto_venta/domain/entities/producto_expo_entity.dart';
+import 'package:punto_venta/domain/usecases/inventario_expo_usecase.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,5 +1,5 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
-import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
+import 'package:punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/search_producto_punto_venta.dart';

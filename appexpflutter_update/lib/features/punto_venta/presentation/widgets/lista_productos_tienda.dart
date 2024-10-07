@@ -1,5 +1,5 @@
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
+import 'package:punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_hooks/flutter_hooks.dart';

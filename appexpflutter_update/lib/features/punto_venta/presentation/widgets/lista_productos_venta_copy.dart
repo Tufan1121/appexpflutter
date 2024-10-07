@@ -1,6 +1,6 @@
-import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
+import 'package:punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
-import 'package:appexpflutter_update/features/punto_venta/domain/entities/detalle_pedido_entity.dart';
+import 'package:punto_venta/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';

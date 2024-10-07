@@ -23,7 +23,6 @@ class PuntoVentaConsultaScreen extends HookWidget {
     // final size = MediaQuery.of(context).size;
     final dateControllerDesde = useTextEditingController();
     final dateControllerHasta = useTextEditingController();
-    final textController = useTextEditingController();
     final selectedDateDesde = useState<DateTime>(DateTime.now());
     final selectedDateHasta = useState<DateTime>(DateTime.now());
     final totalTickets = useState<double>(0.0);

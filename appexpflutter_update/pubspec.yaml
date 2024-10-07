@@ -21,6 +21,8 @@ dependencies:
     path: packages/inventarios
   login:
     path: packages/login
+  punto_venta:
+    path: packages/punto_venta
     
   auto_size_text: ^3.0.0
   carousel_slider: ^4.2.1

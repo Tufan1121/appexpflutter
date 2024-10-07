@@ -1,7 +1,6 @@
-import 'package:appexpflutter_update/features/inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
-import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
+import 'package:punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_tienda.dart';
@@ -13,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class InventarioTienda extends StatefulWidget {
@@ -182,7 +182,7 @@ class _InventarioTiendaState extends State<InventarioTienda>
                                     medidas.addAll(state.medidas);
                                   } else if (state is MedidasError) {
                                     medidas.clear();
-                                    medidas.add(MedidasEntityInv(
+                                    medidas.add(const MedidasEntityInv(
                                         medida: 'Error al cargar medidas',
                                         largo: 0,
                                         cm: 0,
