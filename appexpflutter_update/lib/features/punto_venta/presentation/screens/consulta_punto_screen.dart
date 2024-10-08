@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/popover.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/consulta/consulta_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/pdf_viewer.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PuntoVentaConsultaScreen extends HookWidget {
   const PuntoVentaConsultaScreen({super.key});
@@ -120,8 +122,28 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                         CustomListTile(
                                             text: 'VISUALIZAR',
                                             icon: Icons.remove_red_eye,
-                                            onTap: () {
-                                              //TODO: Lógica para visualizar el ticket
+                                            onTap: () async {
+                                              final prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              final String pdfUrl =
+                                                  'https://tapetestufan.mx/tickets/${prefs.getString('digsig')}/pdf/${ticket.documen}.pdf';
+                                              if (context.mounted) {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PdfViewerScreen(
+                                                      fileName: ticket.documen,
+                                                      userName: prefs.getString(
+                                                              'username') ??
+                                                          'TUFAN TAPETES',
+                                                          clientPhoneNumber: ticket.telefono,
+                                                      url: pdfUrl,
+                                                    ),
+                                                  ),
+                                                );
+                                              }
                                             }),
                                       ],
                                     ),
@@ -164,107 +186,6 @@ class PuntoVentaConsultaScreen extends HookWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Future<dynamic> _cancelacionInput(
-      BuildContext context, TextEditingController textController) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Motivo de cancelación'),
-          content: TextField(
-            controller: textController,
-            maxLines: 5, // Permite múltiples líneas
-            decoration: const InputDecoration(
-              hintText: 'Ingrese el motivo de la cancelación',
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1.0,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                borderSide: BorderSide(
-                  color: Colores.secondaryColor,
-                  width: 2.0,
-                ),
-              ),
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-            ),
-            style: const TextStyle(
-              fontSize: 16.0,
-              color: Colors.black,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                textController.clear();
-              },
-              child: const Text('Cancelar',
-                  style: TextStyle(color: Colores.secondaryColor)),
-            ),
-            ElevatedButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colores.secondaryColor,
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text(
-                'Pedir Autorización',
-                style: TextStyle(color: Colores.scaffoldBackgroundColor),
-              ),
-              onPressed: () {
-                if (textController.text.isEmpty) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Error',
-                              style: TextStyle(color: Colors.red)),
-                          content: const Text(
-                              'Por favor, ingrese el motivo de la cancelación.'),
-                          actions: [
-                            ElevatedButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colores.secondaryColor,
-                                textStyle:
-                                    Theme.of(context).textTheme.labelLarge,
-                              ),
-                              child: const Text(
-                                'Aceptar',
-                                style: TextStyle(
-                                    color: Colores.scaffoldBackgroundColor),
-                              ),
-                              onPressed: () {
-                                // opcion 1
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      });
-                } else {
-                  //TODO: Lógica para cancelar el ticket
-                  Navigator.pop(context);
-                  textController.clear();
-                }
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 
