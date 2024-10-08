@@ -26,6 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await prefs.setString('username', user.nombre);
       await prefs.setString('movil', user.movil);
       await prefs.setString('almacen', user.descripcio);
+      await prefs.setString('digsig', user.digsig);
       emit(AuthAuthenticated(username: user.nombre));
     });
   }
