@@ -22,22 +22,9 @@ import 'package:appexpflutter_update/features/inventarios/presentation/blocs/bus
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
-import 'package:punto_venta/data/data_sources/consulta/consulta_datasource.dart';
 import 'package:appexpflutter_update/features/punto_venta/data/data_sources/consulta/consulta_datasource_imp.dart';
-import 'package:punto_venta/data/data_sources/inventario_expo/inventario_expo_data_source.dart';
 import 'package:appexpflutter_update/features/punto_venta/data/data_sources/inventario_expo/inventario_expo_data_source_impl.dart';
-import 'package:punto_venta/data/data_sources/pedido/pedido_data_source.dart';
 import 'package:appexpflutter_update/features/punto_venta/data/data_sources/pedido/pedido_data_source.impl.dart';
-import 'package:punto_venta/data/repositories/inventario_expo_repository_impl.dart';
-import 'package:punto_venta/data/repositories/pedido_repository_impl.dart';
-import 'package:punto_venta/data/repositories/tickets_repository_impl.dart';
-import 'package:punto_venta/domain/repositories/inventario_expo_repository.dart';
-import 'package:punto_venta/domain/repositories/pedido_repository.dart';
-import 'package:punto_venta/domain/repositories/tickets_repository.dart';
-import 'package:punto_venta/domain/usecases/cliente_usecase.dart';
-import 'package:punto_venta/domain/usecases/inventario_expo_usecase.dart';
-import 'package:punto_venta/domain/usecases/pedido_usecase.dart';
-import 'package:punto_venta/domain/usecases/tickets_usecase.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/consulta/consulta_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pedido/pedido_bloc.dart';
@@ -63,6 +50,20 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/ventas/presentation/blocs/producto/productos_bloc.dart';
 
 //* LIBRERIAS
+import 'package:punto_venta/data/data_sources/inventario_expo/inventario_expo_data_source.dart';
+import 'package:punto_venta/data/data_sources/consulta/consulta_datasource.dart';
+import 'package:punto_venta/data/data_sources/pedido/pedido_data_source.dart';
+import 'package:punto_venta/data/repositories/inventario_expo_repository_impl.dart';
+import 'package:punto_venta/data/repositories/pedido_repository_impl.dart';
+import 'package:punto_venta/data/repositories/tickets_repository_impl.dart';
+import 'package:punto_venta/domain/repositories/inventario_expo_repository.dart';
+import 'package:punto_venta/domain/repositories/pedido_repository.dart';
+import 'package:punto_venta/domain/repositories/tickets_repository.dart';
+import 'package:punto_venta/domain/usecases/cliente_usecase.dart';
+import 'package:punto_venta/domain/usecases/inventario_expo_usecase.dart';
+import 'package:punto_venta/domain/usecases/pedido_usecase.dart';
+import 'package:punto_venta/domain/usecases/tickets_usecase.dart';
+
 import 'package:api_client/dio_client.dart';
 import 'package:api_client/constants/environment.dart';
 
