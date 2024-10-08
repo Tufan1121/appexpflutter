@@ -166,8 +166,20 @@ class PdfViewerScreen extends HookWidget {
           ),
           IconButton(
             icon: const FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: sendToWhatsApp,
-          ),
+            onPressed: () {
+              if (clientPhoneNumber != null &&
+                  clientPhoneNumber!.trim().length == 10) {
+                sendToWhatsApp();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'El número de teléfono del cliente debe de existir y tener 10 dígitos.'),
+                  ),
+                );
+              }
+            },
+          )
         ],
       ),
       body: isUrlValid.value == null
