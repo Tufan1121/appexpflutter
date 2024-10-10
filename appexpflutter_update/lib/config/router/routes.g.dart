@@ -17,7 +17,6 @@ List<RouteBase> get $appRoutes => [
       $clienteNuevoVentaRoute,
       $clienteExistenteRoute,
       $pedidoRoute,
-      $pedidoSesionRoute,
       $generarPedidoRoute,
       $generarPedidoVentaRoute,
       $sesionPedidoRoute,
@@ -25,9 +24,6 @@ List<RouteBase> get $appRoutes => [
       $invetarioExpoRoute,
       $invetarioBodegaRoute,
       $busquedaGlobalRoute,
-      $historialRoute,
-      $reportesScreenRoute,
-      $authReportesScreenRoute,
       $galeriaRoute,
       $puntoVentaRoute,
       $ticketsRoute,
@@ -107,10 +103,9 @@ RouteBase get $photoGalleryRoute => GoRouteData.$route(
 
 extension $PhotoGalleryRouteExtension on PhotoGalleryRoute {
   static PhotoGalleryRoute _fromState(GoRouterState state) => PhotoGalleryRoute(
-        imageUrls: state.uri.queryParametersAll['image-urls']
-                ?.map((e) => e)
-                .toList() ??
-            [],
+        imageUrls:
+            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList()  ??
+                [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         medidas: state.uri.queryParameters['medidas']!,
       );
@@ -142,10 +137,9 @@ RouteBase get $photoGalleryIBodegasRoute => GoRouteData.$route(
 extension $PhotoGalleryIBodegasRouteExtension on PhotoGalleryIBodegasRoute {
   static PhotoGalleryIBodegasRoute _fromState(GoRouterState state) =>
       PhotoGalleryIBodegasRoute(
-        imageUrls: state.uri.queryParametersAll['image-urls']
-                ?.map((e) => e)
-                .toList() ??
-            [],
+        imageUrls:
+            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ??
+                [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         userName: state.uri.queryParameters['user-name'],
         clientPhoneNumber: state.uri.queryParameters['client-phone-number'],
@@ -183,10 +177,9 @@ RouteBase get $photoGalleryRoute2 => GoRouteData.$route(
 extension $PhotoGalleryRoute2Extension on PhotoGalleryRoute2 {
   static PhotoGalleryRoute2 _fromState(GoRouterState state) =>
       PhotoGalleryRoute2(
-        imageUrls: state.uri.queryParametersAll['image-urls']
-                ?.map((e) => e)
-                .toList() ??
-            [],
+        imageUrls:
+            state.uri.queryParametersAll['image-urls']?.map((e) => e).toList() ??
+                [],
         initialIndex: int.parse(state.uri.queryParameters['initial-index']!),
         $extra: state.extra as ProductoExpoEntity,
       );
@@ -297,41 +290,6 @@ extension $PedidoRouteExtension on PedidoRoute {
         queryParams: {
           'id-cliente': idCliente.toString(),
           'nombre-cliente': nombreCliente,
-          'telefono-cliente': telefonoCliente,
-        },
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $pedidoSesionRoute => GoRouteData.$route(
-      path: '/pedido_sesion',
-      factory: $PedidoSesionRouteExtension._fromState,
-    );
-
-extension $PedidoSesionRouteExtension on PedidoSesionRoute {
-  static PedidoSesionRoute _fromState(GoRouterState state) => PedidoSesionRoute(
-        idCliente: int.parse(state.uri.queryParameters['id-cliente']!),
-        nombreCliente: state.uri.queryParameters['nombre-cliente']!,
-        estado: int.parse(state.uri.queryParameters['estado']!),
-        idSesion: int.parse(state.uri.queryParameters['id-sesion']!),
-        telefonoCliente: state.uri.queryParameters['telefono-cliente']!,
-      );
-
-  String get location => GoRouteData.$location(
-        '/pedido_sesion',
-        queryParams: {
-          'id-cliente': idCliente.toString(),
-          'nombre-cliente': nombreCliente,
-          'estado': estado.toString(),
-          'id-sesion': idSesion.toString(),
           'telefono-cliente': telefonoCliente,
         },
       );
@@ -539,74 +497,6 @@ extension $BusquedaGlobalRouteExtension on BusquedaGlobalRoute {
 
   String get location => GoRouteData.$location(
         '/busqueda_global',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $historialRoute => GoRouteData.$route(
-      path: '/historial',
-      factory: $HistorialRouteExtension._fromState,
-    );
-
-extension $HistorialRouteExtension on HistorialRoute {
-  static HistorialRoute _fromState(GoRouterState state) => HistorialRoute();
-
-  String get location => GoRouteData.$location(
-        '/historial',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $reportesScreenRoute => GoRouteData.$route(
-      path: '/reportes',
-      factory: $ReportesScreenRouteExtension._fromState,
-    );
-
-extension $ReportesScreenRouteExtension on ReportesScreenRoute {
-  static ReportesScreenRoute _fromState(GoRouterState state) =>
-      ReportesScreenRoute();
-
-  String get location => GoRouteData.$location(
-        '/reportes',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $authReportesScreenRoute => GoRouteData.$route(
-      path: '/auth_reportes',
-      factory: $AuthReportesScreenRouteExtension._fromState,
-    );
-
-extension $AuthReportesScreenRouteExtension on AuthReportesScreenRoute {
-  static AuthReportesScreenRoute _fromState(GoRouterState state) =>
-      AuthReportesScreenRoute();
-
-  String get location => GoRouteData.$location(
-        '/auth_reportes',
       );
 
   void go(BuildContext context) => context.go(location);

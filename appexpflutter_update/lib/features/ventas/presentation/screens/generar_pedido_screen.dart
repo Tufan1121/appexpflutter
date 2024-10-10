@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
-import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
-import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
@@ -365,13 +363,6 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                 context
                                     .read<InventarioBloc>()
                                     .add(ClearInventarioProductoEvent());
-
-                                context
-                                    .read<DetalleSesionBloc>()
-                                    .add(ClearSesionEvent());
-                                context
-                                    .read<HistorialBloc>()
-                                    .add(ClearHistorialEvent());
                               } else if (state is PedidoError) {
                                 loading.value = false;
                                 ScaffoldMessenger.of(context).showSnackBar(

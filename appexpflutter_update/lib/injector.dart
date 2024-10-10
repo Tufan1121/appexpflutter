@@ -22,10 +22,6 @@ Future<void> init() async {
         () => InventarioExpoVentaDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<InventarioExpoDataSource>(
         () => InventarioExpoDataSourceImpl(dioClient: injector()))
-    ..registerLazySingleton<HistorialDataSource>(
-        () => HistorialDataSourceImpl(dioclient: injector()))
-    ..registerLazySingleton<SalesDatasource>(
-        () => SalesDatasourceImp(dioClient: injector()))
     ..registerLazySingleton<GaleriaDataSource>(
         () => GaleriaDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<ConsultaDatasource>(
@@ -46,10 +42,6 @@ Future<void> init() async {
         InventarioExpoVentaRepositoryImpl(inventarioExpoDataSource: injector()))
     ..registerLazySingleton<InventarioExpoRepository>(() =>
         InventarioExpoRepositoryImpl(inventarioExpoDataSource: injector()))
-    ..registerLazySingleton<HistorialRepository>(
-        () => HistorialRepositoryImpl(historialDataSource: injector()))
-    ..registerLazySingleton<SalesRepository>(
-        () => SalesRepositoryImp(salesDatasource: injector()))
     ..registerLazySingleton<GaleriaRepository>(
         () => GaleriaRepositoryImpl(galeriaDataSource: injector()))
     ..registerLazySingleton<TicketsRepository>(
@@ -72,10 +64,6 @@ Future<void> init() async {
         () => InventarioExpoVentaUsecase(inventarioExpoRepository: injector()))
     ..registerLazySingleton<InventarioExpoUsecase>(
         () => InventarioExpoUsecase(inventarioExpoRepository: injector()))
-    ..registerLazySingleton<HistorialUsecase>(
-        () => HistorialUsecase(historialRepository: injector()))
-    ..registerLazySingleton<SalesUsecase>(
-        () => SalesUsecase(salesRepository: injector()))
     ..registerLazySingleton<GaleriaUsecase>(
         () => GaleriaUsecase(galeriaRepository: injector()))
     ..registerLazySingleton<TicketsUsecase>(
@@ -107,12 +95,6 @@ Future<void> init() async {
         () => SesionPedidoBloc(pedidoUsecase: injector()))
     ..registerLazySingleton<CotizaPedidoBloc>(
         () => CotizaPedidoBloc(pedidoUsecase: injector()))
-    ..registerLazySingleton<HistorialBloc>(
-        () => HistorialBloc(historialUsecase: injector()))
-    ..registerLazySingleton<DetalleSesionBloc>(
-        () => DetalleSesionBloc(historialUsecase: injector()))
-    ..registerLazySingleton<ReportesBloc>(
-        () => ReportesBloc(salesUsecase: injector()))
     ..registerLazySingleton<GaleriaBloc>(
         () => GaleriaBloc(galeriaUsecases: injector()))
     ..registerLazySingleton<DetalleGaleriaBloc>(

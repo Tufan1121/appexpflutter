@@ -10,13 +10,6 @@ import 'package:appexpflutter_update/features/galeria/data/data_sources/galerIa_
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
-import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source.dart';
-import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source_impl.dart';
-import 'package:appexpflutter_update/features/historial/data/repositories/historial_repository_impl.dart';
-import 'package:appexpflutter_update/features/historial/domain/respositories/historial_repository.dart';
-import 'package:appexpflutter_update/features/historial/domain/usecases/historial_usecase.dart';
-import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
-import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/data/data_sources/inventario_expo_data_source_impl.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
@@ -29,12 +22,6 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/con
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
-import 'package:appexpflutter_update/features/reportes/data/data_sources/sales_datasource.dart';
-import 'package:appexpflutter_update/features/reportes/data/data_sources/sales_datasource_imp.dart';
-import 'package:appexpflutter_update/features/reportes/data/repositories/sales_repository_imp.dart';
-import 'package:appexpflutter_update/features/reportes/domain/repositories/sales_repository.dart';
-import 'package:appexpflutter_update/features/reportes/domain/usecases/sales_usecase.dart';
-import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/cliente/cliente_data_source_impl.dart';
 import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/pedido_data_source.impl.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';

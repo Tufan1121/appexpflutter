@@ -1,3 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:appexpflutter_update/main.dart';
+import 'package:appexpflutter_update/config/config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
@@ -6,15 +12,6 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/con
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
-import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:appexpflutter_update/main.dart';
-import 'package:appexpflutter_update/config/config.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
-import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
@@ -75,10 +72,6 @@ class _MyAppState extends State<MyApp> {
             create: (_) => injector<ProductosTiendaBloc>()),
         BlocProvider<BusquedaGlobalBloc>(
             create: (_) => injector<BusquedaGlobalBloc>()),
-        BlocProvider<HistorialBloc>(create: (_) => injector<HistorialBloc>()),
-        BlocProvider<DetalleSesionBloc>(
-            create: (_) => injector<DetalleSesionBloc>()),
-        BlocProvider<ReportesBloc>(create: (_) => injector<ReportesBloc>()),
         BlocProvider<GaleriaBloc>(create: (_) => injector<GaleriaBloc>()),
         BlocProvider<DetalleGaleriaBloc>(
             create: (_) => injector<DetalleGaleriaBloc>()),

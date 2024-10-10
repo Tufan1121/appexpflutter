@@ -1,6 +1,4 @@
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_screen.dart';
-import 'package:appexpflutter_update/features/historial/presentation/screens/historial_screen.dart';
-import 'package:appexpflutter_update/features/historial/presentation/screens/pedido_sesion_screen.dart';
 import 'package:inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_bodega_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_expo_screen.dart';
@@ -12,8 +10,6 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/screens/g
 import 'package:appexpflutter_update/features/punto_venta/presentation/screens/consulta_punto_screen.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/screens/punto_venta_screen.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/screens/tickets_screen.dart';
-import 'package:appexpflutter_update/features/reportes/presentation/screen/auth_reportes_screen.dart';
-import 'package:appexpflutter_update/features/reportes/presentation/screen/reportes_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_existente_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cliente_nuevo_screen.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/cotiza_pedido_screen.dart';
@@ -186,34 +182,6 @@ class PedidoRoute extends GoRouteData {
       );
 }
 
-@TypedGoRoute<PedidoSesionRoute>(
-  path: PedidoSesionRoute.path,
-)
-class PedidoSesionRoute extends GoRouteData {
-  static const path = '/pedido_sesion';
-  final int idCliente;
-  final int estado;
-  final String nombreCliente;
-  final String telefonoCliente;
-  final int idSesion;
-
-  PedidoSesionRoute(
-      {required this.idCliente,
-      required this.nombreCliente,
-      required this.estado,
-      required this.idSesion,
-      required this.telefonoCliente});
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => PedidoSesionScreen(
-        idCliente: idCliente,
-        nombreCliente: nombreCliente,
-        estado: estado,
-        idSesion: idSesion,
-        telefonoCliente: telefonoCliente,
-      );
-}
-
 @TypedGoRoute<GenerarPedidoRoute>(
   path: GenerarPedidoRoute.path,
 )
@@ -344,45 +312,6 @@ class BusquedaGlobalRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const BusquedaGlobalScreen();
-}
-
-@TypedGoRoute<HistorialRoute>(
-  path: HistorialRoute.path,
-)
-class HistorialRoute extends GoRouteData {
-  static const path = '/historial';
-
-  HistorialRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const HistorialScreen();
-}
-
-@TypedGoRoute<ReportesScreenRoute>(
-  path: ReportesScreenRoute.path,
-)
-class ReportesScreenRoute extends GoRouteData {
-  static const path = '/reportes';
-
-  ReportesScreenRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const ReportesScreen();
-}
-
-@TypedGoRoute<AuthReportesScreenRoute>(
-  path: AuthReportesScreenRoute.path,
-)
-class AuthReportesScreenRoute extends GoRouteData {
-  static const path = '/auth_reportes';
-
-  AuthReportesScreenRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const AuthReportesScreen();
 }
 
 @TypedGoRoute<GaleriaRoute>(
