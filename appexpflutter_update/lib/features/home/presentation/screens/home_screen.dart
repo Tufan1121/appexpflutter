@@ -127,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     CardItem(
                       assetPathIcon: 'assets/iconos/precios - rosa gris.png',
-                      label: 'Nueva Sesión de Ventas',
+                      label: 'Cotizaciones',
                       onTap: () => homeModalButtom(
                           height: 160,
                           context: context,

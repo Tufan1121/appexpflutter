@@ -110,41 +110,17 @@ class ListaProductosBodegaCard extends HookWidget {
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Scrollbar(
-                child: Scrollbar(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                        const SizedBox(height: 4),
                         _buildPriceCheckbox(
                           context: context,
                           label: 'Precio de Lista',
                           price: producto.precio1.toDouble(),
                         ),
-                        const SizedBox(width: 10),
-                        _buildPriceCheckbox(
-                          context: context,
-                          label: 'Precio de Expo',
-                          price: producto.precio2.toDouble(),
-                        ),
-                        const SizedBox(width: 10),
-                        _buildPriceCheckbox(
-                          context: context,
-                          label: 'Precio Mayoreo',
-                          price: producto.precio3.toDouble(),
-                        ),
                       ],
                     ),
                   ),
-                ),
+                  const SizedBox(width: 10),
+                ],
               ),
             ],
           ),
