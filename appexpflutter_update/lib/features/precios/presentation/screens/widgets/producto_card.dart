@@ -60,10 +60,6 @@ class ProductoCard extends StatelessWidget {
                 _buildInfoRow('Medidas', producto.medidas),
                 _buildInfoRow('Precio Lista',
                     Utils.formatPrice(producto.precio1.toDouble())),
-                _buildInfoRow('Precio Expo',
-                    Utils.formatPrice(producto.precio2.toDouble())),
-                _buildInfoRow('Precio Mayoreo',
-                    Utils.formatPrice(producto.precio3.toDouble())),
                 _buildCompositionRow(
                     'Composición', '${producto.compo1} ${producto.compo2}'),
               ],

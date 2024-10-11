@@ -141,7 +141,7 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
     //             content: Text('No se pudo abrir WhatsApp.'),
     //           ),
     //         );
-    
+
     //       }
     //     }
     //   } catch (e) {
@@ -234,14 +234,6 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
               children: [
                 Text(
                   'Precio Normal: ${Utils.formatPrice(widget.producto.precio1.toDouble())}',
-                  style: const TextStyle(fontSize: 16.0),
-                ),
-                Text(
-                  'Precio Expo: ${Utils.formatPrice(widget.producto.precio2.toDouble())}',
-                  style: const TextStyle(fontSize: 16.0),
-                ),
-                Text(
-                  'Precio Mayoreo: ${Utils.formatPrice(widget.producto.precio3.toDouble())}',
                   style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(

@@ -5,7 +5,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:precios/domain/entities/producto_entity.dart';
 
-
 class ListaProductosIBodegaCard extends HookWidget {
   const ListaProductosIBodegaCard({
     super.key,
@@ -108,39 +107,17 @@ class ListaProductosIBodegaCard extends HookWidget {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 4),
+                          _buildPriceCheckbox(
+                            context: context,
+                            label: 'Precio de Lista',
+                            price: producto.precio1.toDouble(),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 10),
                   ],
-                ),
-                const SizedBox(height: 4),
-                Scrollbar(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildPriceCheckbox(
-                          context: context,
-                          label: 'Precio de Lista',
-                          price: producto.precio1.toDouble(),
-                        ),
-                        const SizedBox(width: 10),
-                        _buildPriceCheckbox(
-                          context: context,
-                          label: 'Precio de Expo',
-                          price: producto.precio2.toDouble(),
-                        ),
-                        const SizedBox(width: 10),
-                        _buildPriceCheckbox(
-                          context: context,
-                          label: 'Precio Mayoreo',
-                          price: producto.precio3.toDouble(),
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
               ],
             ),

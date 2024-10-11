@@ -135,14 +135,6 @@ class _FullScreenGallery2State extends State<FullScreenGallery2> {
                   style: const TextStyle(fontSize: 16.0),
                 ),
                 Text(
-                  'Precio Expo: ${Utils.formatPrice(widget.producto.precio2.toDouble())}',
-                  style: const TextStyle(fontSize: 16.0),
-                ),
-                Text(
-                  'Precio Mayoreo: ${Utils.formatPrice(widget.producto.precio3.toDouble())}',
-                  style: const TextStyle(fontSize: 16.0),
-                ),
-                Text(
                   'Existencia: ${widget.producto.hm}',
                   style: const TextStyle(fontSize: 16.0),
                 ),

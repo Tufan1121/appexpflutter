@@ -13,14 +13,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class InventarioExpoScreen extends StatefulWidget {
-  const InventarioExpoScreen({super.key});
+class InventarioTiendaScreen extends StatefulWidget {
+  const InventarioTiendaScreen({super.key});
 
   @override
-  State<InventarioExpoScreen> createState() => _InventarioExpoScreenState();
+  State<InventarioTiendaScreen> createState() => _InventarioTiendaScreenState();
 }
 
-class _InventarioExpoScreenState extends State<InventarioExpoScreen>
+class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
     with VerificarCampos {
   final form = FormGroup({
     'descripcio': FormControl<String>(),
@@ -65,7 +65,7 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen>
                   .add(ClearInventarioProductoEvent());
               Navigator.pop(context);
             },
-            title: 'INVENTARIO EXPO',
+            title: 'INVENTARIO TIENDA',
           ),
         ),
         body: Stack(
@@ -92,7 +92,7 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen>
                               medidas.addAll(state.medidas);
                             } else if (state is MedidasError) {
                               medidas.clear();
-                              medidas.add(MedidasEntityInv(
+                              medidas.add(const MedidasEntityInv(
                                   medida: 'Error al cargar medidas',
                                   largo: 0,
                                   cm: 0,

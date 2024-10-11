@@ -160,7 +160,7 @@ class HomeScreen extends StatelessWidget {
                           child: ListView(
                             children: [
                               CustomListTile(
-                                text: 'INVENTARIO EXPO',
+                                text: 'INVENTARIO TIENDA',
                                 assetPathIcon:
                                     'assets/iconos/inventario expo - rosa.png',
                                 onTap: () => InvetarioExpoRoute().push(context),

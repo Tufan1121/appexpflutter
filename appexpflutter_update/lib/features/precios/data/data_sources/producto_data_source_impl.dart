@@ -59,16 +59,6 @@ class ProductoDataSourceImpl implements ProductoDataSource {
           )
           .toList();
       return productosRelativos;
-      // if (jsonList.isNotEmpty) {
-      //   final productosRelativos = jsonList
-      //       .map(
-      //         (json) => ProductoModel.fromJson(json),
-      //       )
-      //       .toList();
-      //   return productosRelativos;
-      // } else {
-      //   throw NotFoundException('Productos no encontrados');
-      // }
     } catch (_) {
       rethrow;
     }
@@ -93,16 +83,6 @@ class ProductoDataSourceImpl implements ProductoDataSource {
           )
           .toList();
       return productosBodega;
-      // if (jsonList.isNotEmpty) {
-      //   final productosRelativos = jsonList
-      //       .map(
-      //         (json) => ProductoModel.fromJson(json),
-      //       )
-      //       .toList();
-      //   return productosRelativos;
-      // } else {
-      //   throw NotFoundException('Productos no encontrados');
-      // }
     } catch (_) {
       rethrow;
     }
