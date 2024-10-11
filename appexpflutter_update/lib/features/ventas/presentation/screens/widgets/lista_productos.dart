@@ -10,7 +10,6 @@ import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:precios/domain/entities/producto_entity.dart';
 
-
 class ListaProductos extends HookWidget {
   const ListaProductos({super.key, required this.productos});
   final List<ProductoEntity> productos;
@@ -21,49 +20,31 @@ class ListaProductos extends HookWidget {
 
     // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
     final countList = useState<List<int>>(List.filled(productos.length, 1));
-    final selectedPriceList =
-        useState<List<int>>(List.filled(productos.length, 1));
+    final customPriceList =
+        useState<List<double?>>(List.filled(productos.length, null));
 
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
       for (var i = 0; i < productos.length; i++) {
-        if (i >= countList.value.length ||
-            i >= selectedPriceList.value.length) {
+        if (i >= countList.value.length || i >= customPriceList.value.length) {
           continue; // Evita acceder fuera de los límites de las listas
         }
 
         final count = countList.value[i];
-        final selectedPrice = selectedPriceList.value[i];
-        // print('Producto ${productos[i].producto}: count = $count, selectedPrice = $selectedPrice');
-
-        if (count > 0) {
-          double precioUnitario = 0.0;
-          switch (selectedPrice) {
-            case 1:
-              precioUnitario = productos[i].precio1.toDouble();
-              break;
-            case 2:
-              precioUnitario = productos[i].precio2.toDouble();
-              break;
-            case 3:
-              precioUnitario = productos[i].precio3.toDouble();
-              break;
-            default:
-              break;
-          }
-          final subtotal = precioUnitario * count;
-          newTotal += subtotal;
-          UtilsVenta.listProductsOrder.add(
-            DetallePedidoEntity(
-              idPedido: 0,
-              clave: productos[i].producto1,
-              clave2: productos[i].producto,
-              cantidad: count,
-              precio: precioUnitario,
-            ),
-          );
-        }
+        final customPrice = customPriceList.value[i];
+        double precioUnitario = customPrice ?? productos[i].precio1.toDouble();
+        final subtotal = precioUnitario * count;
+        newTotal += subtotal;
+        UtilsVenta.listProductsOrder.add(
+          DetallePedidoEntity(
+            idPedido: 0,
+            clave: productos[i].producto1,
+            clave2: productos[i].producto,
+            cantidad: count,
+            precio: precioUnitario,
+          ),
+        );
       }
       total.value = newTotal;
       UtilsVenta.total = total.value;
@@ -72,27 +53,27 @@ class ListaProductos extends HookWidget {
     useEffect(() {
       updateTotal(); // Initial calculation
       return null; // No cleanup needed
-    }, [countList.value, selectedPriceList.value]);
+    }, [countList.value, customPriceList.value]);
 
     useEffect(() {
-      // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
+      // Actualizar countList y customPriceList cuando cambia la longitud de los productos
       final newCountList = List<int>.from(countList.value);
-      final newSelectedPriceList = List<int>.from(selectedPriceList.value);
+      final newCustomPriceList = List<double?>.from(customPriceList.value);
 
       // Ajusta la longitud de las listas
       if (newCountList.length < productos.length) {
         newCountList.addAll(
             List<int>.filled(productos.length - newCountList.length, 1));
-        newSelectedPriceList.addAll(List<int>.filled(
-            productos.length - newSelectedPriceList.length, 1));
+        newCustomPriceList.addAll(List<double?>.filled(
+            productos.length - newCustomPriceList.length, null));
       } else if (newCountList.length > productos.length) {
         newCountList.removeRange(productos.length, newCountList.length);
-        newSelectedPriceList.removeRange(
-            productos.length, newSelectedPriceList.length);
+        newCustomPriceList.removeRange(
+            productos.length, newCustomPriceList.length);
       }
 
       countList.value = newCountList;
-      selectedPriceList.value = newSelectedPriceList;
+      customPriceList.value = newCustomPriceList;
       updateTotal();
       return null;
     }, [productos.length]);
@@ -121,15 +102,15 @@ class ListaProductos extends HookWidget {
                   productos[index].bodega2 +
                   productos[index].bodega3 +
                   productos[index].bodega4;
-
               return HookBuilder(
                 builder: (context) {
                   final count = useState(countList.value[index]);
-                  final selectedPrice =
-                      useState<int>(selectedPriceList.value[index]);
-                  final customPrice = useState<double?>(null);
+                  final showCustomPrice = useState<bool>(false);
+                  final customPrice =
+                      useState<double?>(customPriceList.value[index]);
                   final customPriceController = useTextEditingController(
-                      text: producto.precio3.toString());
+                      text: customPrice.value?.toString() ??
+                          producto.precio1.toString());
 
                   return ClipRect(
                     child: Card(
@@ -156,11 +137,32 @@ class ListaProductos extends HookWidget {
                             children: [
                               Row(
                                 children: [
-                                  Image.network(
-                                    'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
-                                    width: 60,
-                                    height: 60,
+                                  FadeInImage(
+                                    placeholder: const AssetImage(
+                                        'assets/loaders/loading.gif'),
+                                    // ignore: unnecessary_null_comparison
+                                    image: producto.pathima1 != null &&
+                                            producto.pathima1.isNotEmpty
+                                        ? NetworkImage(
+                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
+                                          )
+                                        : const AssetImage(
+                                                'assets/images/no-image.jpg')
+                                            as ImageProvider,
+                                    width: 70,
+                                    height: 70,
                                     fit: BoxFit.cover,
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 300),
+                                    imageErrorBuilder:
+                                        (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/images/no-image.jpg',
+                                        width: 70,
+                                        height: 70,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
@@ -231,45 +233,19 @@ class ListaProductos extends HookWidget {
                                         context: context,
                                         label: 'Precio de Lista',
                                         price: producto.precio1.toDouble(),
-                                        value: selectedPrice.value == 1,
+                                        value: showCustomPrice.value,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 1;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal();
-                                        },
-                                      ),
-                                      _buildPriceCheckbox(
-                                        context: context,
-                                        label: 'Precio de Expo',
-                                        price: producto.precio2.toDouble(),
-                                        value: selectedPrice.value == 2,
-                                        onChanged: (bool? value) {
-                                          selectedPrice.value = 2;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal();
-                                        },
-                                      ),
-                                      _buildPriceCheckbox(
-                                        context: context,
-                                        label: 'Precio Mayoreo',
-                                        price: producto.precio3.toDouble(),
-                                        value: selectedPrice.value == 3,
-                                        onChanged: (bool? value) {
-                                          selectedPrice.value = 3;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal();
+                                          showCustomPrice.value =
+                                              value ?? false;
                                         },
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                              if (selectedPrice.value == 3)
+                              if (showCustomPrice.value)
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
                                       width: 80,
@@ -283,8 +259,8 @@ class ListaProductos extends HookWidget {
                                         },
                                         onSubmitted: (value) {
                                           if (customPrice.value != null) {
-                                            selectedPriceList.value[index] =
-                                                3; // Precio personalizado
+                                            customPriceList.value[index] =
+                                                customPrice.value;
                                             updateTotal();
                                           }
                                         },
@@ -309,25 +285,24 @@ class ListaProductos extends HookWidget {
                                                     .unfocus();
                                                 final price = double.parse(
                                                     customPriceController.text);
+
                                                 final updatedProduct =
                                                     producto.copyWith(
-                                                        precio3: price.toInt());
+                                                        precio1: price.toInt());
+
                                                 context
                                                     .read<ProductosBloc>()
                                                     .add(UpdateProductEvent(
                                                         updatedProduct));
-
                                                 // Actualiza el producto en la lista
                                                 productos[index] =
                                                     updatedProduct;
-                                                // Refleja el nuevo precio en la lista de precios seleccionados
-                                                selectedPriceList.value[index] =
-                                                    3;
+
                                                 updateTotal();
                                               }
                                             : null,
                                         child: const AutoSizeText(
-                                          'APLICAR DESCUENTO',
+                                          'APLICAR PRECIO',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colores
@@ -359,24 +334,25 @@ class ListaProductos extends HookWidget {
     required String label,
     required double price,
     required bool value,
-    required Function(bool?) onChanged,
+    required ValueChanged<bool?> onChanged,
   }) {
-    return Column(
+    return Row(
       children: [
-        AutoSizeText(label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        const SizedBox(width: 2),
+        Checkbox(
+          value: value,
+          onChanged: onChanged,
+          activeColor: Colores.secondaryColor,
+        ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Checkbox(
-              value: value,
-              onChanged: onChanged,
-              activeColor: Colores.secondaryColor,
+            Text(
+              '$label : ',
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(width: 5),
-            AutoSizeText(Utils.formatPrice(price),
-                style: const TextStyle(fontSize: 12)),
+            Text(
+              Utils.formatPrice(price),
+              style: const TextStyle(fontSize: 14),
+            ),
           ],
         ),
       ],

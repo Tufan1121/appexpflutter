@@ -1,11 +1,10 @@
-
 import 'package:sesion_ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
@@ -19,8 +18,7 @@ class ListaProductos extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
-    final totalDetalle = useState<double>(0.0);
-// Hook para countList y selectedPriceList
+
     // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
     final countList = useState<List<int>>(List.filled(productos.length, 1));
     final selectedPriceList =
@@ -32,36 +30,37 @@ class ListaProductos extends HookWidget {
       for (var i = 0; i < productos.length; i++) {
         if (i >= countList.value.length ||
             i >= selectedPriceList.value.length) {
-          // Si el índice está fuera del rango, omite este ciclo
-          continue;
+          continue; // Evita acceder fuera de los límites de las listas
         }
+
         final count = countList.value[i];
         final selectedPrice = selectedPriceList.value[i];
+        // print('Producto ${productos[i].producto}: count = $count, selectedPrice = $selectedPrice');
+
         if (count > 0) {
-          double precio = 0.0;
+          double precioUnitario = 0.0;
           switch (selectedPrice) {
             case 1:
-              precio = productos[i].precio1.toDouble();
+              precioUnitario = productos[i].precio1.toDouble();
               break;
             case 2:
-              precio = productos[i].precio2.toDouble();
+              precioUnitario = productos[i].precio2.toDouble();
               break;
             case 3:
-              precio = productos[i].precio3.toDouble();
+              precioUnitario = productos[i].precio3.toDouble();
               break;
             default:
               break;
           }
-          final subtotal = precio * count;
+          final subtotal = precioUnitario * count;
           newTotal += subtotal;
-          totalDetalle.value = precio * countList.value[i];
           UtilsVenta.listProductsOrder.add(
             DetallePedidoEntity(
               idPedido: 0,
               clave: productos[i].producto1,
               clave2: productos[i].producto,
-              cantidad: countList.value[i],
-              precio: totalDetalle.value,
+              cantidad: count,
+              precio: precioUnitario,
             ),
           );
         }
@@ -80,7 +79,7 @@ class ListaProductos extends HookWidget {
       final newCountList = List<int>.from(countList.value);
       final newSelectedPriceList = List<int>.from(selectedPriceList.value);
 
-      // Ajustar la longitud de las listas
+      // Ajusta la longitud de las listas
       if (newCountList.length < productos.length) {
         newCountList.addAll(
             List<int>.filled(productos.length - newCountList.length, 1));
@@ -139,11 +138,10 @@ class ListaProductos extends HookWidget {
                           vertical: 10, horizontal: 15),
                       clipBehavior: Clip.hardEdge,
                       child: Dismissible(
+                        direction: DismissDirection.startToEnd,
                         key: Key(producto.producto1),
-                        onDismissed: (direction) {
-                          context
-                              .read<ProductosBloc>()
-                              .add(RemoveProductEvent(producto));
+                        confirmDismiss: (direction) async {
+                          return await _dialogEliminar(context, producto);
                         },
                         background: Container(
                           color: Colors.red,
@@ -274,21 +272,30 @@ class ListaProductos extends HookWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     SizedBox(
-                                      width: 50,
-                                      height: 50,
+                                      width: 80,
+                                      height: 32,
                                       child: TextField(
-                                        decoration: const InputDecoration(),
-                                        style: const TextStyle(fontSize: 15),
-                                        inputFormatters: const [],
                                         controller: customPriceController,
                                         keyboardType: TextInputType.number,
                                         onChanged: (value) {
                                           customPrice.value =
                                               double.tryParse(value);
                                         },
+                                        onSubmitted: (value) {
+                                          if (customPrice.value != null) {
+                                            selectedPriceList.value[index] =
+                                                3; // Precio personalizado
+                                            updateTotal();
+                                          }
+                                        },
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 0),
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(width: 5),
+                                    const SizedBox(width: 10),
                                     SizedBox(
                                       height: 33,
                                       width: 110,
@@ -298,6 +305,8 @@ class ListaProductos extends HookWidget {
                                                 Colores.secondaryColor),
                                         onPressed: customPrice.value != null
                                             ? () {
+                                                FocusScope.of(context)
+                                                    .unfocus();
                                                 final price = double.parse(
                                                     customPriceController.text);
                                                 final updatedProduct =
@@ -307,6 +316,13 @@ class ListaProductos extends HookWidget {
                                                     .read<ProductosBloc>()
                                                     .add(UpdateProductEvent(
                                                         updatedProduct));
+
+                                                // Actualiza el producto en la lista
+                                                productos[index] =
+                                                    updatedProduct;
+                                                // Refleja el nuevo precio en la lista de precios seleccionados
+                                                selectedPriceList.value[index] =
+                                                    3;
                                                 updateTotal();
                                               }
                                             : null,
@@ -343,7 +359,7 @@ class ListaProductos extends HookWidget {
     required String label,
     required double price,
     required bool value,
-    required void Function(bool?)? onChanged,
+    required Function(bool?) onChanged,
   }) {
     return Column(
       children: [
@@ -355,11 +371,7 @@ class ListaProductos extends HookWidget {
           children: [
             Checkbox(
               value: value,
-              onChanged: (bool? newValue) {
-                if (newValue == true) {
-                  onChanged!(true);
-                }
-              },
+              onChanged: onChanged,
               activeColor: Colores.secondaryColor,
             ),
             const SizedBox(width: 5),
@@ -368,6 +380,51 @@ class ListaProductos extends HookWidget {
           ],
         ),
       ],
+    );
+  }
+
+  Future<bool?> _dialogEliminar(BuildContext context, ProductoEntity producto) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          icon: const Icon(
+            Icons.warning,
+            color: Colors.red,
+          ),
+          title: const Text(
+            'Confirmar eliminación',
+            style: TextStyle(color: Colors.red),
+          ),
+          content:
+              Text('¿Está seguro de que desea eliminar ${producto.producto}?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Cancelar la eliminación
+              },
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colores.secondaryColor),
+              ),
+            ),
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colores.secondaryColor,
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+              ),
+              onPressed: () {
+                context.read<ProductosBloc>().add(RemoveProductEvent(producto));
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
