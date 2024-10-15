@@ -11,6 +11,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/inventario_bodega.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchProducto extends HookWidget {
   const SearchProducto({
@@ -98,7 +99,10 @@ class SearchProducto extends HookWidget {
           ),
           const SizedBox(width: 10),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async{
+                final prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
               if (productos.isNotEmpty) {
                 Modals(
                     context: context,
@@ -111,7 +115,7 @@ class SearchProducto extends HookWidget {
                               Navigator.of(context).pop();
 
                               String pdfUrl =
-                                  'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf';
+                                  'https://tapetestufan.mx/cotiza/${prefs.getString('digsig')}/pdf/${state.pedido.pedidos}.pdf';
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

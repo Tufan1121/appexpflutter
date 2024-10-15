@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -160,8 +161,9 @@ class PdfViewerPedidoScreen extends HookWidget {
           ),
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-          title: Text(
+          title: AutoSizeText(
             '$search:  $fileName',
+            maxLines: 1,
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.bold,
               color: Colores.scaffoldBackgroundColor,
