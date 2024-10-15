@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_screen.dart';
+import 'package:appexpflutter_update/features/historial/presentation/screens/historial_screen.dart';
 import 'package:inventarios/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_bodega_screen.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/inventario_tienda_screen.dart';
@@ -313,6 +314,20 @@ class BusquedaGlobalRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) =>
       const BusquedaGlobalScreen();
 }
+
+@TypedGoRoute<HistorialRoute>(
+  path: HistorialRoute.path,
+)
+class HistorialRoute extends GoRouteData {
+  static const path = '/historial';
+
+  HistorialRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const HistorialScreen();
+}
+
 
 @TypedGoRoute<GaleriaRoute>(
   path: GaleriaRoute.path,

@@ -24,6 +24,8 @@ import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 
+import 'features/historial/presentation/blocs/historial/historial_bloc.dart';
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -59,6 +61,7 @@ class _MyAppState extends State<MyApp> {
             create: (_) => injector<SesionPedidoBloc>()),
         BlocProvider<CotizaPedidoBloc>(
             create: (_) => injector<CotizaPedidoBloc>()),
+        BlocProvider<HistorialBloc>(create: (_) => injector<HistorialBloc>()),
         BlocProvider<InventarioBloc>(create: (_) => injector<InventarioBloc>()),
         BlocProvider<InventarioTiendaBloc>(
             create: (_) => injector<InventarioTiendaBloc>()),

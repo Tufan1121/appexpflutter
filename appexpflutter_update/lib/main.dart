@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:appexpflutter_update/features/historial/data/repositories/historial_repository_impl.dart';
+import 'package:appexpflutter_update/features/historial/domain/respositories/historial_repository.dart';
+import 'package:appexpflutter_update/features/historial/domain/usecases/historial_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -34,6 +37,9 @@ import 'package:appexpflutter_update/features/precios/data/data_sources/producto
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/historial/data/data_sources/historial_data_source.dart';
+import 'features/historial/data/data_sources/historial_data_source_impl.dart';
+import 'features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'features/ventas/presentation/blocs/producto/productos_bloc.dart';
 
 //* LIBRERIAS

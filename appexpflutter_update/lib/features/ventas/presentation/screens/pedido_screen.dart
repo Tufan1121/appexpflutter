@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/search_producto.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'widgets/widgets.dart' show CustomDropdownButton;
 
 const list = [
   'Pendiente Pago (Anticipo)',
@@ -51,7 +48,7 @@ class _PedidoScreenState extends State<PedidoScreen> {
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colores.secondaryColor.withOpacity(0.78),
           title: Text(
-            'PEDIDO',
+            'COTIZACION',
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.bold,
               color: Colores.scaffoldBackgroundColor,
@@ -60,7 +57,7 @@ class _PedidoScreenState extends State<PedidoScreen> {
                   color: Colors.black26,
                   blurRadius: 6,
                   offset: Offset(2.0, 5.0),
-                )    
+                )
               ],
             ),
           ),
@@ -97,35 +94,6 @@ class _PedidoScreenState extends State<PedidoScreen> {
                               fontSize: 20),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 5),
-                    Center(
-                      child: CustomDropdownButton<String>(
-                        value: dropdownValue.value,
-                        hint: 'Selecciona Estatus del pedido',
-                        styleHint: const TextStyle(fontSize: 15),
-                        prefixIcon: const FaIcon(
-                          FontAwesomeIcons.bagShopping,
-                          color: Colores.secondaryColor,
-                        ),
-                        onChanged: (value) {
-                          dropdownValue.value = value!;
-                        },
-                        icon: const FaIcon(
-                          FontAwesomeIcons.diagramNext,
-                          color: Colores.secondaryColor,
-                        ),
-                        items:
-                            list.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: AutoSizeText(
-                              value,
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          );
-                        }).toList(),
-                      ),
                     ),
                     const SizedBox(height: 20),
                     SearchProducto(

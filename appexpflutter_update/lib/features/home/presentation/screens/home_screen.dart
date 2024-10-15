@@ -185,6 +185,11 @@ class HomeScreen extends StatelessWidget {
                           )),
                     ),
                     CardItem(
+                      icon: Icons.history_rounded,
+                      label: 'Historial',
+                      onTap: () => HistorialRoute().push(context),
+                    ),
+                    CardItem(
                       icon: Icons.photo_library,
                       label: 'Galería',
                       onTap: () {
