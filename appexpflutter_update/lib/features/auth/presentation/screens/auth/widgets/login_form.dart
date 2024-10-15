@@ -43,7 +43,7 @@ class _LoginFormState extends State<LoginForm> {
               'Iniciar sesión ',
               style: textStyles.titleLarge,
             ),
-            const SizedBox(height: 90),
+            const SizedBox(height: 50),
             CustomReactiveTextField(
               formControlName: 'email',
               label: 'Correo',

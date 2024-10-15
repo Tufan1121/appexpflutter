@@ -24,10 +24,16 @@ class HomeScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height),
-            painter: BackgroundPainter2(),
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  'assets/images/fondo.png',
+                ),
+                scale: 10,
+                fit: BoxFit.cover, // Ajusta la imagen para que no se corte
+              ),
+            ),
           ),
           Column(
             children: [
@@ -53,13 +59,13 @@ class HomeScreen extends StatelessWidget {
                         )
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 5),
                     Center(
                       child: Column(
                         children: [
                           Image.asset(
-                            'assets/images/logo_tufan.png',
-                            scale: 12,
+                            'assets/images/tufan_logo.png',
+                            scale: 2.5,
                           ),
                           const SizedBox(height: 5),
                           FutureBuilder<(String, String)>(
@@ -78,7 +84,7 @@ class HomeScreen extends StatelessWidget {
                                           style: GoogleFonts.montserrat(
                                             fontWeight: FontWeight.bold,
                                             color:
-                                                Colores.scaffoldBackgroundColor,
+                                                Colors.black.withOpacity(0.8),
                                             shadows: const [
                                               BoxShadow(
                                                 color: Colors.black26,
@@ -90,8 +96,8 @@ class HomeScreen extends StatelessWidget {
                                       AutoSizeText('Almacen: $almacen',
                                           style: GoogleFonts.montserrat(
                                             fontWeight: FontWeight.bold,
-                                            color:
-                                                Colores.scaffoldBackgroundColor,
+                                            color: Colores.secondaryColor
+                                                .withOpacity(0.8),
                                             shadows: const [
                                               BoxShadow(
                                                 color: Colors.black26,
@@ -109,7 +115,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 5),
                   ],
                 ),
               ),
