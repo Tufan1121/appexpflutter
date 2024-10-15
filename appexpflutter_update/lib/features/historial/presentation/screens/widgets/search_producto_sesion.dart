@@ -175,10 +175,6 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
                                               products: UtilsVenta
                                                   .listProductsOrder));
                                     },
-                              // onTap: () => SesionPedidoRoute(
-                              //         idCliente: idCliente,
-                              //         estadoPedido: estatusPedido)
-                              //     .go(context),
                             );
                           },
                         ),

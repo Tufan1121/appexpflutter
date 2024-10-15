@@ -127,7 +127,7 @@ class SearchHistorial extends HookWidget {
                     color: Colores.secondaryColor,
                   ),
                 ),
-                hintText: 'Buscar...',
+                hintText: 'Buscar cliente/cotización',
                 hintStyle: const TextStyle(color: Colors.grey),
                 fillColor: Colors.white,
                 filled: true,

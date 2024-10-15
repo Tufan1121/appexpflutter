@@ -99,12 +99,11 @@ class SearchProducto extends HookWidget {
           ),
           const SizedBox(width: 10),
           ElevatedButton(
-            onPressed: () async{
-                final prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
               if (productos.isNotEmpty) {
                 Modals(
+                    // ignore: use_build_context_synchronously
                     context: context,
                     height: 80,
                     child: ListView(

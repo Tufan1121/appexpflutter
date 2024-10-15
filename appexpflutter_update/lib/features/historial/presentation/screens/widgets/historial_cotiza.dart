@@ -49,7 +49,7 @@ class HistorialListCotiza extends StatelessWidget {
                 onTap: () async {
                   final prefs = await SharedPreferences.getInstance();
                   String pdfUrl =
-                      'https://tapetestufan.mx/expo/${historial[index].idExpo}/pdf/${historial[index].pedidos}.pdf';
+                      'https://tapetestufan.mx/cotiza/${prefs.getString('digsig')}/pdf/${historial[index].pedidos}.pdf';
                   if (context.mounted) {
                     Navigator.push(
                       context,

@@ -63,23 +63,6 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
 
   final totalAPagar = UtilsVenta.total;
 
-  // Future<void> _openPDF(String pdfUrl) async {
-  //   try {
-  //     // Lanzar la URL en un visor de PDF externo
-  //     await launchUrl(Uri.parse(pdfUrl), mode: LaunchMode.externalApplication);
-  //   } catch (e) {
-  //     // Manejar errores si la URL no se puede abrir
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(
-  //           content: Text('No se pudo abrir el PDF'),
-  //           backgroundColor: Colors.red,
-  //         ),
-  //       );
-  //     }
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final isEntregado = useState(false);
