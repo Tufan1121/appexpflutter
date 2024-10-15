@@ -29,7 +29,7 @@ class _InventarioBodegaState extends State<InventarioBodega>
     'mlargo1': FormControl<String>(),
     'mlargo2': FormControl<String>(),
     'mancho1': FormControl<String>(),
-    'mancho2': FormControl<String>(),
+     'mancho2': FormControl<String>(),
   });
 
   final List<MedidasEntityInv> medidas = [];
