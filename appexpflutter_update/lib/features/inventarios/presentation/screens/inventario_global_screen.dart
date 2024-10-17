@@ -3,7 +3,6 @@ import 'package:appexpflutter_update/features/inventarios/presentation/blocs/bus
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/lista_productos_expo.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -55,27 +54,37 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
         context.read<BusquedaGlobalBloc>().add(ClearInventarioProductoEvent());
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(40.0),
-          child: CustomAppBar(
-            onPressed: () {
-              context
-                  .read<BusquedaGlobalBloc>()
-                  .add(ClearInventarioProductoEvent());
-              Navigator.pop(context);
-            },
-            title: 'BUSQUEDA GLOBAL',
-          ),
-        ),
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/images/fondo.png',
+                  ),
+                  fit: BoxFit
+                      .cover, // Asegura que la imagen de fondo se vea completa
+                ),
+              ),
             ),
             Column(
               children: [
+                const SizedBox(height: 5),
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40.0),
+                  child: CustomAppBar(
+                    backgroundColor: Colors.transparent,
+                    color: Colores.secondaryColor,
+                    onPressed: () {
+                      context
+                          .read<BusquedaGlobalBloc>()
+                          .add(ClearInventarioProductoEvent());
+                      Navigator.pop(context);
+                    },
+                    title: 'BUSQUEDA GLOBAL',
+                  ),
+                ),
                 const SizedBox(height: 5),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),

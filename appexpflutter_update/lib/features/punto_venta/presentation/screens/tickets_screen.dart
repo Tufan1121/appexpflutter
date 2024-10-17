@@ -4,7 +4,7 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inv
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/search_producto_punto_venta.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +12,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 const list = [
   'Pendiente Pago (Anticipo)',
@@ -51,39 +50,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
             .add(ClearInventarioProductoEvent());
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(40.0),
-          child: AppBar(
-            leading: IconButton(
-              onPressed: () {
-                context
-                    .read<ProductosTiendaBloc>()
-                    .add(ClearProductoStateEvent());
-                context
-                    .read<InventarioTiendaBloc>()
-                    .add(ClearInventarioProductoEvent());
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back_rounded),
-            ),
-            iconTheme: const IconThemeData(color: Colors.white),
-            backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-            title: Text(
-              'TICKETS',
-              style: GoogleFonts.montserrat(
-                fontWeight: FontWeight.bold,
-                color: Colores.scaffoldBackgroundColor,
-                shadows: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(2.0, 5.0),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
+        resizeToAvoidBottomInset: true,
         floatingActionButton: ElevatedButton(
           onPressed: () {
             if (productos.isNotEmpty) {
@@ -129,187 +96,216 @@ class _PedidoScreenState extends State<TicketsScreen> {
         ),
         body: Stack(
           children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
+            // Imagen de fondo
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/fondo.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            SingleChildScrollView(
+            SafeArea(
               child: Column(
                 children: [
+                  PreferredSize(
+                    preferredSize: const Size.fromHeight(40.0),
+                    child: CustomAppBar(
+                      backgroundColor: Colors.transparent,
+                      color: Colores.secondaryColor,
+                      onPressed: () {
+                        context
+                            .read<ProductosTiendaBloc>()
+                            .add(ClearProductoStateEvent());
+                        context
+                            .read<InventarioTiendaBloc>()
+                            .add(ClearInventarioProductoEvent());
+                        Navigator.pop(context);
+                      },
+                      title: 'TICKETS',
+                    ),
+                  ),
                   const SizedBox(height: 5),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
                         children: [
-                          const Text(
-                            'Cliente: ',
-                            style: TextStyle(
-                                color: Colores.scaffoldBackgroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Cliente: ',
+                                style: TextStyle(
+                                    color: Colores.secondaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                              AutoSizeText(
+                                maxLines: 2,
+                                widget.data['nombre'],
+                                style: const TextStyle(
+                                    color: Colores.secondaryColor,
+                                    fontSize: 20),
+                              ),
+                            ],
                           ),
-                          AutoSizeText(
-                            maxLines: 2,
-                            widget.data['nombre'],
-                            style: const TextStyle(
-                                color: Colores.scaffoldBackgroundColor,
-                                fontSize: 20),
+                          /* const SizedBox(height: 5),
+                          Center(
+                            child: CustomDropdownButton<String>(
+                              value: dropdownValue.value,
+                              hint: 'Selecciona Estatus del pedido',
+                              styleHint: const TextStyle(fontSize: 15),
+                              prefixIcon: const FaIcon(
+                                FontAwesomeIcons.bagShopping,
+                                color: Colores.secondaryColor,
+                              ),
+                              onChanged: (value) {
+                                dropdownValue.value = value!;
+                              },
+                              icon: const FaIcon(
+                                FontAwesomeIcons.diagramNext,
+                                color: Colores.secondaryColor,
+                              ),
+                              items: list
+                                  .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: AutoSizeText(
+                                    value,
+                                    style: const TextStyle(fontSize: 15),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ), */
+                          const SizedBox(height: 8),
+                          BlocConsumer<ProductosTiendaBloc, ProductosState>(
+                            listener: (context, state) {
+                              if (state is ProductosLoaded) {
+                                if (state.existencia == true) {
+                                  controller.clear();
+                                  _showModal(
+                                    context: context,
+                                    icon: const Center(
+                                      child: FaIcon(
+                                        FontAwesomeIcons.circleCheck,
+                                        color: Colors.green,
+                                        size: 40,
+                                      ),
+                                    ),
+                                    title: 'Agregado',
+                                    menssage:
+                                        'El producto si esta en existencia',
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                }
+                              } else if (state is ProductoError) {
+                                if (state.existencia == false) {
+                                  controller.clear();
+                                  _showModal(
+                                    context: context,
+                                    icon: const Center(
+                                      child: FaIcon(
+                                        FontAwesomeIcons.circleXmark,
+                                        color: Colors.red,
+                                        size: 40,
+                                      ),
+                                    ),
+                                    title: 'Error',
+                                    menssage: 'No existe o no está disponible',
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                }
+                              }
+                            },
+                            builder: (context, state) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0, vertical: 2.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomSearch(
+                                        controller: controller,
+                                        inputFormatters: [
+                                          UpperCaseTextFormatter(),
+                                        ],
+                                        hintText: 'Validar Clave',
+                                        onSubmitted: (value) {
+                                          context
+                                              .read<ProductosTiendaBloc>()
+                                              .add(GetProductEvent(
+                                                  clave: value));
+                                        },
+                                        validator: (value) {
+                                          final List<String>
+                                              clavesNoPermitidas = [
+                                            'F-MIA',
+                                            'T-MIA',
+                                            'Q-MIA',
+                                            'A-MIA'
+                                          ];
+                                          if (value.isNotEmpty) {
+                                            // Verificar si la clave completa está en la lista de claves no permitidas
+                                            if (clavesNoPermitidas.any(
+                                                (clave) =>
+                                                    value.startsWith(clave))) {
+                                              controller.clear();
+                                              return "No puede vender esta Clave.";
+                                            }
+                                            // Verificar si la clave comienza con 'M'
+                                            if (value.startsWith('M')) {
+                                              controller.clear();
+                                              return "No puede vender esta Clave.";
+                                            }
+                                          }
+                                          // controller.clear();
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
+                          const SizedBox(height: 20),
+                          PuntoVentaProductSearch(
+                            estatusPedido:
+                                getEstadoPedidoPagoId(dropdownValue.value),
+                            telefonoCliente: ' telefonoCliente ',
+                          ),
+                          const SizedBox(height: 5),
+                          BlocBuilder<ProductosTiendaBloc, ProductosState>(
+                            builder: (context, state) {
+                              if (state is ProductosLoaded) {
+                                return ListaProductosVenta(
+                                    productos: state.productos);
+                              } else if (state is ProductoLoading) {
+                                return const Column(
+                                  children: [
+                                    SizedBox(height: 150),
+                                    CircularProgressIndicator(
+                                      color: Colores.secondaryColor,
+                                    ),
+                                  ],
+                                );
+                              } else if (state is ProductoError) {
+                                return ListaProductosVenta(
+                                  productos: state.productos,
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
+                          )
                         ],
                       ),
-                      /* const SizedBox(height: 5),
-                      Center(
-                        child: CustomDropdownButton<String>(
-                          value: dropdownValue.value,
-                          hint: 'Selecciona Estatus del pedido',
-                          styleHint: const TextStyle(fontSize: 15),
-                          prefixIcon: const FaIcon(
-                            FontAwesomeIcons.bagShopping,
-                            color: Colores.secondaryColor,
-                          ),
-                          onChanged: (value) {
-                            dropdownValue.value = value!;
-                          },
-                          icon: const FaIcon(
-                            FontAwesomeIcons.diagramNext,
-                            color: Colores.secondaryColor,
-                          ),
-                          items: list
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: AutoSizeText(
-                                value,
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ), */
-                      const SizedBox(height: 8),
-                      BlocConsumer<ProductosTiendaBloc, ProductosState>(
-                        listener: (context, state) {
-                          if (state is ProductosLoaded) {
-                            if (state.existencia == true) {
-                              controller.clear();
-                              _showModal(
-                                context: context,
-                                icon: const Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.circleCheck,
-                                    color: Colors.green,
-                                    size: 40,
-                                  ),
-                                ),
-                                title: 'Agregado',
-                                menssage: 'El producto si esta en existencia',
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            }
-                          } else if (state is ProductoError) {
-                            if (state.existencia == false) {
-                              controller.clear();
-                              _showModal(
-                                context: context,
-                                icon: const Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.circleXmark,
-                                    color: Colors.red,
-                                    size: 40,
-                                  ),
-                                ),
-                                title: 'Error',
-                                menssage: 'No existe o no está disponible',
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            }
-                          }
-                        },
-                        builder: (context, state) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 2.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: CustomSearch(
-                                    controller: controller,
-                                    inputFormatters: [
-                                      UpperCaseTextFormatter(),
-                                    ],
-                                    hintText: 'Validar Clave',
-                                    onSubmitted: (value) {
-                                      context
-                                          .read<ProductosTiendaBloc>()
-                                          .add(GetProductEvent(clave: value));
-                                    },
-                                    validator: (value) {
-                                      final List<String> clavesNoPermitidas = [
-                                        'F-MIA',
-                                        'T-MIA',
-                                        'Q-MIA',
-                                        'A-MIA'
-                                      ];
-                                      if (value.isNotEmpty) {
-                                        // Verificar si la clave completa está en la lista de claves no permitidas
-                                        if (clavesNoPermitidas.any((clave) =>
-                                            value.startsWith(clave))) {
-                                          controller.clear();
-                                          return "No puede vender esta Clave.";
-                                        }
-                                        // Verificar si la clave comienza con 'M'
-                                        if (value.startsWith('M')) {
-                                          controller.clear();
-                                          return "No puede vender esta Clave.";
-                                        }
-                                      }
-                                      // controller.clear();
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      PuntoVentaProductSearch(
-                        estatusPedido:
-                            getEstadoPedidoPagoId(dropdownValue.value),
-                        telefonoCliente: ' telefonoCliente ',
-                      ),
-                      const SizedBox(height: 5),
-                      BlocBuilder<ProductosTiendaBloc, ProductosState>(
-                        builder: (context, state) {
-                          if (state is ProductosLoaded) {
-                            return ListaProductosVenta(
-                                productos: state.productos);
-                          } else if (state is ProductoLoading) {
-                            return const Column(
-                              children: [
-                                SizedBox(height: 150),
-                                CircularProgressIndicator(
-                                  color: Colores.secondaryColor,
-                                ),
-                              ],
-                            );
-                          } else if (state is ProductoError) {
-                            return ListaProductosVenta(
-                              productos: state.productos,
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                      )
-                    ],
+                    ),
                   ),
                 ],
               ),

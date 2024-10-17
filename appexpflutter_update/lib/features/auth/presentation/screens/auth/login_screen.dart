@@ -12,6 +12,7 @@ class LoginScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+        resizeToAvoidBottomInset: false, // Mantiene la imagen de fondo fija
         body: Stack(
           children: [
             // Imagen de fondo
@@ -21,35 +22,45 @@ class LoginScreen extends StatelessWidget {
                   image: AssetImage(
                     'assets/images/fondo.png',
                   ),
-                  scale: 10,
-                  fit: BoxFit.cover, // Ajusta la imagen para que no se corte
+                  fit: BoxFit
+                      .cover, // Asegura que la imagen de fondo se vea completa
                 ),
               ),
             ),
-            SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 90),
-                  // Icon Banner
-                  Image.asset(
-                    'assets/images/tufan_logo.png',
-                    scale: 2.5,
+            SafeArea(
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: size
+                        .height, // Asegura que el ScrollView ocupe toda la pantalla
                   ),
-                  const SizedBox(height: 80),
-                  Container(
-                    height:
-                        size.height - 380, // 80 los dos sizebox y 100 el ícono
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: scaffoldBackgroundColor,
-                      borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(100)),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 90),
+                        // Icono banner
+                        Image.asset(
+                          'assets/images/tufan_logo.png',
+                          scale: 2.5,
+                        ),
+                        const SizedBox(height: 80),
+                        // Contenedor con el formulario
+                        Container(
+                          height:
+                              size.height - 400, // Mantiene el tamaño de 380
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: scaffoldBackgroundColor,
+                            borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(100)),
+                          ),
+                          child: const LoginForm(),
+                        ),
+                      ],
                     ),
-                    child: const LoginForm(),
                   ),
-                ],
+                ),
               ),
             ),
           ],

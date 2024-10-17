@@ -38,7 +38,7 @@ class _LoginFormState extends State<LoginForm> {
         formGroup: form,
         child: Column(
           children: [
-            const SizedBox(height: 50),
+            const SizedBox(height: 15),
             Text(
               'Iniciar sesión ',
               style: textStyles.titleLarge,

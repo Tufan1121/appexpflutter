@@ -4,7 +4,6 @@ import 'package:appexpflutter_update/features/home/presentation/screens/widgets/
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/popover.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/consulta/consulta_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/pdf_viewer.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,25 +48,34 @@ class PuntoVentaConsultaScreen extends HookWidget {
         context.read<ConsultaBloc>().add(ClearTicketsEvent());
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(40.0),
-          child: CustomAppBar(
-            onPressed: () {
-              context.read<ConsultaBloc>().add(ClearTicketsEvent());
-              Navigator.pop(context);
-            },
-            title: 'CONSULTA',
-          ),
-        ),
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/images/fondo.png',
+                  ),
+                  fit: BoxFit
+                      .cover, // Asegura que la imagen de fondo se vea completa
+                ),
+              ),
             ),
             Column(
               children: [
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40.0),
+                  child: CustomAppBar(
+                    backgroundColor: Colors.transparent,
+                    color: Colores.secondaryColor,
+                    onPressed: () {
+                      context.read<ConsultaBloc>().add(ClearTicketsEvent());
+                      Navigator.pop(context);
+                    },
+                    title: 'CONSULTA',
+                  ),
+                ),
                 const SizedBox(
                   height: 5,
                 ),
@@ -81,7 +89,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                         style: GoogleFonts.montserrat(
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
-                            color: Colores.scaffoldBackgroundColor,
+                            color: Colores.secondaryColor,
                             shadows: [
                               const BoxShadow(
                                 color: Colors.black26,
@@ -138,7 +146,8 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                                       userName: prefs.getString(
                                                               'username') ??
                                                           'TUFAN TAPETES',
-                                                          clientPhoneNumber: ticket.telefono,
+                                                      clientPhoneNumber:
+                                                          ticket.telefono,
                                                       url: pdfUrl,
                                                     ),
                                                   ),

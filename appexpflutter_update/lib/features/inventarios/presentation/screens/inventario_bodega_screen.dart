@@ -4,7 +4,6 @@ import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inv
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/lista_productos_ibodega.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -57,27 +56,37 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
             .add(ClearInventarioProductoEvent());
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(40.0),
-          child: CustomAppBar(
-            onPressed: () {
-              context
-                  .read<InventarioBodegaBloc>()
-                  .add(ClearInventarioProductoEvent());
-              Navigator.pop(context);
-            },
-            title: 'INVENTARIO BODEGAS',
-          ),
-        ),
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/images/fondo.png',
+                  ),
+                  fit: BoxFit
+                      .cover, // Asegura que la imagen de fondo se vea completa
+                ),
+              ),
             ),
             Column(
               children: [
+                const SizedBox(height: 5),
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40.0),
+                  child: CustomAppBar(
+                    color: Colores.secondaryColor,
+                    backgroundColor: Colors.transparent,
+                    onPressed: () {
+                      context
+                          .read<InventarioBodegaBloc>()
+                          .add(ClearInventarioProductoEvent());
+                      Navigator.pop(context);
+                    },
+                    title: 'INVENTARIO BODEGAS',
+                  ),
+                ),
                 const SizedBox(height: 5),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),

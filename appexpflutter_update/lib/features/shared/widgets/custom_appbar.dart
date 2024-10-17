@@ -7,12 +7,16 @@ class CustomAppBar extends StatelessWidget {
   final Function()? onPressed;
   final String title;
   final List<Widget>? actions;
+  final Color? color;
+  final Color? backgroundColor;
 
   const CustomAppBar({
     super.key,
     this.onPressed,
     required this.title,
     this.actions,
+    this.color,
+    this.backgroundColor,
   });
 
   @override
@@ -22,15 +26,16 @@ class CustomAppBar extends StatelessWidget {
         onPressed: onPressed,
         icon: const Icon(Icons.arrow_back_rounded),
       ),
-      iconTheme: const IconThemeData(color: Colors.white),
-      backgroundColor: Colores.secondaryColor.withOpacity(0.78),
+      iconTheme: IconThemeData(color: color ?? Colors.white),
+      backgroundColor:
+          backgroundColor ?? Colores.secondaryColor.withOpacity(0.9),
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: AutoSizeText(
           title,
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.bold,
-            color: Colores.scaffoldBackgroundColor,
+            color: color ?? Colores.scaffoldBackgroundColor,
             shadows: const [
               BoxShadow(
                 color: Colors.black26,

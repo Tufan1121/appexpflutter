@@ -30,7 +30,6 @@ class HomeScreen extends StatelessWidget {
                 image: AssetImage(
                   'assets/images/fondo.png',
                 ),
-                scale: 10,
                 fit: BoxFit.cover, // Ajusta la imagen para que no se corte
               ),
             ),

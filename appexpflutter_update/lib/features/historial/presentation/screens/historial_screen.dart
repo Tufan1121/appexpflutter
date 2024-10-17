@@ -2,7 +2,6 @@ import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/historial_cotiza.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/search_historial.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -20,27 +19,33 @@ class HistorialScreen extends StatelessWidget {
         context.read<HistorialBloc>().add(ClearHistorialEvent());
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(40.0),
-          child: CustomAppBar(
-            onPressed: () {
-              context.read<HistorialBloc>().add(ClearHistorialEvent());
-              Navigator.pop(context);
-            },
-            title: 'HISTORIAL',
-          ),
-        ),
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/images/fondo.png',
+                  ),
+                  scale: 10,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
             Column(
               children: [
-                const SizedBox(
-                  height: 5,
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40.0),
+                  child: CustomAppBar(
+                    backgroundColor: Colors.transparent,
+                    color: Colores.secondaryColor,
+                    onPressed: () {
+                      context.read<HistorialBloc>().add(ClearHistorialEvent());
+                      Navigator.pop(context);
+                    },
+                    title: 'HISTORIAL',
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),

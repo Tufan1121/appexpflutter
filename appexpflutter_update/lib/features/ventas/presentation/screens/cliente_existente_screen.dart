@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
@@ -29,29 +28,41 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
         context.read<InventarioBloc>().add(ClearInventarioProductoEvent());
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(40.0),
-          child: CustomAppBar(
-            onPressed: () {
-              context.read<ClienteBloc>().add(ClearClienteStateEvent());
-              context.read<ProductosBloc>().add(ClearProductoStateEvent());
-              context
-                  .read<InventarioBloc>()
-                  .add(ClearInventarioProductoEvent());
-              Navigator.pop(context);
-            },
-            title: 'CLIENTES EXISTENTES',
-          ),
-        ),
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/images/fondo.png',
+                  ),
+                  fit: BoxFit
+                      .cover, // Asegura que la imagen de fondo se vea completa
+                ),
+              ),
             ),
             Column(
               children: [
+                const SizedBox(height: 10),
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40.0),
+                  child: CustomAppBar(
+                    backgroundColor: Colors.transparent,
+                    color: Colores.secondaryColor,
+                    onPressed: () {
+                      context.read<ClienteBloc>().add(ClearClienteStateEvent());
+                      context
+                          .read<ProductosBloc>()
+                          .add(ClearProductoStateEvent());
+                      context
+                          .read<InventarioBloc>()
+                          .add(ClearInventarioProductoEvent());
+                      Navigator.pop(context);
+                    },
+                    title: 'CLIENTES EXISTENTES',
+                  ),
+                ),
                 const SizedBox(height: 5),
                 const SearchClientes(),
                 BlocConsumer<ClienteBloc, ClienteState>(

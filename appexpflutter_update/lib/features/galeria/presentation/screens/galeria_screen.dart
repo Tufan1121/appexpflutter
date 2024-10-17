@@ -4,6 +4,7 @@ import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_detail_screen.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/screens/widgets/search_gallery.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -66,46 +67,37 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
         context.read<GaleriaBloc>().add(ResetGaleriaEvent());
       },
       child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(40.0),
-            child: AppBar(
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  context.read<GaleriaBloc>().add(ResetGaleriaEvent());
-                },
-                icon: const Icon(Icons.arrow_back_rounded),
-              ),
-              iconTheme: const IconThemeData(color: Colors.white),
-              backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-              title: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  'GALERIA',
-                  style: GoogleFonts.montserrat(
-                    fontWeight: FontWeight.bold,
-                    color: Colores.scaffoldBackgroundColor,
-                    shadows: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(2.0, 5.0),
-                      )
-                    ],
+          resizeToAvoidBottomInset: false,
+          body: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/images/fondo.png',
+                    ),
+                    fit: BoxFit
+                        .cover, // Asegura que la imagen de fondo se vea completa
                   ),
                 ),
               ),
-            ),
-          ),
-          body: Stack(
-            children: [
-              CustomPaint(
-                size: Size(MediaQuery.of(context).size.width,
-                    MediaQuery.of(context).size.height),
-                painter: BackgroundPainter(),
-              ),
               Column(
                 children: [
+                  PreferredSize(
+                    preferredSize: const Size.fromHeight(40.0),
+                    child: PreferredSize(
+                      preferredSize: const Size.fromHeight(40.0),
+                      child: CustomAppBar(
+                        backgroundColor: Colors.transparent,
+                        color: Colores.secondaryColor,
+                        onPressed: () {
+                          context.read<GaleriaBloc>().add(ResetGaleriaEvent());
+                          Navigator.pop(context);
+                        },
+                        title: 'GALERÍA',
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 5),
                   const SearchGallery(),
                   const SizedBox(height: 10),

@@ -84,7 +84,7 @@ class ListaProductosVenta extends HookWidget {
             style: GoogleFonts.montserrat(
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
-                color: Colores.scaffoldBackgroundColor,
+                color: Colores.secondaryColor,
                 shadows: [
                   const BoxShadow(
                     color: Colors.black26,

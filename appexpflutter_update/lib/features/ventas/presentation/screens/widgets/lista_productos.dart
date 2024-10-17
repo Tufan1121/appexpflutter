@@ -84,7 +84,7 @@ class ListaProductos extends HookWidget {
             style: GoogleFonts.montserrat(
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
-                color: Colores.scaffoldBackgroundColor,
+                color: Colores.secondaryColor,
                 shadows: [
                   const BoxShadow(
                     color: Colors.black26,
@@ -93,7 +93,7 @@ class ListaProductos extends HookWidget {
                   )
                 ])),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.66,
+          height: MediaQuery.of(context).size.height * 0.75,
           child: ListView.builder(
             itemCount: productos.length,
             itemBuilder: (context, index) {

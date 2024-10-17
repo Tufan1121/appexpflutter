@@ -1,5 +1,4 @@
 import 'package:appexpflutter_update/config/config.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -24,30 +23,36 @@ class PreciosScreen extends StatelessWidget {
         context.read<PreciosBloc>().add(ClearPreciosStateEvent());
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(40.0),
-          child: CustomAppBar(
-            onPressed: () {
-              context.read<PreciosBloc>().add(
-                  ClearPreciosStateEvent()); // Limpia el estado al salir de la pantalla
-              Navigator.pop(context);
-            },
-            title: 'PRECIOS',
-          ),
-        ),
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/images/fondo.png',
+                  ),
+                  fit: BoxFit
+                      .cover, // Asegura que la imagen de fondo se vea completa
+                ),
+              ),
             ),
             SizedBox(
               height: screenHeight * 0.90,
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 5,
+                  PreferredSize(
+                    preferredSize: const Size.fromHeight(40.0),
+                    child: CustomAppBar(
+                      backgroundColor: Colors.transparent,
+                      color: Colores.secondaryColor,
+                      onPressed: () {
+                        context.read<PreciosBloc>().add(
+                            ClearPreciosStateEvent()); // Limpia el estado al salir de la pantalla
+                        Navigator.pop(context);
+                      },
+                      title: 'PRECIOS',
+                    ),
                   ),
                   const SearchPrices(),
                   Expanded(

@@ -1,45 +1,39 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
-import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../config/theme/app_theme.dart';
 
 class GenerarPedidoVentaScreen extends StatefulHookWidget {
   const GenerarPedidoVentaScreen({
     super.key,
-    // required this.idCliente,
     required this.estadoPedido,
     this.idSesion,
     required this.dataCliente,
   });
 
-  // final int idCliente;
   final int estadoPedido;
   final int? idSesion;
   final Map<String, dynamic> dataCliente;
 
   @override
-  State<GenerarPedidoVentaScreen> createState() => _GenerarPedidoScreenState();
+  State<GenerarPedidoVentaScreen> createState() =>
+      _GenerarPedidoVentaScreenState();
 }
 
-class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
+class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
   final form = FormGroup({
-    'metodoDePago1': FormControl<String>(validators: [
-      Validators.required,
-    ]),
-    'anticipoPago1': FormControl<double>(disabled: true, validators: [
-      Validators.required,
-    ]),
+    'metodoDePago1': FormControl<String>(validators: [Validators.required]),
+    'anticipoPago1':
+        FormControl<double>(disabled: true, validators: [Validators.required]),
     'metodoDePago2': FormControl<String>(),
     'anticipoPago2': FormControl<double>(disabled: true),
     'metodoDePago3': FormControl<String>(),
@@ -62,89 +56,71 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
   }
 
   final totalAPagar = UtilsVenta.total;
-  final String username = '';
+
+  void updateDebePorPagar(FormGroup form, ValueNotifier<double> debePorPagar) {
+    final anticipoPago1 = form.control('anticipoPago1').value ?? 0.0;
+    final anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
+    final anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
+    final totalAnticipo = anticipoPago1 + anticipoPago2 + anticipoPago3;
+    debePorPagar.value = totalAPagar - totalAnticipo;
+  }
 
   @override
   Widget build(BuildContext context) {
-    // final isEntregado = useState(false);
-    final loading = useState(false);
-    // final isPendienteFinDeExpo = useState(true);
-    final debePorPagar = useState(totalAPagar);
+    final debePorPagar = useState(UtilsVenta.total);
     final scrollController = useScrollController();
-
-    void updateDebePorPagar() {
-      final anticipoPago1 = form.control('anticipoPago1').value ?? 0.0;
-      final anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
-      final anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
-      final totalAnticipo = anticipoPago1 + anticipoPago2 + anticipoPago3;
-      debePorPagar.value = totalAPagar - totalAnticipo;
-    }
+    final loading = useState(false);
 
     useEffect(() {
       form
           .control('anticipoPago1')
           .valueChanges
-          .listen((_) => updateDebePorPagar());
+          .listen((_) => updateDebePorPagar(form, debePorPagar));
       form
           .control('anticipoPago2')
           .valueChanges
-          .listen((_) => updateDebePorPagar());
+          .listen((_) => updateDebePorPagar(form, debePorPagar));
       form
           .control('anticipoPago3')
           .valueChanges
-          .listen((_) => updateDebePorPagar());
+          .listen((_) => updateDebePorPagar(form, debePorPagar));
 
       return null;
     }, []);
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(40.0),
-        child: AppBar(
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_rounded),
-          ),
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-          title: Text(
-            'GENERAR TICKET',
-            style: GoogleFonts.montserrat(
-              fontWeight: FontWeight.bold,
-              color: Colores.scaffoldBackgroundColor,
-              shadows: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  offset: Offset(2.0, 5.0),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
       body: Stack(
         children: [
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height),
-            painter: BackgroundPainter(),
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/fondo.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: SizedBox(
-              height: 700, // 80 los dos sizebox
-              width: double.infinity,
-              child: Card(
-                elevation: 4.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+          SafeArea(
+            child: Column(
+              children: [
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40.0),
+                  child: CustomAppBar(
+                    backgroundColor: Colors.transparent,
+                    color: Colores.secondaryColor,
+                    onPressed: () => Navigator.pop(context),
+                    title: 'GENERAR TICKET',
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Card(
+                        elevation: 4.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: ReactiveForm(
@@ -153,57 +129,27 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 16.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text('Total a pagar'),
-                                        Text(
-                                          Utils.formatPrice(UtilsVenta.total),
-                                          style: const TextStyle(
-                                              color: Colors.purple,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        const Text('Debe por pagar'),
-                                        Text(
-                                          Utils.formatPrice(debePorPagar.value),
-                                          style: const TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                _buildTotales(debePorPagar),
+                                const SizedBox(height: 10.0),
+                                _buildDropdownAndTextField(
+                                  context: context,
+                                  hintText: 'Selecciona Método de Pago 1',
+                                  controlNameDropdown: 'metodoDePago1',
+                                  controlNameTextField: 'anticipoPago1',
+                                  validationMessages: {
+                                    ValidationMessage.required: (error) =>
+                                        'Este campo es requerido'
+                                  },
                                 ),
                                 const SizedBox(height: 10.0),
-                                buildDropdownAndTextField(
-                                    context: context,
-                                    hintText: 'Selecciona Método de Pago 1',
-                                    controlNameDropdown: 'metodoDePago1',
-                                    controlNameTextField: 'anticipoPago1',
-                                    validationMessages: {
-                                      ValidationMessage.required: (error) =>
-                                          'Este campo es requerido'
-                                    }),
-                                const SizedBox(height: 10.0),
-                                buildDropdownAndTextField(
+                                _buildDropdownAndTextField(
                                   context: context,
                                   hintText: 'Selecciona Método de Pago 2',
                                   controlNameDropdown: 'metodoDePago2',
                                   controlNameTextField: 'anticipoPago2',
                                 ),
                                 const SizedBox(height: 10.0),
-                                buildDropdownAndTextField(
+                                _buildDropdownAndTextField(
                                   context: context,
                                   hintText: 'Selecciona Método de Pago 3',
                                   controlNameDropdown: 'metodoDePago3',
@@ -216,111 +162,24 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                       labelText: 'Observaciones'),
                                   maxLines: 3, // Permitir múltiples líneas
                                   keyboardType: TextInputType.multiline,
-                                  onTapOutside: (event) {
-                                    FocusScope.of(context)
-                                        .requestFocus(FocusNode());
-                                  },
                                   validationMessages: {
                                     ValidationMessage.required: (error) =>
                                         'Este campo es requerido'
                                   },
                                 ),
+                                const SizedBox(height: 20.0),
+                                // Botones de acción dentro del formulario
+                                _buildActionButtons(
+                                    context, loading, debePorPagar),
                               ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          BlocConsumer<PedidoVentaBloc, PedidoState>(
-                            listener: (context, state) {
-                              if (state is PedidoLoading) {
-                                loading.value = true;
-                              }
-                              if (state is PedidoDetalleLoaded) {
-                                loading.value = false;
-                                debePorPagar.value = 0.0;
-
-                                ScaffoldMessenger.of(context)
-                                    .removeCurrentSnackBar();
-                                // ScaffoldMessenger.of(context)
-                                //     .showSnackBar(SnackBar(
-                                //   content: Text(state.message),
-                                //   backgroundColor: Colors.green,
-                                // ));
-
-                                // Aquí  la URL donde está ubicado el PDF
-                                // String pdfUrl =
-                                //     'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
-                                // // _openPDF(pdfUrl);
-
-                                _showDownloadModal(
-                                  context,
-                                  state.pedido.pedidos,
-                                  state.pedido.pedidos,
-                                  state.username,
-                                );
-
-                                //  form.reset();;
-                                context
-                                    .read<ProductosTiendaBloc>()
-                                    .add(ClearProductoStateEvent());
-                                context
-                                    .read<PedidoVentaBloc>()
-                                    .add(ClearPedidoStateEvent());
-                                context
-                                    .read<InventarioTiendaBloc>()
-                                    .add(ClearInventarioProductoEvent());
-                              } else if (state is PedidoError) {
-                                loading.value = false;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(state.message),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                            builder: (context, state) {
-                              return ElevatedButton.icon(
-                                onPressed: loading.value ? null : _submitForm,
-                                icon: const Icon(
-                                  Icons.save,
-                                  color: Colores.scaffoldBackgroundColor,
-                                ),
-                                label: Text(
-                                  loading.value ? 'ESPERE..' : 'GUARDAR',
-                                  style: TextStyle(
-                                      color: loading.value
-                                          ? Colores.secondaryColor
-                                          : Colores.scaffoldBackgroundColor),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colores.secondaryColor),
-                              );
-                            },
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: _dialogCancel,
-                            icon: const Icon(Icons.close,
-                                color: Colores.secondaryColor),
-                            label: const Text(
-                              'CANCELAR',
-                              style: TextStyle(color: Colores.secondaryColor),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -328,12 +187,43 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     );
   }
 
-  Widget buildDropdownAndTextField(
-      {required BuildContext context,
-      required String hintText,
-      required String controlNameDropdown,
-      required String controlNameTextField,
-      Map<String, String Function(Object)>? validationMessages}) {
+  Widget _buildTotales(ValueNotifier<double> debePorPagar) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Total a pagar'),
+            Text(
+              Utils.formatPrice(UtilsVenta.total),
+              style: const TextStyle(
+                  color: Colors.purple, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const Text('Debe por pagar'),
+            Text(
+              Utils.formatPrice(debePorPagar.value),
+              style: const TextStyle(
+                  color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownAndTextField({
+    required BuildContext context,
+    required String hintText,
+    required String controlNameDropdown,
+    required String controlNameTextField,
+    Map<String, String Function(Object)>? validationMessages,
+  }) {
     final enable = useState(false);
     return Center(
       child: Column(
@@ -342,17 +232,18 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
             alignment: AlignmentDirectional.center,
             children: [
               Container(
-                  width: ScreenUtils.percentWidth(context, 80),
-                  height: ScreenUtils.percentHeight(context, 5),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(50),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withOpacity(0.06),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5))
-                      ])),
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.height * 0.05,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5))
+                    ]),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: ReactiveDropdownField<String>(
@@ -380,8 +271,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
           Stack(
             children: [
               SizedBox(
-                  width: ScreenUtils.percentWidth(context, 80),
-                  height: ScreenUtils.percentHeight(context, 4.0)),
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.height * 0.04,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: ReactiveTextField(
@@ -404,6 +296,80 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, ValueNotifier<bool> loading,
+      ValueNotifier<double> debePorPagar) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          BlocConsumer<PedidoVentaBloc, PedidoState>(
+            listener: (context, state) {
+              if (state is PedidoLoading) {
+                loading.value = true;
+              }
+              if (state is PedidoDetalleLoaded) {
+                loading.value = false;
+                debePorPagar.value = 0.0;
+
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+                _showDownloadModal(
+                  context,
+                  state.pedido.pedidos,
+                  state.pedido.pedidos,
+                  state.username,
+                );
+                context
+                    .read<ProductosTiendaBloc>()
+                    .add(ClearProductoStateEvent());
+                context.read<PedidoVentaBloc>().add(ClearPedidoStateEvent());
+                context
+                    .read<InventarioTiendaBloc>()
+                    .add(ClearInventarioProductoEvent());
+              } else if (state is PedidoError) {
+                loading.value = false;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              return ElevatedButton.icon(
+                onPressed: loading.value ? null : _submitForm,
+                icon: const Icon(
+                  Icons.save,
+                  color: Colores.scaffoldBackgroundColor,
+                ),
+                label: Text(
+                  loading.value ? 'ESPERE..' : 'GUARDAR',
+                  style: TextStyle(
+                      color: loading.value
+                          ? Colores.secondaryColor
+                          : Colores.scaffoldBackgroundColor),
+                ),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colores.secondaryColor),
+              );
+            },
+          ),
+          ElevatedButton.icon(
+            onPressed: _dialogCancel,
+            icon: const Icon(Icons.close, color: Colores.secondaryColor),
+            label: const Text(
+              'CANCELAR',
+              style: TextStyle(color: Colores.secondaryColor),
+            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
           ),
         ],
       ),
@@ -449,11 +415,6 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
 
       context.read<PedidoVentaBloc>().add(
           PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
-      // if (widget.idSesion != 0 && widget.idSesion != null) {
-      //   context
-      //       .read<SesionPedidoBloc>()
-      //       .add(PedidoAddIdSesionEvent(idSesion: widget.idSesion!));
-      // }
     } else {
       form.markAllAsTouched();
     }
@@ -535,13 +496,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
   }
 
   void _showDownloadModal(
-      BuildContext context,
-      String pedido,
-      String userName,
-      // Function(String url, String clientPhoneNumber, String userName,
-      //         String fileName)
-      sendToWhatsApp) {
-    // final getpdf = Getpdf(context: context);
+      BuildContext context, String pedido, String userName, sendToWhatsApp) {
     showDialog(
       context: context,
       barrierDismissible: false,

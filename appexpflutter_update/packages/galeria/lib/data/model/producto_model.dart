@@ -40,7 +40,7 @@ class ProductoModel extends ProductoGalEntity{
     required super.precio5,
     required super.precio6,
     required super.precio7,
-    required super.precio8,
+    required super.precio8, 
     super.precio9,
     super.precio10,
     super.fulldescrip,
