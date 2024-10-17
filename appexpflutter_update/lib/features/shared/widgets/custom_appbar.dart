@@ -30,7 +30,7 @@ class CustomAppBar extends StatelessWidget {
       backgroundColor:
           backgroundColor ?? Colores.secondaryColor.withOpacity(0.9),
       title: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: AutoSizeText(
           title,
           style: GoogleFonts.montserrat(
@@ -38,9 +38,9 @@ class CustomAppBar extends StatelessWidget {
             color: color ?? Colores.scaffoldBackgroundColor,
             shadows: const [
               BoxShadow(
-                color: Colors.black26,
+                color: Colors.black87,
                 blurRadius: 6,
-                offset: Offset(2.0, 5.0),
+                offset: Offset(2.0, 2.0),
               )
             ],
           ),

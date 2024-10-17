@@ -60,7 +60,7 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                           .add(ClearInventarioProductoEvent());
                       Navigator.pop(context);
                     },
-                    title: 'CLIENTES EXISTENTES',
+                    title: 'CLIENTE EXISTENTE',
                   ),
                 ),
                 const SizedBox(height: 5),
