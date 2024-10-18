@@ -32,6 +32,13 @@ class ProductoExpoEntity extends Equatable {
   final int precio1;
   final int? precio2;
   final int? precio3;
+  final int? precio4;
+  final int? precio5;
+  final int? precio6;
+  final int? precio7;
+  final int? precio8;
+  final int? precio9;
+  final int? precio10;
   final String? desalmacen;
 
   const ProductoExpoEntity({
@@ -66,6 +73,13 @@ class ProductoExpoEntity extends Equatable {
     required this.precio1,
     this.precio2,
     this.precio3,
+    this.precio4,
+    this.precio5,
+    this.precio6,
+    this.precio7,
+    this.precio8,
+    this.precio9,
+    this.precio10,
     this.desalmacen,
   });
 
@@ -101,6 +115,13 @@ class ProductoExpoEntity extends Equatable {
     int? precio1,
     int? precio2,
     int? precio3,
+    int? precio4,
+    int? precio5,
+    int? precio6,
+    int? precio7,
+    int? precio8,
+    int? precio9,
+    int? precio10,
     String? desalmacen,
   }) =>
       ProductoExpoEntity(
@@ -135,6 +156,13 @@ class ProductoExpoEntity extends Equatable {
         precio1: precio1 ?? this.precio1,
         precio2: precio2 ?? this.precio2,
         precio3: precio3 ?? this.precio3,
+        precio4: precio4 ?? this.precio4,
+        precio5: precio5 ?? this.precio5,
+        precio6: precio6 ?? this.precio6,
+        precio7: precio7 ?? this.precio7,
+        precio8: precio8 ?? this.precio8,
+        precio9: precio9 ?? this.precio9,
+        precio10: precio10 ?? this.precio10,
         desalmacen: desalmacen ?? this.desalmacen,
       );
 
@@ -171,6 +199,13 @@ class ProductoExpoEntity extends Equatable {
         precio1,
         precio2,
         precio3,
+        precio4,
+        precio5,
+        precio6,
+        precio7,
+        precio8,
+        precio9,
+        precio10,
         desalmacen,
       ];
 }

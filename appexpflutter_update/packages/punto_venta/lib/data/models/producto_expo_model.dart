@@ -39,9 +39,16 @@ Map<String, dynamic> convertReducedJsonToFullJson(
     "color3": normalizedJson["color3"] ?? "",
     "lava1": normalizedJson["lava1"] ?? "",
     "lava2": normalizedJson["lava2"] ?? "",
-    "precio1": (normalizedJson["precio1"] as double?)?.toInt() ?? 0,
+    "precio1": normalizedJson["precio1"] ?? 0,
     "precio2": (normalizedJson["precio2"]) ?? 0,
     "precio3": (normalizedJson["precio3"]) ?? 0,
+    "precio4": (normalizedJson["precio4"]) ?? 0,
+    "precio5": (normalizedJson["precio5"]) ?? 0,
+    "precio6": (normalizedJson["precio6"]) ?? 0,
+    "precio7": (normalizedJson["precio7"]) ?? 0,
+    "precio8": (normalizedJson["precio8"]) ?? 0,
+    "precio9": (normalizedJson["precio9"]) ?? 0,
+    "precio10": (normalizedJson["precio10"]) ?? 0,
     "desalmacen": normalizedJson["desalmacen"] ?? "",
   };
 }
@@ -79,6 +86,13 @@ class ProductoExpoModel extends ProductoExpoEntity {
       required super.precio1,
       required super.precio2,
       required super.precio3,
+      required super.precio4,
+      required super.precio5,
+      required super.precio6,
+      required super.precio7,
+      required super.precio8,
+      required super.precio9,
+      required super.precio10,
       required super.desalmacen});
 
   factory ProductoExpoModel.fromJson(Map<String, dynamic> json) {
@@ -115,6 +129,13 @@ class ProductoExpoModel extends ProductoExpoEntity {
       precio1: json["precio1"],
       precio2: json["precio2"],
       precio3: json["precio3"],
+      precio4: json["precio4"],
+      precio5: json["precio5"],
+      precio6: json["precio6"],
+      precio7: json["precio7"],
+      precio8: json["precio8"],
+      precio9: json["precio9"],
+      precio10: json["precio10"],
       desalmacen: json["desalmacen"],
     );
   }
@@ -186,5 +207,12 @@ class ProductoExpoModel extends ProductoExpoEntity {
       precio1: precio1,
       precio2: precio2,
       precio3: precio3,
+      precio4: precio4,
+      precio5: precio5,
+      precio6: precio6,
+      precio7: precio7,
+      precio8: precio8,
+      precio9: precio9,
+      precio10: precio10,
       desalmacen: desalmacen);
 }
