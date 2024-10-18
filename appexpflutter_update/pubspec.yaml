@@ -43,7 +43,7 @@ dependencies:
   syncfusion_flutter_charts: ^26.2.14
   syncfusion_flutter_datagrid: ^26.2.10
   syncfusion_flutter_pdfviewer: ^26.1.40
-  url_launcher: ^6.3.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   build_runner: ^2.4.11
@@ -52,6 +52,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   go_router_builder: ^2.7.0
+
+dependency_overrides:
+  url_launcher_ios: ^6.3.1
 
 flutter_icons:
   android: "launcher_icon"
