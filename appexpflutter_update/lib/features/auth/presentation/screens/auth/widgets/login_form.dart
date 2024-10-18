@@ -32,80 +32,84 @@ class _LoginFormState extends State<LoginForm> {
     final textStyles = Theme.of(context).textTheme;
     final showPassword = useState(true);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: ReactiveForm(
-        formGroup: form,
-        child: Column(
-          children: [
-            const SizedBox(height: 15),
-            Text(
-              'Iniciar sesión ',
-              style: textStyles.titleLarge,
-            ),
-            const SizedBox(height: 50),
-            CustomReactiveTextField(
-              formControlName: 'email',
-              label: 'Correo',
-              keyboardType: TextInputType.emailAddress,
-              validationMessages: {
-                ValidationMessage.required: (error) =>
-                    'Este campo es requerido',
-                ValidationMessage.email: (error) => 'Ingrese un correo correcto'
-              },
-            ),
-            const SizedBox(height: 30),
-            CustomReactiveTextField(
-              formControlName: 'password',
-              label: 'Contraseña',
-              obscureText: showPassword.value,
-              onSubmitted: (p0) => _submitForm(),
-              validationMessages: {
-                ValidationMessage.required: (error) =>
-                    'Este campo es requerido',
-              },
-              suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.remove_red_eye_outlined,
-                  color:
-                      showPassword.value ? Colors.grey : Colores.secondaryColor,
-                  size: 25,
-                ),
-                onPressed: () => showPassword.value = !showPassword.value,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 50),
+        child: ReactiveForm(
+          formGroup: form,
+          child: Column(
+            children: [
+              const SizedBox(height: 15),
+              Text(
+                'Iniciar sesión ',
+                style: textStyles.titleLarge,
               ),
-            ),
-            const SizedBox(height: 30),
-            BlocConsumer<AuthBloc, AuthState>(
-              listener: (context, state) {
-                if (state is AuthError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      duration: const Duration(seconds: 2),
-                      backgroundColor: Colors.red,
-                      content: Text(
-                        state.message,
-                        style:
-                            GoogleFonts.montserrat(fontWeight: FontWeight.bold),
+              const SizedBox(height: 50),
+              CustomReactiveTextField(
+                formControlName: 'email',
+                label: 'Correo',
+                keyboardType: TextInputType.emailAddress,
+                validationMessages: {
+                  ValidationMessage.required: (error) =>
+                      'Este campo es requerido',
+                  ValidationMessage.email: (error) =>
+                      'Ingrese un correo correcto'
+                },
+              ),
+              const SizedBox(height: 30),
+              CustomReactiveTextField(
+                formControlName: 'password',
+                label: 'Contraseña',
+                obscureText: showPassword.value,
+                onSubmitted: (p0) => _submitForm(),
+                validationMessages: {
+                  ValidationMessage.required: (error) =>
+                      'Este campo es requerido',
+                },
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: showPassword.value
+                        ? Colors.grey
+                        : Colores.secondaryColor,
+                    size: 25,
+                  ),
+                  onPressed: () => showPassword.value = !showPassword.value,
+                ),
+              ),
+              const SizedBox(height: 30),
+              BlocConsumer<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: Colors.red,
+                        content: Text(
+                          state.message,
+                          style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                  );
-                } else if (state is AuthAuthenticated) {
-                  // Navegar a la pantalla de inicio
-                  HomeRoute().go(context);
-                }
-              },
-              builder: (context, state) {
-                return SizedBox(
-                    width: double.infinity,
-                    height: 60,
-                    child: CustomFilledButton(
-                        text: 'Iniciar sesión',
-                        buttonColor: Colores.secondaryColor,
-                        onPressed: _submitForm));
-              },
-            ),
-            const Spacer(flex: 1),
-          ],
+                    );
+                  } else if (state is AuthAuthenticated) {
+                    // Navegar a la pantalla de inicio
+                    HomeRoute().go(context);
+                  }
+                },
+                builder: (context, state) {
+                  return SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: CustomFilledButton(
+                          text: 'Iniciar sesión',
+                          buttonColor: Colores.secondaryColor,
+                          onPressed: _submitForm));
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

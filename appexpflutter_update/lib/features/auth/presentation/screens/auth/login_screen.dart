@@ -28,12 +28,12 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             SafeArea(
-              child: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: size
-                        .height, // Asegura que el ScrollView ocupe toda la pantalla
-                  ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: size
+                      .height, // Asegura que el ScrollView ocupe toda la pantalla
+                ),
+                child: SingleChildScrollView(
                   child: IntrinsicHeight(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,17 +44,12 @@ class LoginScreen extends StatelessWidget {
                           'assets/images/tufan_logo.png',
                           scale: 2.5,
                         ),
-                        const SizedBox(height: 80),
+                        const SizedBox(height: 40),
                         // Contenedor con el formulario
-                        Container(
+                        SizedBox(
                           height:
-                              size.height - 400, // Mantiene el tamaño de 380
+                              size.height - 340, // Mantiene el tamaño de 380
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: scaffoldBackgroundColor,
-                            borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(100)),
-                          ),
                           child: const LoginForm(),
                         ),
                       ],
