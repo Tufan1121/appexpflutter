@@ -1,39 +1,42 @@
-import 'package:intl/intl.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfigToken {
   final storage = const FlutterSecureStorage();
 
-// Eliminar el token
+  // Eliminar el token
   Future<void> deleteToken() async {
     await storage.delete(key: 'accessToken');
   }
 
-// Guardar la última fecha de verificación
-  Future<void> saveLastCheckedDate() async {
+  // Guardar la última fecha y hora de verificación
+  Future<void> saveLastCheckedDateTime() async {
     final prefs = await SharedPreferences.getInstance();
-    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    await prefs.setString('lastCheckedDate', today);
+    final now = DateTime.now().toIso8601String();
+    await prefs.setString('lastCheckedDateTime', now);
   }
 
-// Obtener la última fecha de verificación
-  Future<String?> getLastCheckedDate() async {
+  // Obtener la última fecha y hora de verificación
+  Future<DateTime?> getLastCheckedDateTime() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('lastCheckedDate');
+    final lastCheckedDateTimeString = prefs.getString('lastCheckedDateTime');
+    if (lastCheckedDateTimeString != null) {
+      return DateTime.parse(lastCheckedDateTimeString);
+    }
+    return null;
   }
 
-// Verificar y eliminar token si es necesario
+  // Verificar y eliminar token si es necesario
   Future<void> checkAndDeleteTokenIfNeeded() async {
-    final lastCheckedDate = await getLastCheckedDate();
-    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final lastCheckedDateTime = await getLastCheckedDateTime();
     final now = DateTime.now();
 
-    // Si hoy es lunes y no se ha verificado hoy
-    if (now.weekday == DateTime.monday && lastCheckedDate != today) {
+    // Si han pasado más de 24 horas desde la última verificación
+    if (lastCheckedDateTime == null ||
+        now.difference(lastCheckedDateTime).inHours >= 24) {
       await deleteToken();
-      await saveLastCheckedDate();
-      // print('Token eliminado porque es lunes');
-    } 
+      await saveLastCheckedDateTime();
+      // print('Token eliminado porque han pasado más de 24 horas');
+    }
   }
 }
