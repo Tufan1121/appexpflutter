@@ -38,8 +38,8 @@ class ProductoGalEntity extends Equatable {
   final int precio6;
   final int precio7;
   final int precio8;
-  final double? precio9;
-  final double? precio10;
+  final int? precio9;
+  final int? precio10;
   final String? fulldescrip;
   final String descrip;
   final String? skuph;
