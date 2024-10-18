@@ -26,7 +26,6 @@ class ClienteNuevoScreen extends StatelessWidget {
           ),
           Column(
             children: [
-              const SizedBox(height: 10),
               PreferredSize(
                 preferredSize: const Size.fromHeight(40.0),
                 child: CustomAppBar(
