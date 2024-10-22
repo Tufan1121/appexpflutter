@@ -22,20 +22,41 @@ class ListaProductosVenta extends HookWidget {
     final countList = useState<List<int>>(List.filled(productos.length, 1));
     final customPriceList =
         useState<List<double?>>(List.filled(productos.length, null));
+    final selectedPriceList = useState<List<double>>(
+        productos.map((e) => e.precio1.toDouble()).toList());
+    final dropdownPriceList =
+        useState<List<double?>>(List.filled(productos.length, null));
 
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
       for (var i = 0; i < productos.length; i++) {
-        if (i >= countList.value.length || i >= customPriceList.value.length) {
+        if (i >= countList.value.length ||
+            i >= customPriceList.value.length ||
+            i >= selectedPriceList.value.length ||
+            i >= dropdownPriceList.value.length) {
           continue; // Evita acceder fuera de los límites de las listas
         }
 
         final count = countList.value[i];
         final customPrice = customPriceList.value[i];
-        double precioUnitario = customPrice ?? productos[i].precio1.toDouble();
+        final selectedPrice = selectedPriceList
+            .value[i]; // Siempre tiene el precio seleccionado del checkbox
+        final dropdownPrice = dropdownPriceList.value[i];
+
+        // Priorizar el precio del Checkbox (precio1) si está seleccionado
+        double precioUnitario = (dropdownPrice == null)
+            ? selectedPrice // Aplica el precio del checkbox si no hay dropdown
+            : dropdownPrice; // Si hay dropdown, usa el valor seleccionado en él
+
+        // El customPrice solo se aplica si existe y es válido (no afecta el checkbox/dropdown)
+        if (customPrice != null) {
+          precioUnitario = customPrice;
+        }
+
         final subtotal = precioUnitario * count;
         newTotal += subtotal;
+
         UtilsVenta.listProductsOrder.add(
           DetallePedidoEntity(
             idPedido: 0,
@@ -50,30 +71,12 @@ class ListaProductosVenta extends HookWidget {
       UtilsVenta.total = total.value;
     }
 
+    // Selecciona el precio1 por defecto cuando se inicializa la lista
     useEffect(() {
-      updateTotal(); // Initial calculation
-      return null; // No cleanup needed
-    }, [countList.value, customPriceList.value]);
-
-    useEffect(() {
-      // Actualizar countList y customPriceList cuando cambia la longitud de los productos
-      final newCountList = List<int>.from(countList.value);
-      final newCustomPriceList = List<double?>.from(customPriceList.value);
-
-      // Ajusta la longitud de las listas
-      if (newCountList.length < productos.length) {
-        newCountList.addAll(
-            List<int>.filled(productos.length - newCountList.length, 1));
-        newCustomPriceList.addAll(List<double?>.filled(
-            productos.length - newCustomPriceList.length, null));
-      } else if (newCountList.length > productos.length) {
-        newCountList.removeRange(productos.length, newCountList.length);
-        newCustomPriceList.removeRange(
-            productos.length, newCustomPriceList.length);
+      // Inicializar con el checkbox seleccionado por defecto (precio1)
+      for (var i = 0; i < productos.length; i++) {
+        selectedPriceList.value[i] = productos[i].precio1.toDouble();
       }
-
-      countList.value = newCountList;
-      customPriceList.value = newCustomPriceList;
       updateTotal();
       return null;
     }, [productos.length]);
@@ -84,7 +87,7 @@ class ListaProductosVenta extends HookWidget {
             style: GoogleFonts.montserrat(
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
-                color: Colores.scaffoldBackgroundColor,
+                color: Colores.secondaryColor,
                 shadows: [
                   const BoxShadow(
                     color: Colors.black26,
@@ -98,13 +101,17 @@ class ListaProductosVenta extends HookWidget {
             itemCount: productos.length,
             itemBuilder: (context, index) {
               final producto = productos[index];
-              final existencia = producto.hm;
+              final existencia = productos[index].hm;
               return HookBuilder(
                 builder: (context) {
                   final count = useState(countList.value[index]);
                   final showCustomPrice = useState<bool>(false);
                   final customPrice =
                       useState<double?>(customPriceList.value[index]);
+                  final selectedPrice =
+                      useState<double>(selectedPriceList.value[index]);
+                  final dropdownPrice =
+                      useState<double?>(dropdownPriceList.value[index]);
                   final customPriceController = useTextEditingController(
                       text: customPrice.value?.toString() ??
                           producto.precio1.toString());
@@ -137,6 +144,7 @@ class ListaProductosVenta extends HookWidget {
                                   FadeInImage(
                                     placeholder: const AssetImage(
                                         'assets/loaders/loading.gif'),
+                                    // ignore: unnecessary_null_comparison
                                     image: producto.pathima1 != null &&
                                             producto.pathima1!.isNotEmpty
                                         ? NetworkImage(
@@ -223,27 +231,43 @@ class ListaProductosVenta extends HookWidget {
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
                                       _buildPriceCheckbox(
                                         context: context,
-                                        label: 'Precio Normal',
+                                        label: 'Precio de Lista',
                                         price: producto.precio1.toDouble(),
-                                        value: showCustomPrice.value,
+                                        value: selectedPrice.value ==
+                                            producto.precio1.toDouble(),
                                         onChanged: (bool? value) {
-                                          showCustomPrice.value =
-                                              value ?? false;
+                                          if (value == true) {
+                                            // Volver al precio de lista (precio1) cuando el checkbox esté seleccionado
+                                            selectedPrice.value =
+                                                producto.precio1.toDouble();
+                                            dropdownPrice.value =
+                                                null; // Limpiar el dropdown
+                                            dropdownPriceList.value[index] =
+                                                null; // Asegurarnos que el valor del dropdown sea null
+                                          } else {
+                                            // Si desmarcan el checkbox, vuelve al valor del dropdown o al precio1
+                                            selectedPrice.value =
+                                                dropdownPrice.value ??
+                                                    producto.precio1.toDouble();
+                                          }
+
+                                          selectedPriceList.value[index] =
+                                              selectedPrice.value;
+                                          updateTotal(); // Recalcular el total al cambiar el checkbox
                                         },
                                       ),
-                                      _buildPriceCheckbox(
-                                        context: context,
-                                        label: 'Precio Expo',
-                                        price:
-                                            producto.precio2?.toDouble() ?? 0.0,
-                                        value: showCustomPrice.value,
-                                        onChanged: (bool? value) {
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.edit,
+                                          color: Colores.secondaryColor,
+                                        ),
+                                        onPressed: () {
                                           showCustomPrice.value =
-                                              value ?? false;
+                                              !showCustomPrice.value;
                                         },
                                       ),
                                     ],
@@ -264,13 +288,6 @@ class ListaProductosVenta extends HookWidget {
                                           customPrice.value =
                                               double.tryParse(value);
                                         },
-                                        onSubmitted: (value) {
-                                          if (customPrice.value != null) {
-                                            customPriceList.value[index] =
-                                                customPrice.value;
-                                            updateTotal();
-                                          }
-                                        },
                                         decoration: const InputDecoration(
                                           border: OutlineInputBorder(),
                                           contentPadding: EdgeInsets.symmetric(
@@ -284,43 +301,73 @@ class ListaProductosVenta extends HookWidget {
                                       width: 110,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Colores.secondaryColor),
+                                          backgroundColor:
+                                              Colores.secondaryColor,
+                                        ),
                                         onPressed: customPrice.value != null
                                             ? () {
                                                 FocusScope.of(context)
                                                     .unfocus();
-                                                final price = double.parse(
+
+                                                // Parsear el valor del customPriceController
+                                                final price = double.tryParse(
                                                     customPriceController.text);
 
-                                                final updatedProduct =
-                                                    producto.copyWith(
-                                                        precio1: price.toInt());
+                                                if (price != null) {
+                                                  // Actualiza el precio personalizado (customPrice)
+                                                  customPriceList.value[index] =
+                                                      price;
 
-                                                context
-                                                    .read<ProductosTiendaBloc>()
-                                                    .add(UpdateProductEvent(
-                                                        updatedProduct));
-                                                // Actualiza el producto en la lista
-                                                productos[index] =
-                                                    updatedProduct;
+                                                  // Actualiza el producto con el nuevo precio
+                                                  final updatedProduct =
+                                                      producto.copyWith(
+                                                          precio1:
+                                                              price.toInt());
 
-                                                updateTotal();
+                                                  context
+                                                      .read<
+                                                          ProductosTiendaBloc>()
+                                                      .add(UpdateProductEvent(
+                                                          updatedProduct));
+
+                                                  // Actualiza el producto en la lista de productos locales
+                                                  productos[index] =
+                                                      updatedProduct;
+
+                                                  // Refrescar el total con el nuevo precio
+                                                  updateTotal();
+
+                                                  // Mostrar el precio actualizado en la UI (opcional)
+                                                  selectedPriceList
+                                                      .value[index] = price;
+                                                }
                                               }
                                             : null,
                                         child: const AutoSizeText(
                                           'APLICAR PRECIO',
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colores
-                                                  .scaffoldBackgroundColor),
-                                          // maxLines: 1,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Colores.scaffoldBackgroundColor,
+                                          ),
                                           minFontSize: 8,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              _buildPriceDropdown(
+                                context: context,
+                                producto: producto,
+                                dropdownPrice: dropdownPrice,
+                                dropdownPriceList: dropdownPriceList,
+                                index: index,
+                                selectedPrice: selectedPrice,
+                                updateTotal: updateTotal,
+                              ),
                             ],
                           ),
                         ),
@@ -341,25 +388,122 @@ class ListaProductosVenta extends HookWidget {
     required String label,
     required double price,
     required bool value,
-    required Function(bool?) onChanged,
+    required ValueChanged<bool?> onChanged,
   }) {
-    return Column(
+    return Row(
       children: [
-        AutoSizeText(label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        const SizedBox(width: 2),
+        Checkbox(
+          value: value,
+          onChanged: onChanged,
+          activeColor: Colores.secondaryColor,
+        ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Checkbox(
-              value: value,
-              onChanged: onChanged,
-              activeColor: Colores.secondaryColor,
+            Text(
+              '$label : ',
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(width: 5),
-            AutoSizeText(Utils.formatPrice(price),
-                style: const TextStyle(fontSize: 12)),
+            Text(
+              Utils.formatPrice(price),
+              style: const TextStyle(fontSize: 14),
+            ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPriceDropdown({
+    required BuildContext context,
+    required ProductoExpoEntity producto,
+    required ValueNotifier<double?> dropdownPrice,
+    required ValueNotifier<List<double?>> dropdownPriceList,
+    required ValueNotifier<double?> selectedPrice,
+    required int index,
+    required VoidCallback updateTotal,
+  }) {
+    // Lista de promociones (precios)
+    final promociones = [
+      if (producto.precio4 != null) producto.precio4?.toDouble(),
+      if (producto.precio5 != null) producto.precio5?.toDouble(),
+      if (producto.precio6 != null) producto.precio6?.toDouble(),
+      if (producto.precio7 != null) producto.precio7?.toDouble(),
+      if (producto.precio8 != null) producto.precio8?.toDouble(),
+      if (producto.precio9 != null) producto.precio9?.toDouble(),
+      if (producto.precio10 != null) producto.precio10?.toDouble(),
+    ];
+
+    // Lista de descuentos en porcentaje que corresponde a las promociones
+    final descuentos = [
+      '-20%',
+      '-25%',
+      '-30%',
+      '-35%',
+      '-40%',
+      '-50%',
+      '-70%',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Promoción:',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          width: 200,
+          height: 40,
+          child: DropdownButtonHideUnderline(
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8), // Reducir padding
+              decoration: BoxDecoration(
+                border: Border.all(color: Colores.secondaryColor, width: 1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: DropdownButton<double>(
+                isExpanded:
+                    true, // Permite que el Dropdown ocupe todo el ancho disponible
+                value: dropdownPrice.value,
+                hint: const Text(
+                  'Seleccione una promoción',
+                  style: TextStyle(fontSize: 12), // Texto más pequeño
+                ),
+                onChanged: (double? newValue) {
+                  if (newValue != null) {
+                    dropdownPrice.value = newValue;
+                    dropdownPriceList.value[index] = newValue;
+
+                    // Desmarcar el checkbox cuando se selecciona una promoción
+                    selectedPrice.value = newValue;
+                  }
+                  updateTotal();
+                },
+                items: List<DropdownMenuItem<double>>.generate(
+                  promociones.length,
+                  (i) => DropdownMenuItem(
+                    value: promociones[i],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          descuentos[i], // Mostrar el porcentaje de descuento
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          Utils.formatPrice(promociones[i] ??
+                              0.0), // Mostrar el precio de la promoción
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -381,7 +525,7 @@ class ListaProductosVenta extends HookWidget {
           ),
           content:
               Text('¿Está seguro de que desea eliminar ${producto.producto}?'),
-          actions: <Widget>[
+          actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false); // Cancelar la eliminación

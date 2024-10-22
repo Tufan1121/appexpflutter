@@ -2,7 +2,7 @@ import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
-import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta_copy.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/search_producto_punto_venta.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_search.dart';
