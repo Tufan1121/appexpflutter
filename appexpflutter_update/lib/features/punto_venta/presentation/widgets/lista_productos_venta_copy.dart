@@ -95,288 +95,296 @@ class ListaProductosVenta extends HookWidget {
                     offset: Offset(2.0, 5.0),
                   )
                 ])),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.66,
-          child: ListView.builder(
-            itemCount: productos.length,
-            itemBuilder: (context, index) {
-              final producto = productos[index];
-              final existencia = productos[index].hm;
-              return HookBuilder(
-                builder: (context) {
-                  final count = useState(countList.value[index]);
-                  final showCustomPrice = useState<bool>(false);
-                  final customPrice =
-                      useState<double?>(customPriceList.value[index]);
-                  final selectedPrice =
-                      useState<double>(selectedPriceList.value[index]);
-                  final dropdownPrice =
-                      useState<double?>(dropdownPriceList.value[index]);
-                  final customPriceController = useTextEditingController(
-                      text: customPrice.value?.toString() ??
-                          producto.precio1.toString());
+        Scrollbar(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.66,
+            child: ListView.builder(
+              itemCount: productos.length,
+              itemBuilder: (context, index) {
+                final producto = productos[index];
+                final existencia = productos[index].hm;
+                return HookBuilder(
+                  builder: (context) {
+                    final count = useState(countList.value[index]);
+                    final showCustomPrice = useState<bool>(false);
+                    final customPrice =
+                        useState<double?>(customPriceList.value[index]);
+                    final selectedPrice =
+                        useState<double>(selectedPriceList.value[index]);
+                    final dropdownPrice =
+                        useState<double?>(dropdownPriceList.value[index]);
+                    final customPriceController = useTextEditingController(
+                        text: customPrice.value?.toString() ??
+                            producto.precio1.toString());
 
-                  return ClipRect(
-                    child: Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 15),
-                      clipBehavior: Clip.hardEdge,
-                      child: Dismissible(
-                        direction: DismissDirection.startToEnd,
-                        key: Key(producto.producto1),
-                        confirmDismiss: (direction) async {
-                          return await _dialogEliminar(context, producto);
-                        },
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerLeft,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: const Icon(Icons.delete, color: Colors.white),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  FadeInImage(
-                                    placeholder: const AssetImage(
-                                        'assets/loaders/loading.gif'),
-                                    // ignore: unnecessary_null_comparison
-                                    image: producto.pathima1 != null &&
-                                            producto.pathima1!.isNotEmpty
-                                        ? NetworkImage(
-                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1 ?? '')}',
-                                          )
-                                        : const AssetImage(
-                                                'assets/images/no-image.jpg')
-                                            as ImageProvider,
-                                    width: 70,
-                                    height: 70,
-                                    fit: BoxFit.cover,
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 300),
-                                    imageErrorBuilder:
-                                        (context, error, stackTrace) {
-                                      return Image.asset(
-                                        'assets/images/no-image.jpg',
-                                        width: 70,
-                                        height: 70,
-                                        fit: BoxFit.cover,
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          producto.producto,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                    return ClipRect(
+                      child: Card(
+                        elevation: 4,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 15),
+                        clipBehavior: Clip.hardEdge,
+                        child: Dismissible(
+                          direction: DismissDirection.startToEnd,
+                          key: Key(producto.producto1),
+                          confirmDismiss: (direction) async {
+                            return await _dialogEliminar(context, producto);
+                          },
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child:
+                                const Icon(Icons.delete, color: Colors.white),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    FadeInImage(
+                                      placeholder: const AssetImage(
+                                          'assets/loaders/loading.gif'),
+                                      // ignore: unnecessary_null_comparison
+                                      image: producto.pathima1 != null &&
+                                              producto.pathima1!.isNotEmpty
+                                          ? NetworkImage(
+                                              'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1 ?? '')}',
+                                            )
+                                          : const AssetImage(
+                                                  'assets/images/no-image.jpg')
+                                              as ImageProvider,
+                                      width: 70,
+                                      height: 70,
+                                      fit: BoxFit.cover,
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 300),
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          'assets/images/no-image.jpg',
+                                          width: 70,
+                                          height: 70,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            producto.producto,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
                                           ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Clave: ${producto.producto1}',
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Existencia: ${existencia.toInt()}',
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.add),
+                                          onPressed: () {
+                                            if (count.value <
+                                                existencia.toInt()) {
+                                              count.value++;
+                                              countList.value[index] =
+                                                  count.value;
+                                              updateTotal();
+                                            }
+                                          },
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Clave: ${producto.producto1}',
-                                          style: const TextStyle(fontSize: 14),
+                                        Text('${count.value}'),
+                                        IconButton(
+                                          icon: const Icon(Icons.remove),
+                                          onPressed: () {
+                                            if (count.value > 1) {
+                                              count.value--;
+                                              countList.value[index] =
+                                                  count.value;
+                                              updateTotal();
+                                            }
+                                          },
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Existencia: ${existencia.toInt()}',
-                                          style: const TextStyle(fontSize: 14),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Scrollbar(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        _buildPriceCheckbox(
+                                          context: context,
+                                          label: 'Precio de Lista',
+                                          price: producto.precio1.toDouble(),
+                                          value: selectedPrice.value ==
+                                              producto.precio1.toDouble(),
+                                          onChanged: (bool? value) {
+                                            if (value == true) {
+                                              // Volver al precio de lista (precio1) cuando el checkbox esté seleccionado
+                                              selectedPrice.value =
+                                                  producto.precio1.toDouble();
+                                              dropdownPrice.value =
+                                                  null; // Limpiar el dropdown
+                                              dropdownPriceList.value[index] =
+                                                  null; // Asegurarnos que el valor del dropdown sea null
+                                            } else {
+                                              // Si desmarcan el checkbox, vuelve al valor del dropdown o al precio1
+                                              selectedPrice.value =
+                                                  dropdownPrice.value ??
+                                                      producto.precio1
+                                                          .toDouble();
+                                            }
+
+                                            selectedPriceList.value[index] =
+                                                selectedPrice.value;
+                                            updateTotal(); // Recalcular el total al cambiar el checkbox
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.edit,
+                                            color: Colores.secondaryColor,
+                                          ),
+                                          onPressed: () {
+                                            showCustomPrice.value =
+                                                !showCustomPrice.value;
+                                          },
                                         ),
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
+                                ),
+                                if (showCustomPrice.value)
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.add),
-                                        onPressed: () {
-                                          if (count.value <
-                                              existencia.toInt()) {
-                                            count.value++;
-                                            countList.value[index] =
-                                                count.value;
-                                            updateTotal();
-                                          }
-                                        },
-                                      ),
-                                      Text('${count.value}'),
-                                      IconButton(
-                                        icon: const Icon(Icons.remove),
-                                        onPressed: () {
-                                          if (count.value > 1) {
-                                            count.value--;
-                                            countList.value[index] =
-                                                count.value;
-                                            updateTotal();
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              Scrollbar(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      _buildPriceCheckbox(
-                                        context: context,
-                                        label: 'Precio de Lista',
-                                        price: producto.precio1.toDouble(),
-                                        value: selectedPrice.value ==
-                                            producto.precio1.toDouble(),
-                                        onChanged: (bool? value) {
-                                          if (value == true) {
-                                            // Volver al precio de lista (precio1) cuando el checkbox esté seleccionado
-                                            selectedPrice.value =
-                                                producto.precio1.toDouble();
-                                            dropdownPrice.value =
-                                                null; // Limpiar el dropdown
-                                            dropdownPriceList.value[index] =
-                                                null; // Asegurarnos que el valor del dropdown sea null
-                                          } else {
-                                            // Si desmarcan el checkbox, vuelve al valor del dropdown o al precio1
-                                            selectedPrice.value =
-                                                dropdownPrice.value ??
-                                                    producto.precio1.toDouble();
-                                          }
-
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal(); // Recalcular el total al cambiar el checkbox
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.edit,
-                                          color: Colores.secondaryColor,
-                                        ),
-                                        onPressed: () {
-                                          showCustomPrice.value =
-                                              !showCustomPrice.value;
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if (showCustomPrice.value)
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      height: 32,
-                                      child: TextField(
-                                        controller: customPriceController,
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (value) {
-                                          customPrice.value =
-                                              double.tryParse(value);
-                                        },
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          contentPadding: EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 0),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    SizedBox(
-                                      height: 33,
-                                      width: 110,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Colores.secondaryColor,
-                                        ),
-                                        onPressed: customPrice.value != null
-                                            ? () {
-                                                FocusScope.of(context)
-                                                    .unfocus();
-
-                                                // Parsear el valor del customPriceController
-                                                final price = double.tryParse(
-                                                    customPriceController.text);
-
-                                                if (price != null) {
-                                                  // Actualiza el precio personalizado (customPrice)
-                                                  customPriceList.value[index] =
-                                                      price;
-
-                                                  // Actualiza el producto con el nuevo precio
-                                                  final updatedProduct =
-                                                      producto.copyWith(
-                                                          precio1:
-                                                              price.toInt());
-
-                                                  context
-                                                      .read<
-                                                          ProductosTiendaBloc>()
-                                                      .add(UpdateProductEvent(
-                                                          updatedProduct));
-
-                                                  // Actualiza el producto en la lista de productos locales
-                                                  productos[index] =
-                                                      updatedProduct;
-
-                                                  // Refrescar el total con el nuevo precio
-                                                  updateTotal();
-
-                                                  // Mostrar el precio actualizado en la UI (opcional)
-                                                  selectedPriceList
-                                                      .value[index] = price;
-                                                }
-                                              }
-                                            : null,
-                                        child: const AutoSizeText(
-                                          'APLICAR PRECIO',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color:
-                                                Colores.scaffoldBackgroundColor,
+                                      SizedBox(
+                                        width: 80,
+                                        height: 32,
+                                        child: TextField(
+                                          controller: customPriceController,
+                                          keyboardType: TextInputType.number,
+                                          onChanged: (value) {
+                                            customPrice.value =
+                                                double.tryParse(value);
+                                          },
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 8, vertical: 0),
                                           ),
-                                          minFontSize: 8,
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 10),
+                                      SizedBox(
+                                        height: 33,
+                                        width: 110,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colores.secondaryColor,
+                                          ),
+                                          onPressed: customPrice.value != null
+                                              ? () {
+                                                  FocusScope.of(context)
+                                                      .unfocus();
+
+                                                  // Parsear el valor del customPriceController
+                                                  final price = double.tryParse(
+                                                      customPriceController
+                                                          .text);
+
+                                                  if (price != null) {
+                                                    // Actualiza el precio personalizado (customPrice)
+                                                    customPriceList
+                                                        .value[index] = price;
+
+                                                    // Actualiza el producto con el nuevo precio
+                                                    final updatedProduct =
+                                                        producto.copyWith(
+                                                            precio1:
+                                                                price.toInt());
+
+                                                    context
+                                                        .read<
+                                                            ProductosTiendaBloc>()
+                                                        .add(UpdateProductEvent(
+                                                            updatedProduct));
+
+                                                    // Actualiza el producto en la lista de productos locales
+                                                    productos[index] =
+                                                        updatedProduct;
+
+                                                    // Refrescar el total con el nuevo precio
+                                                    updateTotal();
+
+                                                    // Mostrar el precio actualizado en la UI (opcional)
+                                                    selectedPriceList
+                                                        .value[index] = price;
+                                                  }
+                                                }
+                                              : null,
+                                          child: const AutoSizeText(
+                                            'APLICAR PRECIO',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colores
+                                                  .scaffoldBackgroundColor,
+                                            ),
+                                            minFontSize: 8,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                const SizedBox(
+                                  width: 10,
                                 ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              _buildPriceDropdown(
-                                context: context,
-                                producto: producto,
-                                dropdownPrice: dropdownPrice,
-                                dropdownPriceList: dropdownPriceList,
-                                index: index,
-                                selectedPrice: selectedPrice,
-                                updateTotal: updateTotal,
-                              ),
-                            ],
+                                _buildPriceDropdown(
+                                  context: context,
+                                  producto: producto,
+                                  dropdownPrice: dropdownPrice,
+                                  dropdownPriceList: dropdownPriceList,
+                                  index: index,
+                                  selectedPrice: selectedPrice,
+                                  updateTotal: updateTotal,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              );
-            },
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ),
       ],
