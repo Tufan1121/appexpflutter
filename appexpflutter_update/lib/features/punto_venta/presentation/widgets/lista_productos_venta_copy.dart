@@ -430,8 +430,8 @@ class ListaProductosVenta extends HookWidget {
     required int index,
     required VoidCallback updateTotal,
   }) {
-    // Lista de promociones (precios)
-    final promociones = [
+    // Lista de promociones (precios) - la lista necesita ser mutable si el precio cambia
+    final promociones = useState<List<double?>>([
       if (producto.precio4 != null) producto.precio4?.toDouble(),
       if (producto.precio5 != null) producto.precio5?.toDouble(),
       if (producto.precio6 != null) producto.precio6?.toDouble(),
@@ -439,7 +439,10 @@ class ListaProductosVenta extends HookWidget {
       if (producto.precio8 != null) producto.precio8?.toDouble(),
       if (producto.precio9 != null) producto.precio9?.toDouble(),
       if (producto.precio10 != null) producto.precio10?.toDouble(),
-    ];
+    ]);
+
+    // Variable para almacenar el valor editado antes de aplicarlo
+    final editPrice = useState<double?>(null);
 
     // Lista de descuentos en porcentaje que corresponde a las promociones
     final descuentos = [
@@ -452,6 +455,11 @@ class ListaProductosVenta extends HookWidget {
       '-70%',
     ];
 
+    final showCustomPriceDropdown = useState<bool>(
+        false); // Controla la visibilidad del TextField para editar el precio de promoción
+    final customPriceController =
+        useTextEditingController(); // Controlador para el TextField de edición de precio
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -459,60 +467,207 @@ class ListaProductosVenta extends HookWidget {
           'Promoción:',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
-        SizedBox(
-          width: 200,
-          height: 40,
-          child: DropdownButtonHideUnderline(
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8), // Reducir padding
-              decoration: BoxDecoration(
-                border: Border.all(color: Colores.secondaryColor, width: 1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: DropdownButton<double>(
-                isExpanded:
-                    true, // Permite que el Dropdown ocupe todo el ancho disponible
-                value: dropdownPrice.value,
-                hint: const Text(
-                  'Seleccione una promoción',
-                  style: TextStyle(fontSize: 12), // Texto más pequeño
-                ),
-                onChanged: (double? newValue) {
-                  if (newValue != null) {
-                    dropdownPrice.value = newValue;
-                    dropdownPriceList.value[index] = newValue;
+        Row(
+          children: [
+            // DropdownButton para seleccionar la promoción
+            SizedBox(
+              width: 200,
+              height: 40,
+              child: DropdownButtonHideUnderline(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8), // Reducir padding
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colores.secondaryColor, width: 1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: DropdownButton<double>(
+                    isExpanded:
+                        true, // Permite que el Dropdown ocupe todo el ancho disponible
+                    value: dropdownPrice.value,
+                    hint: const Text(
+                      'Seleccione una promoción',
+                      style: TextStyle(fontSize: 12), // Texto más pequeño
+                    ),
+                    onChanged: (double? newValue) {
+                      if (newValue != null) {
+                        dropdownPrice.value = newValue;
+                        dropdownPriceList.value[index] = newValue;
 
-                    // Desmarcar el checkbox cuando se selecciona una promoción
-                    selectedPrice.value = newValue;
-                  }
-                  updateTotal();
-                },
-                items: List<DropdownMenuItem<double>>.generate(
-                  promociones.length,
-                  (i) => DropdownMenuItem(
-                    value: promociones[i],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          descuentos[i], // Mostrar el porcentaje de descuento
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold),
+                        // Al seleccionar una promoción, actualiza la variable temporal `editPrice` con el valor actual
+                        editPrice.value = newValue;
+
+                        // Desmarcar el checkbox cuando se selecciona una promoción
+                        selectedPrice.value = newValue;
+
+                        // Actualiza el total
+                        updateTotal();
+                      }
+                    },
+                    items: List<DropdownMenuItem<double>>.generate(
+                      promociones.value.length,
+                      (i) => DropdownMenuItem(
+                        value: promociones.value[i],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              descuentos[
+                                  i], // Mostrar el porcentaje de descuento
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            Text(
+                              Utils.formatPrice(promociones.value[i] ??
+                                  0.0), // Mostrar el precio de la promoción
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
                         ),
-                        Text(
-                          Utils.formatPrice(promociones[i] ??
-                              0.0), // Mostrar el precio de la promoción
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
+
+            // Botón para editar el precio del Dropdown
+            IconButton(
+              icon: Icon(
+                Icons.edit,
+                color: dropdownPrice.value != null
+                    ? Colores.secondaryColor
+                    : Colors.grey,
+              ),
+              onPressed: dropdownPrice.value != null
+                  ? () {
+                      // Habilita el campo de edición si hay una promoción seleccionada
+                      showCustomPriceDropdown.value =
+                          !showCustomPriceDropdown.value;
+                      customPriceController.text =
+                          editPrice.value?.toString() ?? '';
+                    }
+                  : null, // Deshabilitar si no hay promoción seleccionada
+            ),
+          ],
         ),
+
+        // TextField para editar el precio de la promoción seleccionada
+        if (showCustomPriceDropdown.value)
+          Row(
+            children: [
+              SizedBox(
+                width: 80,
+                height: 32,
+                child: TextField(
+                  controller: customPriceController,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    final newPrice = double.tryParse(value);
+                    if (newPrice != null) {
+                      editPrice.value =
+                          newPrice; // Almacena el valor editado temporalmente
+                    }
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              SizedBox(
+                height: 33,
+                width: 110,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colores.secondaryColor,
+                  ),
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    final price = double.tryParse(customPriceController.text);
+
+                    if (price != null) {
+                      // Aplicar el valor temporal editado al modelo del producto
+                      ProductoExpoEntity updatedProduct;
+
+                      switch (dropdownPrice.value) {
+                        case double value
+                            when value == producto.precio4?.toDouble():
+                          updatedProduct =
+                              producto.copyWith(precio4: price.toInt());
+                          promociones.value[0] =
+                              price; // Actualiza la lista de promociones
+                          break;
+                        case double value
+                            when value == producto.precio5?.toDouble():
+                          updatedProduct =
+                              producto.copyWith(precio5: price.toInt());
+                          promociones.value[1] = price;
+                          break;
+                        case double value
+                            when value == producto.precio6?.toDouble():
+                          updatedProduct =
+                              producto.copyWith(precio6: price.toInt());
+                          promociones.value[2] = price;
+                          break;
+                        case double value
+                            when value == producto.precio7?.toDouble():
+                          updatedProduct =
+                              producto.copyWith(precio7: price.toInt());
+                          promociones.value[3] = price;
+                          break;
+                        case double value
+                            when value == producto.precio8?.toDouble():
+                          updatedProduct =
+                              producto.copyWith(precio8: price.toInt());
+                          promociones.value[4] = price;
+                          break;
+                        case double value
+                            when value == producto.precio9?.toDouble():
+                          updatedProduct =
+                              producto.copyWith(precio9: price.toInt());
+                          promociones.value[5] = price;
+                          break;
+                        case double value
+                            when value == producto.precio10?.toDouble():
+                          updatedProduct =
+                              producto.copyWith(precio10: price.toInt());
+                          promociones.value[6] = price;
+                          break;
+                        default:
+                          updatedProduct =
+                              producto.copyWith(precio1: price.toInt());
+                      }
+
+                      // Enviar el evento para actualizar el producto en el bloc
+                      context
+                          .read<ProductosTiendaBloc>()
+                          .add(UpdateProductEvent(updatedProduct));
+
+                      // Actualiza el producto en la lista de productos locales
+                      productos[index] = updatedProduct;
+
+                      // Refrescar el total con el nuevo precio
+                      updateTotal();
+
+                      // Actualizar el `dropdownPrice` para reflejar el nuevo valor
+                      dropdownPrice.value = price;
+                      showCustomPriceDropdown.value = false;
+                    }
+                  },
+                  child: const AutoSizeText(
+                    'APLICAR PRECIO',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colores.scaffoldBackgroundColor,
+                    ),
+                    minFontSize: 8,
+                  ),
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
