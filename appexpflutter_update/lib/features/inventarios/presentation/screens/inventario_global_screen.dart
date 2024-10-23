@@ -388,24 +388,23 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                   ),
                 ),
                 const SizedBox(height: 5),
-                BlocBuilder<BusquedaGlobalBloc, BusquedaGlobalState>(
-                  builder: (context, state) {
-                    if (state is InventarioLoading) {
-                      return const Column(
-                        children: [
-                          SizedBox(height: 150),
-                          CircularProgressIndicator(
-                            color: Colores.secondaryColor,
-                          ),
-                        ],
-                      );
-                    }
-                    if (state is InventarioProductosLoaded) {
-                      final productos = state.productos;
+                Expanded(
+                  child: BlocBuilder<BusquedaGlobalBloc, BusquedaGlobalState>(
+                    builder: (context, state) {
+                      if (state is InventarioLoading) {
+                        return const Column(
+                          children: [
+                            SizedBox(height: 150),
+                            CircularProgressIndicator(
+                              color: Colores.secondaryColor,
+                            ),
+                          ],
+                        );
+                      }
+                      if (state is InventarioProductosLoaded) {
+                        final productos = state.productos;
 
-                      return SizedBox(
-                        height: size.height * 0.56,
-                        child: ListView.builder(
+                        return ListView.builder(
                           itemCount: productos.length,
                           itemBuilder: (context, index) {
                             final producto = productos[index];
@@ -428,36 +427,36 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                                   .push(context),
                             );
                           },
-                        ),
-                      );
-                    }
-                    if (state is InventarioError) {
-                      return Column(
-                        children: [
-                          const SizedBox(height: 150),
-                          Center(
-                            child: SizedBox(
-                              height: 60,
-                              width: 300,
-                              child: Card(
-                                child: AutoSizeText(
-                                  state.message,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold),
+                        );
+                      }
+                      if (state is InventarioError) {
+                        return Column(
+                          children: [
+                            const SizedBox(height: 150),
+                            Center(
+                              child: SizedBox(
+                                height: 60,
+                                width: 300,
+                                child: Card(
+                                  child: AutoSizeText(
+                                    state.message,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        );
+                      }
+                      return Center(
+                        child: Container(),
                       );
-                    }
-                    return Center(
-                      child: Container(),
-                    );
-                  },
+                    },
+                  ),
                 ),
               ],
             ),

@@ -1,7 +1,6 @@
-
 import 'package:inventarios/domain/entities/producto_expo_entity.dart';
 
-class ProductoExpoModel extends ProductoExpoEntity{
+class ProductoExpoModel extends ProductoExpoEntity {
   const ProductoExpoModel(
       {required super.producto,
       required super.producto1,
@@ -34,6 +33,13 @@ class ProductoExpoModel extends ProductoExpoEntity{
       required super.precio1,
       required super.precio2,
       required super.precio3,
+      required super.precio4,
+      required super.precio5,
+      required super.precio6,
+      required super.precio7,
+      required super.precio8,
+      required super.precio9,
+      required super.precio10,
       required super.desalmacen});
 
   factory ProductoExpoModel.fromJson(Map<String, dynamic> json) =>
@@ -53,7 +59,8 @@ class ProductoExpoModel extends ProductoExpoEntity{
         origen: json["origen"],
         rojo: json["rojo"],
         observac: json["observac"],
-        hobserva: json["hobserva"] == null ? null : DateTime.parse(json["hobserva"]),
+        hobserva:
+            json["hobserva"] == null ? null : DateTime.parse(json["hobserva"]),
         pathima1: json["pathima1"],
         pathima2: json["pathima2"],
         pathima3: json["pathima3"],
@@ -69,6 +76,13 @@ class ProductoExpoModel extends ProductoExpoEntity{
         precio1: json["precio1"],
         precio2: json["precio2"],
         precio3: json["precio3"],
+        precio4: json["precio4"],
+        precio5: json["precio5"],
+        precio6: json["precio6"],
+        precio7: json["precio7"],
+        precio8: json["precio8"],
+        precio9: json["precio9"],
+        precio10: json["precio10"],
         desalmacen: json["desalmacen"],
       );
 
@@ -139,5 +153,12 @@ class ProductoExpoModel extends ProductoExpoEntity{
       precio1: precio1,
       precio2: precio2,
       precio3: precio3,
+      precio4: precio4,
+      precio5: precio5,
+      precio6: precio6,
+      precio7: precio7,
+      precio8: precio8,
+      precio9: precio9,
+      precio10: precio10,
       desalmacen: desalmacen);
 }

@@ -3,7 +3,6 @@ import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_detail_screen.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/screens/widgets/search_gallery.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

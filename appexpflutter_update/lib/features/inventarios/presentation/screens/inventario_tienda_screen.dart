@@ -109,7 +109,6 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                             }
 
                             // Asegurar de que no haya duplicados
-                            // Asegurar de que no haya duplicados
                             final uniqueMedidas = medidas.toSet().toList();
 
                             // Asegurar de que el valor seleccionado esté en la lista
@@ -352,8 +351,6 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                                   'diseno': diseno,
                                   'mancho1': mancho1,
                                   'mancho2': mancho2,
-                                  // 'mancho1': mancho1 - 0.01,
-                                  // 'mancho2': mancho2 + 0.01,
                                 };
                               } else if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
                                   (mlargo1 > 0.0 && mlargo2 > 0.0)) {
@@ -364,13 +361,6 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                                   'mlargo2': mlargo2,
                                   'mancho1': mancho1,
                                   'mancho2': mancho2,
-
-                                  // 'descripcio': descripcio,
-                                  // 'diseno': diseno,
-                                  // 'mlargo1': mlargo1 - 0.01,
-                                  // 'mlargo2': mlargo2 + 0.01,
-                                  // 'mancho1': mancho1 - 0.01,
-                                  // 'mancho2': mancho2 + 0.01,
                                 };
                               } else {
                                 data = {
@@ -389,24 +379,23 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                   ),
                 ),
                 const SizedBox(height: 5),
-                BlocBuilder<InventarioExpoBloc, InventarioExpoState>(
-                  builder: (context, state) {
-                    if (state is InventarioLoading) {
-                      return const Column(
-                        children: [
-                          SizedBox(height: 150),
-                          CircularProgressIndicator(
-                            color: Colores.secondaryColor,
-                          ),
-                        ],
-                      );
-                    }
-                    if (state is InventarioProductosLoaded) {
-                      final productos = state.productos;
+                Expanded(
+                  child: BlocBuilder<InventarioExpoBloc, InventarioExpoState>(
+                    builder: (context, state) {
+                      if (state is InventarioLoading) {
+                        return const Column(
+                          children: [
+                            SizedBox(height: 150),
+                            CircularProgressIndicator(
+                              color: Colores.secondaryColor,
+                            ),
+                          ],
+                        );
+                      }
+                      if (state is InventarioProductosLoaded) {
+                        final productos = state.productos;
 
-                      return SizedBox(
-                        height: size.height * 0.56,
-                        child: ListView.builder(
+                        return ListView.builder(
                           itemCount: productos.length,
                           itemBuilder: (context, index) {
                             final producto = productos[index];
@@ -429,37 +418,37 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                               ).push(context),
                             );
                           },
-                        ),
-                      );
-                    }
-                    if (state is InventarioError) {
-                      return Column(
-                        children: [
-                          const SizedBox(height: 150),
-                          Center(
-                            child: SizedBox(
-                              height: 60,
-                              width: 300,
-                              child: Card(
-                                child: AutoSizeText(
-                                  state.message,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
+                        );
+                      }
+                      if (state is InventarioError) {
+                        return Column(
+                          children: [
+                            const SizedBox(height: 150),
+                            Center(
+                              child: SizedBox(
+                                height: 60,
+                                width: 300,
+                                child: Card(
+                                  child: AutoSizeText(
+                                    state.message,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        );
+                      }
+                      return Center(
+                        child: Container(),
                       );
-                    }
-                    return Center(
-                      child: Container(),
-                    );
-                  },
+                    },
+                  ),
                 ),
               ],
             ),
