@@ -18,13 +18,13 @@ class ListaProductosExpo extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final List<double> promociones = [
+      producto.precio8.toDouble(),
+      producto.precio9.toDouble(),
       producto.precio4.toDouble(),
+      producto.precio10.toDouble(),
       producto.precio5.toDouble(),
       producto.precio6.toDouble(),
       producto.precio7.toDouble(),
-      producto.precio8.toDouble(),
-      producto.precio9.toDouble(),
-      producto.precio10.toDouble(),
     ];
 
     final descuentos = [
@@ -134,7 +134,7 @@ class ListaProductosExpo extends HookWidget {
                           ),
                           children: [
                             SizedBox(
-                              height: 100,
+                              height: 150,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),

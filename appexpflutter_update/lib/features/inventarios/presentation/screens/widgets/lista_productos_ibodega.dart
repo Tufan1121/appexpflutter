@@ -23,13 +23,13 @@ class ListaProductosIBodegaCard extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final List<double> promociones = [
+      producto.precio8.toDouble(),
+      if (producto.precio9 != null) producto.precio9!.toDouble(),
       producto.precio4.toDouble(),
+      if (producto.precio10 != null) producto.precio10!.toDouble(),
       producto.precio5.toDouble(),
       producto.precio6.toDouble(),
       producto.precio7.toDouble(),
-      producto.precio8.toDouble(),
-      if (producto.precio9 != null) producto.precio9!.toDouble(),
-      if (producto.precio10 != null) producto.precio10!.toDouble(),
     ];
 
     final descuentos = [
@@ -158,7 +158,7 @@ class ListaProductosIBodegaCard extends HookWidget {
                           ),
                           children: [
                             SizedBox(
-                              height: 100,
+                              height: 150,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),

@@ -432,13 +432,13 @@ class ListaProductosVenta extends HookWidget {
   }) {
     // Lista de promociones (precios) - la lista necesita ser mutable si el precio cambia
     final promociones = useState<List<double?>>([
+      if (producto.precio8 != null) producto.precio8?.toDouble(),
+      if (producto.precio9 != null) producto.precio9?.toDouble(),
       if (producto.precio4 != null) producto.precio4?.toDouble(),
+      if (producto.precio10 != null) producto.precio10?.toDouble(),
       if (producto.precio5 != null) producto.precio5?.toDouble(),
       if (producto.precio6 != null) producto.precio6?.toDouble(),
       if (producto.precio7 != null) producto.precio7?.toDouble(),
-      if (producto.precio8 != null) producto.precio8?.toDouble(),
-      if (producto.precio9 != null) producto.precio9?.toDouble(),
-      if (producto.precio10 != null) producto.precio10?.toDouble(),
     ]);
 
     // Variable para almacenar el valor editado antes de aplicarlo
