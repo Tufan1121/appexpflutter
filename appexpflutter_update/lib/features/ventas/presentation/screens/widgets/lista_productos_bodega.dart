@@ -1,18 +1,19 @@
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:precios/domain/entities/producto_entity.dart';
 
 class ListaProductosBodegaCard extends HookWidget {
-  const ListaProductosBodegaCard(
-      {super.key,
-      required this.producto,
-      this.isSelected,
-      this.existencia,
-      this.isMultiSelectMode});
+  const ListaProductosBodegaCard({
+    super.key,
+    required this.producto,
+    this.isSelected,
+    this.existencia,
+    this.isMultiSelectMode,
+  });
   final ProductoEntity producto;
   final bool? isSelected;
   final int? existencia;
@@ -20,6 +21,26 @@ class ListaProductosBodegaCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<double> promociones = [
+      producto.precio8.toDouble(),
+      if (producto.precio9 != null) producto.precio9!.toDouble(),
+      producto.precio4.toDouble(),
+      if (producto.precio10 != null) producto.precio10!.toDouble(),
+      producto.precio5.toDouble(),
+      producto.precio6.toDouble(),
+      producto.precio7.toDouble(),
+    ];
+
+    final descuentos = [
+      '-20%',
+      '-25%',
+      '-30%',
+      '-35%',
+      '-40%',
+      '-50%',
+      '-70%',
+    ];
+
     return ClipRect(
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -122,6 +143,43 @@ class ListaProductosBodegaCard extends HookWidget {
                   const SizedBox(width: 10),
                 ],
               ),
+              const SizedBox(height: 4),
+              SizedBox(
+                width: 180,
+                child: ExpansionTile(
+                  expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                  title: AutoSizeText(
+                    'Promoción',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.bold,
+                      color: Colores.secondaryColor,
+                    ),
+                    maxLines: 1,
+                  ),
+                  children: [
+                    SizedBox(
+                      height: 150,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: promociones.length,
+                        itemBuilder: (context, index) {
+                          final precio = promociones[index];
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: _buildPriceCheckbox(
+                              context: context,
+                              label: descuentos[index],
+                              price: precio,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -134,12 +192,13 @@ class ListaProductosBodegaCard extends HookWidget {
     required String label,
     required double price,
   }) {
-    return Column(
+    return Row(
       children: [
         AutoSizeText(
           label,
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
         ),
+        const SizedBox(width: 10),
         AutoSizeText(
           Utils.formatPrice(price),
           maxLines: 2,
