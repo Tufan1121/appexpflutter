@@ -26,17 +26,17 @@ class ConfigToken {
     return null;
   }
 
-  // Verificar y eliminar token si es necesario
+  // Verificar y eliminar token si han pasado más de 10 horas
   Future<void> checkAndDeleteTokenIfNeeded() async {
     final lastCheckedDateTime = await getLastCheckedDateTime();
     final now = DateTime.now();
 
-    // Si han pasado más de 24 horas desde la última verificación
+    // Si han pasado más de 10 horas desde la última verificación
     if (lastCheckedDateTime == null ||
-        now.difference(lastCheckedDateTime).inHours >= 24) {
+        now.difference(lastCheckedDateTime).inHours >= 10) {
       await deleteToken();
       await saveLastCheckedDateTime();
-      // print('Token eliminado porque han pasado más de 24 horas');
+      // print('Token eliminado porque han pasado más de 10 horas');
     }
   }
 }

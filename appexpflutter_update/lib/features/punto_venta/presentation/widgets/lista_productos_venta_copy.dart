@@ -272,8 +272,7 @@ class ListaProductosVenta extends HookWidget {
                                 SingleChildScrollView(
                                   //scrollDirection: Axis.horizontal,
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       _buildPriceCheckbox(
                                         context: context,
