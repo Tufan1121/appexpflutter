@@ -26,6 +26,9 @@ class ListaProductosVenta extends HookWidget {
         productos.map((e) => e.precio1.toDouble()).toList());
     final dropdownPriceList =
         useState<List<double?>>(List.filled(productos.length, null));
+    // Nueva lista para rastrear el estado de selección del checkbox
+    final isSelectedList =
+        useState<List<bool>>(List.filled(productos.length, true));
 
     void updateTotal() {
       double newTotal = 0.0;
@@ -86,6 +89,7 @@ class ListaProductosVenta extends HookWidget {
       final newCustomPriceList = List<double?>.from(customPriceList.value);
       final newSelectedPriceList = List<double>.from(selectedPriceList.value);
       final newDropdownPriceList = List<double?>.from(dropdownPriceList.value);
+      final newIsSelectedList = List<bool>.from(isSelectedList.value);
 
       if (newCountList.length < productos.length) {
         newCountList.addAll(
@@ -98,6 +102,8 @@ class ListaProductosVenta extends HookWidget {
             .toList());
         newDropdownPriceList.addAll(List<double?>.filled(
             productos.length - newDropdownPriceList.length, null));
+        newIsSelectedList.addAll(List<bool>.filled(
+            productos.length - newIsSelectedList.length, true));
       } else if (newCountList.length > productos.length) {
         newCountList.removeRange(productos.length, newCountList.length);
         newCustomPriceList.removeRange(
@@ -106,12 +112,15 @@ class ListaProductosVenta extends HookWidget {
             productos.length, newSelectedPriceList.length);
         newDropdownPriceList.removeRange(
             productos.length, newDropdownPriceList.length);
+        newIsSelectedList.removeRange(
+            productos.length, newIsSelectedList.length);
       }
 
       countList.value = newCountList;
       customPriceList.value = newCustomPriceList;
       selectedPriceList.value = newSelectedPriceList;
       dropdownPriceList.value = newDropdownPriceList;
+      isSelectedList.value = newIsSelectedList;
 
       updateTotal();
       return null;
@@ -278,13 +287,16 @@ class ListaProductosVenta extends HookWidget {
                                         context: context,
                                         label: 'Precio de Lista',
                                         price: producto.precio1.toDouble(),
-                                        value: selectedPrice.value ==
-                                            producto.precio1.toDouble(),
+                                        value: isSelectedList.value[index],
                                         onChanged: (bool? value) {
                                           if (value == true) {
                                             // Volver al precio de lista (precio1) cuando el checkbox esté seleccionado
                                             selectedPrice.value =
                                                 producto.precio1.toDouble();
+
+                                            isSelectedList.value[index] =
+                                                value ?? false;
+
                                             dropdownPrice.value =
                                                 null; // Limpiar el dropdown
                                             dropdownPriceList.value[index] =
@@ -302,10 +314,12 @@ class ListaProductosVenta extends HookWidget {
                                       ),
                                       IconButton(
                                         icon: const Icon(Icons.edit),
-                                        onPressed: () {
-                                          showCustomPrice.value =
-                                              !showCustomPrice.value;
-                                        },
+                                        onPressed: isSelectedList.value[index]
+                                            ? () {
+                                                showCustomPrice.value =
+                                                    !showCustomPrice.value;
+                                              }
+                                            : null,
                                       ),
                                     ],
                                   ),
@@ -371,6 +385,10 @@ class ListaProductosVenta extends HookWidget {
                                                     updateTotal();
                                                     selectedPriceList
                                                         .value[index] = price;
+                                                    isSelectedList
+                                                        .value[index] = true;
+                                                    showCustomPrice.value =
+                                                        false;
                                                   }
                                                 }
                                               : null,
@@ -395,6 +413,8 @@ class ListaProductosVenta extends HookWidget {
                                   dropdownPriceList: dropdownPriceList,
                                   index: index,
                                   selectedPrice: selectedPrice,
+                                  showCustomPrice: showCustomPrice,
+                                  isSelectedList: isSelectedList,
                                   updateTotal: updateTotal,
                                 ),
                               ],
@@ -449,6 +469,8 @@ class ListaProductosVenta extends HookWidget {
     required ValueNotifier<double?> dropdownPrice,
     required ValueNotifier<List<double?>> dropdownPriceList,
     required ValueNotifier<double?> selectedPrice,
+    required ValueNotifier<bool> showCustomPrice,
+    required ValueNotifier<List<bool>> isSelectedList,
     required int index,
     required VoidCallback updateTotal,
   }) {
@@ -520,7 +542,9 @@ class ListaProductosVenta extends HookWidget {
                         editPrice.value = newValue;
 
                         // Desmarcar el checkbox cuando se selecciona una promoción
-                        selectedPrice.value = newValue;
+                        //selectedPrice.value = newValue;
+                        isSelectedList.value[index] = false;
+                        showCustomPrice.value = false;
 
                         // Actualiza el total
                         updateTotal();
@@ -610,7 +634,6 @@ class ListaProductosVenta extends HookWidget {
                     final price = double.tryParse(customPriceController.text);
 
                     if (price != null) {
-                      // Aplicar el valor temporal editado al modelo del producto
                       ProductoExpoEntity updatedProduct;
 
                       switch (dropdownPrice.value) {
@@ -618,8 +641,7 @@ class ListaProductosVenta extends HookWidget {
                             when value == producto.precio4?.toDouble():
                           updatedProduct =
                               producto.copyWith(precio4: price.toInt());
-                          promociones.value[0] =
-                              price; // Actualiza la lista de promociones
+                          promociones.value[0] = price;
                           break;
                         case double value
                             when value == producto.precio5?.toDouble():
@@ -662,19 +684,17 @@ class ListaProductosVenta extends HookWidget {
                               producto.copyWith(precio1: price.toInt());
                       }
 
-                      // Enviar el evento para actualizar el producto en el bloc
                       context
                           .read<ProductosTiendaBloc>()
                           .add(UpdateProductEvent(updatedProduct));
 
-                      // Actualiza el producto en la lista de productos locales
                       productos[index] = updatedProduct;
 
-                      // Refrescar el total con el nuevo precio
+                      // Guardar el precio personalizado en dropdownPriceList y actualizar el total
+                      dropdownPrice.value = price;
+                      dropdownPriceList.value[index] = price;
                       updateTotal();
 
-                      // Actualizar el `dropdownPrice` para reflejar el nuevo valor
-                      dropdownPrice.value = price;
                       showCustomPriceDropdown.value = false;
                     }
                   },
