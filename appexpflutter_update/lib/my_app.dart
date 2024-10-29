@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:appexpflutter_update/features/auth/config/config_token.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,17 +35,70 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final GoRouter _router;
   final storage = const FlutterSecureStorage();
+  Timer? sessionTimer;
+  final configToken = ConfigToken();
+
+  StreamSubscription? sessionStream;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _init();
+  }
 
   Future<void> _init() async {
     final token = await storage.read(key: 'accessToken');
-    // _router =
-    //     GoRouter(initialLocation: PruebsRoute.path, routes: $appRoutes);
+
+    // Inicializa el router con la ruta de inicio de sesión o la ruta principal.
     _router = GoRouter(
-        initialLocation: token != null ? HomeRoute.path : LoginRoute.path,
-        routes: $appRoutes);
+      initialLocation: token != null ? HomeRoute.path : LoginRoute.path,
+      routes: $appRoutes,
+    );
+
+    // Inicia el Stream de verificación de sesión si el token existe
+    if (token != null) {
+      _startSessionStream();
+    }
+  }
+
+  // Inicia un Stream que verifica cada minuto si han pasado 10 minutos
+  void _startSessionStream() {
+    sessionStream =
+        Stream.periodic(const Duration(minutes: 1)).listen((_) async {
+      final hasExpired = await configToken.checkAndDeleteTokenIfNeeded();
+      if (hasExpired) {
+        _redirectToLogin();
+      }
+    });
+  }
+
+  // Redirige al usuario a la pantalla de inicio de sesión
+  void _redirectToLogin() {
+    sessionStream?.cancel(); // Cancela el stream al cerrar sesión
+    _router.go(LoginRoute.path);
+  }
+
+  // Detener el Stream al salir de la app o al pausar
+  @override
+  void dispose() {
+    sessionStream?.cancel(); // Cancela el stream si se destruye el widget
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // Detecta cuando la app pasa a primer o segundo plano y reinicia el stream
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && sessionStream == null) {
+      _startSessionStream();
+    } else if (state == AppLifecycleState.paused) {
+      sessionStream?.cancel();
+      sessionStream = null;
+    }
   }
 
   @override
