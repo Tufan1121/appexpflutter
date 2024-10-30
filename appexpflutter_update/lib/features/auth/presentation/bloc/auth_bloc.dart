@@ -13,6 +13,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required this.authUsecase}) : super(AuthInitial()) {
     on<LoginEvent>(_getToken);
+    on<LogoutEvent>(_deleteAccessToken);
   }
 
   Future<void> _getToken(LoginEvent event, Emitter<AuthState> emit) async {
@@ -36,7 +37,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   // Método para eliminar el token almacenado (logout)
-  Future<void> deleteAccessToken() async {
-    await storage.delete(key: 'accessToken');
+  Future<void> _deleteAccessToken(
+      LogoutEvent event, Emitter<AuthState> emit) async {
+    final result = await authUsecase.logout();
+    await result.fold((error) async {
+      await storage.delete(key: 'accessToken');
+    }, (message) async {
+      await storage.delete(key: 'accessToken');
+    });
   }
 }

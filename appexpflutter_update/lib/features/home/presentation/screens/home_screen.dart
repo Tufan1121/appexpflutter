@@ -51,9 +51,9 @@ class HomeScreen extends StatelessWidget {
                           ),
                           tooltip: 'Cerrar Sesión',
                           color: Colores.scaffoldBackgroundColor,
-                          onPressed: () async {
-                            await context.read<AuthBloc>().deleteAccessToken();
-                            if (context.mounted) LoginRoute().go(context);
+                          onPressed: () {
+                            context.read<AuthBloc>().add(const LogoutEvent());
+                            LoginRoute().go(context);
                           },
                         )
                       ],

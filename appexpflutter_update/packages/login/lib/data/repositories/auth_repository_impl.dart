@@ -5,7 +5,6 @@ import 'package:login/data/data_sources/auth_data_source.dart';
 import 'package:login/domain/entities/auth_user_entity.dart';
 import 'package:login/domain/repositories/auth_repository.dart';
 
-
 class AuthRepositoryImpl implements AuthRepository {
   final AuthDatasource authDatasource;
 
@@ -16,6 +15,16 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final result = await authDatasource.login(email, password);
       return Right(result.toEntity());
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, String>> logout([int? idUser]) async {
+    try {
+      final result = await authDatasource.logout();
+      return Right(result);
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
     }

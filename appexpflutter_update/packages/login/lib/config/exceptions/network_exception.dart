@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:login/config/exceptions/network_error_model.dart';
 
-
 class NetworkException extends Equatable implements Exception {
   late final String message;
   late final int? statusCode;
@@ -56,6 +55,8 @@ class NetworkException extends Equatable implements Exception {
         } else if (statusCode == 500) {
           message =
               'Error del servidor. Por favor, inténtelo de nuevo más tarde.';
+        } else if (statusCode == 400) {
+          message = data['detail'];
         } else {
           if (data is Map<String, dynamic>) {
             final model = NetworkErrorModel.fromJson(data);

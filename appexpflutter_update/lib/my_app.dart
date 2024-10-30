@@ -41,12 +41,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Timer? sessionTimer;
   final configToken = ConfigToken();
 
+  // Agrega esta línea
+  late final AuthBloc authBloc;
+
   StreamSubscription? sessionStream;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Inicializa el authBloc aquí
+    authBloc = injector<AuthBloc>();
     _init();
   }
 
@@ -65,7 +70,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  // Inicia un Stream que verifica cada minuto si han pasado 10 minutos
+  // Inicia un Stream que verifica cada minuto si han pasado más de 10 horas
   void _startSessionStream() {
     sessionStream =
         Stream.periodic(const Duration(minutes: 1)).listen((_) async {
@@ -79,6 +84,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   // Redirige al usuario a la pantalla de inicio de sesión
   void _redirectToLogin() {
     sessionStream?.cancel(); // Cancela el stream al cerrar sesión
+    authBloc.add(const LogoutEvent());
     _router.go(LoginRoute.path);
   }
 
@@ -105,6 +111,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<AuthBloc>(create: (_) => authBloc),
         BlocProvider<AuthBloc>(create: (_) => injector<AuthBloc>()),
         BlocProvider<PreciosBloc>(create: (_) => injector<PreciosBloc>()),
         BlocProvider<ProductosBloc>(create: (_) => injector<ProductosBloc>()),
