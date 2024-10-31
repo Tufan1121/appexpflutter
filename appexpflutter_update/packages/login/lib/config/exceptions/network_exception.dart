@@ -57,6 +57,8 @@ class NetworkException extends Equatable implements Exception {
               'Error del servidor. Por favor, inténtelo de nuevo más tarde.';
         } else if (statusCode == 400) {
           message = data['detail'];
+        } else if (statusCode == 403) {
+          message = data['detail'];
         } else {
           if (data is Map<String, dynamic>) {
             final model = NetworkErrorModel.fromJson(data);

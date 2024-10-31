@@ -45,7 +45,7 @@ class AuthDataSourceImpl implements AuthDatasource {
           options: Options(headers: {
             'Authorization': 'Bearer $token',
           }));
-      return response.data as String;
+      return response.data['detail'] as String;
     } catch (_) {
       rethrow;
     }

@@ -32,7 +32,7 @@ class PuntoVentaScreen extends HookWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  title: 'COTIZACIÓN',
+                  title: 'PUNTO DE VENTA',
                 ),
               ),
               Expanded(
