@@ -12,4 +12,8 @@ class AuthUsecase {
       String email, String password) async {
     return await authRepository.login(email, password);
   }
+
+  Future<Either<NetworkException, String>> logout([int? idUser]) async {
+    return await authRepository.logout();
+  }
 }

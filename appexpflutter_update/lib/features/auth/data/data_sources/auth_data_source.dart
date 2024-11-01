@@ -2,4 +2,5 @@ import 'package:appexpflutter_update/features/auth/data/models/auth_user_model.d
 
 abstract interface class AuthDatasource {
   Future<AuthUserModel> login(String email, String password);
+  Future<String> logout([int? idUser]);
 }

@@ -19,4 +19,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(NetworkException.fromDioError(e));
     }
   }
+
+  @override
+  Future<Either<NetworkException, String>> logout([int? idUser]) async {
+    try {
+      final result = await authDatasource.logout();
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
 }
