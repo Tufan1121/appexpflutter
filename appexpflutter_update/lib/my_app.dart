@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:appexpflutter_update/features/auth/config/config_token.dart';
+import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +46,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final AuthBloc authBloc;
 
   StreamSubscription? sessionStream;
+    late final Future<void> _initFuture;
 
   @override
   void initState() {
@@ -52,7 +54,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     // Inicializa el authBloc aquí
     authBloc = injector<AuthBloc>();
-    _init();
+     _initFuture = _init();
   }
 
   Future<void> _init() async {
@@ -117,6 +119,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<ProductosBloc>(create: (_) => injector<ProductosBloc>()),
         BlocProvider<ClienteBloc>(create: (_) => injector<ClienteBloc>()),
         BlocProvider<PedidoBloc>(create: (_) => injector<PedidoBloc>()),
+        BlocProvider<ReportesBloc>(create: (_) => injector<ReportesBloc>()),
+
         BlocProvider<PedidoVentaBloc>(
             create: (_) => injector<PedidoVentaBloc>()),
         BlocProvider<SesionPedidoBloc>(
@@ -142,11 +146,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             create: (_) => injector<DetalleGaleriaBloc>()),
         BlocProvider<DetalleProductoBloc>(
             create: (_) => injector<DetalleProductoBloc>()),
+
         BlocProvider<MedidasCubit>(create: (_) => injector<MedidasCubit>()),
         BlocProvider<ConsultaBloc>(create: (_) => injector<ConsultaBloc>()),
       ],
       child: FutureBuilder(
-        future: _init(),
+        future: _initFuture,
         builder: (context, state) {
           if (state.connectionState == ConnectionState.waiting) {
             return Container();

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class SalesPedidosEntity extends Equatable {
-  final int gtotal;
+  final double gtotal;
   final String fecham;
 
   const SalesPedidosEntity({

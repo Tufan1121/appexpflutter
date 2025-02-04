@@ -79,7 +79,7 @@ class ReportesScreen extends HookWidget {
 
                 // Calcula la suma total de cada serie
                 final totalPedidos =
-                    listaPedidos.fold<int>(0, (sum, item) => sum + item.gtotal);
+                    listaPedidos.fold<int>(0, (sum, item) => sum + item.gtotal.toInt());
                 final totalTickets = listaTickets.fold<int>(
                     0, (sum, item) => sum + item.gtotal.toInt());
 
@@ -87,7 +87,7 @@ class ReportesScreen extends HookWidget {
                 final Map<String, int> sumasPorFecha = {};
 
                 for (var pedido in listaPedidos) {
-                  sumasPorFecha[pedido.fecham] = pedido.gtotal;
+                  sumasPorFecha[pedido.fecham] = pedido.gtotal.toInt();
                 }
 
                 for (var ticket in listaTickets) {
