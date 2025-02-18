@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:appexpflutter_update/features/auth/config/config_token.dart';
+import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +31,7 @@ import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.d
 import 'features/historial/presentation/blocs/historial/historial_bloc.dart';
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key}); 
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -46,7 +47,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final AuthBloc authBloc;
 
   StreamSubscription? sessionStream;
-    late final Future<void> _initFuture;
+  late final Future<void> _initFuture;
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     // Inicializa el authBloc aquí
     authBloc = injector<AuthBloc>();
-     _initFuture = _init();
+    _initFuture = _init();
   }
 
   Future<void> _init() async {
@@ -114,13 +115,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(create: (_) => authBloc),
-        BlocProvider<AuthBloc>(create: (_) => injector<AuthBloc>()),
+        // BlocProvider<AuthBloc>(create: (_) => injector<AuthBloc>()),
         BlocProvider<PreciosBloc>(create: (_) => injector<PreciosBloc>()),
         BlocProvider<ProductosBloc>(create: (_) => injector<ProductosBloc>()),
         BlocProvider<ClienteBloc>(create: (_) => injector<ClienteBloc>()),
         BlocProvider<PedidoBloc>(create: (_) => injector<PedidoBloc>()),
         BlocProvider<ReportesBloc>(create: (_) => injector<ReportesBloc>()),
-
+        BlocProvider<DetalleSesionBloc>(
+            create: (_) => injector<DetalleSesionBloc>()),
         BlocProvider<PedidoVentaBloc>(
             create: (_) => injector<PedidoVentaBloc>()),
         BlocProvider<SesionPedidoBloc>(
@@ -135,8 +137,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             create: (_) => injector<InventarioBodegaBloc>()),
         BlocProvider<InventarioExpoBloc>(
             create: (_) => injector<InventarioExpoBloc>()),
-        BlocProvider<InventarioTiendaBloc>(
-            create: (_) => injector<InventarioTiendaBloc>()),
         BlocProvider<ProductosTiendaBloc>(
             create: (_) => injector<ProductosTiendaBloc>()),
         BlocProvider<BusquedaGlobalBloc>(
