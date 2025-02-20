@@ -10,7 +10,7 @@ class SalesTicketsModel extends SalesTicketsEntity
 
   factory SalesTicketsModel.fromJson(Map<String, dynamic> json) =>
       SalesTicketsModel(
-        gtotal: json["gtotal"] as double,
+        gtotal: (json["gtotal"] as num).toDouble(),
         fecham: json["fecham"],
       );
 

@@ -10,7 +10,7 @@ class SalesPedidosModel extends SalesPedidosEntity
 
   factory SalesPedidosModel.fromJson(Map<String, dynamic> json) =>
       SalesPedidosModel(
-        gtotal: json["gtotal"],
+        gtotal: (json["gtotal"] as num).toDouble(),
         fecham: json["fecham"],
       );
 
