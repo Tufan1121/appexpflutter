@@ -33,7 +33,7 @@ class ConfigToken {
     final now = DateTime.now();
 
     if (lastCheckedDateTime == null ||
-        now.difference(lastCheckedDateTime).inHours >= 10) {
+        now.difference(lastCheckedDateTime).inDays >= 7) {
       await deleteToken();
       await saveLastCheckedDateTime();
       return true; // Indica que el token expiró
