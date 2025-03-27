@@ -1,0 +1,19 @@
+library galeria;
+
+export 'data/model/galeria_model.dart';
+export 'data/model/medidas_model.dart';
+export 'data/model/producto_inv_model.dart';
+export 'data/model/producto_model.dart';
+export 'data/model/tabla_precio_model.dart';
+export 'data/repositories/galeria_repository_impl.dart';
+export 'data/data_sources/galeria_data_source.dart';
+export 'domain/entities/galeria_entity.dart';
+export 'domain/entities/medidas_entity.dart';
+export 'domain/entities/producto_entity.dart';
+export 'domain/entities/producto_inv_entity.dart';
+export 'domain/entities/tabla_precio_entity.dart';
+export 'domain/entities/producto_con_existencias.dart';
+export 'domain/repositories/galeria_repository.dart';
+export 'domain/usecase/galeria_usecases.dart';
+export 'config/exceptions/network_exception.dart';
+export 'config/exceptions/not_found_expection.dart';

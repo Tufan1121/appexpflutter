@@ -1,0 +1,102 @@
+name: appexpflutter_update
+description: "A new Flutter project."
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  # librerias:
+  api_client:
+    path: packages/api_client
+  precios:
+    path: packages/precios
+  sesion_ventas:
+    path: packages/sesion_ventas
+  galeria:
+    path: packages/galeria
+  inventarios:
+    path: packages/inventarios
+  login:
+    path: packages/login
+  punto_venta:
+    path: packages/punto_venta
+
+  # librerias de flutter: 
+  auto_size_text: ^3.0.0
+  carousel_slider: ^4.2.1
+  
+  collection: ^1.18.0
+  connectivity_plus: ^6.0.3
+  cupertino_icons: ^1.0.6
+  dio: ^5.4.3+1
+  equatable: ^2.0.5
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.6
+  flutter_hooks: ^0.20.5
+  flutter_pdfview: ^1.3.2
+  flutter_secure_storage: ^9.2.2
+  font_awesome_flutter: ^10.7.0
+  fpdart: ^1.1.0
+  get_it: ^7.7.0
+  go_router: ^14.1.4
+  google_fonts: ^6.2.1
+  intl: ^0.19.0
+  mobile_scanner: ^5.1.1
+  open_file: ^3.3.2
+  path_provider: ^2.1.3
+  permission_handler: ^11.3.1
+  photo_view: ^0.15.0
+  reactive_forms: ^17.0.1
+  rxdart: ^0.27.7
+  share_plus: ^9.0.0
+  shared_preferences: ^2.2.3
+  syncfusion_flutter_charts: ^26.2.14
+  syncfusion_flutter_datagrid: ^26.2.10
+  syncfusion_flutter_pdfviewer: ^26.1.40
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  change_app_package_name: ^1.2.0
+  build_runner: ^2.4.11
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^3.0.0
+  flutter_test:
+    sdk: flutter
+  go_router_builder: ^2.7.0
+
+dependency_overrides:
+  url_launcher_ios: ^6.3.1
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/iconos/GRUPO-TUFAN-LOGO-CUADRADO.ico"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  # web:
+  #   generate: true
+  #   image_path: "assets/icon/icon.png"
+  #   background_color: "#hexcode"
+  #   theme_color: "#hexcode"
+  # windows:
+  #   generate: true
+  #   image_path: "assets/icon/icon.png"
+  #   icon_size: 48 # min:48, max:256, default: 48
+  # macos:
+  #   generate: true
+  #   image_path: "assets/icon/icon.png"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - .env
+    - assets/loaders/
+    - assets/images/
+    - assets/iconos/
+    - assets/iconos/qr/
+    - google_fonts/montserrat_alternates/
