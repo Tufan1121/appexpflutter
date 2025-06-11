@@ -9,7 +9,7 @@ workflows:
     scripts:
       - name: Install dependencies
         script: flutter pub get
-      - name: Build iOS .ipa
+      - name: Build IPA
         script: flutter build ipa --release
     artifacts:
       - build/ios/ipa/*.ipa
