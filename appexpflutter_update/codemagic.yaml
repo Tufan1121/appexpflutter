@@ -19,3 +19,10 @@ workflows:
         key_id: $APP_STORE_CONNECT_KEY_ID
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
+code_signing:
+  provisioning_profiles:
+    - bundle_identifier: com.tapetestufan.tienda
+      path: /Users/builder/provisioning/TiendaProfile.mobileprovision
+  certificates:
+    - certificate: $APP_STORE_CERT
+      password: $APP_STORE_CERT_PASSWORD
