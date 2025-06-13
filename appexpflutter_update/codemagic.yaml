@@ -11,20 +11,20 @@ workflows:
         script: flutter pub get
       - name: Build IPA
         script: flutter build ipa --release
+      - name: Debug publishing
+        script: echo "Intentando publicar a TestFlight..."
     artifacts:
       - build/ios/ipa/*.ipa
+    code_signing:
+      provisioning_profiles:
+        - bundle_identifier: com.tapetestufan.tienda
+          path: /Users/builder/provisioning/TiendaProfile.mobileprovision
+      certificates:
+        - certificate: $APP_STORE_CERT
+          password: $APP_STORE_CERT_PASSWORD
     publishing:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_ID
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
-code_signing:
-  provisioning_profiles:
-    - bundle_identifier: com.tapetestufan.tienda
-      path: /Users/builder/provisioning/TiendaProfile.mobileprovision
-  certificates:
-    - certificate: $APP_STORE_CERT
-      password: $APP_STORE_CERT_PASSWORD
-  - name: Debug publishing
-        script: echo "Intentando publicar a TestFlight..."
