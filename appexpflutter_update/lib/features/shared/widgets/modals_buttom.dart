@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/popover.dart';
 import 'package:flutter/material.dart';
 
@@ -12,13 +11,19 @@ class Modals {
     return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
+      isScrollControlled: true,
       builder: (context) {
         return Popover(
           child: Container(
             height: height,
-            color: Colores.scaffoldBackgroundColor,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+            ),
             child: Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(16),
               child: child,
             ),
           ),

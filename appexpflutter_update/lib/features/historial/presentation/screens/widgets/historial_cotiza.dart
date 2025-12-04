@@ -42,10 +42,30 @@ class HistorialListCotiza extends StatelessWidget {
           final formattedDate =
               DateFormat('yyyy/MM/dd').format(historial[index].fecha);
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Card(
-              elevation: 4,
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colores.dividerColor.withValues(alpha: 0.2),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colores.primaryColor.withValues(alpha: 0.06),
+                    blurRadius: 15,
+                    offset: const Offset(0, 3),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
               child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 onTap: () async {
                   final prefs = await SharedPreferences.getInstance();
                   String pdfUrl =
@@ -67,56 +87,76 @@ class HistorialListCotiza extends StatelessWidget {
                   }
                 },
                 leading: Container(
-                  height: 40,
-                  width: 40,
-                  decoration: const BoxDecoration(
-                      color: Colores.scaffoldBackgroundColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 1,
-                          offset: Offset(0, 4), // changes position of shadow
-                        ),
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colores.secondaryColor.withValues(alpha: 0.12),
+                        Colores.primaryColor.withValues(alpha: 0.12),
                       ],
-                      borderRadius: BorderRadius.all(Radius.circular(50))),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colores.secondaryColor.withValues(alpha: 0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  ),
                   child: const Center(
                     child: FaIcon(
                       FontAwesomeIcons.userLarge,
                       color: Colores.secondaryColor,
-                      size: 20,
+                      size: 22,
                     ),
                   ),
                 ),
                 title: AutoSizeText(
                   historial[index].pedidos,
-                  style: const TextStyle(
-                      color: Colores.secondaryColor,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colores.secondaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 4),
                     AutoSizeText(
                       'Cliente: ${historial[index].nombre} ${historial[index].apellido}',
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colores.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
+                        Icon(
+                          Icons.calendar_today_rounded,
+                          size: 14,
+                          color: Colores.textSecondary,
+                        ),
+                        const SizedBox(width: 6),
                         AutoSizeText(
                           formattedDate,
-                          style: const TextStyle(
-                            color: Colors.black,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colores.textSecondary,
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 16),
+                        Icon(
+                          Icons.attach_money_rounded,
+                          size: 14,
+                          color: Colores.successColor,
+                        ),
+                        const SizedBox(width: 4),
                         AutoSizeText(
-                          'Total: ${Utils.formatPrice(historial[index].totalPagar.toDouble())}',
-                          style: const TextStyle(
-                            color: Colors.black,
+                          Utils.formatPrice(historial[index].totalPagar.toDouble()),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colores.successColor,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],

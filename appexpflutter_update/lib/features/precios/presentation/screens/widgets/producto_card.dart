@@ -40,38 +40,75 @@ class ProductoCard extends StatelessWidget {
       '-50%',
       '-70%',
     ];
-    return Card(
+    return Container(
       clipBehavior: Clip.antiAlias,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0),
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
+      margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.0),
+        border: Border.all(
+          color: Colores.dividerColor.withValues(alpha: 0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colores.primaryColor.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (imagen != null && imagen!.isNotEmpty)
-            GestureDetector(
-                onTap: onTap,
-                child: FadeInImage(
-                  image: NetworkImage(
-                    imagen!,
+            Stack(
+              children: [
+                GestureDetector(
+                  onTap: onTap,
+                  child: FadeInImage(
+                    image: NetworkImage(imagen!),
+                    placeholder: const AssetImage('assets/loaders/loading.gif'),
+                    width: double.infinity,
+                    height: 140,
+                    fadeInDuration: const Duration(milliseconds: 300),
+                    fit: BoxFit.cover,
                   ),
-                  placeholder: const AssetImage('assets/loaders/loading.gif'),
-                  width: double.infinity,
-                  height: 120,
-                  fadeInDuration: const Duration(milliseconds: 300),
-                  fit: BoxFit.cover,
-                )),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.3),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Column(
               children: [
                 AutoSizeText(
                   producto.producto,
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: Colores.textPrimary,
                   ),
                   maxLines: 1,
                 ),
