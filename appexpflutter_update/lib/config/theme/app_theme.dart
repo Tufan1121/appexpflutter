@@ -161,6 +161,48 @@ class AppTheme {
       ),
 
       ///* Buttons - Diseño contemporáneo
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return Colores.textTertiary.withValues(alpha: 0.3);
+            }
+            return Colores.primaryColor;
+          }),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return Colores.textTertiary;
+            }
+            return Colors.white;
+          }),
+          elevation: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) return 0;
+            if (states.contains(WidgetState.pressed)) return 2;
+            if (states.contains(WidgetState.hovered)) return 8;
+            return 4;
+          }),
+          shadowColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) return Colors.transparent;
+            return Colores.primaryColor.withValues(alpha: 0.3);
+          }),
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          ),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          textStyle: WidgetStatePropertyAll(
+            GoogleFonts.montserrat(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      ),
+
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith((states) {
@@ -215,14 +257,34 @@ class AppTheme {
 
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: const WidgetStatePropertyAll(Colores.primaryColor),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return Colores.textTertiary;
+            }
+            return Colores.primaryColor;
+          }),
+          overlayColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.pressed)) {
+              return Colores.primaryColor.withValues(alpha: 0.15);
+            }
+            if (states.contains(WidgetState.hovered)) {
+              return Colores.primaryColor.withValues(alpha: 0.08);
+            }
+            return null;
+          }),
           padding: const WidgetStatePropertyAll(
             EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           textStyle: WidgetStatePropertyAll(
             GoogleFonts.montserrat(
               fontWeight: FontWeight.w600,
               fontSize: 14,
+              letterSpacing: 0.5,
             ),
           ),
         ),
@@ -235,7 +297,7 @@ class AppTheme {
         scrolledUnderElevation: 1,
         backgroundColor: Colores.surfaceColor,
         surfaceTintColor: Colors.transparent,
-        shadowColor: Colors.black.withOpacity(0.05),
+        shadowColor: Colors.black.withValues(alpha: 0.05),
         foregroundColor: Colores.textPrimary,
         titleTextStyle: GoogleFonts.montserratAlternates().copyWith(
           fontSize: 20,
@@ -247,6 +309,18 @@ class AppTheme {
           color: Colores.textPrimary,
           size: 24,
         ),
+      ),
+
+      ///* FloatingActionButton - Moderno con gradient
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: Colores.primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 6,
+        highlightElevation: 12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        iconSize: 28,
       ),
 
       ///* Input Decoration - Forms modernos
