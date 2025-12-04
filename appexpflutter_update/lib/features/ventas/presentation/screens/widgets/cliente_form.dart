@@ -100,7 +100,7 @@ class _LoginFormState extends State<ClienteForm> {
               },
             ),
             SwitchListTile(
-              activeColor: Colores.secondaryColor,
+              activeThumbColor: Colores.secondaryColor,
               title: Text(factura.value
                   ? 'Requiere Factura: Sí'
                   : 'Requiere Factura: No'),

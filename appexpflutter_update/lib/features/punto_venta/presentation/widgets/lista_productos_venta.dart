@@ -109,29 +109,49 @@ class ListaProductosVenta extends HookWidget {
                       text: customPrice.value?.toString() ??
                           producto.precio1.toString());
 
-                  return ClipRect(
-                    child: Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 15),
-                      clipBehavior: Clip.hardEdge,
-                      child: Dismissible(
-                        direction: DismissDirection.startToEnd,
-                        key: Key(producto.producto1),
-                        confirmDismiss: (direction) async {
-                          return await _dialogEliminar(context, producto);
-                        },
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerLeft,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: const Icon(Icons.delete, color: Colors.white),
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colores.dividerColor.withValues(alpha: 0.5),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colores.primaryColor.withValues(alpha: 0.08),
+                          blurRadius: 20,
+                          offset: const Offset(0, 4),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Dismissible(
+                      direction: DismissDirection.startToEnd,
+                      key: Key(producto.producto1),
+                      confirmDismiss: (direction) async {
+                        return await _dialogEliminar(context, producto);
+                      },
+                      background: Container(
+                        decoration: BoxDecoration(
+                          color: Colores.errorColor,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: const Icon(Icons.delete_outline_rounded, 
+                            color: Colors.white, size: 32),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                               Row(
                                 children: [
                                   FadeInImage(
@@ -146,22 +166,30 @@ class ListaProductosVenta extends HookWidget {
                                         : const AssetImage(
                                                 'assets/images/no-image.jpg')
                                             as ImageProvider,
-                                    width: 70,
-                                    height: 70,
+                                    width: 80,
+                                    height: 80,
                                     fit: BoxFit.cover,
                                     fadeInDuration:
                                         const Duration(milliseconds: 300),
                                     imageErrorBuilder:
                                         (context, error, stackTrace) {
-                                      return Image.asset(
-                                        'assets/images/no-image.jpg',
-                                        width: 70,
-                                        height: 70,
-                                        fit: BoxFit.cover,
+                                      return Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          color: Colores.primaryColor.withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Image.asset(
+                                          'assets/images/no-image.jpg',
+                                          width: 80,
+                                          height: 80,
+                                          fit: BoxFit.cover,
+                                        ),
                                       );
                                     },
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -311,8 +339,7 @@ class ListaProductosVenta extends HookWidget {
                                     ),
                                   ],
                                 ),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
                     ),

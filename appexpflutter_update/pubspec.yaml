@@ -45,7 +45,7 @@ dependencies:
   get_it: ^7.7.0
   go_router: ^14.1.4
   google_fonts: ^6.2.1
-  intl: ^0.19.0
+  intl: ^0.20.2
   mobile_scanner: ^5.1.1
   open_file: ^3.3.2
   path_provider: ^2.1.3
@@ -53,11 +53,11 @@ dependencies:
   photo_view: ^0.15.0
   reactive_forms: ^17.0.1
   rxdart: ^0.27.7
-  share_plus: ^9.0.0
+  share_plus: ^10.0.0
   shared_preferences: ^2.2.3
-  syncfusion_flutter_charts: ^26.2.14
-  syncfusion_flutter_datagrid: ^26.2.10
-  syncfusion_flutter_pdfviewer: ^26.1.40
+  syncfusion_flutter_charts: ^28.2.7
+  syncfusion_flutter_datagrid: ^28.2.7
+  syncfusion_flutter_pdfviewer: ^28.2.7
   url_launcher: ^6.3.1
 
 dev_dependencies:

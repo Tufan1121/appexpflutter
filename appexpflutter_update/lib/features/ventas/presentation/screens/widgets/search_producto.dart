@@ -45,61 +45,115 @@ class SearchProducto extends HookWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => ScannerProductoPage(
-                onDetect: (barcode) {
-                  // / Manejar la detección de códigos de barras
-                  scanResult.value = barcode.barcodes.first.rawValue ?? '';
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  Colores.primaryColor.withValues(alpha: 0.1),
+                  Colores.accentColor.withValues(alpha: 0.1),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colores.primaryColor.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => ScannerProductoPage(
+                  onDetect: (barcode) {
+                    scanResult.value = barcode.barcodes.first.rawValue ?? '';
 
-                  context
-                      .read<ProductosBloc>()
-                      .add(GetQRProductEvent(clave: scanResult.value));
+                    context
+                        .read<ProductosBloc>()
+                        .add(GetQRProductEvent(clave: scanResult.value));
 
-                  Navigator.of(context)
-                      .popUntil(ModalRoute.withName('/pedido'));
-                },
+                    Navigator.of(context)
+                        .popUntil(ModalRoute.withName('/pedido'));
+                  },
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8),
+                elevation: 0,
+              ),
+              child: Image.asset(
+                'assets/iconos/qr/qr 72_.png',
+                scale: 5,
               ),
             ),
-            style: ElevatedButton.styleFrom(
-              elevation: 2,
-              shape: const CircleBorder(),
-              padding: const EdgeInsets.all(8),
-              // Otros estilos según sea necesario
-            ),
-            child: Image.asset(
-              'assets/iconos/qr/qr 72_.png',
-              scale: 5,
-            ),
           ),
           const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  Colores.secondaryColor.withValues(alpha: 0.1),
+                  Colores.primaryColor.withValues(alpha: 0.1),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colores.secondaryColor.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
-                builder: (BuildContext context) {
-                  return const InventarioBodega();
-                },
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              elevation: 2,
-              shape: const CircleBorder(),
-              padding: const EdgeInsets.all(8),
+              ],
             ),
-            child: Image.asset(
-              'assets/iconos/inventario bodegas - rosa2.png',
-              scale: 5,
+            child: ElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  builder: (BuildContext context) {
+                    return const InventarioBodega();
+                  },
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8),
+                elevation: 0,
+              ),
+              child: Image.asset(
+                'assets/iconos/inventario bodegas - rosa2.png',
+                scale: 5,
+              ),
             ),
           ),
           const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  Colores.secondaryColor.withValues(alpha: 0.12),
+                  Colores.accentColor.withValues(alpha: 0.12),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colores.secondaryColor.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ElevatedButton(
+              onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
               if (productos.isNotEmpty) {
                 Modals(
@@ -190,44 +244,91 @@ class SearchProducto extends HookWidget {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text('Atención'),
-                      content: const Text('Debes agregar algún producto'),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      title: Text(
+                        'Atención',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colores.textPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: Text(
+                        'Debes agregar algún producto',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colores.textSecondary,
+                        ),
+                      ),
                       actions: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colores.secondaryColor),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'Aceptar',
-                            style: TextStyle(
-                                color: Colores.scaffoldBackgroundColor),
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Colores.secondaryColor, Color(0xFFFF4081)],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colores.secondaryColor.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                        )
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Aceptar',
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     );
                   },
                 );
               }
             },
-            // onPressed: () => SesionPedidoRoute(
-            //   idCliente: idCliente,
-            //   estadoPedido: estatusPedido,
-            // ).push(context),
             style: ElevatedButton.styleFrom(
-              elevation: 2,
+              backgroundColor: Colors.white,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
-              // Otros estilos según sea necesario
+              elevation: 0,
             ),
-            child: Padding(
+            child: Container(
               padding: const EdgeInsets.all(2.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Colores.secondaryColor.withValues(alpha: 0.1),
+                    Colores.accentColor.withValues(alpha: 0.1),
+                  ],
+                ),
+              ),
               child: Image.asset(
                 'assets/iconos/pedidos - rosa gris.png',
                 scale: 6,
               ),
             ),
+          ),
           ),
         ],
       ),

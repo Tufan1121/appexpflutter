@@ -106,7 +106,7 @@ class _ClienteFormState extends State<ClienteFormEdit> {
               },
             ),
             SwitchListTile(
-              activeColor: Colores.secondaryColor,
+              activeThumbColor: Colores.secondaryColor,
               title: Text(widget.factura.value
                   ? 'Requiere Factura: Sí'
                   : 'Requiere Factura: No'),

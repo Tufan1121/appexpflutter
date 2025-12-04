@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/widgets.dart';
+import 'package:appexpflutter_update/features/shared/widgets/modern_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,13 +26,36 @@ class HomeScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+          // Gradiente de fondo moderno
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colores.primaryColor.withOpacity(0.1),
+                  Colores.accentColor.withOpacity(0.05),
+                  Colores.scaffoldBackgroundColor,
+                ],
+              ),
+            ),
+          ),
+          // Imagen de fondo con overlay
+          Container(
+            decoration: BoxDecoration(
+              image: const DecorationImage(
                 image: AssetImage(
                   'assets/images/fondo.png',
                 ),
-                fit: BoxFit.cover, // Ajusta la imagen para que no se corte
+                fit: BoxFit.cover,
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colores.scaffoldBackgroundColor.withOpacity(0.3),
+                ],
               ),
             ),
           ),
@@ -44,18 +69,43 @@ class HomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Spacer(),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.logout,
-                            size: 30,
+                        Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colores.primaryColor.withOpacity(0.9),
+                                Colores.accentColor.withOpacity(0.8),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colores.primaryColor.withOpacity(0.4),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          tooltip: 'Cerrar Sesión',
-                          color: Colores.scaffoldBackgroundColor,
-                          onPressed: () {
-                            context.read<AuthBloc>().add(const LogoutEvent());
-                            LoginRoute().go(context);
-                          },
-                        )
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () {
+                                context.read<AuthBloc>().add(const LogoutEvent());
+                                LoginRoute().go(context);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                child: const Icon(
+                                  Icons.logout_rounded,
+                                  size: 24,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 5),
@@ -121,16 +171,20 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 30,
-                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
                   padding: const EdgeInsets.all(20.0),
                   children: [
-                    CardItem(
+                    ModernItemCard(
                       assetPathIcon: 'assets/iconos/qr/qr 72_.png',
                       label: 'Precios',
                       onTap: () => PreciosRoute().push(context),
+                      gradientColors: [
+                        Colores.primaryColor.withOpacity(0.1),
+                        Colores.accentColor.withOpacity(0.05),
+                      ],
                     ),
-                    CardItem(
+                    ModernItemCard(
                       assetPathIcon: 'assets/iconos/precios - rosa gris.png',
                       label: 'Cotizaciones',
                       onTap: () => homeModalButtom(
@@ -155,10 +209,14 @@ class HomeScreen extends StatelessWidget {
                             ],
                           )),
                     ),
-                    CardItem(
+                    ModernItemCard(
                       assetPathIcon:
                           'assets/iconos/inventarios - rosa gris.png',
                       label: 'Inventarios',
+                      gradientColors: [
+                        Colores.accentColor.withOpacity(0.1),
+                        Colores.primaryColor.withOpacity(0.05),
+                      ],
                       onTap: () => homeModalButtom(
                           context: context,
                           height: 220,
@@ -189,22 +247,34 @@ class HomeScreen extends StatelessWidget {
                             ],
                           )),
                     ),
-                    CardItem(
+                    ModernItemCard(
                       icon: Icons.history_rounded,
                       label: 'Historial',
                       onTap: () => HistorialRoute().push(context),
+                      gradientColors: [
+                        Colores.secondaryColor.withOpacity(0.1),
+                        Colores.primaryColor.withOpacity(0.05),
+                      ],
                     ),
-                    CardItem(
-                      icon: Icons.photo_library,
+                    ModernItemCard(
+                      icon: Icons.photo_library_rounded,
                       label: 'Galería',
                       onTap: () {
                         GaleriaRoute().push(context);
                       },
+                      gradientColors: [
+                        Colores.accentColor.withOpacity(0.1),
+                        Colores.secondaryColor.withOpacity(0.05),
+                      ],
                     ),
-                    CardItem(
-                      icon: Icons.point_of_sale_sharp,
+                    ModernItemCard(
+                      icon: Icons.point_of_sale_rounded,
                       label: 'Punto de Venta',
                       onTap: () => PuntoVentaRoute().push(context),
+                      gradientColors: [
+                        Colores.primaryColor.withOpacity(0.1),
+                        Colores.secondaryColor.withOpacity(0.05),
+                      ],
                     ),
                   ],
                 ),

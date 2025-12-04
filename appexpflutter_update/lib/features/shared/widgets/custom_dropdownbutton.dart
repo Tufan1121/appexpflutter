@@ -48,7 +48,7 @@ class CustomDropdownButton<T> extends StatelessWidget {
               ),
               border: InputBorder.none,
             ),
-            value: value,
+            initialValue: value,
             items: items,
             onChanged: onChanged,
             hint: Scrollbar(

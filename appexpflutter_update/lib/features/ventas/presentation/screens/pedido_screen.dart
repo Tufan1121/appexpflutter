@@ -45,12 +45,34 @@ class _PedidoScreenState extends State<PedidoScreen> {
             true, // Permitir que la pantalla se ajuste cuando el teclado esté visible
         body: Stack(
           children: [
-            // Imagen de fondo
+            // Gradiente de fondo moderno
             Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colores.primaryColor.withValues(alpha: 0.05),
+                    Colores.accentColor.withValues(alpha: 0.03),
+                    Colores.scaffoldBackgroundColor,
+                  ],
+                ),
+              ),
+            ),
+            // Imagen de fondo con overlay
+            Container(
+              decoration: BoxDecoration(
+                image: const DecorationImage(
                   image: AssetImage('assets/images/fondo.png'),
                   fit: BoxFit.cover,
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colores.scaffoldBackgroundColor.withValues(alpha: 0.3),
+                  ],
                 ),
               ),
             ),
@@ -66,31 +88,59 @@ class _PedidoScreenState extends State<PedidoScreen> {
                       title: 'COTIZACIÓN',
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colores.primaryColor.withValues(alpha: 0.1),
+                            Colores.accentColor.withValues(alpha: 0.05),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colores.primaryColor.withValues(alpha: 0.2),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.person_outline_rounded,
+                            color: Colores.primaryColor,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Cliente: ',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Colores.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Flexible(
+                            child: AutoSizeText(
+                              widget.nombreCliente,
+                              maxLines: 2,
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: Colores.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Cliente: ',
-                                style: TextStyle(
-                                    color: Colores.secondaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
-                              AutoSizeText(
-                                maxLines: 2,
-                                widget.nombreCliente,
-                                style: const TextStyle(
-                                    color: Colores.secondaryColor,
-                                    fontSize: 20),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
                           // Buscador de productos
                           SearchProducto(
                             estatusPedido:

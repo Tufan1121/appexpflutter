@@ -57,14 +57,36 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
         resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
+            // Gradiente de fondo moderno
             Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colores.primaryColor.withValues(alpha: 0.05),
+                    Colores.accentColor.withValues(alpha: 0.03),
+                    Colores.scaffoldBackgroundColor,
+                  ],
+                ),
+              ),
+            ),
+            // Imagen de fondo con overlay
+            Container(
+              decoration: BoxDecoration(
+                image: const DecorationImage(
                   image: AssetImage(
                     'assets/images/fondo.png',
                   ),
-                  fit: BoxFit
-                      .cover, // Asegura que la imagen de fondo se vea completa
+                  fit: BoxFit.cover,
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colores.scaffoldBackgroundColor.withValues(alpha: 0.3),
+                  ],
                 ),
               ),
             ),
@@ -124,7 +146,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 45),
                               child: DropdownButtonFormField<String>(
-                                value: selectedMedida,
+                                initialValue: selectedMedida,
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.white,

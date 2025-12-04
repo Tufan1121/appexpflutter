@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
+import 'package:appexpflutter_update/features/shared/widgets/modern_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 
 class LoginForm extends StatefulHookWidget {
@@ -34,17 +34,27 @@ class _LoginFormState extends State<LoginForm> {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         child: ReactiveForm(
           formGroup: form,
           child: Column(
             children: [
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
               Text(
-                'Iniciar sesión ',
-                style: textStyles.titleLarge,
+                'Iniciar sesión',
+                style: textStyles.headlineMedium?.copyWith(
+                  color: Colores.primaryColor,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 8),
+              Text(
+                'Ingresa tus credenciales',
+                style: textStyles.bodyMedium?.copyWith(
+                  color: Colores.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 40),
               CustomReactiveTextField(
                 formControlName: 'email',
                 label: 'Correo',
@@ -83,12 +93,27 @@ class _LoginFormState extends State<LoginForm> {
                   if (state is AuthError) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          state.message,
-                          style: GoogleFonts.montserrat(
-                              fontWeight: FontWeight.bold),
+                        duration: const Duration(seconds: 3),
+                        backgroundColor: Colores.errorColor,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        content: Row(
+                          children: [
+                            const Icon(Icons.error_outline_rounded, 
+                                color: Colors.white),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                state.message,
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -98,13 +123,32 @@ class _LoginFormState extends State<LoginForm> {
                   }
                 },
                 builder: (context, state) {
-                  return SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: CustomFilledButton(
-                          text: 'Iniciar sesión',
-                          buttonColor: Colores.secondaryColor,
-                          onPressed: _submitForm));
+                  final isLoading = state is AuthLoading;
+                  
+                  return Column(
+                    children: [
+                      ModernButton(
+                        text: 'Iniciar sesión',
+                        isGradient: true,
+                        isLoading: isLoading,
+                        width: double.infinity,
+                        onPressed: isLoading ? null : _submitForm,
+                      ),
+                      const SizedBox(height: 16),
+                      ModernButton(
+                        text: 'MODO DEMO',
+                        isGradient: false,
+                        isOutlined: true,
+                        width: double.infinity,
+                        icon: Icons.explore_rounded,
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                HomeRoute().go(context);
+                              },
+                      ),
+                    ],
+                  );
                 },
               ),
               const SizedBox(height: 20),

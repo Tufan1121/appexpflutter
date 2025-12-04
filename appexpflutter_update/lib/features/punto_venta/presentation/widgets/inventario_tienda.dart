@@ -205,7 +205,7 @@ class _InventarioTiendaState extends State<InventarioTienda>
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 45),
                                     child: DropdownButtonFormField<String>(
-                                      value: selectedMedida,
+                                      initialValue: selectedMedida,
                                       decoration: InputDecoration(
                                         filled: true,
                                         fillColor: Colors.white,

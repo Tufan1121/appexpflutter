@@ -22,14 +22,37 @@ class HistorialScreen extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
+            // Gradiente de fondo moderno
             Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colores.primaryColor.withValues(alpha: 0.05),
+                    Colores.accentColor.withValues(alpha: 0.03),
+                    Colores.scaffoldBackgroundColor,
+                  ],
+                ),
+              ),
+            ),
+            // Imagen de fondo con overlay
+            Container(
+              decoration: BoxDecoration(
+                image: const DecorationImage(
                   image: AssetImage(
                     'assets/images/fondo.png',
                   ),
                   scale: 10,
                   fit: BoxFit.cover,
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colores.scaffoldBackgroundColor.withValues(alpha: 0.3),
+                  ],
                 ),
               ),
             ),
@@ -55,11 +78,26 @@ class HistorialScreen extends StatelessWidget {
                 BlocBuilder<HistorialBloc, HistorialState>(
                   builder: (context, state) {
                     if (state is HistorialLoading) {
-                      return const Column(
+                      return Column(
                         children: [
-                          SizedBox(height: 150),
-                          CircularProgressIndicator(
-                            color: Colores.secondaryColor,
+                          const SizedBox(height: 150),
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colores.primaryColor.withValues(alpha: 0.1),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: const CircularProgressIndicator(
+                              color: Colores.primaryColor,
+                              strokeWidth: 3,
+                            ),
                           ),
                         ],
                       );

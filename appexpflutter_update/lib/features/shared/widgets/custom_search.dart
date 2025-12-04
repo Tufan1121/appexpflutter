@@ -27,19 +27,27 @@ class CustomSearch extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30.0),
-        boxShadow: const [
+        borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(
+          color: Colores.dividerColor.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black26,
-            blurRadius: 6,
-            offset: Offset(2.0, 5.0),
-          )
+            color: Colores.primaryColor.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: TextField(
-        style: const TextStyle(
-          color: Colores.secondaryColor,
-          fontSize: 16,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: Colores.textPrimary,
         ),
         obscureText: false,
         inputFormatters: inputFormatters,
@@ -55,34 +63,69 @@ class CustomSearch extends StatelessWidget {
                 barrierDismissible: false,
                 builder: (BuildContext context) {
                   return AlertDialog(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     icon: const Center(
                       child: FaIcon(
                         FontAwesomeIcons.circleXmark,
-                        color: Colors.red,
-                        size: 40,
+                        color: Colores.errorColor,
+                        size: 48,
                       ),
                     ),
-                    title: const Text('Error'),
+                    title: Text(
+                      'Error',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Colores.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     content: Text(
                       validationMessage,
-                      style: const TextStyle(fontSize: 15),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colores.textSecondary,
+                      ),
                     ),
                     actions: [
                       Center(
-                        child: ElevatedButton(
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colores.secondaryColor,
-                            textStyle: Theme.of(context).textTheme.labelLarge,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Colores.errorColor, Color(0xFFFF5252)],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colores.errorColor.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          child: const Text(
-                            'Aceptar',
-                            style: TextStyle(
-                                color: Colores.scaffoldBackgroundColor),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 12,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(
+                              'Aceptar',
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                          onPressed: () {
-                            // opcion 1
-                            Navigator.of(context).pop();
-                          },
                         ),
                       ),
                     ],
@@ -95,22 +138,45 @@ class CustomSearch extends StatelessWidget {
           onSubmitted(value);
         },
         decoration: InputDecoration(
-          prefixIcon: const Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Icon(
-              Icons.search,
-              color: Colores.secondaryColor,
+          prefixIcon: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colores.primaryColor.withValues(alpha: 0.1),
+                  Colores.accentColor.withValues(alpha: 0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.search_rounded,
+              color: Colores.primaryColor,
+              size: 24,
             ),
           ),
           hintText: hintText ?? 'Buscar...',
-          hintStyle: const TextStyle(color: Colors.grey),
+          hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Colores.textTertiary,
+          ),
           fillColor: Colors.white,
           filled: true,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.only(left: 12.0, top: 5, bottom: 20),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(
+              color: Colores.primaryColor,
+              width: 2,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         ),
       ),
     );

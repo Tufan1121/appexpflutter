@@ -26,20 +26,52 @@ class ListaProductosTiendaCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        clipBehavior: Clip.hardEdge,
-        color: isMultiSelectMode!
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(
+        gradient: isMultiSelectMode!
             ? isSelected!
-                ? Colores.secondaryColor.withOpacity(0.5)
+                ? LinearGradient(
+                    colors: [
+                      Colores.secondaryColor.withValues(alpha: 0.2),
+                      Colores.primaryColor.withValues(alpha: 0.1),
+                    ],
+                  )
                 : null
             : null,
+        color: isMultiSelectMode! && isSelected! ? null : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isSelected! 
+              ? Colores.secondaryColor.withValues(alpha: 0.5)
+              : Colores.dividerColor.withValues(alpha: 0.5),
+          width: isSelected! ? 2 : 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isSelected!
+                ? Colores.secondaryColor.withValues(alpha: 0.2)
+                : Colores.primaryColor.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
         child: InkWell(
           onLongPress: () => onLongPress(producto),
           onTap: () => onTap(producto),
+          borderRadius: BorderRadius.circular(16),
+          splashColor: Colores.primaryColor.withValues(alpha: 0.1),
+          highlightColor: Colores.primaryColor.withValues(alpha: 0.05),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -55,46 +87,62 @@ class ListaProductosTiendaCard extends HookWidget {
                             )
                           : const AssetImage('assets/images/no-image.jpg')
                               as ImageProvider,
-                      width: 70,
-                      height: 70,
+                      width: 80,
+                      height: 80,
                       fit: BoxFit.cover,
                       fadeInDuration: const Duration(milliseconds: 300),
                       imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/no-image.jpg',
-                          width: 70,
-                          height: 70,
-                          fit: BoxFit.cover,
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colores.primaryColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Image.asset(
+                            'assets/images/no-image.jpg',
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          ),
                         );
                       },
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             producto.producto,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: Colores.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Clave: ${producto.producto1}',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colores.textSecondary,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Clave: ${producto.producto1}',
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.black),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
                             'Existencia: $existencia',
-                            style: const TextStyle(fontSize: 14),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: existencia! > 0 
+                                  ? Colores.successColor 
+                                  : Colores.errorColor,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Medidas: ${producto.medidas}',
-                            style: const TextStyle(fontSize: 14),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colores.textSecondary,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           _buildPriceCheckbox(
