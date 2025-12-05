@@ -11,9 +11,9 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({required this.authDatasource});
   @override
   Future<Either<NetworkException, AuthUserEntity>> login(
-      String email, String password) async {
+      String email, String password, {bool forceLogin = false}) async {
     try {
-      final result = await authDatasource.login(email, password);
+      final result = await authDatasource.login(email, password, forceLogin: forceLogin);
       return Right(result.toEntity());
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
@@ -24,6 +24,16 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<NetworkException, String>> logout([int? idUser]) async {
     try {
       final result = await authDatasource.logout();
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, String>> logoutByEmail(String email, [String? password]) async {
+    try {
+      final result = await authDatasource.logoutByEmail(email, password);
       return Right(result);
     } on DioException catch (e) {
       return Left(NetworkException.fromDioError(e));
