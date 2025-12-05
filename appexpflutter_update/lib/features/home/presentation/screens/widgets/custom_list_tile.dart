@@ -85,7 +85,7 @@ class CustomListTile extends StatelessWidget {
             color: Colores.primaryColor.withValues(alpha: 0.08),
             shape: BoxShape.circle,
           ),
-          child: Icon(
+          child: const Icon(
             Icons.arrow_forward_ios_rounded,
             size: 16,
             color: Colores.primaryColor,

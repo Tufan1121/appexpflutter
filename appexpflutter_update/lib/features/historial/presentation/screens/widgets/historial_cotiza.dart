@@ -133,7 +133,7 @@ class HistorialListCotiza extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.calendar_today_rounded,
                           size: 14,
                           color: Colores.textSecondary,
@@ -146,7 +146,7 @@ class HistorialListCotiza extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Icon(
+                        const Icon(
                           Icons.attach_money_rounded,
                           size: 14,
                           color: Colores.successColor,

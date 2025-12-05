@@ -138,7 +138,7 @@ class ListaProductosExpo extends HookWidget {
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.inventory_2_outlined,
                                   size: 16,
                                   color: Colores.successColor,
@@ -194,7 +194,7 @@ class ListaProductosExpo extends HookWidget {
                           expandedCrossAxisAlignment: CrossAxisAlignment.start,
                           title: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.local_offer_outlined,
                                 size: 18,
                                 color: Colores.secondaryColor,

@@ -109,7 +109,7 @@ class _PedidoScreenState extends State<PedidoScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.person_outline_rounded,
                             color: Colores.primaryColor,
                             size: 24,

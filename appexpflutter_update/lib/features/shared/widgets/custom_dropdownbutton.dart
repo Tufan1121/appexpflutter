@@ -82,7 +82,7 @@ class CustomDropdownButton<T> extends StatelessWidget {
             ),
             icon: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: icon ?? Icon(
+              child: icon ?? const Icon(
                 Icons.keyboard_arrow_down_rounded,
                 color: Colores.primaryColor,
                 size: 24,

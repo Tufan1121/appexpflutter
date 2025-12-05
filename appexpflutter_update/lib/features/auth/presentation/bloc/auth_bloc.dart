@@ -20,8 +20,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final prefs = await SharedPreferences.getInstance();
     emit(AuthLoading());
     final result = await authUsecase.login(event.email, event.password);
-    await result.fold((error) async => emit(AuthError(message: error.message)),
-        (user) async {
+    
+    if (result.isLeft()) {
+      final error = result.getLeft().toNullable()!;
+      emit(AuthError(message: error.message));
+    } else {
+      final user = result.getRight().toNullable()!;
       // Guarda el accessToken en el almacenamiento seguro
       await storage.write(key: 'accessToken', value: user.accessToken);
       await prefs.setString('username', user.nombre);
@@ -29,7 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await prefs.setString('almacen', user.descripcio);
       await prefs.setString('digsig', user.digsig);
       emit(AuthAuthenticated(username: user.nombre));
-    });
+    }
   }
 
   Future<String?> getAccessToken() async {

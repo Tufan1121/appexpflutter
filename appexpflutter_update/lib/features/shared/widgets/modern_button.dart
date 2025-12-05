@@ -184,7 +184,7 @@ class _ModernButtonState extends State<ModernButton>
                 padding: widget.padding ??
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: widget.isLoading
-                    ? Center(
+                    ? const Center(
                         child: SizedBox(
                           height: 24,
                           width: 24,

@@ -5,6 +5,7 @@ import 'package:api_client/constants/environment.dart';
 import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DioClient {
   late final Dio _dio;
@@ -26,6 +27,10 @@ class DioClient {
     if (connectivityResult.contains(ConnectivityResult.none)) {
       return false;
     } else {
+      // En Flutter Web, InternetAddress.lookup no está disponible
+      if (kIsWeb) {
+        return true; // En web, confiamos en connectivity_plus
+      }
       try {
         final result = await InternetAddress.lookup('google.com');
         return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
