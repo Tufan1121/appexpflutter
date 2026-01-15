@@ -76,8 +76,10 @@ class _ModernButtonState extends State<ModernButton>
                     end: Alignment.bottomRight,
                     colors: [
                       Colores.gradientStart,
+                      Colores.gradientMiddle,
                       Colores.gradientEnd,
                     ],
+                    stops: [0.0, 0.5, 1.0],
                   )
                 : null,
             color: widget.isGradient ? null : Colores.primaryColor,
@@ -85,15 +87,15 @@ class _ModernButtonState extends State<ModernButton>
             boxShadow: widget.onPressed != null
                 ? [
                     BoxShadow(
-                      color: Colores.primaryColor.withOpacity(0.4),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
+                      color: Colores.primaryColor.withOpacity(0.3),
+                      blurRadius: 24,
+                      offset: const Offset(0, 12),
                       spreadRadius: 0,
                     ),
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: Colores.gradientEnd.withOpacity(0.2),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
                     ),
                   ]
                 : null,

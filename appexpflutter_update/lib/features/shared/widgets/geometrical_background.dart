@@ -33,16 +33,19 @@ class GeometricalBackground extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: Colors.black,
               ),
-              child: Column(
-                children: [
-                  ShapeRow(shapeWidgets: shapeWidgets),
-                  ShapeRow(shapeWidgets: shapeWidgets),
-                  ShapeRow(shapeWidgets: shapeWidgets),
-                  ShapeRow(shapeWidgets: shapeWidgets),
-                  ShapeRow(shapeWidgets: shapeWidgets),
-                  ShapeRow(shapeWidgets: shapeWidgets),
-                  ShapeRow(shapeWidgets: shapeWidgets),
-                ],
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    ShapeRow(shapeWidgets: shapeWidgets),
+                    ShapeRow(shapeWidgets: shapeWidgets),
+                    ShapeRow(shapeWidgets: shapeWidgets),
+                    ShapeRow(shapeWidgets: shapeWidgets),
+                    ShapeRow(shapeWidgets: shapeWidgets),
+                    ShapeRow(shapeWidgets: shapeWidgets),
+                    ShapeRow(shapeWidgets: shapeWidgets),
+                  ],
+                ),
               )),
 
           // Child widget
