@@ -252,12 +252,15 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _submitForm() {
+    print('DEBUG: _submitForm called'); // DEBUG
     if (form.invalid) {
       form.markAllAsTouched();
+      print('DEBUG: Form is invalid'); // DEBUG
       return;
     }
     email = form.control('email').value!;
     password = form.control('password').value!;
+    print('DEBUG: Dispatching LoginEvent with email: $email'); // DEBUG
     // Realiza las acciones necesarias, como iniciar sesión
     context.read<AuthBloc>().add(LoginEvent(email, password));
   }
