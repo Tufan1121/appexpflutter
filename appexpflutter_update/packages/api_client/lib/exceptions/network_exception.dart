@@ -33,7 +33,7 @@ class NetworkException extends Equatable implements Exception {
         if (dioException.error.runtimeType == SocketException) {
           message = 'Por favor revise su conexion a internet';
         } else {
-          message = 'Ocurrió un error inesperado';
+          message = 'Ocurrió un error inesperado (Connection): ${dioException.error}';
         }
         break;
 
@@ -59,6 +59,8 @@ class NetworkException extends Equatable implements Exception {
           message = data['detail'];
         } else if (statusCode == 403) {
           message = data['detail'];
+        } else if (statusCode == 422) {
+          message = 'Error de validación (422): ${data['detail']}';
         } else {
           if (data is Map<String, dynamic>) {
             final model = NetworkErrorModel.fromJson(data);
@@ -71,7 +73,7 @@ class NetworkException extends Equatable implements Exception {
         break;
 
       case DioExceptionType.unknown:
-        message = 'Ocurrió un error inesperado';
+        message = 'Ocurrió un error inesperado (Unknown): ${dioException.message}';
         break;
     }
 

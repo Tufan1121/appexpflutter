@@ -16,6 +16,9 @@ class AuthRepositoryImpl implements AuthRepository {
       final result = await authDatasource.login(email, password);
       return Right(result.toEntity());
     } on DioException catch (e) {
+      print('DEBUG: AuthRepositoryImpl login DioException: ${e.message}');
+      print('DEBUG: DioException type: ${e.type}');
+      print('DEBUG: DioException response: ${e.response}');
       return Left(NetworkException.fromDioError(e));
     }
   }
