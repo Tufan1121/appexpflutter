@@ -4,8 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
 class NetworkException extends Equatable implements Exception {
-  late final String message;
-  late final int? statusCode;
+  String message = '';
+  int? statusCode;
 
   NetworkException.customMessage(String messages) {
     message = messages;

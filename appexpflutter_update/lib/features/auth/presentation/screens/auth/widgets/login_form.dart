@@ -222,7 +222,10 @@ class _LoginFormState extends State<LoginForm> {
                                 onPressed: isLoading
                                     ? null
                                     : () {
-                                        HomeRoute().go(context);
+                                        // Use the specific demo token provided
+                                        const demoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIZWxtdXQgSGVpc2UiLCJkaWdzaWciOiIyMDgiLCJyZWdnIjoxMDAzLCJtb3ZpbCI6IiIsImtpbmQiOjEsImRlc2NyaXBjaW8iOiJFWFBPUyBHREwiLCJ0b2tlbiI6IiIsImNlbXAiOiJUVUZBTiIsImV4cCI6MTc2OTExODExNn0.PzJuXB4WMOBE74-y6LExiTe2SbxgUAiyYCVrj7pHCz4";
+                                        context.read<AuthBloc>().add(const DemoLoginEvent(demoToken));
+                                        // Navigation is handled by the BlocListener listening for AuthAuthenticated
                                       },
                               ),
                             ],

@@ -123,6 +123,7 @@ class ListaProductosVenta extends HookWidget {
                   final customPrice = useState<double?>(null);
                   final customPriceController = useTextEditingController(
                       text: producto.precio2.toString());
+                  final scrollController = useScrollController();
 
                   return ClipRect(
                     child: Card(
@@ -234,7 +235,9 @@ class ListaProductosVenta extends HookWidget {
                               ),
                               const SizedBox(height: 4),
                               Scrollbar(
+                                controller: scrollController,
                                 child: SingleChildScrollView(
+                                  controller: scrollController,
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     mainAxisAlignment:

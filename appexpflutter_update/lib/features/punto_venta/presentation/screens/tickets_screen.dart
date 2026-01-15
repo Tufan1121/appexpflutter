@@ -12,6 +12,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_event.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_state.dart';
+import 'package:appexpflutter_update/features/punto_venta/data/models/cuenta_model.dart';
+import 'package:appexpflutter_update/features/punto_venta/data/models/terminal_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 const list = [
@@ -318,6 +323,13 @@ class _PedidoScreenState extends State<TicketsScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Trigger initial load of payment info
+    context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
   }
 
   void _showModal(

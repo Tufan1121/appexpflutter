@@ -15,6 +15,10 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../config/theme/app_theme.dart';
 import '../../../shared/widgets/layout_screens.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_state.dart';
+import 'package:appexpflutter_update/features/punto_venta/data/models/cuenta_model.dart';
+import 'package:appexpflutter_update/features/punto_venta/data/models/terminal_model.dart';
 
 class SesionPedidoScreen extends StatefulHookWidget {
   const SesionPedidoScreen({
@@ -48,13 +52,21 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
     ),
     'entregado': FormControl<bool>(value: false),
     'pendienteFinDeExpo': FormControl<bool>(value: true),
+    'cuenta1': FormControl<String>(),
+    'terminal1': FormControl<String>(),
+    'cuenta2': FormControl<String>(),
+    'terminal2': FormControl<String>(),
+    'cuenta3': FormControl<String>(),
+    'terminal3': FormControl<String>(),
   });
 
   final List<String> metodosDePago = [
     '01 Efectivo',
     '02 Cheque Nominativo',
     '03 Transferencia Electrónica',
-    '04 Tarjeta de Crédito o Débito'
+    '04 Tarjeta de Crédito',
+    '28 Tarjeta de débito',
+    '82 Tarjeta de debito'
   ];
 
   int getMetodoDePagoId(String metodo) {
@@ -197,6 +209,8 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                   hintText: 'Selecciona Método de Pago 1',
                                   controlNameDropdown: 'metodoDePago1',
                                   controlNameTextField: 'anticipoPago1',
+                                  controlNameCuenta: 'cuenta1',
+                                  controlNameTerminal: 'terminal1',
                                   validationMessages: {
                                     ValidationMessage.required: (error) =>
                                         'Este campo es requerido'
@@ -207,6 +221,8 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                 hintText: 'Selecciona Método de Pago 2',
                                 controlNameDropdown: 'metodoDePago2',
                                 controlNameTextField: 'anticipoPago2',
+                                controlNameCuenta: 'cuenta2',
+                                controlNameTerminal: 'terminal2',
                               ),
                               const SizedBox(height: 10.0),
                               buildDropdownAndTextField(
@@ -214,6 +230,8 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                 hintText: 'Selecciona Método de Pago 3',
                                 controlNameDropdown: 'metodoDePago3',
                                 controlNameTextField: 'anticipoPago3',
+                                controlNameCuenta: 'cuenta3',
+                                controlNameTerminal: 'terminal3',
                               ),
                               const SizedBox(height: 10.0),
                               ReactiveTextField(
@@ -375,12 +393,15 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
     );
   }
 
-  Widget buildDropdownAndTextField(
-      {required BuildContext context,
-      required String hintText,
-      required String controlNameDropdown,
-      required String controlNameTextField,
-      Map<String, String Function(Object)>? validationMessages}) {
+  Widget buildDropdownAndTextField({
+    required BuildContext context,
+    required String hintText,
+    required String controlNameDropdown,
+    required String controlNameTextField,
+    String? controlNameCuenta,
+    String? controlNameTerminal,
+    Map<String, String Function(Object)>? validationMessages,
+  }) {
     final enable = useState(false);
     return Center(
       child: Column(
@@ -418,11 +439,106 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                   onChanged: (control) {
                     form.control(controlNameTextField).markAsEnabled();
                     enable.value = form.control(controlNameTextField).disabled;
+
+                    if (controlNameCuenta != null) form.control(controlNameCuenta).reset();
+                    if (controlNameTerminal != null) form.control(controlNameTerminal).reset();
                   },
                 ),
               ),
             ],
           ),
+          
+          // Conditional Dropdowns
+           ReactiveValueListenableBuilder<String?>(
+            formControlName: controlNameDropdown,
+            builder: (context, control, child) {
+              final String? method = control.value;
+              if (method == null) return const SizedBox.shrink();
+
+              // Logic for Accounts: 01 Efectivo, 03 Transferencia
+              if ((method.contains('01') || method.contains('03')) && controlNameCuenta != null) {
+                 return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
+                   builder: (context, state) {
+                     if (state is PaymentInfoLoaded) {
+                       return Padding(
+                         padding: const EdgeInsets.only(top: 10.0),
+                         child: Stack(
+                           alignment: AlignmentDirectional.center,
+                           children: [
+                             Container(
+                                 width: ScreenUtils.percentWidth(context, 80),
+                                 height: ScreenUtils.percentHeight(context, 5),
+                                 decoration: BoxDecoration(
+                                     color: Colors.white,
+                                     borderRadius: BorderRadius.circular(50),
+                                     border: Border.all(color: Colors.grey.shade300),
+                                 )),
+                             Padding(
+                               padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                               child: ReactiveDropdownField<String>( // Changed to String
+                                 formControlName: controlNameCuenta,
+                                 decoration: const InputDecoration(
+                                     hintText: 'Selecciona Cuenta',
+                                     border: InputBorder.none),
+                                 items: state.cuentas.map((e) => DropdownMenuItem(
+                                   value: e.id, // e.id is String
+                                   child: Text(e.nombre),
+                                 )).toList(),
+                               ),
+                             ),
+                           ],
+                         ),
+                       );
+                     }
+                     return const SizedBox.shrink();
+                   },
+                 );
+              }
+              
+              // Logic for Terminals: 04 Tarjeta de crédito, 82 Tarjeta de debito
+              if ((method.contains('04') || method.contains('82')) && controlNameTerminal != null) {
+                return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
+                   builder: (context, state) {
+                     if (state is PaymentInfoLoaded) {
+                       return Padding(
+                         padding: const EdgeInsets.only(top: 10.0),
+                         child: Stack(
+                           alignment: AlignmentDirectional.center,
+                           children: [
+                             Container(
+                                 width: ScreenUtils.percentWidth(context, 80),
+                                 height: ScreenUtils.percentHeight(context, 5),
+                                 decoration: BoxDecoration(
+                                     color: Colors.white,
+                                     borderRadius: BorderRadius.circular(50),
+                                     border: Border.all(color: Colors.grey.shade300),
+                                 )),
+                             Padding(
+                               padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                               child: ReactiveDropdownField<String>( // Changed to String
+                                 formControlName: controlNameTerminal,
+                                 decoration: const InputDecoration(
+                                     hintText: 'Selecciona Terminal',
+                                     border: InputBorder.none),
+                                 items: state.terminales.map((e) => DropdownMenuItem(
+                                   value: e.id, // e.id is String
+                                   child: Text(e.nombre),
+                                 )).toList(),
+                               ),
+                             ),
+                           ],
+                         ),
+                       );
+                     }
+                     return const SizedBox.shrink();
+                   },
+                 );
+              }
+
+              return const SizedBox.shrink();
+            },
+          ),
+
           const SizedBox(height: 4.0),
           Stack(
             children: [
@@ -489,6 +605,12 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
         'entregado': entregado,
         'id_metodopago2': metodo2,
         'id_metodopago3': metodo3.toString(),
+        'id_cuenta1': form.control('cuenta1').value,
+        'id_terminal1': form.control('terminal1').value,
+        'id_cuenta2': form.control('cuenta2').value,
+        'id_terminal2': form.control('terminal2').value,
+        'id_cuenta3': form.control('cuenta3').value,
+        'id_terminal3': form.control('terminal3').value,
       };
 
       context.read<SesionPedidoBloc>().add(PedidoAddSesionEvent(

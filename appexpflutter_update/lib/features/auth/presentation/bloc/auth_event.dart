@@ -20,3 +20,11 @@ class LoginEvent extends AuthEvent {
 class LogoutEvent extends AuthEvent {
   const LogoutEvent();
 }
+
+class DemoLoginEvent extends AuthEvent {
+  final String token;
+  const DemoLoginEvent(this.token);
+
+  @override
+  List<Object> get props => [token];
+}

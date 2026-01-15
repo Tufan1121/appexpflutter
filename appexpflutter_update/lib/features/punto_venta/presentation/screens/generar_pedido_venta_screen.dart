@@ -14,6 +14,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_event.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_state.dart';
+import 'package:appexpflutter_update/features/punto_venta/data/models/cuenta_model.dart';
+import 'package:appexpflutter_update/features/punto_venta/data/models/terminal_model.dart';
 import '../../../../config/theme/app_theme.dart';
 
 class GenerarPedidoVentaScreen extends StatefulHookWidget {
@@ -49,6 +54,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     'observaciones': FormControl<String>(),
     'entregado': FormControl<bool>(value: false),
     'pendienteFinDeExpo': FormControl<bool>(value: true),
+    'cuenta1': FormControl<String>(),
+    'terminal1': FormControl<String>(),
+    'cuenta2': FormControl<String>(),
+    'terminal2': FormControl<String>(),
+    'cuenta3': FormControl<String>(),
+    'terminal3': FormControl<String>(),
   });
 
   final List<String> metodosDePago = [
@@ -56,7 +67,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     '02 Cheque Nominativo',
     '03 Transferencia Electrónica',
     '04 Tarjeta de Crédito',
-    '28 Tarjeta de débito'
+    '28 Tarjeta de débito',
+    '82 Tarjeta de debito'
   ];
 
   int getMetodoDePagoId(String metodo) {
@@ -95,6 +107,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
           .control('anticipoPago3')
           .valueChanges
           .listen((_) => updateDebePorPagar());
+
+      // Trigger initial load of payment info
+      context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
 
       return null;
     }, []);
@@ -193,6 +208,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                     hintText: 'Selecciona Método de Pago 1',
                                     controlNameDropdown: 'metodoDePago1',
                                     controlNameTextField: 'anticipoPago1',
+                                    controlNameCuenta: 'cuenta1',
+                                    controlNameTerminal: 'terminal1',
                                     validationMessages: {
                                       ValidationMessage.required: (error) =>
                                           'Este campo es requerido'
@@ -203,6 +220,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                   hintText: 'Selecciona Método de Pago 2',
                                   controlNameDropdown: 'metodoDePago2',
                                   controlNameTextField: 'anticipoPago2',
+                                  controlNameCuenta: 'cuenta2',
+                                  controlNameTerminal: 'terminal2',
                                 ),
                                 const SizedBox(height: 10.0),
                                 buildDropdownAndTextField(
@@ -210,6 +229,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                   hintText: 'Selecciona Método de Pago 3',
                                   controlNameDropdown: 'metodoDePago3',
                                   controlNameTextField: 'anticipoPago3',
+                                  controlNameCuenta: 'cuenta3',
+                                  controlNameTerminal: 'terminal3',
                                 ),
                                 const SizedBox(height: 10.0),
                                 ReactiveTextField(
@@ -337,12 +358,15 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     );
   }
 
-  Widget buildDropdownAndTextField(
-      {required BuildContext context,
-      required String hintText,
-      required String controlNameDropdown,
-      required String controlNameTextField,
-      Map<String, String Function(Object)>? validationMessages}) {
+  Widget buildDropdownAndTextField({
+    required BuildContext context,
+    required String hintText,
+    required String controlNameDropdown,
+    required String controlNameTextField,
+    required String controlNameCuenta,
+    required String controlNameTerminal,
+    Map<String, String Function(Object)>? validationMessages,
+  }) {
     final enable = useState(false);
     return Center(
       child: Column(
@@ -380,11 +404,107 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                   onChanged: (control) {
                     form.control(controlNameTextField).markAsEnabled();
                     enable.value = form.control(controlNameTextField).disabled;
+                    
+                    // Reset conditional fields when main payment method changes
+                    form.control(controlNameCuenta).reset();
+                    form.control(controlNameTerminal).reset();
                   },
                 ),
               ),
             ],
           ),
+          
+          // Conditional Dropdowns using ReactiveValueListenableBuilder
+          ReactiveValueListenableBuilder<String?>(
+            formControlName: controlNameDropdown,
+            builder: (context, control, child) {
+              final String? method = control.value;
+              if (method == null) return const SizedBox.shrink();
+
+              // Logic for Accounts: 01 Efectivo, 03 Transferencia
+              if (method.contains('01') || method.contains('03')) {
+                 return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
+                   builder: (context, state) {
+                     if (state is PaymentInfoLoaded) {
+                       return Padding(
+                         padding: const EdgeInsets.only(top: 10.0),
+                         child: Stack(
+                           alignment: AlignmentDirectional.center,
+                           children: [
+                             Container(
+                                 width: ScreenUtils.percentWidth(context, 80),
+                                 height: ScreenUtils.percentHeight(context, 5),
+                                 decoration: BoxDecoration(
+                                     color: Colors.white,
+                                     borderRadius: BorderRadius.circular(50),
+                                     border: Border.all(color: Colors.grey.shade300),
+                                 )),
+                             Padding(
+                               padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                               child: ReactiveDropdownField<String>(
+                                 formControlName: controlNameCuenta,
+                                 decoration: const InputDecoration(
+                                     hintText: 'Selecciona Cuenta',
+                                     border: InputBorder.none),
+                                 items: state.cuentas.map((e) => DropdownMenuItem(
+                                   value: e.id.toString(),
+                                   child: Text(e.nombre),
+                                 )).toList(),
+                               ),
+                             ),
+                           ],
+                         ),
+                       );
+                     }
+                     return const SizedBox.shrink(); // Hide or show loading
+                   },
+                 );
+              }
+              
+              // Logic for Terminals: 04 Tarjeta de crédito, 82 Tarjeta de debito
+              if (method.contains('04') || method.contains('82')) {
+                return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
+                   builder: (context, state) {
+                     if (state is PaymentInfoLoaded) {
+                       return Padding(
+                         padding: const EdgeInsets.only(top: 10.0),
+                         child: Stack(
+                           alignment: AlignmentDirectional.center,
+                           children: [
+                             Container(
+                                 width: ScreenUtils.percentWidth(context, 80),
+                                 height: ScreenUtils.percentHeight(context, 5),
+                                 decoration: BoxDecoration(
+                                     color: Colors.white,
+                                     borderRadius: BorderRadius.circular(50),
+                                     border: Border.all(color: Colors.grey.shade300),
+                                 )),
+                             Padding(
+                               padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                               child: ReactiveDropdownField<String>(
+                                 formControlName: controlNameTerminal,
+                                 decoration: const InputDecoration(
+                                     hintText: 'Selecciona Terminal',
+                                     border: InputBorder.none),
+                                 items: state.terminales.map((e) => DropdownMenuItem(
+                                   value: e.id,
+                                   child: Text(e.nombre),
+                                 )).toList(),
+                               ),
+                             ),
+                           ],
+                         ),
+                       );
+                     }
+                     return const SizedBox.shrink();
+                   },
+                 );
+              }
+
+              return const SizedBox.shrink();
+            },
+          ),
+
           const SizedBox(height: 4.0),
           Stack(
             children: [
@@ -454,6 +574,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
         'entregado': entregado,
         'id_metodopago2': metodo2,
         'id_metodopago3': metodo3.toString(),
+        'id_cuenta1': form.control('cuenta1').value,
+        'id_terminal1': form.control('terminal1').value,
+        'id_cuenta2': form.control('cuenta2').value,
+        'id_terminal2': form.control('terminal2').value,
+        'id_cuenta3': form.control('cuenta3').value,
+        'id_terminal3': form.control('terminal3').value,
       };
 
       context.read<PedidoVentaBloc>().add(
