@@ -7,6 +7,7 @@ import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/shared/widgets/modern_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginForm extends StatefulHookWidget {
   const LoginForm({super.key});
@@ -214,7 +215,7 @@ class _LoginFormState extends State<LoginForm> {
                                 onPressed: isLoading ? null : _submitForm,
                               ),
                               const SizedBox(height: 16),
-                              ModernButton(
+                                ModernButton(
                                 text: 'Modo Demo',
                                 isGradient: false,
                                 isOutlined: true,
@@ -222,8 +223,16 @@ class _LoginFormState extends State<LoginForm> {
                                 icon: Icons.explore_rounded,
                                 onPressed: isLoading
                                     ? null
-                                    : () {
-                                        HomeRoute().go(context);
+                                    : () async {
+                                        final prefs =
+                                            await SharedPreferences.getInstance();
+                                        await prefs.setString(
+                                            'username', 'Usuario Demo');
+                                        await prefs.setString(
+                                            'almacen', 'Sucursal Demo');
+                                        if (context.mounted) {
+                                          HomeRoute().go(context);
+                                        }
                                       },
                               ),
                             ],
