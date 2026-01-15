@@ -6,6 +6,19 @@ class Colores {
   static const Color primaryColor = Color(0xff424CB8);
   static const Color secondaryColor = Color(0xffD90080);
   static const scaffoldBackgroundColor = Color(0xFFF8F7F7);
+  
+  // Text colors
+  static const textPrimary = Color(0xff0F172A);
+  static const textSecondary = Color(0xff64748B);
+  static const textTertiary = Color(0xff94A3B8);
+  
+  // Status colors
+  static const errorColor = Color(0xffEF4444);
+  static const warningColor = Color(0xffF59E0B);
+  
+  // Gradients
+  static const gradientStart = Color(0xff6366F1);
+  static const gradientEnd = Color(0xff8B5CF6);
 }
 
 class AppTheme {

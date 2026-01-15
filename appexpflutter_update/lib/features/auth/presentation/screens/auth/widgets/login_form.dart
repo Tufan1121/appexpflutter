@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
+import 'package:appexpflutter_update/features/shared/widgets/modern_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 
 class LoginForm extends StatefulHookWidget {
@@ -32,80 +32,128 @@ class _LoginFormState extends State<LoginForm> {
     final textStyles = Theme.of(context).textTheme;
     final showPassword = useState(true);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: ReactiveForm(
-        formGroup: form,
-        child: Column(
-          children: [
-            const SizedBox(height: 50),
-            Text(
-              'Iniciar sesión ',
-              style: textStyles.titleLarge,
-            ),
-            const SizedBox(height: 90),
-            CustomReactiveTextField(
-              formControlName: 'email',
-              label: 'Correo',
-              keyboardType: TextInputType.emailAddress,
-              validationMessages: {
-                ValidationMessage.required: (error) =>
-                    'Este campo es requerido',
-                ValidationMessage.email: (error) => 'Ingrese un correo correcto'
-              },
-            ),
-            const SizedBox(height: 30),
-            CustomReactiveTextField(
-              formControlName: 'password',
-              label: 'Contraseña',
-              obscureText: showPassword.value,
-              onSubmitted: (p0) => _submitForm(),
-              validationMessages: {
-                ValidationMessage.required: (error) =>
-                    'Este campo es requerido',
-              },
-              suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.remove_red_eye_outlined,
-                  color:
-                      showPassword.value ? Colors.grey : Colores.secondaryColor,
-                  size: 25,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: ReactiveForm(
+          formGroup: form,
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Text(
+                'Iniciar sesión',
+                style: textStyles.headlineMedium?.copyWith(
+                  color: Colores.primaryColor,
+                  fontWeight: FontWeight.w700,
                 ),
-                onPressed: () => showPassword.value = !showPassword.value,
               ),
-            ),
-            const SizedBox(height: 30),
-            BlocConsumer<AuthBloc, AuthState>(
-              listener: (context, state) {
-                if (state is AuthError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      duration: const Duration(seconds: 2),
-                      backgroundColor: Colors.red,
-                      content: Text(
-                        state.message,
-                        style:
-                            GoogleFonts.montserrat(fontWeight: FontWeight.bold),
+              const SizedBox(height: 8),
+              Text(
+                'Ingresa tus credenciales',
+                style: textStyles.bodyMedium?.copyWith(
+                  color: Colores.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 40),
+              CustomReactiveTextField(
+                formControlName: 'email',
+                label: 'Correo',
+                keyboardType: TextInputType.emailAddress,
+                validationMessages: {
+                  ValidationMessage.required: (error) =>
+                      'Este campo es requerido',
+                  ValidationMessage.email: (error) =>
+                      'Ingrese un correo correcto'
+                },
+              ),
+              const SizedBox(height: 30),
+              CustomReactiveTextField(
+                formControlName: 'password',
+                label: 'Contraseña',
+                obscureText: showPassword.value,
+                onSubmitted: (p0) => _submitForm(),
+                validationMessages: {
+                  ValidationMessage.required: (error) =>
+                      'Este campo es requerido',
+                },
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: showPassword.value
+                        ? Colors.grey
+                        : Colores.secondaryColor,
+                    size: 25,
+                  ),
+                  onPressed: () => showPassword.value = !showPassword.value,
+                ),
+              ),
+              const SizedBox(height: 30),
+              BlocConsumer<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: const Duration(seconds: 3),
+                        backgroundColor: Colores.errorColor,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        content: Row(
+                          children: [
+                            const Icon(Icons.error_outline_rounded, 
+                                color: Colors.white),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                state.message,
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                } else if (state is AuthAuthenticated) {
-                  // Navegar a la pantalla de inicio
-                  HomeRoute().go(context);
-                }
-              },
-              builder: (context, state) {
-                return SizedBox(
-                    width: double.infinity,
-                    height: 60,
-                    child: CustomFilledButton(
+                    );
+                  } else if (state is AuthAuthenticated) {
+                    // Navegar a la pantalla de inicio
+                    HomeRoute().go(context);
+                  }
+                },
+                builder: (context, state) {
+                  final isLoading = state is AuthLoading;
+                  
+                  return Column(
+                    children: [
+                      ModernButton(
                         text: 'Iniciar sesión',
-                        buttonColor: Colores.secondaryColor,
-                        onPressed: _submitForm));
-              },
-            ),
-            const Spacer(flex: 1),
-          ],
+                        isGradient: true,
+                        isLoading: isLoading,
+                        width: double.infinity,
+                        onPressed: isLoading ? null : _submitForm,
+                      ),
+                      const SizedBox(height: 16),
+                      ModernButton(
+                        text: 'MODO DEMO',
+                        isGradient: false,
+                        isOutlined: true,
+                        width: double.infinity,
+                        icon: Icons.explore_rounded,
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                HomeRoute().go(context);
+                              },
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
