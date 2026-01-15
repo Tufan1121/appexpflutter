@@ -26,7 +26,19 @@ class Colores {
   
   // Gradients
   static const gradientStart = Color(0xff6366F1);
-  static const gradientEnd = Color(0xff8B5CF6);
+  static const gradientMiddle = Color(0xff8B5CF6); // Added
+  static const gradientEnd = Color(0xffEC4899); // Changed to Pink for vibrancy
+
+  // Glassmorphism colors
+  static const glassBackground = Color(0x40FFFFFF); // 25% white
+  static const glassBorder = Color(0x30FFFFFF); // 19% white
+  static const glassShadow = Color(0x1A000000); // 10% black
+  
+  // Input field colors
+  static const inputBackground = Color(0xFFF1F5F9); // Slate 100
+  static const inputBorder = Color(0xFFE2E8F0); // Slate 200
+  static const inputFocusBorder = Color(0xff6366F1); // Primary
+  static const inputError = Color(0xffFEE2E2); // Red 100
 }
 
 class AppTheme {
