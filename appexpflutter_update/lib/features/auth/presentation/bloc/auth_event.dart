@@ -20,13 +20,3 @@ class LoginEvent extends AuthEvent {
 class LogoutEvent extends AuthEvent {
   const LogoutEvent();
 }
-
-class ForceLoginEvent extends AuthEvent {
-  final String email;
-  final String password;
-
-  const ForceLoginEvent(this.email, this.password);
-
-  @override
-  List<Object> get props => [email, password];
-}

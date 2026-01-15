@@ -9,15 +9,12 @@ class AuthUsecase {
   AuthUsecase({required this.authRepository});
 
   Future<Either<NetworkException, AuthUserEntity>> login(
-      String email, String password, {bool forceLogin = false}) async {
-    return await authRepository.login(email, password, forceLogin: forceLogin);
+      String email, String password) async {
+    return await authRepository.login(email, password);
   }
 
   Future<Either<NetworkException, String>> logout([int? idUser ]) async {
     return await authRepository.logout();
   }
 
-  Future<Either<NetworkException, String>> logoutByEmail(String email, [String? password]) async {
-    return await authRepository.logoutByEmail(email, password);
-  }
 }

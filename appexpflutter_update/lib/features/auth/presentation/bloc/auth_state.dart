@@ -35,18 +35,3 @@ class AuthError extends AuthState {
   @override
   List<Object> get props => [message];
 }
-
-class AuthSessionConflict extends AuthState {
-  final String email;
-  final String password;
-  final String message;
-
-  const AuthSessionConflict({
-    required this.email,
-    required this.password,
-    required this.message,
-  });
-
-  @override
-  List<Object> get props => [email, password, message];
-}

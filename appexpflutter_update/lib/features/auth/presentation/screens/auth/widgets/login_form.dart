@@ -117,9 +117,6 @@ class _LoginFormState extends State<LoginForm> {
                         ),
                       ),
                     );
-                  } else if (state is AuthSessionConflict) {
-                    // Mostrar diálogo para forzar login
-                    _showSessionConflictDialog(context, state);
                   } else if (state is AuthAuthenticated) {
                     // Navegar a la pantalla de inicio
                     HomeRoute().go(context);
@@ -171,95 +168,5 @@ class _LoginFormState extends State<LoginForm> {
     password = form.control('password').value!;
     // Realiza las acciones necesarias, como iniciar sesión
     context.read<AuthBloc>().add(LoginEvent(email, password));
-  }
-
-  void _showSessionConflictDialog(BuildContext context, AuthSessionConflict state) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Row(
-            children: [
-              Icon(
-                Icons.devices_other_rounded,
-                color: Colores.secondaryColor,
-                size: 28,
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  'Sesión activa',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                state.message,
-                style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '¿Deseas cerrar la otra sesión e iniciar aquí?',
-                style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              child: Text(
-                'Cancelar',
-                style: GoogleFonts.montserrat(
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                // Forzar login cerrando la otra sesión
-                context.read<AuthBloc>().add(
-                  ForceLoginEvent(state.email, state.password),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colores.secondaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(
-                'Cerrar e iniciar aquí',
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
