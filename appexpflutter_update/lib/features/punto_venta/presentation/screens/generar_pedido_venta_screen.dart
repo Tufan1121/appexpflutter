@@ -68,7 +68,6 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     '03 Transferencia Electrónica',
     '04 Tarjeta de Crédito',
     '28 Tarjeta de débito',
-    '82 Tarjeta de debito'
   ];
 
   int getMetodoDePagoId(String metodo) {
@@ -461,11 +460,16 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                  );
               }
               
-              // Logic for Terminals: 04 Tarjeta de crédito, 28 Tarjeta de débito, 82 Tarjeta de debito
-              if (method.contains('04') || method.contains('28') || method.contains('82')) {
+              // Logic for Terminals: 04 Tarjeta de crédito, 28 Tarjeta de débito
+              if (method.contains('04') || method.contains('28')) {
                 return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
                    builder: (context, state) {
                      if (state is PaymentInfoLoaded) {
+                       // Filtrar terminales: para '28' solo mostrar los que contengan "REGULAR"
+                       final terminalesFiltrados = method.contains('28')
+                           ? state.terminales.where((t) => t.nombre.toUpperCase().contains('REGULAR')).toList()
+                           : state.terminales;
+                       
                        return Padding(
                          padding: const EdgeInsets.only(top: 10.0),
                          child: Stack(
@@ -486,7 +490,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                  decoration: const InputDecoration(
                                      hintText: 'Selecciona Terminal',
                                      border: InputBorder.none),
-                                 items: state.terminales.map((e) => DropdownMenuItem(
+                                 items: terminalesFiltrados.map((e) => DropdownMenuItem(
                                    value: e.id,
                                    child: Text(e.nombre),
                                  )).toList(),
@@ -559,6 +563,66 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       final double anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
       final entregado = form.control('entregado').value ? 1 : 0;
 
+      // VALIDACIÓN: Verificar que se haya seleccionado cuenta o terminal según el método
+      String? errorMessage;
+      
+      // Validar método 1
+      if (metodo1 > 0) {
+        final metodoStr = form.control('metodoDePago1').value ?? '';
+        if (metodoStr.contains('01') || metodoStr.contains('03')) {
+          // Efectivo o Transferencia: debe tener cuenta
+          if (form.control('cuenta1').value == null || form.control('cuenta1').value.toString().isEmpty) {
+            errorMessage = 'Método de Pago 1: Debe seleccionar una cuenta para $metodoStr';
+          }
+        } else if (metodoStr.contains('04') || metodoStr.contains('28')) {
+          // Tarjeta: debe tener terminal
+          if (form.control('terminal1').value == null || form.control('terminal1').value.toString().isEmpty) {
+            errorMessage = 'Método de Pago 1: Debe seleccionar un terminal para $metodoStr';
+          }
+        }
+      }
+      
+      // Validar método 2
+      if (errorMessage == null && metodo2 > 0) {
+        final metodoStr = form.control('metodoDePago2').value ?? '';
+        if (metodoStr.contains('01') || metodoStr.contains('03')) {
+          if (form.control('cuenta2').value == null || form.control('cuenta2').value.toString().isEmpty) {
+            errorMessage = 'Método de Pago 2: Debe seleccionar una cuenta para $metodoStr';
+          }
+        } else if (metodoStr.contains('04') || metodoStr.contains('28')) {
+          if (form.control('terminal2').value == null || form.control('terminal2').value.toString().isEmpty) {
+            errorMessage = 'Método de Pago 2: Debe seleccionar un terminal para $metodoStr';
+          }
+        }
+      }
+      
+      // Validar método 3
+      if (errorMessage == null && metodo3 > 0) {
+        final metodoStr = form.control('metodoDePago3').value ?? '';
+        if (metodoStr.contains('01') || metodoStr.contains('03')) {
+          if (form.control('cuenta3').value == null || form.control('cuenta3').value.toString().isEmpty) {
+            errorMessage = 'Método de Pago 3: Debe seleccionar una cuenta para $metodoStr';
+          }
+        } else if (metodoStr.contains('04') || metodoStr.contains('28')) {
+          if (form.control('terminal3').value == null || form.control('terminal3').value.toString().isEmpty) {
+            errorMessage = 'Método de Pago 3: Debe seleccionar un terminal para $metodoStr';
+          }
+        }
+      }
+      
+      // Si hay error, mostrar mensaje y no continuar
+      if (errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+        return;
+      }
+
+      final totalAPagar = anticipoPago + anticipoPago2 + anticipoPago3;
       // Obtener información de cuentas y terminales desde el estado del Bloc
       final paymentInfoState = context.read<PaymentInfoBloc>().state;
       
@@ -595,10 +659,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       final terminal3 = getTerminalById(form.control('terminal3').value);
 
       final data = {
-        'descripcio': widget.dataCliente['nombre'],
-        'correo': widget.dataCliente['correo'],
-        'direccion': widget.dataCliente['direccion'],
-        'telefono': widget.dataCliente['telefono'],
+        'descripcio': widget.dataCliente['nombre'] ?? '',
+        'correo': widget.dataCliente['correo'] ?? '',
+        'direccion': widget.dataCliente['direccion'] ?? '',
+        'telefono': widget.dataCliente['telefono'] ?? '',
         'id_metodopago': metodo1,
         // banco/cuenta SIEMPRE se llenan (de cuenta o terminal, el que esté disponible)
         // terminal solo se llena cuando hay terminal
@@ -606,7 +670,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
         'cuenta1': cuenta1?.cuenta ?? terminal1?.cuenta ?? '',
         'dig1': '',  // No existe en los endpoints, siempre vacío
         'terminal1': terminal1?.id ?? '',
-        'observaciones': observaciones,
+        'observaciones': observaciones ?? '',
         'estatus': widget.estadoPedido,
         'anticipo': anticipoPago,
         'anticipo2': anticipoPago2,
