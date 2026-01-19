@@ -24,15 +24,27 @@ class PaymentInfoDataSourceImpl implements PaymentInfoDataSource {
           },
         ),
       );
-      // Assuming result.data is a List
-      print('DEBUG: fetched cuentas: ${result.data}');
+      
+      // DEBUG: Ver estructura completa de la respuesta
+      print('═══════════════════════════════════════════════════════');
+      print('DEBUG /cuentas/ - Respuesta completa:');
+      print(result.data);
+      print('DEBUG /cuentas/ - Tipo: ${result.data.runtimeType}');
+      
+      if (result.data is List && (result.data as List).isNotEmpty) {
+        print('DEBUG /cuentas/ - Primer elemento:');
+        print((result.data as List).first);
+        print('DEBUG /cuentas/ - Campos del primer elemento:');
+        (result.data as List).first.forEach((key, value) {
+          print('  $key: $value (${value.runtimeType})');
+        });
+      }
+      print('═══════════════════════════════════════════════════════');
+      
       return (result.data as List).map((e) => CuentaModel.fromJson(e)).toList();
-    } catch (_) {
-      // Return empty list on error to allow UI to function at least partially
-      // or rethrow if strict
-      // rethrow;
-      // For now, let's return safe value or dummy data in case API fails
-       return [];
+    } catch (e) {
+      print('ERROR en getCuentas: $e');
+      return [];
     }
   }
 
@@ -48,9 +60,26 @@ class PaymentInfoDataSourceImpl implements PaymentInfoDataSource {
           },
         ),
       );
-      print('DEBUG: fetched terminales: ${result.data}');
+      
+      // DEBUG: Ver estructura completa de la respuesta
+      print('═══════════════════════════════════════════════════════');
+      print('DEBUG /terminales/ - Respuesta completa:');
+      print(result.data);
+      print('DEBUG /terminales/ - Tipo: ${result.data.runtimeType}');
+      
+      if (result.data is List && (result.data as List).isNotEmpty) {
+        print('DEBUG /terminales/ - Primer elemento:');
+        print((result.data as List).first);
+        print('DEBUG /terminales/ - Campos del primer elemento:');
+        (result.data as List).first.forEach((key, value) {
+          print('  $key: $value (${value.runtimeType})');
+        });
+      }
+      print('═══════════════════════════════════════════════════════');
+      
       return (result.data as List).map((e) => TerminalModel.fromJson(e)).toList();
-    } catch (_) {
+    } catch (e) {
+      print('ERROR en getTerminales: $e');
       return [];
     }
   }

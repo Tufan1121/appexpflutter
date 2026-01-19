@@ -559,28 +559,119 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       final double anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
       final entregado = form.control('entregado').value ? 1 : 0;
 
+      // Obtener información de cuentas y terminales desde el estado del Bloc
+      final paymentInfoState = context.read<PaymentInfoBloc>().state;
+      
+      // Helper para obtener cuenta por ID
+      CuentaModel? getCuentaById(String? id) {
+        if (id == null || paymentInfoState is! PaymentInfoLoaded) return null;
+        try {
+          return paymentInfoState.cuentas.firstWhere((c) => c.id == id);
+        } catch (_) {
+          return null;
+        }
+      }
+      
+      // Helper para obtener terminal por ID
+      TerminalModel? getTerminalById(String? id) {
+        if (id == null || paymentInfoState is! PaymentInfoLoaded) return null;
+        try {
+          return paymentInfoState.terminales.firstWhere((t) => t.id == id);
+        } catch (_) {
+          return null;
+        }
+      }
+
+      // Obtener datos de pago 1
+      final cuenta1 = getCuentaById(form.control('cuenta1').value);
+      final terminal1 = getTerminalById(form.control('terminal1').value);
+      
+      // Obtener datos de pago 2
+      final cuenta2 = getCuentaById(form.control('cuenta2').value);
+      final terminal2 = getTerminalById(form.control('terminal2').value);
+      
+      // Obtener datos de pago 3
+      final cuenta3 = getCuentaById(form.control('cuenta3').value);
+      final terminal3 = getTerminalById(form.control('terminal3').value);
+
       final data = {
         'descripcio': widget.dataCliente['nombre'],
         'correo': widget.dataCliente['correo'],
         'direccion': widget.dataCliente['direccion'],
         'telefono': widget.dataCliente['telefono'],
         'id_metodopago': metodo1,
+        // banco/cuenta/dig SIEMPRE se llenan (de cuenta o terminal, el que esté disponible)
+        // terminal solo se llena cuando hay terminal
+        'banco1': cuenta1?.banco ?? terminal1?.banco ?? '',
+        'cuenta1': cuenta1?.cuenta ?? terminal1?.cuenta ?? '',
+        'dig1': cuenta1?.dig ?? terminal1?.dig ?? '',
+        'terminal1': terminal1?.id ?? '',
         'observaciones': observaciones,
         'estatus': widget.estadoPedido,
-        'anticipo': anticipoPago.toInt(),
-        'anticipo2': anticipoPago2.toInt(),
-        'anticipo3': anticipoPago3.toInt(),
-        'total_pagar': totalAPagar.toInt(),
+        'anticipo': anticipoPago,
+        'anticipo2': anticipoPago2,
+        'anticipo3': anticipoPago3,
+        'total_pagar': totalAPagar,
+        'id_cliente': widget.dataCliente['id_cliente'] ?? 0,
         'entregado': entregado,
         'id_metodopago2': metodo2,
-        'id_metodopago3': metodo3.toString(),
-        'id_cuenta1': form.control('cuenta1').value,
-        'id_terminal1': form.control('terminal1').value,
-        'id_cuenta2': form.control('cuenta2').value,
-        'id_terminal2': form.control('terminal2').value,
-        'id_cuenta3': form.control('cuenta3').value,
-        'id_terminal3': form.control('terminal3').value,
+        'banco2': cuenta2?.banco ?? terminal2?.banco ?? '',
+        'cuenta2': cuenta2?.cuenta ?? terminal2?.cuenta ?? '',
+        'dig2': cuenta2?.dig ?? terminal2?.dig ?? '',
+        'terminal2': terminal2?.id ?? '',
+        'id_metodopago3': metodo3,
+        'banco3': cuenta3?.banco ?? terminal3?.banco ?? '',
+        'cuenta3': cuenta3?.cuenta ?? terminal3?.cuenta ?? '',
+        'dig3': cuenta3?.dig ?? terminal3?.dig ?? '',
+        'terminal3': terminal3?.id ?? '',
       };
+
+      // DEBUG: Mostrar JSON completo que se enviará
+      print('═══════════════════════════════════════════════════════════════');
+      print('🚀 ENVIANDO PEDIDO AL BACKEND');
+      print('═══════════════════════════════════════════════════════════════');
+      print('📋 DATOS DEL CLIENTE:');
+      print('  Nombre: ${data['descripcio']}');
+      print('  Correo: ${data['correo']}');
+      print('  Teléfono: ${data['telefono']}');
+      print('  ID Cliente: ${data['id_cliente']}');
+      print('');
+      print('💰 MÉTODO DE PAGO 1:');
+      print('  ID Método: ${data['id_metodopago']} (${metodo1 > 0 ? metodosDePago[metodo1 - 1] : 'N/A'})');
+      print('  Banco: "${data['banco1']}"');
+      print('  Cuenta: "${data['cuenta1']}"');
+      print('  Dig: "${data['dig1']}"');
+      print('  Terminal: "${data['terminal1']}"');
+      print('  Anticipo: \$${data['anticipo']}');
+      print('');
+      if (metodo2 > 0) {
+        print('💳 MÉTODO DE PAGO 2:');
+        print('  ID Método: ${data['id_metodopago2']} (${metodosDePago[metodo2 - 1]})');
+        print('  Banco: "${data['banco2']}"');
+        print('  Cuenta: "${data['cuenta2']}"');
+        print('  Dig: "${data['dig2']}"');
+        print('  Terminal: "${data['terminal2']}"');
+        print('  Anticipo: \$${data['anticipo2']}');
+        print('');
+      }
+      if (metodo3 > 0) {
+        print('💵 MÉTODO DE PAGO 3:');
+        print('  ID Método: ${data['id_metodopago3']} (${metodosDePago[metodo3 - 1]})');
+        print('  Banco: "${data['banco3']}"');
+        print('  Cuenta: "${data['cuenta3']}"');
+        print('  Dig: "${data['dig3']}"');
+        print('  Terminal: "${data['terminal3']}"');
+        print('  Anticipo: \$${data['anticipo3']}');
+        print('');
+      }
+      print('📊 TOTALES:');
+      print('  Total a Pagar: \$${data['total_pagar']}');
+      print('  Entregado: ${data['entregado'] == 1 ? 'Sí' : 'No'}');
+      print('  Estatus: ${data['estatus']}');
+      print('');
+      print('📝 JSON COMPLETO:');
+      print(data);
+      print('═══════════════════════════════════════════════════════════════');
 
       context.read<PedidoVentaBloc>().add(
           PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
