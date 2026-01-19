@@ -461,8 +461,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                  );
               }
               
-              // Logic for Terminals: 04 Tarjeta de crédito, 82 Tarjeta de debito
-              if (method.contains('04') || method.contains('82')) {
+              // Logic for Terminals: 04 Tarjeta de crédito, 28 Tarjeta de débito, 82 Tarjeta de debito
+              if (method.contains('04') || method.contains('28') || method.contains('82')) {
                 return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
                    builder: (context, state) {
                      if (state is PaymentInfoLoaded) {
@@ -600,11 +600,11 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
         'direccion': widget.dataCliente['direccion'],
         'telefono': widget.dataCliente['telefono'],
         'id_metodopago': metodo1,
-        // banco/cuenta/dig SIEMPRE se llenan (de cuenta o terminal, el que esté disponible)
+        // banco/cuenta SIEMPRE se llenan (de cuenta o terminal, el que esté disponible)
         // terminal solo se llena cuando hay terminal
         'banco1': cuenta1?.banco ?? terminal1?.banco ?? '',
         'cuenta1': cuenta1?.cuenta ?? terminal1?.cuenta ?? '',
-        'dig1': cuenta1?.dig ?? terminal1?.dig ?? '',
+        'dig1': '',  // No existe en los endpoints, siempre vacío
         'terminal1': terminal1?.id ?? '',
         'observaciones': observaciones,
         'estatus': widget.estadoPedido,
@@ -617,12 +617,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
         'id_metodopago2': metodo2,
         'banco2': cuenta2?.banco ?? terminal2?.banco ?? '',
         'cuenta2': cuenta2?.cuenta ?? terminal2?.cuenta ?? '',
-        'dig2': cuenta2?.dig ?? terminal2?.dig ?? '',
+        'dig2': '',  // No existe en los endpoints, siempre vacío
         'terminal2': terminal2?.id ?? '',
         'id_metodopago3': metodo3,
         'banco3': cuenta3?.banco ?? terminal3?.banco ?? '',
         'cuenta3': cuenta3?.cuenta ?? terminal3?.cuenta ?? '',
-        'dig3': cuenta3?.dig ?? terminal3?.dig ?? '',
+        'dig3': '',  // No existe en los endpoints, siempre vacío
         'terminal3': terminal3?.id ?? '',
       };
 
