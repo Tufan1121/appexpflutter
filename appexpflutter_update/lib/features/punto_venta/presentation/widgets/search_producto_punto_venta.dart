@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
+﻿import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/inventario_tienda.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,7 +57,7 @@ class PuntoVentaProductSearch extends HookWidget {
               // Otros estilos según sea necesario
             ),
             child: Image.asset(
-              'assets/iconos/qr/qr 72_.png',
+              'assets/iconos/qr/qr_72_.png',
               scale: 5,
             ),
           ),
@@ -81,7 +81,7 @@ class PuntoVentaProductSearch extends HookWidget {
               padding: const EdgeInsets.all(8),
             ),
             child: Image.asset(
-              'assets/iconos/inventario bodegas - rosa2.png',
+              'assets/iconos/inventario_bodegas__rosa2.png',
               scale: 5,
             ),
           ),

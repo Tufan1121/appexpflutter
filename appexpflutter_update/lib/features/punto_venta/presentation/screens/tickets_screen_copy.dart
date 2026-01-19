@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
+﻿import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
@@ -139,7 +139,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
           padding: const EdgeInsets.all(8),
         ),
         child: Image.asset(
-          'assets/iconos/generar pedido- rosa.png',
+          'assets/iconos/generar_pedido_rosa.png',
           scale: 4.5,
         ),
       ),

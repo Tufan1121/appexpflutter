@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
+﻿import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/custom_list_tile.dart';
 import 'package:appexpflutter_update/features/shared/widgets/modals_buttom.dart';
@@ -70,7 +70,7 @@ class SearchProducto extends HookWidget {
               // Otros estilos según sea necesario
             ),
             child: Image.asset(
-              'assets/iconos/qr/qr 72_.png',
+              'assets/iconos/qr/qr_72_.png',
               scale: 5,
             ),
           ),
@@ -94,7 +94,7 @@ class SearchProducto extends HookWidget {
               padding: const EdgeInsets.all(8),
             ),
             child: Image.asset(
-              'assets/iconos/inventario bodegas - rosa2.png',
+              'assets/iconos/inventario_bodegas__rosa2.png',
               scale: 5,
             ),
           ),
@@ -145,7 +145,7 @@ class SearchProducto extends HookWidget {
                             return CustomListTile(
                               text: loading ? 'GENERANDO...' : 'GENERAR SESION',
                               assetPathIcon:
-                                  'assets/iconos/pedidos - rosa gris.png',
+                                  'assets/iconos/pedidos_rosa_gris.png',
                               onTap: loading
                                   ? null
                                   : () {
@@ -232,7 +232,7 @@ class SearchProducto extends HookWidget {
                                     ? 'GENERANDO...'
                                     : 'GENERAR COTIZACION',
                                 assetPathIcon:
-                                    'assets/iconos/pedidos - rosa gris.png',
+                                    'assets/iconos/pedidos_rosa_gris.png',
                                 onTap: loading
                                     ? null
                                     : () {
@@ -306,7 +306,7 @@ class SearchProducto extends HookWidget {
             child: Padding(
               padding: const EdgeInsets.all(2.0),
               child: Image.asset(
-                'assets/iconos/pedidos - rosa gris.png',
+                'assets/iconos/pedidos_rosa_gris.png',
                 scale: 6,
               ),
             ),

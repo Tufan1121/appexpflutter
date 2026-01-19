@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/config/config.dart';
+﻿import 'package:appexpflutter_update/config/config.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -121,12 +121,12 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   children: [
                     CardItem(
-                      assetPathIcon: 'assets/iconos/qr/qr 72_.png',
+                      assetPathIcon: 'assets/iconos/qr/qr_72_.png',
                       label: 'Precios',
                       onTap: () => PreciosRoute().push(context),
                     ),
                     CardItem(
-                      assetPathIcon: 'assets/iconos/precios - rosa gris.png',
+                      assetPathIcon: 'assets/iconos/precios__rosa_gris.png',
                       label: 'Nueva Sesión de Ventas',
                       onTap: () => homeModalButtom(
                           height: 160,
@@ -136,14 +136,14 @@ class HomeScreen extends StatelessWidget {
                               CustomListTile(
                                 text: 'CLIENTE NUEVO',
                                 assetPathIcon:
-                                    'assets/iconos/cliente nuevo - rosa gris.png',
+                                    'assets/iconos/cliente_nuevo__rosa_gris.png',
                                 onTap: () => ClienteNuevoRoute().push(context),
                               ),
                               const Divider(),
                               CustomListTile(
                                 text: 'CLIENTE EXISTENTE',
                                 assetPathIcon:
-                                    'assets/iconos/cliente existente - rosa gris.png',
+                                    'assets/iconos/cliente_existente__rosa_gris.png',
                                 onTap: () =>
                                     ClienteExistenteRoute().push(context),
                               ),
@@ -152,7 +152,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     CardItem(
                       assetPathIcon:
-                          'assets/iconos/inventarios - rosa gris.png',
+                          'assets/iconos/inventarios__rosa_gris.png',
                       label: 'Inventarios',
                       onTap: () => homeModalButtom(
                           context: context,
@@ -162,14 +162,14 @@ class HomeScreen extends StatelessWidget {
                               CustomListTile(
                                 text: 'INVENTARIO EXPO',
                                 assetPathIcon:
-                                    'assets/iconos/inventario expo - rosa.png',
+                                    'assets/iconos/inventario_expo__rosa.png',
                                 onTap: () => InvetarioExpoRoute().push(context),
                               ),
                               const Divider(),
                               CustomListTile(
                                   text: 'INVENTARIO BODEGAS',
                                   assetPathIcon:
-                                      'assets/iconos/inventario bodegas - rosa2.png',
+                                      'assets/iconos/inventario_bodegas__rosa2.png',
                                   onTap: () {
                                     InvetarioBodegaRoute().push(context);
                                   }),
@@ -177,7 +177,7 @@ class HomeScreen extends StatelessWidget {
                               CustomListTile(
                                 text: 'BUSQUEDA GLOBAL',
                                 assetPathIcon:
-                                    'assets/iconos/busqueda global - rosa.png',
+                                    'assets/iconos/busqueda_global__rosa.png',
                                 onTap: () =>
                                     BusquedaGlobalRoute().push(context),
                               ),

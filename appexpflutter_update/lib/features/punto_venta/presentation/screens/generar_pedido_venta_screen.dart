@@ -159,8 +159,11 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: SingleChildScrollView(
+                      child: Scrollbar(
                         controller: scrollController,
+                        thumbVisibility: true,
+                        child: SingleChildScrollView(
+                          controller: scrollController,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: ReactiveForm(
@@ -252,6 +255,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                           ),
                         ),
                       ),
+                    ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
