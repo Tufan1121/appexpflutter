@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class CustomReactiveTextField extends StatelessWidget {
+class CustomReactiveTextField extends StatefulWidget {
   final String? label;
   final String? hint;
   final String? errorMessage;
@@ -41,6 +41,33 @@ class CustomReactiveTextField extends StatelessWidget {
   });
 
   @override
+  State<CustomReactiveTextField> createState() => _CustomReactiveTextFieldState();
+}
+
+class _CustomReactiveTextFieldState extends State<CustomReactiveTextField> {
+  final FocusNode _focusNode = FocusNode();
+  bool _hasFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _hasFocus = _focusNode.hasFocus;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
@@ -52,7 +79,8 @@ class CustomReactiveTextField extends StatelessWidget {
 
     return Stack(
       children: [
-        Container(
+        AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             height: 55,
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -62,30 +90,33 @@ class CustomReactiveTextField extends StatelessWidget {
                     bottomRight: borderRadius),
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 10,
+                      color: _hasFocus 
+                          ? colors.primary.withOpacity(0.2) 
+                          : Colors.black.withOpacity(0.06),
+                      blurRadius: _hasFocus ? 16 : 10,
                       offset: const Offset(0, 5))
                 ])),
         SizedBox(
           child: ReactiveTextField<String>(
-            readOnly: readOnly,
-            obscureText: obscureText,
-            keyboardType: keyboardType,
-            formControlName: formControlName,
-            inputFormatters: inputFormatters,
-            onSubmitted: onSubmitted,
+            focusNode: _focusNode,
+            readOnly: widget.readOnly,
+            obscureText: widget.obscureText,
+            keyboardType: widget.keyboardType,
+            formControlName: widget.formControlName,
+            inputFormatters: widget.inputFormatters,
+            onSubmitted: widget.onSubmitted,
             autocorrect: false,
             style: const TextStyle(fontSize: 20, color: Colors.black54),
-            validationMessages: validationMessages,
+            validationMessages: widget.validationMessages,
             decoration: InputDecoration(
-                hintStyle: hintStyle,
+                hintStyle: widget.hintStyle,
                 floatingLabelStyle: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 18),
                 enabledBorder: border,
                 focusedBorder: border,
-                errorStyle: errorStyle,
+                errorStyle: widget.errorStyle,
                 errorBorder: border.copyWith(
                     borderRadius: const BorderRadius.only(
                         topLeft: borderRadius,
@@ -99,13 +130,13 @@ class CustomReactiveTextField extends StatelessWidget {
                         bottomRight: borderRadius),
                     borderSide: BorderSide(color: Colors.red.shade800)),
                 isDense: true,
-                label: label != null ? Text(label!) : null,
-                hintText: hint,
+                label: widget.label != null ? Text(widget.label!) : null,
+                hintText: widget.hint,
                 focusColor: colors.primary,
-                prefixIcon: prefixIcon,
-                suffixIcon: suffixIcon,
+                prefixIcon: widget.prefixIcon,
+                suffixIcon: widget.suffixIcon,
                 border: InputBorder.none,
-                suffixText: suffixText
+                suffixText: widget.suffixText
                 // icon: Icon( Icons.supervised_user_circle_outlined, color: colors.primary, )
                 ),
           ),

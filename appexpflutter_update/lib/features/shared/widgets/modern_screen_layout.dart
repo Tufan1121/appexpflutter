@@ -25,6 +25,7 @@ class ModernScreenLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: showAppBar
           ? (customAppBar ??
               PreferredSize(

@@ -44,6 +44,7 @@ class GeometricalBackground extends StatelessWidget {
               ),
             ),
             child: SingleChildScrollView(
+              primary: false,
               physics: const NeverScrollableScrollPhysics(),
               child: Column(
                 children: [
