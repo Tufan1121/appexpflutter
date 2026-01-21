@@ -1,0 +1,31 @@
+﻿Running Gradle task 'assembleDebug'...                          
+Checking the license for package Android SDK Platform 36 in H:\Android\sdk\licenses
+License for package Android SDK Platform 36 accepted.
+Preparing "Install Android SDK Platform 36 (revision 2)".
+Warning: Failed to read or create install properties file.
+flutter : 
+At line:1 char:1
++ flutter build apk --debug 2>&1 | Out-File -FilePath build_output2.txt ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Could not determine the dependencies of task ':app:compileDebugJavaWithJavac'.
+> Could not determine the dependencies of null.
+   > Failed to install the following SDK components:
+         platforms;android-36 Android SDK Platform 36
+     Install the missing components using the SDK manager in Android Studio.
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 6s
+Running Gradle task 'assembleDebug'...                              7.0s
+Gradle task assembleDebug failed with exit code 1

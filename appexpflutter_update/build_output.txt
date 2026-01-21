@@ -1,0 +1,228 @@
+﻿Running Gradle task 'assembleDebug'...                          
+flutter : H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\com\
+tapetestufan\expo\MainActivity.java:3: error: package io.flutter.embedding.android 
+does not exist
+At line:1 char:1
++ flutter build apk --debug 2>&1 | Out-File -FilePath build_output.txt  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (H:\Personal\app... does not exist:String) 
+    [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+import io.flutter.embedding.android.FlutterActivity;
+                                   ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\com\tapetestuf
+an\expo\MainActivity.java:5: error: cannot find symbol
+public class MainActivity extends FlutterActivity {
+                                  ^
+  symbol: class FlutterActivity
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:3: error: cannot find symbol
+import androidx.annotation.Keep;
+                          ^
+  symbol:   class Keep
+  location: package androidx.annotation
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:4: error: cannot find symbol
+import androidx.annotation.NonNull;
+                          ^
+  symbol:   class NonNull
+  location: package androidx.annotation
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:5: error: cannot find symbol
+import io.flutter.Log;
+                 ^
+  symbol:   class Log
+  location: package io.flutter
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:7: error: package io.flutter.embedding.engine does 
+not exist
+import io.flutter.embedding.engine.FlutterEngine;
+                                  ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:14: error: cannot find symbol
+@Keep
+ ^
+  symbol: class Keep
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:17: error: cannot find symbol
+  public static void registerWith(@NonNull FlutterEngine flutterEngine) {
+                                           ^
+  symbol:   class FlutterEngine
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:17: error: cannot find symbol
+  public static void registerWith(@NonNull FlutterEngine flutterEngine) {
+                                   ^
+  symbol:   class NonNull
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:19: error: package 
+dev.fluttercommunity.plus.connectivity does not exist
+      flutterEngine.getPlugins().add(new 
+dev.fluttercommunity.plus.connectivity.ConnectivityPlugin());
+                                                                               ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:21: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin connectivity_plus, 
+dev.fluttercommunity.plus.connectivity.ConnectivityPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:24: error: package 
+dev.fluttercommunity.plus.device_info does not exist
+      flutterEngine.getPlugins().add(new 
+dev.fluttercommunity.plus.device_info.DeviceInfoPlusPlugin());
+                                                                              ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:26: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin device_info_plus, 
+dev.fluttercommunity.plus.device_info.DeviceInfoPlusPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:29: error: package 
+io.endigo.plugins.pdfviewflutter does not exist
+      flutterEngine.getPlugins().add(new 
+io.endigo.plugins.pdfviewflutter.PDFViewFlutterPlugin());
+                                                                         ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:31: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin flutter_pdfview, 
+io.endigo.plugins.pdfviewflutter.PDFViewFlutterPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:34: error: package 
+com.it_nomads.fluttersecurestorage does not exist
+      flutterEngine.getPlugins().add(new 
+com.it_nomads.fluttersecurestorage.FlutterSecureStoragePlugin());
+                                                                           ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:36: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin flutter_secure_storage, 
+com.it_nomads.fluttersecurestorage.FlutterSecureStoragePlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:39: error: package dev.steenbakker.mobile_scanner 
+does not exist
+      flutterEngine.getPlugins().add(new 
+dev.steenbakker.mobile_scanner.MobileScannerPlugin());
+                                                                       ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:41: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin mobile_scanner, 
+dev.steenbakker.mobile_scanner.MobileScannerPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:44: error: package com.crazecoder.openfile does 
+not exist
+      flutterEngine.getPlugins().add(new com.crazecoder.openfile.OpenFilePlugin());
+                                                                ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:46: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin open_file_android, 
+com.crazecoder.openfile.OpenFilePlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:49: error: package io.flutter.plugins.pathprovider 
+does not exist
+      flutterEngine.getPlugins().add(new 
+io.flutter.plugins.pathprovider.PathProviderPlugin());
+                                                                        ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:51: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin path_provider_android, 
+io.flutter.plugins.pathprovider.PathProviderPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:54: error: package com.baseflow.permissionhandler 
+does not exist
+      flutterEngine.getPlugins().add(new 
+com.baseflow.permissionhandler.PermissionHandlerPlugin());
+                                                                       ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:56: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin permission_handler_android, 
+com.baseflow.permissionhandler.PermissionHandlerPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:59: error: package dev.fluttercommunity.plus.share 
+does not exist
+      flutterEngine.getPlugins().add(new 
+dev.fluttercommunity.plus.share.SharePlusPlugin());
+                                                                        ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:61: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin share_plus, 
+dev.fluttercommunity.plus.share.SharePlusPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:64: error: package 
+io.flutter.plugins.sharedpreferences does not exist
+      flutterEngine.getPlugins().add(new 
+io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin());
+                                                                             ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:66: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin shared_preferences_android, 
+io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:69: error: package 
+com.syncfusion.flutter.pdfviewer does not exist
+      flutterEngine.getPlugins().add(new 
+com.syncfusion.flutter.pdfviewer.SyncfusionFlutterPdfViewerPlugin());
+                                                                         ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:71: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin syncfusion_flutter_pdfviewer, 
+com.syncfusion.flutter.pdfviewer.SyncfusionFlutterPdfViewerPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:74: error: package io.flutter.plugins.urllauncher 
+does not exist
+      flutterEngine.getPlugins().add(new 
+io.flutter.plugins.urllauncher.UrlLauncherPlugin());
+                                                                       ^
+H:\Personal\appexpflutter\appexpflutter_update\android\app\src\main\java\io\flutter\plu
+gins\GeneratedPluginRegistrant.java:76: error: cannot find symbol
+      Log.e(TAG, "Error registering plugin url_launcher_android, 
+io.flutter.plugins.urllauncher.UrlLauncherPlugin", e);
+      ^
+  symbol:   variable Log
+  location: class GeneratedPluginRegistrant
+33 errors
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugJavaWithJavac'.
+> Compilation failed; see the compiler error output for details.
+
+* Try:
+> Run with --info option to get more log output.
+> Run with --scan to get full insights.
+
+BUILD FAILED in 9s
+Running Gradle task 'assembleDebug'...                             10.2s
+Gradle task assembleDebug failed with exit code 1
