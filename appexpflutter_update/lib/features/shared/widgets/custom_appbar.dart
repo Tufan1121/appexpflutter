@@ -1,7 +1,5 @@
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomAppBar extends StatelessWidget {
   final Function()? onPressed;
@@ -17,32 +15,69 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      leading: IconButton(
-        onPressed: onPressed,
-        icon: const Icon(Icons.arrow_back_rounded),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colores.gradientStart,
+            Colores.gradientMiddle,
+            Colores.gradientEnd,
+          ],
+          stops: [0.0, 0.5, 1.0],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      iconTheme: const IconThemeData(color: Colors.white),
-      backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-      title: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: AutoSizeText(
-          title,
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.bold,
-            color: Colores.scaffoldBackgroundColor,
-            shadows: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(2.0, 5.0),
+      child: AppBar(
+        leading: onPressed != null
+            ? Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: onPressed,
+                  icon: const Icon(Icons.arrow_back_rounded),
+                  color: Colors.white,
+                  iconSize: 20,
+                  padding: EdgeInsets.zero,
+                ),
               )
+            : null,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            letterSpacing: 0.5,
+            shadows: [
+              Shadow(
+                color: Colors.black26,
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
             ],
           ),
-          maxLines: 1,
         ),
+        actions: actions,
       ),
-      actions: actions,
     );
   }
 }
+

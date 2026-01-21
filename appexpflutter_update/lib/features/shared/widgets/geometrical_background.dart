@@ -1,5 +1,6 @@
 import 'dart:math' show pi;
 import 'package:flutter/material.dart';
+import 'package:appexpflutter_update/config/theme/app_theme.dart';
 
 class GeometricalBackground extends StatelessWidget {
   final Widget child;
@@ -27,26 +28,36 @@ class GeometricalBackground extends StatelessWidget {
         children: [
           Positioned(child: Container(color: backgroundColor)),
 
-          // Background with shapes
+          // Background with dark gradient and shapes
           Container(
-              height: size.height * 0.7,
-              decoration: const BoxDecoration(
-                color: Colors.black,
+            height: size.height * 0.7,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF0F172A), // Slate 900 (Negro azulado profundo)
+                  Color(0xFF1E293B), // Slate 800 (Gris oscuro)
+                  Color(0xFF334155), // Slate 700 (Gris medio)
+                ],
+                stops: [0.0, 0.6, 1.0],
               ),
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    ShapeRow(shapeWidgets: shapeWidgets),
-                    ShapeRow(shapeWidgets: shapeWidgets),
-                    ShapeRow(shapeWidgets: shapeWidgets),
-                    ShapeRow(shapeWidgets: shapeWidgets),
-                    ShapeRow(shapeWidgets: shapeWidgets),
-                    ShapeRow(shapeWidgets: shapeWidgets),
-                    ShapeRow(shapeWidgets: shapeWidgets),
-                  ],
-                ),
-              )),
+            ),
+            child: SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  ShapeRow(shapeWidgets: shapeWidgets),
+                  ShapeRow(shapeWidgets: shapeWidgets),
+                  ShapeRow(shapeWidgets: shapeWidgets),
+                  ShapeRow(shapeWidgets: shapeWidgets),
+                  ShapeRow(shapeWidgets: shapeWidgets),
+                  ShapeRow(shapeWidgets: shapeWidgets),
+                  ShapeRow(shapeWidgets: shapeWidgets),
+                ],
+              ),
+            ),
+          ),
 
           // Child widget
           child,

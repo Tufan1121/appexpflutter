@@ -6,6 +6,7 @@ import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.d
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,95 +23,150 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height),
-            painter: BackgroundPainter2(),
-          ),
-          Column(
+      body: GeometricalBackground(
+        child: Column(
             children: [
               SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Spacer(),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.logout,
-                            size: 30,
-                          ),
-                          tooltip: 'Cerrar Sesión',
-                          color: Colores.scaffoldBackgroundColor,
-                          onPressed: () async {
-                              context.read<AuthBloc>().add(const LogoutEvent());
-                            if (context.mounted) LoginRoute().go(context);
-                          },
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: Column(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header with logout button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Image.asset(
-                            'assets/images/logo_tufan.png',
-                            scale: 12,
+                          const Spacer(),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.logout_rounded,
+                                size: 24,
+                              ),
+                              tooltip: 'Cerrar Sesión',
+                              color: Colors.white,
+                              onPressed: () async {
+                                context.read<AuthBloc>().add(const LogoutEvent());
+                                if (context.mounted) LoginRoute().go(context);
+                              },
+                            ),
                           ),
-                          const SizedBox(height: 5),
-                          FutureBuilder<(String, String)>(
-                              future: username(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                } else if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                } else if (snapshot.hasData) {
-                                  final (username, almacen) = snapshot.data!;
-                                  return Column(
-                                    children: [
-                                      AutoSizeText('Bienvenido $username',
-                                          style: GoogleFonts.montserrat(
-                                            fontWeight: FontWeight.bold,
-                                            color:
-                                                Colores.scaffoldBackgroundColor,
-                                            shadows: const [
-                                              BoxShadow(
-                                                color: Colors.black26,
-                                                blurRadius: 6,
-                                                offset: Offset(2.0, 5.0),
-                                              )
-                                            ],
-                                          )),
-                                      AutoSizeText('Almacen: $almacen',
-                                          style: GoogleFonts.montserrat(
-                                            fontWeight: FontWeight.bold,
-                                            color:
-                                                Colores.scaffoldBackgroundColor,
-                                            shadows: const [
-                                              BoxShadow(
-                                                color: Colors.black26,
-                                                blurRadius: 6,
-                                                offset: Offset(2.0, 5.0),
-                                              )
-                                            ],
-                                          )),
-                                    ],
-                                  );
-                                } else {
-                                  return const Text('No data');
-                                }
-                              }),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                  ],
+                      const SizedBox(height: 24),
+                      
+                      // Logo and welcome section
+                      Center(
+                        child: Column(
+                          children: [
+                            // Logo with glassmorphism container
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                  width: 1.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
+                              ),
+                              child: Image.asset(
+                                'assets/images/logo_tufan.png',
+                                scale: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            
+                            // User info
+                            FutureBuilder<(String, String)>(
+                              future: username(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                    'Error: ${snapshot.error}',
+                                    style: const TextStyle(color: Colors.white),
+                                  );
+                                } else if (snapshot.hasData) {
+                                  final (username, almacen) = snapshot.data!;
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.3),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          '¡Bienvenido!',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          username,
+                                          style: const TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w800,
+                                            color: Colors.white,
+                                            letterSpacing: -0.5,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Almacén: $almacen',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white.withOpacity(0.9),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  return const Text(
+                                    'No data',
+                                    style: TextStyle(color: Colors.white),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
               ),
               Expanded(
@@ -139,7 +195,6 @@ class HomeScreen extends StatelessWidget {
                                     'assets/iconos/cliente_nuevo__rosa_gris.png',
                                 onTap: () => ClienteNuevoRoute().push(context),
                               ),
-                              const Divider(),
                               CustomListTile(
                                 text: 'CLIENTE EXISTENTE',
                                 assetPathIcon:
@@ -165,7 +220,6 @@ class HomeScreen extends StatelessWidget {
                                     'assets/iconos/inventario_expo__rosa.png',
                                 onTap: () => InvetarioExpoRoute().push(context),
                               ),
-                              const Divider(),
                               CustomListTile(
                                   text: 'INVENTARIO BODEGAS',
                                   assetPathIcon:
@@ -173,7 +227,6 @@ class HomeScreen extends StatelessWidget {
                                   onTap: () {
                                     InvetarioBodegaRoute().push(context);
                                   }),
-                              const Divider(),
                               CustomListTile(
                                 text: 'BUSQUEDA GLOBAL',
                                 assetPathIcon:
@@ -213,8 +266,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ],
           ),
-        ],
-      ),
+        ),
     );
   }
 
@@ -223,13 +275,13 @@ class HomeScreen extends StatelessWidget {
     return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
+      isScrollControlled: true,
       builder: (context) {
         return Popover(
-          child: Container(
+          child: SizedBox(
             height: height,
-            color: Colores.scaffoldBackgroundColor,
-            child: Container(
-              padding: const EdgeInsets.all(10),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: child,
             ),
           ),
