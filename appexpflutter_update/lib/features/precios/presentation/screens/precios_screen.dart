@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -35,14 +36,8 @@ class PreciosScreen extends StatelessWidget {
             title: 'PRECIOS',
           ),
         ),
-        body: Stack(
-          children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
-            ),
-            SizedBox(
+        body: GeometricalBackground(
+          child: SizedBox(
               height: screenHeight * 0.90,
               child: Column(
                 children: [
@@ -192,7 +187,6 @@ class PreciosScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
         ),
       ),
     );

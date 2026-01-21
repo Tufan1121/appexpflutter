@@ -17,19 +17,10 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colores.gradientStart,
-            Colores.gradientMiddle,
-            Colores.gradientEnd,
-          ],
-          stops: [0.0, 0.5, 1.0],
-        ),
+        color: const Color(0xFF0F172A).withOpacity(0.5), // Fondo oscuro semi-transparente
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),

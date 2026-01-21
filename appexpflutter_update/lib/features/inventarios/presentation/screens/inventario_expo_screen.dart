@@ -6,6 +6,7 @@ import 'package:appexpflutter_update/features/inventarios/presentation/cubits/me
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/lista_productos_expo.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -68,14 +69,8 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen>
             title: 'INVENTARIO EXPO',
           ),
         ),
-        body: Stack(
-          children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
-            ),
-            Column(
+        body: GeometricalBackground(
+          child: Column(
               children: [
                 const SizedBox(height: 5),
                 Padding(
@@ -454,7 +449,6 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen>
                 ),
               ],
             ),
-          ],
         ),
       ),
     );
