@@ -223,7 +223,7 @@ class _LoginFormState extends State<LoginForm> {
                                     ? null
                                     : () {
                                         // Use the specific demo token provided
-                                        const demoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIZWxtdXQgSGVpc2UiLCJkaWdzaWciOiIyMDgiLCJyZWdnIjoxMDAzLCJtb3ZpbCI6IiIsImtpbmQiOjEsImRlc2NyaXBjaW8iOiJFWFBPUyBHREwiLCJ0b2tlbiI6IiIsImNlbXAiOiJUVUZBTiIsImV4cCI6MTc2OTExODExNn0.PzJuXB4WMOBE74-y6LExiTe2SbxgUAiyYCVrj7pHCz4";
+                                        const demoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIZWxtdXQgSGVpc2UiLCJkaWdzaWciOiIyMDgiLCJyZWdnIjoxMDAzLCJtb3ZpbCI6IiIsImtpbmQiOjEsImRlc2NyaXBjaW8iOiJFWFBPUyBHREwiLCJ0b2tlbiI6IiIsImNlbXAiOiJUVUZBTiIsImV4cCI6MTc2OTcyNjU5MX0.enEKLT4U13NT7UFwDX2Rga6oEQWTuO9apFQ5far7tug";
                                         context.read<AuthBloc>().add(const DemoLoginEvent(demoToken));
                                         // Navigation is handled by the BlocListener listening for AuthAuthenticated
                                       },

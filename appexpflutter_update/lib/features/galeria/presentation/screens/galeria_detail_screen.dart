@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class GaleriaDetailScreen extends StatefulWidget {
   final String? userName;
@@ -78,13 +79,26 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
         // Construir la URL original de la imagen
         final originalImageUrl = 'https://tapetestufan.mx:446/imagen/_web/$imageUrl';
         
-        // Codificar la URL para el parámetro
-        final encodedImageUrl = Uri.encodeComponent(originalImageUrl);
+        // Obtener token de autenticación
+        const storage = FlutterSecureStorage();
+        final token = await storage.read(key: 'accessToken');
         
-        // Descargar desde el endpoint de marca de agua
-        final watermarkUrl = 'https://tapetestufan.mx:6002/add-watermark/?image_url=$encodedImageUrl';
+        // Endpoint de marca de agua - requiere POST
+        final watermarkUrl = 'https://tapetestufan.mx:6002/add-watermark/';
         
-        await dio.download(watermarkUrl, file.path);
+        // Hacer POST request con autenticación
+        final response = await dio.post(
+          watermarkUrl,
+          queryParameters: {'image_url': originalImageUrl},
+          options: Options(
+            responseType: ResponseType.bytes,
+            headers: {'Authorization': 'Bearer $token'},
+          ),
+        );
+        
+        // Guardar imagen con marca de agua
+        await file.writeAsBytes(response.data);
+        
         await Share.shareXFiles([XFile(file.path)],
             text:
                 'Te comparto la imagen del producto ${imageUrl.split('/').first}');

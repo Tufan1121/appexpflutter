@@ -9,7 +9,7 @@
 
 2. **Inicia sesión:**
    - Usuario: `omar@protonmail.com`
-   - Password: `x5sa/85w`
+   - Password: `/85w`
 
 3. **Abre la consola de debug** para ver los logs
 
