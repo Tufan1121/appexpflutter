@@ -102,8 +102,17 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
         final appDownloadsDir = await getTemporaryDirectory();
         final file =
             File('${appDownloadsDir.path}/${imageUrl.split('/').last}');
-        await dio.download(
-            'https://tapetestufan.mx:446/imagen/_web/$imageUrl', file.path);
+        
+        // Construir la URL original de la imagen
+        final originalImageUrl = 'https://tapetestufan.mx:446/imagen/_web/$imageUrl';
+        
+        // Codificar la URL para el parámetro
+        final encodedImageUrl = Uri.encodeComponent(originalImageUrl);
+        
+        // Descargar desde el endpoint de marca de agua
+        final watermarkUrl = 'https://tapetestufan.mx:6002/add-watermark/?image_url=$encodedImageUrl';
+        
+        await dio.download(watermarkUrl, file.path);
         await Share.shareXFiles([XFile(file.path)],
             text:
                 'te comparto la imagen del producto ${imageUrl.split('/').first}');
