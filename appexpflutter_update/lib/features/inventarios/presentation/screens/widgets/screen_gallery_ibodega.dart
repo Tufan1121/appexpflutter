@@ -217,7 +217,7 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
               duration: const Duration(seconds: 5),
               action: SnackBarAction(
                 label: 'Reintentar',
-                textColor: Colors.White,
+                textColor: Colors.white,
                 onPressed: () => shareImage(imageUrl),
               ),
             ),
