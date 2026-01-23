@@ -99,10 +99,48 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
     // }
 
     Future<void> shareImage(String imageUrl) async {
+      // Mostrar indicador de carga
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Text('Preparando imagen con marca de agua...'),
+              ],
+            ),
+            duration: Duration(seconds: 30),
+          ),
+        );
+      }
+
       try {
-        final appDownloadsDir = await getTemporaryDirectory();
-        final file =
-            File('${appDownloadsDir.path}/${imageUrl.split('/').last}');
+        // Intentar obtener directorio temporal, con fallback a documents
+        Directory appDir;
+        try {
+          appDir = await getTemporaryDirectory();
+        } catch (e) {
+          final appDocs = await getApplicationDocumentsDirectory();
+          appDir = appDocs;
+        }
+        
+        // Asegurar que el archivo tenga una extensión válida
+        final fileName = imageUrl.split('/').last;
+        final fileNameWithExtension = fileName.contains('.') 
+            ? fileName 
+            : '$fileName.jpg';
+        
+        // Crear archivo con timestamp para evitar conflictos
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final file = File('${appDir.path}/share_$timestamp\_$fileNameWithExtension');
         
         // Construir la URL original de la imagen
         final originalImageUrl = 'https://tapetestufan.mx:446/imagen/_web/$imageUrl';
@@ -114,27 +152,74 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
         // Endpoint de marca de agua - requiere POST
         final watermarkUrl = 'https://tapetestufan.mx:6002/add-watermark/';
         
-        // Hacer POST request con autenticación
+        // Hacer POST request con autenticación y timeout extendido
         final response = await dio.post(
           watermarkUrl,
           queryParameters: {'image_url': originalImageUrl},
           options: Options(
             responseType: ResponseType.bytes,
             headers: {'Authorization': 'Bearer $token'},
+            receiveTimeout: const Duration(seconds: 30),
+            sendTimeout: const Duration(seconds: 30),
           ),
+        ).timeout(
+          const Duration(seconds: 35),
+          onTimeout: () {
+            throw Exception('Tiempo de espera agotado. Por favor intenta de nuevo.');
+          },
         );
+        
+        // Verificar que la respuesta tenga datos
+        if (response.data == null || (response.data as List<int>).isEmpty) {
+          throw Exception('No se recibió la imagen del servidor');
+        }
         
         // Guardar imagen con marca de agua
         await file.writeAsBytes(response.data);
         
-        await Share.shareXFiles([XFile(file.path)],
-            text:
-                'te comparto la imagen del producto ${imageUrl.split('/').first}');
+        // Verificar que el archivo se escribió correctamente
+        if (!await file.exists()) {
+          throw Exception('Error al guardar la imagen temporalmente');
+        }
+        
+        // Ocultar el indicador de carga
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
+        
+        // Compartir con MIME type explícito para Android
+        await Share.shareXFiles(
+          [XFile(file.path, mimeType: 'image/jpeg')],
+          text: 'te comparto la imagen del producto ${imageUrl.split('/').first}',
+        );
+        
+        // Limpiar archivo temporal después de compartir
+        try {
+          await Future.delayed(const Duration(seconds: 2));
+          if (await file.exists()) {
+            await file.delete();
+          }
+        } catch (e) {
+          // Ignorar errores al limpiar
+        }
       } catch (e) {
+        // Ocultar indicador de carga
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
+        
+        // Mostrar error específico
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error al compartir la imagen: $e'),
+              content: Text('Error al compartir: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Reintentar',
+                textColor: Colors.White,
+                onPressed: () => shareImage(imageUrl),
+              ),
             ),
           );
         }

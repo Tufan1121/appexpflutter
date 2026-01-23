@@ -228,6 +228,15 @@ class _LoginFormState extends State<LoginForm> {
                                         // Navigation is handled by the BlocListener listening for AuthAuthenticated
                                       },
                               ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'v1.0.0',
+                                style: textStyles.bodySmall?.copyWith(
+                                  color: Colores.textSecondary.withOpacity(0.6),
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ],
                           );
                         },
