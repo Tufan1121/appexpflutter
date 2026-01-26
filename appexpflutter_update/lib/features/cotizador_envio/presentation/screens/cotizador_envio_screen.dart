@@ -1,9 +1,9 @@
-import 'package:appexpflutter_update/config/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/repositories/shipping_repository.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/shipping_rate_response.dart';
+import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -91,7 +91,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Selecciona la ciudad de origen y destino', style: GoogleFonts.inter()),
-          backgroundColor: Colors.red,
+          backgroundColor: Colores.errorColor,
         ),
       );
       return;
@@ -172,7 +172,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
       case 'estafeta':
         return const Color(0xFF00A651); // Estafeta green
       default:
-        return Colors.blue;
+        return Colores.primaryColor;
     }
   }
 
@@ -243,46 +243,63 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
             // Content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Formulario
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Header card
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 1.5,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: Row(
+                    // CARD FORMULARIO - Estilo premium blanco
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.95),
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                          BoxShadow(
+                            color: Colores.gradientEnd.withOpacity(0.15),
+                            blurRadius: 30,
+                            offset: const Offset(0, 15),
+                          ),
+                        ],
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Header con icono gradient
+                            Row(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.all(12),
+                                  height: 56,
+                                  width: 56,
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(12),
+                                    gradient: const LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Colores.gradientStart,
+                                        Colores.gradientMiddle,
+                                        Colores.gradientEnd,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colores.primaryColor.withOpacity(0.3),
+                                        blurRadius: 15,
+                                        offset: const Offset(0, 6),
+                                      ),
+                                    ],
                                   ),
                                   child: const Icon(
                                     Icons.local_shipping_rounded,
                                     color: Colors.white,
-                                    size: 32,
+                                    size: 28,
                                   ),
                                 ),
                                 const SizedBox(width: 16),
@@ -295,7 +312,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                                         style: GoogleFonts.inter(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
-                                          color: Colors.white,
+                                          color: Colores.textPrimary,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
@@ -304,7 +321,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                                         style: GoogleFonts.inter(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w500,
-                                          color: Colors.white.withOpacity(0.8),
+                                          color: Colores.textSecondary,
                                         ),
                                       ),
                                     ],
@@ -312,166 +329,152 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(height: 32),
+                            const SizedBox(height: 28),
 
-                          // ORIGEN Section
-                          _buildSectionTitle('Origen'),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: _buildCityDropdown(
-                                  value: _selectedOriginCityLabel,
-                                  label: 'Ciudad Origen',
-                                  onChanged: (val) => setState(() => _selectedOriginCityLabel = val),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // DESTINO Section
-                          _buildSectionTitle('Destino'),
-                          const SizedBox(height: 16),
+                            // ORIGEN Section
+                            _buildSectionTitle('Origen', Icons.flight_takeoff_rounded),
+                            const SizedBox(height: 12),
+                            _buildCityDropdown(
+                              value: _selectedOriginCityLabel,
+                              label: 'Selecciona ciudad de origen',
+                              onChanged: (val) => setState(() => _selectedOriginCityLabel = val),
+                            ),
+                            const SizedBox(height: 20),
+
+                            // DESTINO Section
+                            _buildSectionTitle('Destino', Icons.flight_land_rounded),
+                            const SizedBox(height: 12),
+                            _buildCityDropdown(
+                              value: _selectedDestinationCityLabel,
+                              label: 'Selecciona ciudad de destino',
+                              onChanged: (val) => setState(() => _selectedDestinationCityLabel = val),
+                            ),
+                            const SizedBox(height: 20),
+
+                            // Códigos Postales
+                            _buildSectionTitle('Códigos Postales', Icons.pin_drop_rounded),
+                            const SizedBox(height: 12),
                             Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: _buildCityDropdown(
-                                  value: _selectedDestinationCityLabel,
-                                  label: 'Ciudad Destino',
-                                  onChanged: (val) => setState(() => _selectedDestinationCityLabel = val),
+                              children: [
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _codigoPostalOrigenController,
+                                    label: 'CP Origen',
+                                    icon: Icons.location_on_outlined,
+                                    keyboardType: TextInputType.number,
+                                    maxLength: 5,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          
-                          // Ubicaciones (CP)
-                          _buildSectionTitle('Códigos Postales'),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _codigoPostalOrigenController,
-                                  label: 'CP Origen',
-                                  icon: Icons.location_on_outlined,
-                                  keyboardType: TextInputType.number,
-                                  maxLength: 5,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _codigoPostalDestinoController,
+                                    label: 'CP Destino',
+                                    icon: Icons.my_location_rounded,
+                                    keyboardType: TextInputType.number,
+                                    maxLength: 5,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _codigoPostalDestinoController,
-                                  label: 'CP Destino',
-                                  icon: Icons.my_location_rounded,
-                                  keyboardType: TextInputType.number,
-                                  maxLength: 5,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 32),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
 
-                          // DIMENSIONES Section
-                          _buildSectionTitle('Dimensiones (cm) y Peso (kg)'),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _altoController,
-                                  label: 'Alto',
-                                  icon: Icons.height_rounded,
-                                  keyboardType: TextInputType.number,
+                            // DIMENSIONES Section
+                            _buildSectionTitle('Dimensiones y Peso', Icons.straighten_rounded),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _altoController,
+                                    label: 'Alto (cm)',
+                                    icon: Icons.height_rounded,
+                                    keyboardType: TextInputType.number,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _largoController,
-                                  label: 'Largo',
-                                  icon: Icons.straighten_rounded,
-                                  keyboardType: TextInputType.number,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _largoController,
+                                    label: 'Largo (cm)',
+                                    icon: Icons.straighten_rounded,
+                                    keyboardType: TextInputType.number,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _anchoController,
-                                  label: 'Ancho',
-                                  icon: Icons.open_in_full_rounded,
-                                  keyboardType: TextInputType.number,
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _anchoController,
+                                    label: 'Ancho (cm)',
+                                    icon: Icons.open_in_full_rounded,
+                                    keyboardType: TextInputType.number,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _pesoController,
-                                  label: 'Peso',
-                                  icon: Icons.scale_rounded,
-                                  keyboardType: TextInputType.number,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _pesoController,
+                                    label: 'Peso (kg)',
+                                    icon: Icons.scale_rounded,
+                                    keyboardType: TextInputType.number,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 32),
+                              ],
+                            ),
+                            const SizedBox(height: 28),
 
-                          // Action buttons
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildOutlineButton(
-                                  label: 'Limpiar',
-                                  icon: Icons.refresh_rounded,
-                                  onPressed: _limpiarFormulario,
+                            // Action buttons
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildOutlineButton(
+                                    label: 'Limpiar',
+                                    icon: Icons.refresh_rounded,
+                                    onPressed: _limpiarFormulario,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                flex: 2,
-                                child: _buildPrimaryButton(
-                                  label: _isLoading ? 'Cotizando...' : 'Cotizar Envío',
-                                  icon: _isLoading ? Icons.hourglass_top_rounded : Icons.calculate_rounded,
-                                  onPressed: _isLoading ? () {} : _calcularCotizacion,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  flex: 2,
+                                  child: _buildGradientButton(
+                                    label: _isLoading ? 'Cotizando...' : 'Cotizar Envío',
+                                    icon: _isLoading ? Icons.hourglass_top_rounded : Icons.calculate_rounded,
+                                    onPressed: _isLoading ? () {} : _calcularCotizacion,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
                     // Error message
                     if (_errorMessage != null) ...[
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
+                          color: Colores.errorColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: Colors.red.withOpacity(0.5),
+                            color: Colores.errorColor.withOpacity(0.3),
                             width: 1,
                           ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.error_outline, color: Colors.red),
+                            const Icon(Icons.error_outline, color: Colores.errorColor),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 _errorMessage!,
                                 style: GoogleFonts.inter(
-                                  color: Colors.white,
+                                  color: Colores.errorColor,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -492,11 +495,12 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Obteniendo cotizaciones de FedEx, DHL y Estafeta...',
+                              'Consultando FedEx, DHL y Estafeta...',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.inter(
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withOpacity(0.9),
                                 fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -506,8 +510,33 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
 
                     // Resultados
                     if (_cotizaciones != null && !_isLoading) ...[
-                      const SizedBox(height: 32),
-                      _buildSectionTitle('Cotizaciones Disponibles'),
+                      const SizedBox(height: 24),
+                      // Título de resultados
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.receipt_long_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Cotizaciones Disponibles',
+                            style: GoogleFonts.inter(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       ..._cotizaciones!.entries.map((entry) {
                         final carrier = entry.key;
@@ -541,15 +570,25 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: Colors.white,
-        letterSpacing: 0.5,
-      ),
+  Widget _buildSectionTitle(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 18,
+          color: Colores.primaryColor,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: Colores.textPrimary,
+            letterSpacing: 0.3,
+          ),
+        ),
+      ],
     );
   }
 
@@ -560,70 +599,62 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     TextInputType keyboardType = TextInputType.text,
     int? maxLength,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLength: maxLength,
+      style: GoogleFonts.inter(
+        color: Colores.textPrimary,
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
       ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        maxLength: maxLength,
-        style: GoogleFonts.inter(
-          color: Colors.white,
-          fontSize: 16,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.inter(
+          color: Colores.textSecondary,
+          fontSize: 13,
           fontWeight: FontWeight.w500,
         ),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: GoogleFonts.inter(
-            color: Colors.white.withOpacity(0.8),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: Colors.white.withOpacity(0.9),
-            size: 20,
-          ),
-          counterText: '',
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-          floatingLabelStyle: GoogleFonts.inter(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
+        prefixIcon: Icon(
+          icon,
+          color: Colores.primaryColor,
+          size: 20,
         ),
-        inputFormatters: keyboardType == TextInputType.number
-            ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))]
-            : null,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Requerido';
-          }
-          if (keyboardType == TextInputType.number) {
-            final number = double.tryParse(value);
-            if (number == null || number <= 0) {
-              return 'Inválido';
-            }
-          }
-          return null;
-        },
+        counterText: '',
+        filled: true,
+        fillColor: Colores.inputBackground,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colores.inputBorder),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colores.inputBorder),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colores.primaryColor, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
+      inputFormatters: keyboardType == TextInputType.number
+          ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))]
+          : null,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Requerido';
+        }
+        if (keyboardType == TextInputType.number) {
+          final number = double.tryParse(value);
+          if (number == null || number <= 0) {
+            return 'Inválido';
+          }
+        }
+        return null;
+      },
     );
   }
 
@@ -634,10 +665,10 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(16),
+        color: Colores.inputBackground,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colores.inputBorder,
           width: 1,
         ),
       ),
@@ -649,19 +680,19 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
           hint: Text(
             label,
             style: GoogleFonts.inter(
-              color: Colors.white.withOpacity(0.8),
+              color: Colores.textSecondary,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
-          dropdownColor: const Color(0xFF1E293B), // Slate 800
+          dropdownColor: Colors.white,
           icon: Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: Colors.white.withOpacity(0.9),
+            color: Colores.primaryColor,
           ),
           style: GoogleFonts.inter(
-            color: Colors.white,
-            fontSize: 16,
+            color: Colores.textPrimary,
+            fontSize: 15,
             fontWeight: FontWeight.w500,
           ),
           items: _availableCities.map((cityData) {
@@ -678,31 +709,34 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
 
   Widget _buildCarrierErrorCard(String carrier, String error) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.white.withOpacity(0.95),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.red.withOpacity(0.3),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: _getCarrierColor(carrier).withOpacity(0.2),
+              color: _getCarrierColor(carrier).withOpacity(0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               _getCarrierIcon(carrier),
               color: _getCarrierColor(carrier),
-              size: 28,
+              size: 24,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -710,17 +744,18 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                 Text(
                   _getCarrierName(carrier),
                   style: GoogleFonts.inter(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: Colores.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   error,
                   style: GoogleFonts.inter(
-                    fontSize: 13,
-                    color: Colors.red.shade300,
+                    fontSize: 12,
+                    color: Colores.errorColor,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -733,20 +768,21 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
 
   Widget _buildRateCard(String carrier, ShippingRate rate) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withOpacity(0.95),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: _getCarrierColor(carrier).withOpacity(0.5),
-          width: 2,
-        ),
         boxShadow: [
           BoxShadow(
-            color: _getCarrierColor(carrier).withOpacity(0.2),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 15,
-            offset: const Offset(0, 5),
+            offset: const Offset(0, 6),
+          ),
+          BoxShadow(
+            color: _getCarrierColor(carrier).withOpacity(0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -759,16 +795,16 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: _getCarrierColor(carrier).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  color: _getCarrierColor(carrier).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
                   _getCarrierIcon(carrier),
                   color: _getCarrierColor(carrier),
-                  size: 28,
+                  size: 26,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -776,18 +812,18 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                     Text(
                       rate.carrierDescription,
                       style: GoogleFonts.inter(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: Colores.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       rate.serviceDescription,
                       style: GoogleFonts.inter(
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colores.textSecondary,
                       ),
                     ),
                   ],
@@ -795,20 +831,27 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
               ),
               // Precio
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
                       _getCarrierColor(carrier),
-                      _getCarrierColor(carrier).withOpacity(0.7),
+                      _getCarrierColor(carrier).withOpacity(0.8),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _getCarrierColor(carrier).withOpacity(0.4),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
                     Text(
-                      '\$${rate.totalPrice.toStringAsFixed(2)}',
+                      '\$${rate.totalPrice.toStringAsFixed(0)}',
                       style: GoogleFonts.inter(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
@@ -818,11 +861,11 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                     Text(
                       rate.currency,
                       style: GoogleFonts.inter(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: carrier.toLowerCase() == 'dhl' 
                             ? Colors.black.withOpacity(0.7) 
-                            : Colors.white.withOpacity(0.8),
+                            : Colors.white.withOpacity(0.85),
                       ),
                     ),
                   ],
@@ -830,51 +873,44 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           // Detalles de entrega
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colores.inputBackground,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.access_time_rounded,
-                  color: Colors.white.withOpacity(0.8),
-                  size: 20,
+                  color: Colores.primaryColor,
+                  size: 18,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  'Tiempo de entrega: ',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    color: Colors.white.withOpacity(0.7),
-                  ),
-                ),
                 Text(
                   rate.deliveryEstimate,
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: Colores.textPrimary,
                   ),
                 ),
                 if (rate.deliveryDate != null) ...[
-                  const SizedBox(width: 16),
+                  const Spacer(),
                   Icon(
                     Icons.calendar_today_rounded,
-                    color: Colors.white.withOpacity(0.8),
-                    size: 18,
+                    color: Colores.textSecondary,
+                    size: 16,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     rate.deliveryDate!.date,
                     style: GoogleFonts.inter(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colores.textSecondary,
                     ),
                   ),
                 ],
@@ -886,32 +922,29 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     );
   }
 
-  Widget _buildPrimaryButton({
+  Widget _buildGradientButton({
     required String label,
     required IconData icon,
     required VoidCallback onPressed,
   }) {
     return Container(
-      height: 56,
+      height: 52,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withOpacity(0.3),
-            Colors.white.withOpacity(0.2),
-          ],
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          colors: [
+            Colores.gradientStart,
+            Colores.gradientMiddle,
+            Colores.gradientEnd,
+          ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.5),
-          width: 1.5,
-        ),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colores.primaryColor.withOpacity(0.4),
             blurRadius: 15,
-            offset: const Offset(0, 8),
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -919,23 +952,23 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
                 color: Colors.white,
-                size: 24,
+                size: 22,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Text(
                 label,
                 style: GoogleFonts.inter(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  letterSpacing: 0.5,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -951,12 +984,12 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     required VoidCallback onPressed,
   }) {
     return Container(
-      height: 56,
+      height: 52,
       decoration: BoxDecoration(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: Colors.white.withOpacity(0.5),
+          color: Colores.inputBorder,
           width: 1.5,
         ),
       ),
@@ -964,23 +997,22 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                color: Colors.white,
-                size: 22,
+                color: Colores.textSecondary,
+                size: 20,
               ),
               const SizedBox(width: 8),
               Text(
                 label,
                 style: GoogleFonts.inter(
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: 0.3,
+                  color: Colores.textSecondary,
                 ),
               ),
             ],
