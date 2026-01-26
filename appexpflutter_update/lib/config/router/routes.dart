@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/cotizador_envio/presentation/screens/cotizador_envio_screen.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_screen.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/historial_screen.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/pedido_sesion_screen.dart';
@@ -431,3 +432,15 @@ class PuntoVentaHistoryRoute extends GoRouteData with $PuntoVentaHistoryRoute {
   Widget build(BuildContext context, GoRouterState state) =>
       const PuntoVentaConsultaScreen();
 }
+
+@TypedGoRoute<CotizadorEnvioRoute>(
+  path: CotizadorEnvioRoute.path,
+)
+class CotizadorEnvioRoute extends GoRouteData with $CotizadorEnvioRoute {
+  static const path = '/cotizador_envio';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CotizadorEnvioScreen();
+}
+

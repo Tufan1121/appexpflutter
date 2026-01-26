@@ -30,7 +30,7 @@ class GeometricalBackground extends StatelessWidget {
 
           // Background with dark gradient and shapes
           Container(
-            height: size.height * 0.7,
+            height: size.height,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,

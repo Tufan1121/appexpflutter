@@ -261,6 +261,11 @@ class HomeScreen extends StatelessWidget {
                       label: 'Punto de Venta',
                       onTap: () => PuntoVentaRoute().push(context),
                     ),
+                    CardItem(
+                      icon: Icons.local_shipping_rounded,
+                      label: 'Cotizador de Envíos',
+                      onTap: () => CotizadorEnvioRoute().push(context),
+                    ),
                   ],
                 ),
               ),
