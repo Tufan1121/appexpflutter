@@ -30,10 +30,10 @@ class AuthDataSourceImpl implements AuthDatasource {
 
       final authUserModel = AuthUserModel.fromJson(response.data);
       final token = response.data['access_token'] as String;
-      print('Token: $token');
+      // print('Token: $token');
       return authUserModel;
     } catch (e) {
-      print('DEBUG: AuthDataSourceImpl login error: $e');
+      // print('DEBUG: AuthDataSourceImpl login error: $e');
       rethrow;
     }
   }

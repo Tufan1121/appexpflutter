@@ -230,7 +230,7 @@ class _LoginFormState extends State<LoginForm> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'v1.0.0',
+                                'v1.0.3',
                                 style: textStyles.bodySmall?.copyWith(
                                   color: Colores.textSecondary.withOpacity(0.6),
                                   fontSize: 12,
@@ -264,15 +264,15 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _submitForm() {
-    print('DEBUG: _submitForm called'); // DEBUG
+    // print('DEBUG: _submitForm called'); // DEBUG
     if (form.invalid) {
       form.markAllAsTouched();
-      print('DEBUG: Form is invalid'); // DEBUG
+      // print('DEBUG: Form is invalid'); // DEBUG
       return;
     }
     email = form.control('email').value!;
     password = form.control('password').value!;
-    print('DEBUG: Dispatching LoginEvent with email: $email'); // DEBUG
+    // print('DEBUG: Dispatching LoginEvent with email: $email'); // DEBUG
     // Realiza las acciones necesarias, como iniciar sesión
     context.read<AuthBloc>().add(LoginEvent(email, password));
   }

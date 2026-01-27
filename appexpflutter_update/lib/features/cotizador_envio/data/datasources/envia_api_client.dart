@@ -16,7 +16,7 @@ class EnviaApiClient {
       receiveTimeout: const Duration(milliseconds: 30000),
       responseType: ResponseType.json,
     ));
-    print('DEBUG TOKEN ENVIADO: [Bearer ${Environment.enviaToken}]');
+    // print('DEBUG TOKEN ENVIADO: [Bearer ${Environment.enviaToken}]');
   }
 
   Future<Response<dynamic>> post(
