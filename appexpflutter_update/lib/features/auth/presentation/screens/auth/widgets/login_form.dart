@@ -230,7 +230,7 @@ class _LoginFormState extends State<LoginForm> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'v1.0.3',
+                                'v1.0.5',
                                 style: textStyles.bodySmall?.copyWith(
                                   color: Colores.textSecondary.withOpacity(0.6),
                                   fontSize: 12,

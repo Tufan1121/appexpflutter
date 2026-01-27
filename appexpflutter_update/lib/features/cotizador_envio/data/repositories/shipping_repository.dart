@@ -31,7 +31,8 @@ class ShippingRepository {
     }
   }
 
-  /// Obtiene cotizaciones de los 3 carriers en paralelo
+  /// Obtiene cotizaciones de los carriers en paralelo
+  /// [packageAmount] es la cantidad de paquetes/productos a enviar
   Future<Map<String, ShippingRateResponse>> getShippingRates({
     required String originPostalCode,
     required String originCity,
@@ -45,8 +46,9 @@ class ShippingRepository {
     required double length,
     required double width,
     required double weight,
+    int packageAmount = 1, // Cantidad de paquetes
   }) async {
-    // Crear las 3 solicitudes en paralelo
+    // Crear las solicitudes en paralelo
     final futures = carriers.map((carrier) async {
       final request = _buildRequest(
         originPostalCode: originPostalCode,
@@ -62,6 +64,7 @@ class ShippingRepository {
         width: width,
         weight: weight,
         carrier: carrier,
+        packageAmount: packageAmount,
       );
 
       try {
@@ -110,6 +113,7 @@ class ShippingRepository {
     required double width,
     required double weight,
     required String carrier,
+    required int packageAmount,
   }) {
     return ShippingRateRequest(
       origin: Origin(
@@ -126,6 +130,7 @@ class ShippingRepository {
       ),
       packages: [
         Package(
+          amount: packageAmount, // Cantidad de productos/paquetes
           dimensions: Dimensions(
             length: length,
             width: width,
@@ -139,3 +144,4 @@ class ShippingRepository {
     );
   }
 }
+

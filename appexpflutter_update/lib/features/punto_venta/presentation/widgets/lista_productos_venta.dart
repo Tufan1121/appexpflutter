@@ -2,6 +2,7 @@ import 'package:appexpflutter_update/features/punto_venta/domain/entities/produc
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/shipping_quote_modal.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ class ListaProductosVenta extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
+    final shippingCost = useState<double>(UtilsVenta.shippingCost);
 
     // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
     final countList = useState<List<int>>(List.filled(productos.length, 1));
@@ -26,6 +28,8 @@ class ListaProductosVenta extends HookWidget {
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
+      int totalItems = 0;
+
       for (var i = 0; i < productos.length; i++) {
         if (i >= countList.value.length ||
             i >= selectedPriceList.value.length) {
@@ -34,9 +38,9 @@ class ListaProductosVenta extends HookWidget {
 
         final count = countList.value[i];
         final selectedPrice = selectedPriceList.value[i];
-        // print('Producto ${productos[i].producto}: count = $count, selectedPrice = $selectedPrice');
 
         if (count > 0) {
+          totalItems += count;
           double precioUnitario = 0.0;
           switch (selectedPrice) {
             case 1:
@@ -63,6 +67,9 @@ class ListaProductosVenta extends HookWidget {
       }
       total.value = newTotal;
       UtilsVenta.total = total.value;
+      
+      // Forzar redraw
+      shippingCost.value = UtilsVenta.shippingCost;
     }
 
     useEffect(() {
@@ -95,35 +102,114 @@ class ListaProductosVenta extends HookWidget {
 
     return Column(
       children: [
-        Text('Total: ${Utils.formatPrice(total.value)}',
-            style: GoogleFonts.montserrat(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colores.scaffoldBackgroundColor,
-                shadows: [
-                  const BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(2.0, 5.0),
-                  )
-                ])),
+        // Card de Totales y Envío
+        Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Subtotal:', style: GoogleFonts.inter(fontSize: 14)),
+                    Text(Utils.formatPrice(total.value), style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                         int totalCount = countList.value.fold(0, (sum, item) => sum + item);
+                         if (totalCount == 0 && productos.isEmpty) {
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             const SnackBar(content: Text('Agrega productos para cotizar envío')),
+                           );
+                           return;
+                         }
+                        
+                         ShippingQuoteModal.show(
+                          context: context,
+                          productCount: totalCount > 0 ? totalCount : 1,
+                          onShippingSelected: (price, carrier, description) {
+                            UtilsVenta.setShipping(price, carrier, description);
+                            shippingCost.value = price;
+                            updateTotal(); // Actualizar totales
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.local_shipping, size: 16, color: Colors.white),
+                      label: const Text('Cotizar Envío', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colores.primaryColor,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                    ),
+                    if (shippingCost.value > 0)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              UtilsVenta.shippingCarrier,
+                              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              Utils.formatPrice(shippingCost.value),
+                              style: GoogleFonts.inter(fontSize: 14, color: Colors.green, fontWeight: FontWeight.bold),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                UtilsVenta.clearShipping();
+                                shippingCost.value = 0;
+                                updateTotal();
+                              },
+                              child: const Text('Eliminar envío', style: TextStyle(color: Colors.red, fontSize: 10)),
+                            )
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                const Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('TOTAL:', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      Utils.formatPrice(total.value + shippingCost.value),
+                      style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colores.primaryColor),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.66,
+          height: MediaQuery.of(context).size.height * 0.55,
           child: ListView.builder(
             itemCount: productos.length,
             itemBuilder: (context, index) {
               final producto = productos[index];
               final existencia = producto.hm;
+              
+              // Usar valores directos de las listas
+              final currentCount = countList.value.length > index ? countList.value[index] : 1;
+              final currentSelectedPrice = selectedPriceList.value.length > index ? selectedPriceList.value[index] : 1;
 
               return HookBuilder(
                 builder: (context) {
-                  final count = useState(countList.value[index]);
-                  final selectedPrice =
-                      useState<int>(selectedPriceList.value[index]);
                   final customPrice = useState<double?>(null);
                   final customPriceController = useTextEditingController(
                       text: producto.precio2.toString());
-                  final scrollController = useScrollController();
+                  final scrollController = useScrollController(); // Scroll por item
 
                   return ClipRect(
                     child: Card(
@@ -133,7 +219,7 @@ class ListaProductosVenta extends HookWidget {
                       clipBehavior: Clip.hardEdge,
                       child: Dismissible(
                         direction: DismissDirection.startToEnd,
-                        key: Key(producto.producto1),
+                        key: ValueKey('pv_${producto.producto1}'),
                         confirmDismiss: (direction) async {
                           return await _dialogEliminar(context, producto);
                         },
@@ -208,24 +294,31 @@ class ListaProductosVenta extends HookWidget {
                                       IconButton(
                                         icon: const Icon(Icons.add),
                                         onPressed: () {
-                                          if (count.value <
+                                          if (currentCount <
                                               existencia.toInt()) {
-                                            count.value++;
-                                            countList.value[index] =
-                                                count.value;
+                                            countList.value[index] = currentCount + 1;
                                             updateTotal();
+                                          } else {
+                                             ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(content: Text('No hay más existencia disponible'), duration: Duration(milliseconds: 1000)),
+                                            );
                                           }
                                         },
                                       ),
-                                      Text('${count.value}'),
+                                      Text('$currentCount'),
                                       IconButton(
-                                        icon: const Icon(Icons.remove),
-                                        onPressed: () {
-                                          if (count.value > 1) {
-                                            count.value--;
-                                            countList.value[index] =
-                                                count.value;
+                                        icon: Icon(
+                                          currentCount == 1 ? Icons.delete_outline : Icons.remove,
+                                          color: currentCount == 1 ? Colors.red : null,
+                                        ),
+                                        onPressed: () async {
+                                          if (currentCount > 1) {
+                                            countList.value[index] = currentCount - 1;
                                             updateTotal();
+                                          } else {
+                                            // Eliminar
+                                            final confirm = await _dialogEliminar(context, producto);
+                                            // Si confirma, Dismissible lo maneja o estado se actualiza por el bloc
                                           }
                                         },
                                       ),
@@ -235,7 +328,8 @@ class ListaProductosVenta extends HookWidget {
                               ),
                               const SizedBox(height: 4),
                               Scrollbar(
-                                controller: scrollController,
+                                controller: scrollController, // Usar controller unico por item
+                                thumbVisibility: true,
                                 child: SingleChildScrollView(
                                   controller: scrollController,
                                   scrollDirection: Axis.horizontal,
@@ -247,11 +341,9 @@ class ListaProductosVenta extends HookWidget {
                                         context: context,
                                         label: 'Precio de Lista',
                                         price: producto.precio1.toDouble(),
-                                        value: selectedPrice.value == 1,
+                                        value: currentSelectedPrice == 1,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 1;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
+                                          selectedPriceList.value[index] = 1;
                                           updateTotal();
                                         },
                                       ),
@@ -260,19 +352,17 @@ class ListaProductosVenta extends HookWidget {
                                         label: 'Precio de Expo',
                                         price:
                                             producto.precio2?.toDouble() ?? 0.0,
-                                        value: selectedPrice.value == 2,
+                                        value: currentSelectedPrice == 2,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 2;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal();
+                                            selectedPriceList.value[index] = 2;
+                                            updateTotal();
                                         },
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                              if (selectedPrice.value == 2)
+                              if (currentSelectedPrice == 2)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -288,9 +378,14 @@ class ListaProductosVenta extends HookWidget {
                                         },
                                         onSubmitted: (value) {
                                           if (customPrice.value != null) {
-                                            selectedPriceList.value[index] =
-                                                2; // Precio personalizado
-                                            updateTotal();
+                                             // Aquí solo actualizamos el precio localmente en la lógica
+                                             // Pero la lógica actual depende del precio en el producto entity
+                                             // Así que enviamos evento para actualizar producto en bloc
+                                             
+                                              final price = double.parse(customPriceController.text);
+                                              final updatedProduct = producto.copyWith(precio2: price.toInt());
+                                              context.read<ProductosTiendaBloc>().add(UpdateProductEvent(updatedProduct));
+                                              // Se actualizará por el BlocListener padre
                                           }
                                         },
                                         decoration: const InputDecoration(
@@ -323,11 +418,7 @@ class ListaProductosVenta extends HookWidget {
                                                     .read<ProductosTiendaBloc>()
                                                     .add(UpdateProductEvent(
                                                         updatedProduct));
-                                                // Actualiza el producto en la lista
-                                                productos[index] =
-                                                    updatedProduct;
-
-                                                updateTotal();
+                                                // La lista se reconstruirá cuando el estado del bloc cambie
                                               }
                                             : null,
                                         child: const AutoSizeText(
@@ -435,3 +526,4 @@ class ListaProductosVenta extends HookWidget {
     );
   }
 }
+

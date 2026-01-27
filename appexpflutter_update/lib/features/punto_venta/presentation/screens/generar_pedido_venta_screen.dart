@@ -74,7 +74,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     return metodosDePago.indexOf(metodo) + 1;
   }
 
-  final totalAPagar = UtilsVenta.total;
+  final totalAPagar = UtilsVenta.totalWithShipping;
   final String username = '';
 
   @override
@@ -94,6 +94,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     }
 
     useEffect(() {
+      // Pre-llenar observaciones con detalles de envío si hay
+      if (UtilsVenta.hasShipping) {
+        final envioInfo = '[ENVÍO COTIZADO: ${UtilsVenta.shippingCarrier} - ${UtilsVenta.shippingServiceDescription} - \$${UtilsVenta.shippingCost.toStringAsFixed(2)} MXN]';
+        form.control('observaciones').value = envioInfo;
+      }
+
       form
           .control('anticipoPago1')
           .valueChanges
@@ -180,13 +186,20 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text('Total a pagar'),
+                                        Text(UtilsVenta.hasShipping ? 'Total (incluye envío)' : 'Total a pagar'),
                                         Text(
-                                          Utils.formatPrice(UtilsVenta.total),
+                                          Utils.formatPrice(UtilsVenta.totalWithShipping),
                                           style: const TextStyle(
                                               color: Colors.purple,
                                               fontWeight: FontWeight.bold),
                                         ),
+                                        if (UtilsVenta.hasShipping)
+                                          Text(
+                                            'Envío: ${Utils.formatPrice(UtilsVenta.shippingCost)}',
+                                            style: const TextStyle(
+                                                fontSize: 11,
+                                                color: Colors.grey),
+                                          ),
                                       ],
                                     ),
                                     Column(
@@ -560,7 +573,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       final metodo3 = form.control('metodoDePago3').value != null
           ? getMetodoDePagoId(form.control('metodoDePago3').value)
           : 0;
-      final String observaciones = form.control('observaciones').value ?? '';
+      // Construir observaciones incluyendo detalles de envío si hay
+      String observaciones = form.control('observaciones').value ?? '';
+      if (UtilsVenta.hasShipping) {
+        final envioInfo = '\n[ENVÍO COTIZADO: ${UtilsVenta.shippingCarrier} - ${UtilsVenta.shippingServiceDescription} - \$${UtilsVenta.shippingCost.toStringAsFixed(2)} MXN]';
+        observaciones = observaciones.isEmpty ? envioInfo.trim() : '$observaciones$envioInfo';
+      }
 
       final double anticipoPago = form.control('anticipoPago1').value ?? 0.0;
       final double anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
