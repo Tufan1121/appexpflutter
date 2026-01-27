@@ -140,7 +140,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     if (_selectedOriginSuburb == null || _selectedDestinationSuburb == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Selecciona la colonia de origen y destino', style: GoogleFonts.inter()),
+          content: Text('No se pudo obtener información de los códigos postales', style: GoogleFonts.inter()),
           backgroundColor: Colores.errorColor,
         ),
       );
@@ -201,12 +201,16 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
 
   IconData _getCarrierIcon(String carrier) {
     switch (carrier.toLowerCase()) {
+      case 'paquetexpress':
+        return Icons.inventory_2_rounded;
       case 'fedex':
         return Icons.local_shipping_rounded;
       case 'dhl':
         return Icons.flight_rounded;
       case 'estafeta':
         return Icons.delivery_dining_rounded;
+      case 'redpack':
+        return Icons.markunread_mailbox_rounded;
       default:
         return Icons.local_shipping_rounded;
     }
@@ -214,12 +218,16 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
 
   Color _getCarrierColor(String carrier) {
     switch (carrier.toLowerCase()) {
+      case 'paquetexpress':
+        return const Color(0xFF1976D2); // Paquetexpress blue
       case 'fedex':
         return const Color(0xFF4D148C); // FedEx purple
       case 'dhl':
         return const Color(0xFFFFCC00); // DHL yellow
       case 'estafeta':
         return const Color(0xFF00A651); // Estafeta green
+      case 'redpack':
+        return const Color(0xFFD32F2F); // Redpack red
       default:
         return Colores.primaryColor;
     }
@@ -227,12 +235,16 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
 
   String _getCarrierName(String carrier) {
     switch (carrier.toLowerCase()) {
+      case 'paquetexpress':
+        return 'Paquetexpress';
       case 'fedex':
         return 'FedEx';
       case 'dhl':
         return 'DHL Express';
       case 'estafeta':
         return 'Estafeta';
+      case 'redpack':
+        return 'Redpack';
       default:
         return carrier.toUpperCase();
     }
@@ -242,7 +254,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: GeometricalBackground(
         child: Column(
           children: [
@@ -380,33 +392,38 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                             ),
                             const SizedBox(height: 28),
 
-                            // ORIGEN Section
-                            _buildSectionTitle('Origen', Icons.flight_takeoff_rounded),
+                            // ORIGEN Y DESTINO Section - Códigos postales en el mismo row
+                            _buildSectionTitle('Códigos Postales', Icons.pin_drop_rounded),
                             const SizedBox(height: 12),
-                            _buildZipcodeField(
-                              controller: _codigoPostalOrigenController,
-                              label: 'Código Postal Origen',
-                              icon: Icons.location_on_outlined,
-                              info: _originInfo,
-                              isLoading: _isLoadingOrigin,
-                              onChanged: (_) => _buscarInfoOrigen(),
-                              selectedSuburb: _selectedOriginSuburb,
-                              onSuburbChanged: (val) => setState(() => _selectedOriginSuburb = val),
-                            ),
-                            const SizedBox(height: 20),
-
-                            // DESTINO Section
-                            _buildSectionTitle('Destino', Icons.flight_land_rounded),
-                            const SizedBox(height: 12),
-                            _buildZipcodeField(
-                              controller: _codigoPostalDestinoController,
-                              label: 'Código Postal Destino',
-                              icon: Icons.my_location_rounded,
-                              info: _destinationInfo,
-                              isLoading: _isLoadingDestination,
-                              onChanged: (_) => _buscarInfoDestino(),
-                              selectedSuburb: _selectedDestinationSuburb,
-                              onSuburbChanged: (val) => setState(() => _selectedDestinationSuburb = val),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: _buildZipcodeField(
+                                    controller: _codigoPostalOrigenController,
+                                    label: 'CP Origen',
+                                    icon: Icons.flight_takeoff_rounded,
+                                    info: _originInfo,
+                                    isLoading: _isLoadingOrigin,
+                                    onChanged: (_) => _buscarInfoOrigen(),
+                                    selectedSuburb: _selectedOriginSuburb,
+                                    onSuburbChanged: (val) => setState(() => _selectedOriginSuburb = val),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildZipcodeField(
+                                    controller: _codigoPostalDestinoController,
+                                    label: 'CP Destino',
+                                    icon: Icons.flight_land_rounded,
+                                    info: _destinationInfo,
+                                    isLoading: _isLoadingDestination,
+                                    onChanged: (_) => _buscarInfoDestino(),
+                                    selectedSuburb: _selectedDestinationSuburb,
+                                    onSuburbChanged: (val) => setState(() => _selectedDestinationSuburb = val),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 20),
 
@@ -417,18 +434,18 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                               children: [
                                 Expanded(
                                   child: _buildTextField(
-                                    controller: _altoController,
-                                    label: 'Alto (cm)',
-                                    icon: Icons.height_rounded,
+                                    controller: _largoController,
+                                    label: 'Largo (cm)',
+                                    icon: Icons.straighten_rounded,
                                     keyboardType: TextInputType.number,
                                   ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: _buildTextField(
-                                    controller: _largoController,
-                                    label: 'Largo (cm)',
-                                    icon: Icons.straighten_rounded,
+                                    controller: _altoController,
+                                    label: 'Alto (cm)',
+                                    icon: Icons.height_rounded,
                                     keyboardType: TextInputType.number,
                                   ),
                                 ),
@@ -817,53 +834,54 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                     ),
                   ],
                 ),
-                if (info.suburbs.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colores.inputBorder,
-                        width: 1,
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: selectedSuburb,
-                        isExpanded: true,
-                        hint: Text(
-                          'Selecciona la colonia',
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            color: Colores.textSecondary,
-                          ),
-                        ),
-                        icon: Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          color: Colores.primaryColor,
-                          size: 20,
-                        ),
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          color: Colores.textPrimary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        items: info.suburbs.map((suburb) {
-                          return DropdownMenuItem<String>(
-                            value: suburb,
-                            child: Text(
-                              suburb,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: onSuburbChanged,
-                      ),
-                    ),
-                  ),
-                ],
+                // Dropdown de colonia oculto - la selección automática sigue funcionando
+                // if (info.suburbs.isNotEmpty) ...[
+                //   const SizedBox(height: 8),
+                //   Container(
+                //     padding: const EdgeInsets.symmetric(horizontal: 12),
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.circular(8),
+                //       border: Border.all(
+                //         color: Colores.inputBorder,
+                //         width: 1,
+                //       ),
+                //     ),
+                //     child: DropdownButtonHideUnderline(
+                //       child: DropdownButton<String>(
+                //         value: selectedSuburb,
+                //         isExpanded: true,
+                //         hint: Text(
+                //           'Selecciona la colonia',
+                //           style: GoogleFonts.inter(
+                //             fontSize: 13,
+                //             color: Colores.textSecondary,
+                //           ),
+                //         ),
+                //         icon: Icon(
+                //           Icons.keyboard_arrow_down_rounded,
+                //           color: Colores.primaryColor,
+                //           size: 20,
+                //         ),
+                //         style: GoogleFonts.inter(
+                //           fontSize: 13,
+                //           color: Colores.textPrimary,
+                //           fontWeight: FontWeight.w500,
+                //         ),
+                //         items: info.suburbs.map((suburb) {
+                //           return DropdownMenuItem<String>(
+                //             value: suburb,
+                //             child: Text(
+                //               suburb,
+                //               overflow: TextOverflow.ellipsis,
+                //             ),
+                //           );
+                //         }).toList(),
+                //         onChanged: onSuburbChanged,
+                //       ),
+                //     ),
+                //   ),
+                // ],
               ],
             ),
           ),

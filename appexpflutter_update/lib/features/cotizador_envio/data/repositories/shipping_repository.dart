@@ -9,7 +9,7 @@ class ShippingRepository {
   ShippingRepository() : _apiClient = EnviaApiClient();
 
   /// Lista de carriers soportados
-  static const List<String> carriers = ['fedex', 'dhl', 'paquetexpress', 'redpack'];
+  static const List<String> carriers = ['paquetexpress', 'fedex', 'dhl', 'redpack'];
 
   /// Obtiene información del código postal desde la API de geocodes
   /// Solo necesita el código postal, devuelve ciudad, estado, colonias, etc.
