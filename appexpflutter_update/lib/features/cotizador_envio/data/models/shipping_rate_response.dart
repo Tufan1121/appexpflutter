@@ -54,6 +54,11 @@ class ShippingRate {
   });
 
   factory ShippingRate.fromJson(Map<String, dynamic> json) {
+    // Obtener el precio original y aplicar 20% de aumento con redondeo hacia arriba
+    final double originalPrice = (json['totalPrice'] ?? 0).toDouble();
+    final double priceWithMarkup = originalPrice * 1.20; // +20%
+    final double roundedPrice = priceWithMarkup.ceilToDouble(); // Redondeo hacia arriba
+
     return ShippingRate(
       carrierId: json['carrierId'] ?? 0,
       carrier: json['carrier'] ?? '',
@@ -65,7 +70,7 @@ class ShippingRate {
       deliveryDate: json['deliveryDate'] != null
           ? DeliveryDate.fromJson(json['deliveryDate'])
           : null,
-      totalPrice: (json['totalPrice'] ?? 0).toDouble(),
+      totalPrice: roundedPrice,
       currency: json['currency'] ?? 'MXN',
     );
   }

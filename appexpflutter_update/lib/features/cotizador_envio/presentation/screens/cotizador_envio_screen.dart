@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/repositories/shipping_repository.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/shipping_rate_response.dart';
+import 'package:appexpflutter_update/features/cotizador_envio/data/models/zipcode_info.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,9 +26,13 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
   final _anchoController = TextEditingController();
   final _pesoController = TextEditingController();
 
-  // Ciudades seleccionadas (Labels)
-  String? _selectedOriginCityLabel;
-  String? _selectedDestinationCityLabel;
+  // Información de ubicación obtenida automáticamente
+  ZipcodeInfo? _originInfo;
+  ZipcodeInfo? _destinationInfo;
+  String? _selectedOriginSuburb;
+  String? _selectedDestinationSuburb;
+  bool _isLoadingOrigin = false;
+  bool _isLoadingDestination = false;
 
   final ShippingRepository _shippingRepository = ShippingRepository();
 
@@ -35,30 +40,6 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
   Map<String, ShippingRateResponse>? _cotizaciones;
   String? _errorMessage;
   String _userName = '';
-
-  // Lista de Ciudades predefinidas que mapean a Ciudad y Estado
-  final List<Map<String, String>> _availableCities = [
-    {'label': 'Monterrey, NL', 'city': 'Monterrey', 'state': 'NL'},
-    {'label': 'San Pedro Garza García, NL', 'city': 'San Pedro Garza García', 'state': 'NL'},
-    {'label': 'Apodaca, NL', 'city': 'Apodaca', 'state': 'NL'},
-    {'label': 'Guadalupe, NL', 'city': 'Guadalupe', 'state': 'NL'},
-    {'label': 'Ciudad de México, CDMX', 'city': 'Ciudad de México', 'state': 'CMX'},
-    {'label': 'Guadalajara, JAL', 'city': 'Guadalajara', 'state': 'JAL'},
-    {'label': 'Zapopan, JAL', 'city': 'Zapopan', 'state': 'JAL'},
-    {'label': 'Puebla, PUE', 'city': 'Puebla', 'state': 'PUE'},
-    {'label': 'Querétaro, QRO', 'city': 'Querétaro', 'state': 'QRO'},
-    {'label': 'Mérida, YUC', 'city': 'Mérida', 'state': 'YUC'},
-    {'label': 'León, GTO', 'city': 'León', 'state': 'GTO'},
-    {'label': 'Tijuana, BC', 'city': 'Tijuana', 'state': 'BC'},
-    {'label': 'Hermosillo, SON', 'city': 'Hermosillo', 'state': 'SON'},
-    {'label': 'Saltillo, COAH', 'city': 'Saltillo', 'state': 'COAH'},
-    {'label': 'San Luis Potosí, SLP', 'city': 'San Luis Potosí', 'state': 'SLP'},
-    {'label': 'Toluca, MEX', 'city': 'Toluca', 'state': 'MEX'},
-    {'label': 'Cancún, QROO', 'city': 'Cancún', 'state': 'QROO'},
-    {'label': 'Veracruz, VER', 'city': 'Veracruz', 'state': 'VER'},
-    {'label': 'Chihuahua, CHIH', 'city': 'Chihuahua', 'state': 'CHIH'},
-    {'label': 'Aguascalientes, AGS', 'city': 'Aguascalientes', 'state': 'AGS'},
-  ];
 
   @override
   void initState() {
@@ -84,13 +65,82 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     super.dispose();
   }
 
+  /// Busca automáticamente la información del código postal de origen
+  Future<void> _buscarInfoOrigen() async {
+    final cp = _codigoPostalOrigenController.text.trim();
+    if (cp.length != 5) {
+      setState(() => _originInfo = null);
+      return;
+    }
+
+    setState(() => _isLoadingOrigin = true);
+    try {
+      final info = await _shippingRepository.getZipcodeInfo(cp);
+      setState(() {
+        _originInfo = info;
+        _selectedOriginSuburb = info?.suburbs.isNotEmpty == true ? info!.suburbs.first : null;
+        _isLoadingOrigin = false;
+      });
+    } catch (e) {
+      setState(() {
+        _originInfo = null;
+        _isLoadingOrigin = false;
+      });
+    }
+  }
+
+  /// Busca automáticamente la información del código postal de destino
+  Future<void> _buscarInfoDestino() async {
+    final cp = _codigoPostalDestinoController.text.trim();
+    if (cp.length != 5) {
+      setState(() => _destinationInfo = null);
+      return;
+    }
+
+    setState(() => _isLoadingDestination = true);
+    try {
+      final info = await _shippingRepository.getZipcodeInfo(cp);
+      setState(() {
+        _destinationInfo = info;
+        _selectedDestinationSuburb = info?.suburbs.isNotEmpty == true ? info!.suburbs.first : null;
+        _isLoadingDestination = false;
+      });
+    } catch (e) {
+      setState(() {
+        _destinationInfo = null;
+        _isLoadingDestination = false;
+      });
+    }
+  }
+
   Future<void> _calcularCotizacion() async {
     if (!_formKey.currentState!.validate()) return;
     
-    if (_selectedOriginCityLabel == null || _selectedDestinationCityLabel == null) {
+    // Validar códigos postales
+    if (_codigoPostalOrigenController.text.trim().length != 5 ||
+        _codigoPostalDestinoController.text.trim().length != 5) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Selecciona la ciudad de origen y destino', style: GoogleFonts.inter()),
+          content: Text('Los códigos postales deben tener 5 dígitos', style: GoogleFonts.inter()),
+          backgroundColor: Colores.errorColor,
+        ),
+      );
+      return;
+    }
+    if (_originInfo == null || _destinationInfo == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Espera a que se cargue la información de los códigos postales', style: GoogleFonts.inter()),
+          backgroundColor: Colores.errorColor,
+        ),
+      );
+      return;
+    }
+
+    if (_selectedOriginSuburb == null || _selectedDestinationSuburb == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Selecciona la colonia de origen y destino', style: GoogleFonts.inter()),
           backgroundColor: Colores.errorColor,
         ),
       );
@@ -104,18 +154,15 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     });
 
     try {
-      // Buscar los objetos de ciudad seleccionados
-      final originCityData = _availableCities.firstWhere((c) => c['label'] == _selectedOriginCityLabel);
-      final destCityData = _availableCities.firstWhere((c) => c['label'] == _selectedDestinationCityLabel);
-
       final cotizaciones = await _shippingRepository.getShippingRates(
-        userName: _userName,
-        originPostalCode: _codigoPostalOrigenController.text,
-        originCity: originCityData['city']!,
-        originState: originCityData['state']!,
-        destinationPostalCode: _codigoPostalDestinoController.text,
-        destinationCity: destCityData['city']!,
-        destinationState: destCityData['state']!,
+        originPostalCode: _codigoPostalOrigenController.text.trim(),
+        originCity: _originInfo!.locality,
+        originState: _originInfo!.stateCode2,
+        originDistrict: _selectedOriginSuburb!,
+        destinationPostalCode: _codigoPostalDestinoController.text.trim(),
+        destinationCity: _destinationInfo!.locality,
+        destinationState: _destinationInfo!.stateCode2,
+        destinationDistrict: _selectedDestinationSuburb!,
         height: double.parse(_altoController.text),
         length: double.parse(_largoController.text),
         width: double.parse(_anchoController.text),
@@ -143,8 +190,10 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     _anchoController.clear();
     _pesoController.clear();
     setState(() {
-      _selectedOriginCityLabel = null;
-      _selectedDestinationCityLabel = null;
+      _originInfo = null;
+      _destinationInfo = null;
+      _selectedOriginSuburb = null;
+      _selectedDestinationSuburb = null;
       _cotizaciones = null;
       _errorMessage = null;
     });
@@ -334,48 +383,30 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
                             // ORIGEN Section
                             _buildSectionTitle('Origen', Icons.flight_takeoff_rounded),
                             const SizedBox(height: 12),
-                            _buildCityDropdown(
-                              value: _selectedOriginCityLabel,
-                              label: 'Selecciona ciudad de origen',
-                              onChanged: (val) => setState(() => _selectedOriginCityLabel = val),
+                            _buildZipcodeField(
+                              controller: _codigoPostalOrigenController,
+                              label: 'Código Postal Origen',
+                              icon: Icons.location_on_outlined,
+                              info: _originInfo,
+                              isLoading: _isLoadingOrigin,
+                              onChanged: (_) => _buscarInfoOrigen(),
+                              selectedSuburb: _selectedOriginSuburb,
+                              onSuburbChanged: (val) => setState(() => _selectedOriginSuburb = val),
                             ),
                             const SizedBox(height: 20),
 
                             // DESTINO Section
                             _buildSectionTitle('Destino', Icons.flight_land_rounded),
                             const SizedBox(height: 12),
-                            _buildCityDropdown(
-                              value: _selectedDestinationCityLabel,
-                              label: 'Selecciona ciudad de destino',
-                              onChanged: (val) => setState(() => _selectedDestinationCityLabel = val),
-                            ),
-                            const SizedBox(height: 20),
-
-                            // Códigos Postales
-                            _buildSectionTitle('Códigos Postales', Icons.pin_drop_rounded),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildTextField(
-                                    controller: _codigoPostalOrigenController,
-                                    label: 'CP Origen',
-                                    icon: Icons.location_on_outlined,
-                                    keyboardType: TextInputType.number,
-                                    maxLength: 5,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: _buildTextField(
-                                    controller: _codigoPostalDestinoController,
-                                    label: 'CP Destino',
-                                    icon: Icons.my_location_rounded,
-                                    keyboardType: TextInputType.number,
-                                    maxLength: 5,
-                                  ),
-                                ),
-                              ],
+                            _buildZipcodeField(
+                              controller: _codigoPostalDestinoController,
+                              label: 'Código Postal Destino',
+                              icon: Icons.my_location_rounded,
+                              info: _destinationInfo,
+                              isLoading: _isLoadingDestination,
+                              onChanged: (_) => _buscarInfoDestino(),
+                              selectedSuburb: _selectedDestinationSuburb,
+                              onSuburbChanged: (val) => setState(() => _selectedDestinationSuburb = val),
                             ),
                             const SizedBox(height: 20),
 
@@ -658,52 +689,219 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
     );
   }
 
-  Widget _buildCityDropdown({
-    required String? value,
+  /// Widget para campo de código postal con información de ubicación automática
+  Widget _buildZipcodeField({
+    required TextEditingController controller,
     required String label,
-    required Function(String?) onChanged,
+    required IconData icon,
+    required ZipcodeInfo? info,
+    required bool isLoading,
+    required Function(String) onChanged,
+    required String? selectedSuburb,
+    required Function(String?) onSuburbChanged,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colores.inputBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colores.inputBorder,
-          width: 1,
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: value,
-          isExpanded: true,
-          hint: Text(
-            label,
-            style: GoogleFonts.inter(
-              color: Colores.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          dropdownColor: Colors.white,
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: Colores.primaryColor,
-          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Campo de texto del código postal
+        TextFormField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          maxLength: 5,
           style: GoogleFonts.inter(
             color: Colores.textPrimary,
             fontSize: 15,
             fontWeight: FontWeight.w500,
           ),
-          items: _availableCities.map((cityData) {
-            return DropdownMenuItem<String>(
-              value: cityData['label'],
-              child: Text(cityData['label']!),
-            );
-          }).toList(),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: GoogleFonts.inter(
+              color: Colores.textSecondary,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+            prefixIcon: Icon(
+              icon,
+              color: Colores.primaryColor,
+              size: 20,
+            ),
+            suffixIcon: isLoading
+                ? const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colores.primaryColor),
+                      ),
+                    ),
+                  )
+                : info != null
+                    ? const Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.green,
+                        size: 20,
+                      )
+                    : null,
+            counterText: '',
+            filled: true,
+            fillColor: Colores.inputBackground,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colores.inputBorder),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: info != null ? Colors.green.withValues(alpha: 0.5) : Colores.inputBorder,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colores.primaryColor, width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+          ),
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(5),
+          ],
           onChanged: onChanged,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Código postal requerido';
+            }
+            if (value.length != 5) {
+              return 'Debe tener 5 dígitos';
+            }
+            return null;
+          },
         ),
-      ),
+        // Información de ubicación y selector de colonia
+        if (info != null) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colores.primaryColor.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colores.primaryColor.withValues(alpha: 0.15),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.place_rounded,
+                      color: Colores.primaryColor,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${info.locality}, ${info.state.name}',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colores.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (info.suburbs.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colores.inputBorder,
+                        width: 1,
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedSuburb,
+                        isExpanded: true,
+                        hint: Text(
+                          'Selecciona la colonia',
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: Colores.textSecondary,
+                          ),
+                        ),
+                        icon: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Colores.primaryColor,
+                          size: 20,
+                        ),
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: Colores.textPrimary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        items: info.suburbs.map((suburb) {
+                          return DropdownMenuItem<String>(
+                            value: suburb,
+                            child: Text(
+                              suburb,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: onSuburbChanged,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ] else if (controller.text.length == 5 && !isLoading) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colores.errorColor.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: Colores.errorColor.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colores.errorColor,
+                  size: 18,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Código postal no encontrado',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colores.errorColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 

@@ -27,12 +27,14 @@ class Origin {
   final String state;
   final String country;
   final String postalCode;
+  final String district;
 
   Origin({
     this.city = '',
     this.state = '',
     this.country = 'MX',
     required this.postalCode,
+    this.district = '',
   });
 
   Map<String, dynamic> toJson() => {
@@ -40,6 +42,7 @@ class Origin {
         'state': state,
         'country': country,
         'postalCode': postalCode,
+        'district': district,
       };
 }
 
@@ -48,12 +51,14 @@ class Destination {
   final String state;
   final String country;
   final String postalCode;
+  final String district;
 
   Destination({
     this.city = '',
     this.state = '',
     this.country = 'MX',
     required this.postalCode,
+    this.district = '',
   });
 
   Map<String, dynamic> toJson() => {
@@ -61,6 +66,7 @@ class Destination {
         'state': state,
         'country': country,
         'postalCode': postalCode,
+        'district': district,
       };
 }
 

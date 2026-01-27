@@ -1,4 +1,4 @@
-import 'dart:io';
+
 import 'package:api_client/constants/environment.dart';
 import 'package:dio/dio.dart';
 
@@ -34,6 +34,27 @@ class EnviaApiClient {
         options: options,
         cancelToken: cancelToken,
       );
+    } on DioException {
+      rethrow;
+    }
+  }
+
+  /// Realiza una solicitud GET para obtener información de código postal
+  /// Endpoint: https://geocodes.envia.com/zipcode/{country}/{zipcode}
+  Future<Response<dynamic>> getZipcodeInfo(String zipCode, {String country = 'MX'}) async {
+    final geocodeDio = Dio(BaseOptions(
+      baseUrl: 'https://geocodes.envia.com',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${Environment.enviaToken}',
+      },
+      connectTimeout: const Duration(milliseconds: 15000),
+      receiveTimeout: const Duration(milliseconds: 15000),
+      responseType: ResponseType.json,
+    ));
+    
+    try {
+      return await geocodeDio.get('/zipcode/$country/$zipCode');
     } on DioException {
       rethrow;
     }
