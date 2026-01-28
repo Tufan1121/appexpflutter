@@ -248,12 +248,29 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       // Si hay un solo tipo de producto, cotización simple
       // Si hay varios tipos, cotizar en paralelo cada uno
       
+      print('DEBUG MODAL: Productos únicos = ${products.length}');
+      for (var p in products) {
+        print('DEBUG MODAL:   - ${p.productName} x${p.cantidad}');
+      }
+      
       if (products.length == 1) {
         // Caso simple: un solo tipo de producto
+        print('DEBUG MODAL: Usando _cotizarProductoUnico');
         await _cotizarProductoUnico(products.first);
       } else {
         // Caso múltiple: varios tipos de productos, cotizar en paralelo
+        print('DEBUG MODAL: Usando _cotizarMultiplesProductos');
         await _cotizarMultiplesProductos(products);
+      }
+      
+      // Log para verificar availableRates
+      if (_aggregatedQuotes != null) {
+        for (var entry in _aggregatedQuotes!.entries) {
+          print('DEBUG MODAL: Carrier ${entry.key} -> availableRates.length = ${entry.value.availableRates.length}');
+          for (var rate in entry.value.availableRates) {
+            print('DEBUG MODAL:    - ${rate.serviceDescription}: \$${rate.totalPrice}');
+          }
+        }
       }
 
       setState(() {
@@ -302,10 +319,17 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
           bestRate: null,
         );
       } else {
-        // Tomar la tarifa más barata de este carrier
-        final bestRate = response.data.reduce((a, b) => 
-          a.totalPrice < b.totalPrice ? a : b
-        );
+        print('DEBUG: Carrier $carrier devolvió ${response.data.length} tarifas');
+        for (var r in response.data) {
+          print('DEBUG:  - ${r.serviceDescription}: \$${r.totalPrice}');
+        }
+        
+        // Ordenar tarifas por precio
+        final rates = List<ShippingRate>.from(response.data)
+          ..sort((a, b) => a.totalPrice.compareTo(b.totalPrice));
+
+        // Tomar la tarifa más barata de este carrier (por defecto para el aggregated simple)
+        final bestRate = rates.first;
         
         aggregated[carrier] = _AggregatedQuote(
           carrier: carrier,
@@ -319,6 +343,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
           ],
           hasError: false,
           bestRate: bestRate,
+          availableRates: rates,
         );
       }
     }
@@ -327,6 +352,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
   }
 
   /// Cotización para múltiples tipos de productos (en paralelo)
+  /// Muestra TODAS las combinaciones de servicios disponibles
   Future<void> _cotizarMultiplesProductos(List<ProductShippingInfo> products) async {
     // Cotizar cada producto en paralelo
     final futures = products.map((product) async {
@@ -358,11 +384,11 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
     final aggregated = <String, _AggregatedQuote>{};
     
     for (final carrier in ShippingRepository.carriers) {
-      double totalCost = 0;
-      final breakdowns = <_ProductBreakdown>[];
       bool hasError = false;
       String? errorMsg;
-      ShippingRate? overallBestRate;
+      
+      // Recopilar todas las tarifas de este carrier para cada producto
+      final productRatesMap = <ProductShippingInfo, List<ShippingRate>>{};
       
       for (final result in results) {
         final product = result.key;
@@ -374,30 +400,155 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
           break;
         }
         
-        // Tomar la tarifa más barata para este producto
-        final bestRate = carrierResponse.data.reduce((a, b) => 
-          a.totalPrice < b.totalPrice ? a : b
-        );
-        
-        totalCost += bestRate.totalPrice;
-        breakdowns.add(_ProductBreakdown(
-          product: product,
-          cost: bestRate.totalPrice,
-          rate: bestRate,
-        ));
-        
-        // Guardar el rate para mostrar info general
-        overallBestRate ??= bestRate;
+        productRatesMap[product] = carrierResponse.data;
       }
       
-      aggregated[carrier] = _AggregatedQuote(
-        carrier: carrier,
-        totalCost: totalCost,
-        productBreakdown: breakdowns,
-        hasError: hasError,
-        errorMessage: errorMsg,
-        bestRate: overallBestRate,
-      );
+      if (hasError) {
+        aggregated[carrier] = _AggregatedQuote(
+          carrier: carrier,
+          totalCost: 0,
+          productBreakdown: [],
+          hasError: true,
+          errorMessage: errorMsg,
+          bestRate: null,
+          availableRates: [],
+        );
+        continue;
+      }
+      
+      // Obtener todos los serviceId únicos disponibles en TODOS los productos
+      // Un servicio solo es válido si está disponible para TODOS los productos
+      Set<int>? commonServiceIds;
+      for (final rates in productRatesMap.values) {
+        final serviceIds = rates.map((r) => r.serviceId).toSet();
+        if (commonServiceIds == null) {
+          commonServiceIds = serviceIds;
+        } else {
+          commonServiceIds = commonServiceIds.intersection(serviceIds);
+        }
+      }
+      
+      // Si no hay servicios en común, usar el servicio más barato de cada producto
+      if (commonServiceIds == null || commonServiceIds.isEmpty) {
+        // Fallback: usar el más barato de cada producto
+        double totalCost = 0;
+        final breakdowns = <_ProductBreakdown>[];
+        ShippingRate? bestRate;
+        
+        for (final entry in productRatesMap.entries) {
+          final product = entry.key;
+          final rates = entry.value;
+          final cheapest = rates.reduce((a, b) => a.totalPrice < b.totalPrice ? a : b);
+          totalCost += cheapest.totalPrice;
+          breakdowns.add(_ProductBreakdown(
+            product: product,
+            cost: cheapest.totalPrice,
+            rate: cheapest,
+          ));
+          bestRate ??= cheapest;
+        }
+        
+        // Crear un solo rate combinado para el fallback
+        if (bestRate != null) {
+          final combinedRate = ShippingRate(
+            carrierId: bestRate.carrierId,
+            carrier: bestRate.carrier,
+            carrierDescription: bestRate.carrierDescription,
+            serviceId: bestRate.serviceId,
+            service: bestRate.service,
+            serviceDescription: '${bestRate.serviceDescription} (combinado)',
+            deliveryEstimate: bestRate.deliveryEstimate,
+            deliveryDate: bestRate.deliveryDate,
+            totalPrice: totalCost,
+            currency: bestRate.currency,
+          );
+          
+          aggregated[carrier] = _AggregatedQuote(
+            carrier: carrier,
+            totalCost: totalCost,
+            productBreakdown: breakdowns,
+            hasError: false,
+            bestRate: combinedRate,
+            availableRates: [combinedRate],
+          );
+        }
+        continue;
+      }
+      
+      // Crear una tarifa combinada para cada servicio común
+      final combinedRates = <ShippingRate>[];
+      final allBreakdowns = <int, List<_ProductBreakdown>>{}; // serviceId -> breakdowns
+      
+      for (final serviceId in commonServiceIds) {
+        double serviceTotalCost = 0;
+        final serviceBreakdowns = <_ProductBreakdown>[];
+        ShippingRate? templateRate;
+        
+        for (final entry in productRatesMap.entries) {
+          final product = entry.key;
+          final rates = entry.value;
+          
+          // Buscar la tarifa con este serviceId
+          final rate = rates.firstWhere(
+            (r) => r.serviceId == serviceId,
+            orElse: () => rates.first,
+          );
+          
+          serviceTotalCost += rate.totalPrice;
+          serviceBreakdowns.add(_ProductBreakdown(
+            product: product,
+            cost: rate.totalPrice,
+            rate: rate,
+          ));
+          templateRate ??= rate;
+        }
+        
+        if (templateRate != null) {
+          // Crear una tarifa combinada con el precio total
+          final combinedRate = ShippingRate(
+            carrierId: templateRate.carrierId,
+            carrier: templateRate.carrier,
+            carrierDescription: templateRate.carrierDescription,
+            serviceId: templateRate.serviceId,
+            service: templateRate.service,
+            serviceDescription: templateRate.serviceDescription,
+            deliveryEstimate: templateRate.deliveryEstimate,
+            deliveryDate: templateRate.deliveryDate,
+            totalPrice: serviceTotalCost,
+            currency: templateRate.currency,
+          );
+          
+          combinedRates.add(combinedRate);
+          allBreakdowns[serviceId] = serviceBreakdowns;
+        }
+      }
+      
+      // Ordenar por precio
+      combinedRates.sort((a, b) => a.totalPrice.compareTo(b.totalPrice));
+      
+      if (combinedRates.isNotEmpty) {
+        final bestRate = combinedRates.first;
+        final bestBreakdowns = allBreakdowns[bestRate.serviceId] ?? [];
+        
+        aggregated[carrier] = _AggregatedQuote(
+          carrier: carrier,
+          totalCost: bestRate.totalPrice,
+          productBreakdown: bestBreakdowns,
+          hasError: false,
+          bestRate: bestRate,
+          availableRates: combinedRates,
+        );
+      } else {
+        aggregated[carrier] = _AggregatedQuote(
+          carrier: carrier,
+          totalCost: 0,
+          productBreakdown: [],
+          hasError: true,
+          errorMessage: 'Sin servicios disponibles',
+          bestRate: null,
+          availableRates: [],
+        );
+      }
     }
     
     _aggregatedQuotes = aggregated;
@@ -775,7 +926,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
         if (a.key.toLowerCase() == 'paquetexpress') return -1;
         if (b.key.toLowerCase() == 'paquetexpress') return 1;
         
-        // Luego por precio
+        // Luego por precio total (del mejor rate)
         return a.value.totalCost.compareTo(b.value.totalCost);
       });
 
@@ -786,11 +937,208 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       if (quote.hasError) {
         cards.add(_buildCarrierErrorCard(carrier, quote.errorMessage ?? 'Error'));
       } else {
-        cards.add(_buildSelectableQuoteCard(carrier, quote));
+        // Mostrar todas las tarifas disponibles para este carrier
+        if (quote.availableRates.isNotEmpty) {
+          for (final rate in quote.availableRates) {
+            cards.add(_buildSingleRateCard(carrier, rate, quote.productBreakdown));
+          }
+        } else if (quote.bestRate != null) {
+          // Fallback usando el bestRate si availableRates está vacío pero hay bestRate
+          cards.add(_buildSingleRateCard(carrier, quote.bestRate!, quote.productBreakdown));
+        }
       }
     }
 
     return cards;
+  }
+
+  Widget _buildSingleRateCard(String carrier, ShippingRate rate, List<_ProductBreakdown> breakdownInfo) {
+    final carrierColor = _getCarrierColor(carrier);
+    final hasMultipleProducts = breakdownInfo.length > 1;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            final description = '${rate.carrierDescription} - ${rate.serviceDescription}';
+            
+            // Generar el desglose por producto
+            String breakdown = '';
+            if (hasMultipleProducts) {
+               // Si es múltiple producto complejo, el rate individual quizás no aplique 1:1, 
+               // pero en el caso simple (1 producto) sí.
+               // Si estamos aquí con hasMultipleProducts=true, es porque usamos _cotizarMultiplesProductos
+               // donde availableRates tiene solo 1 elemento (el combinado), así que esto funciona igual.
+               final breakdownLines = breakdownInfo.map((b) => 
+                '  • ${b.product.productName} (${b.product.cantidad}u): \$${b.cost.toStringAsFixed(0)} MXN'
+              ).toList();
+              breakdown = 'Desglose:\n${breakdownLines.join('\n')}';
+            }
+            
+            widget.onShippingSelected(
+              rate.totalPrice,
+              carrier,
+              description,
+              breakdown,
+            );
+            Navigator.pop(context);
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[200]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header del carrier
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: carrierColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        _getCarrierIcon(carrier),
+                        color: carrierColor,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            rate.carrierDescription.isNotEmpty ? rate.carrierDescription : _getCarrierName(carrier),
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colores.textPrimary,
+                            ),
+                          ),
+                          Text(
+                            rate.serviceDescription,
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: Colores.textSecondary,
+                            ),
+                          ),
+                          if (rate.deliveryDate != null && rate.deliveryDate!.dateDifference > 0)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                'Entrega aprox: ${rate.deliveryDate!.dateDifference} ${rate.deliveryDate!.timeUnit}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: Colors.green[700],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            )
+                          else if (rate.deliveryEstimate.isNotEmpty)
+                             Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                'Entrega: ${rate.deliveryEstimate}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: Colors.green[700],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '\$${rate.totalPrice.toStringAsFixed(2)}',
+                          style: GoogleFonts.inter(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colores.primaryColor,
+                          ),
+                        ),
+                        Text(
+                          'MXN',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                if (hasMultipleProducts) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey[200]!),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Desglose:',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        ...breakdownInfo.map((item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '${item.product.productName} (${item.product.cantidad}u)',
+                                  style: GoogleFonts.inter(fontSize: 11, color: Colors.grey[600]),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Text(
+                                '\$${item.cost.toStringAsFixed(0)}',
+                                style: GoogleFonts.inter(fontSize: 11, color: Colors.grey[800], fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildCarrierErrorCard(String carrier, String error) {
@@ -1270,6 +1618,7 @@ class _AggregatedQuote {
   final bool hasError;
   final String? errorMessage;
   final ShippingRate? bestRate;
+  final List<ShippingRate> availableRates;
 
   _AggregatedQuote({
     required this.carrier,
@@ -1278,6 +1627,7 @@ class _AggregatedQuote {
     required this.hasError,
     this.errorMessage,
     this.bestRate,
+    this.availableRates = const [],
   });
 }
 
