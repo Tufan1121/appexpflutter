@@ -156,7 +156,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       
       // Pre-llenar observaciones con detalles de envío si hay
       if (UtilsVenta.hasShipping) {
-        final envioInfo = '[ENVÍO COTIZADO: ${UtilsVenta.shippingCarrier} - ${UtilsVenta.shippingServiceDescription} - \$${UtilsVenta.shippingCost.toStringAsFixed(2)} MXN]';
+        String envioInfo = '[ENVÍO COTIZADO: ${UtilsVenta.shippingCarrier} - ${UtilsVenta.shippingServiceDescription} - \$${UtilsVenta.shippingCost.toStringAsFixed(2)} MXN]';
+        if (UtilsVenta.shippingBreakdown.isNotEmpty) {
+          envioInfo += '\n${UtilsVenta.shippingBreakdown}';
+        }
         form.control('observaciones').value = envioInfo;
       }
       
@@ -660,7 +663,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       // Construir observaciones incluyendo detalles de envío si hay
       String observaciones = form.control('observaciones').value ?? '';
       if (UtilsVenta.hasShipping) {
-        final envioInfo = '\n[ENVÍO COTIZADO: ${UtilsVenta.shippingCarrier} - ${UtilsVenta.shippingServiceDescription} - \$${UtilsVenta.shippingCost.toStringAsFixed(2)} MXN]';
+        String envioInfo = '\n[ENVÍO COTIZADO: ${UtilsVenta.shippingCarrier} - ${UtilsVenta.shippingServiceDescription} - \$${UtilsVenta.shippingCost.toStringAsFixed(2)} MXN]';
+        if (UtilsVenta.shippingBreakdown.isNotEmpty) {
+          envioInfo += '\n${UtilsVenta.shippingBreakdown}';
+        }
         observaciones = observaciones.isEmpty ? envioInfo.trim() : '$observaciones$envioInfo';
       }
 

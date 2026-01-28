@@ -16,21 +16,34 @@ class UtilsVenta {
   /// Descripción del servicio de envío (vacío si no hay envío)
   static String shippingServiceDescription = '';
   
+  /// Desglose de costos por producto (para observaciones)
+  static String shippingBreakdown = '';
+  
   /// Indica si se ha seleccionado un envío
   static bool get hasShipping => shippingCost > 0;
   
   /// Total incluyendo envío
   static double get totalWithShipping => total + shippingCost;
   
+  /// Obtiene la descripción completa del envío incluyendo desglose
+  static String get fullShippingDescription {
+    if (shippingBreakdown.isEmpty) {
+      return shippingServiceDescription;
+    }
+    return '$shippingServiceDescription\\n$shippingBreakdown';
+  }
+  
   /// Establece el envío seleccionado
   static void setShipping({
     required double cost,
     required String carrier,
     required String serviceDescription,
+    String breakdown = '',
   }) {
     shippingCost = cost;
     shippingCarrier = carrier;
     shippingServiceDescription = serviceDescription;
+    shippingBreakdown = breakdown;
   }
   
   /// Limpia la información del envío
@@ -38,6 +51,7 @@ class UtilsVenta {
     shippingCost = 0;
     shippingCarrier = '';
     shippingServiceDescription = '';
+    shippingBreakdown = '';
   }
   
   /// Limpia toda la información de la venta
@@ -47,3 +61,4 @@ class UtilsVenta {
     clearShipping();
   }
 }
+

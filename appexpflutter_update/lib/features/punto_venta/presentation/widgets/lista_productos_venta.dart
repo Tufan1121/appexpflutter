@@ -2,7 +2,8 @@ import 'package:appexpflutter_update/features/punto_venta/domain/entities/produc
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
-import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/shipping_quote_modal.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/shipping_quote_modal_v2.dart';
+import 'package:appexpflutter_update/features/cotizador_envio/data/models/product_shipping_info.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,6 +101,34 @@ class ListaProductosVenta extends HookWidget {
       return null;
     }, [productos.length]);
 
+    // Construye la lista de productos con dimensiones para cotización
+    List<ProductShippingInfo> buildProductsForQuote() {
+      final List<ProductShippingInfo> result = [];
+      for (int i = 0; i < productos.length; i++) {
+        if (i < countList.value.length && countList.value[i] > 0) {
+          final producto = productos[i];
+          // Usar dimensiones reales del producto
+          final double largo = (producto.largo ?? 0) > 0 ? producto.largo! : 30;
+          final double ancho = (producto.ancho ?? 0) > 0 ? producto.ancho! : 20;
+          // Estimar alto basado en el tipo de producto (tapetes suelen ser planos)
+          final double alto = 10.0; // Alto estimado por defecto
+          // Peso estimado: 1.5kg por unidad
+          final double peso = 1.5;
+          
+          result.add(ProductShippingInfo(
+            productKey: producto.producto1,
+            productName: producto.producto,
+            largo: largo,
+            ancho: ancho,
+            alto: alto,
+            peso: peso,
+            cantidad: countList.value[i],
+          ));
+        }
+      }
+      return result;
+    }
+
     return Column(
       children: [
         // Card de Totales y Envío
@@ -132,11 +161,12 @@ class ListaProductosVenta extends HookWidget {
                            return;
                          }
                         
-                         ShippingQuoteModal.show(
+                         final productsForQuote = buildProductsForQuote();
+                         ShippingQuoteModalV2.show(
                           context: context,
-                          productCount: totalCount > 0 ? totalCount : 1,
-                          onShippingSelected: (price, carrier, description) {
-                            UtilsVenta.setShipping(price, carrier, description);
+                          products: productsForQuote,
+                          onShippingSelected: (price, carrier, description, breakdown) {
+                            UtilsVenta.setShipping(price, carrier, description, breakdown);
                             shippingCost.value = price;
                             updateTotal(); // Actualizar totales
                           },
