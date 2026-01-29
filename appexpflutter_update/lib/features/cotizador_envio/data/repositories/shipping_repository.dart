@@ -139,7 +139,10 @@ class ShippingRepository {
           weight: weight,
         ),
       ],
-      shipment: Shipment(carrier: carrier),
+      shipment: Shipment(
+        carrier: carrier,
+        type: carrier == 'tresguerras' ? 2 : 1, // Tresguerras requiere type 2 (LTL/Pallet) para cotizar
+      ),
       settings: Settings(),
     );
   }
