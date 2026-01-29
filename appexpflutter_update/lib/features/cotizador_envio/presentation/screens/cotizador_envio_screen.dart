@@ -252,11 +252,13 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      resizeToAvoidBottomInset: true,
-      body: GeometricalBackground(
-        child: Column(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: true,
+        body: GeometricalBackground(
+          child: Column(
           children: [
             // Custom App Bar
             SafeArea(
@@ -613,6 +615,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
               ),
             ),
           ],
+          ),
         ),
       ),
     );

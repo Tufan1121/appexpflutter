@@ -609,13 +609,15 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
-    return Container(
-      height: mediaQuery.size.height * 0.9,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Container(
+        height: mediaQuery.size.height * 0.9,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
         children: [
           // Handle bar
           Container(
@@ -698,7 +700,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
           // Content
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + mediaQuery.viewInsets.bottom),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -808,6 +810,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

@@ -127,9 +127,13 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
 
       return null;
     }, []);
-    return LayoutScreens(
-      onPressed: () => Navigator.pop(context),
-      titleScreen: 'COTIZACION PEDIDO',
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: LayoutScreens(
+        resizeToAvoidBottomInset: true,
+        onPressed: () => Navigator.pop(context),
+        titleScreen: 'COTIZACION PEDIDO',
       child: Column(
         children: [
           const SizedBox(
@@ -371,6 +375,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
           )
         ],
       ),
+    ),
     );
   }
 
