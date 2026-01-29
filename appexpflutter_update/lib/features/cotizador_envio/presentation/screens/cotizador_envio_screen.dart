@@ -209,7 +209,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
         return Icons.flight_rounded;
       case 'estafeta':
         return Icons.delivery_dining_rounded;
-      case 'redpack':
+      case 'tresguerras':
         return Icons.markunread_mailbox_rounded;
       default:
         return Icons.local_shipping_rounded;
@@ -226,8 +226,8 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
         return const Color(0xFFFFCC00); // DHL yellow
       case 'estafeta':
         return const Color(0xFF00A651); // Estafeta green
-      case 'redpack':
-        return const Color(0xFFD32F2F); // Redpack red
+      case 'tresguerras':
+        return const Color(0xFFD32F2F); // tresguerras red
       default:
         return Colores.primaryColor;
     }
@@ -243,8 +243,8 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
         return 'DHL Express';
       case 'estafeta':
         return 'Estafeta';
-      case 'redpack':
-        return 'Redpack';
+      case 'tresguerras':
+        return 'tresguerras';
       default:
         return carrier.toUpperCase();
     }

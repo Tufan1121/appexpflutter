@@ -237,7 +237,7 @@ class _ShippingQuoteModalState extends State<ShippingQuoteModal> {
         return Icons.flight_rounded;
       case 'estafeta':
         return Icons.delivery_dining_rounded;
-      case 'redpack':
+      case 'tresguerras':
         return Icons.markunread_mailbox_rounded;
       default:
         return Icons.local_shipping_rounded;
@@ -254,7 +254,7 @@ class _ShippingQuoteModalState extends State<ShippingQuoteModal> {
         return const Color(0xFFFFCC00);
       case 'estafeta':
         return const Color(0xFF00A651);
-      case 'redpack':
+      case 'tresguerras':
         return const Color(0xFFD32F2F);
       default:
         return Colores.primaryColor;
@@ -271,8 +271,8 @@ class _ShippingQuoteModalState extends State<ShippingQuoteModal> {
         return 'DHL Express';
       case 'estafeta':
         return 'Estafeta';
-      case 'redpack':
-        return 'Redpack';
+      case 'tresguerras':
+        return 'tresguerras';
       default:
         return carrier.toUpperCase();
     }
