@@ -159,6 +159,7 @@ class _ShippingQuoteModalState extends State<ShippingQuoteModal> {
   }
 
   Future<void> _calcularCotizacion() async {
+    FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
 
     // Validar códigos postales
@@ -371,7 +372,8 @@ class _ShippingQuoteModalState extends State<ShippingQuoteModal> {
           // Content
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + mediaQuery.viewInsets.bottom),
               child: Form(
                 key: _formKey,
                 child: Column(

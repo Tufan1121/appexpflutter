@@ -202,6 +202,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
 
   /// Cotiza envíos para todos los productos (en paralelo si son diferentes)
   Future<void> _calcularCotizacion() async {
+    FocusScope.of(context).unfocus(); // Cerrar teclado
     if (!_formKey.currentState!.validate()) return;
 
     // Validar códigos postales
@@ -700,6 +701,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
           // Content
           Expanded(
             child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + mediaQuery.viewInsets.bottom),
               child: Form(
                 key: _formKey,

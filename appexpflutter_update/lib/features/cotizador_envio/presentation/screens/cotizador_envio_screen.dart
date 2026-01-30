@@ -114,6 +114,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
   }
 
   Future<void> _calcularCotizacion() async {
+    FocusScope.of(context).unfocus(); // Cerrar teclado al iniciar cotización
     if (!_formKey.currentState!.validate()) return;
     
     // Validar códigos postales
@@ -306,6 +307,7 @@ class _CotizadorEnvioScreenState extends State<CotizadorEnvioScreen> {
             // Content
             Expanded(
               child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
