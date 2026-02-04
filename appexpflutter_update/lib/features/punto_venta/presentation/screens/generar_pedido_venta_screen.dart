@@ -96,10 +96,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     useEffect(() {
       // Pre-llenar observaciones con detalles de envío si hay
       if (UtilsVenta.hasShipping) {
-        String envioInfo = '[ENVÍO COTIZADO: ${UtilsVenta.shippingCarrier} - ${UtilsVenta.shippingServiceDescription} - \$${UtilsVenta.shippingCost.toStringAsFixed(2)} MXN]';
-        if (UtilsVenta.shippingBreakdown.isNotEmpty) {
-          envioInfo += '\n${UtilsVenta.shippingBreakdown}';
-        }
+        String envioInfo = 'Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}';
         form.control('observaciones').value = envioInfo;
       }
 
@@ -579,11 +576,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       // Construir observaciones incluyendo detalles de envío si hay
       String observaciones = form.control('observaciones').value ?? '';
       if (UtilsVenta.hasShipping) {
-        String envioInfo = '\n[ENVÍO COTIZADO: ${UtilsVenta.shippingCarrier} - ${UtilsVenta.shippingServiceDescription} - \$${UtilsVenta.shippingCost.toStringAsFixed(2)} MXN]';
-        if (UtilsVenta.shippingBreakdown.isNotEmpty) {
-          envioInfo += '\n${UtilsVenta.shippingBreakdown}';
-        }
-        observaciones = observaciones.isEmpty ? envioInfo.trim() : '$observaciones$envioInfo';
+        String envioInfo = 'Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}';
+        observaciones = observaciones.isEmpty ? envioInfo : '$observaciones $envioInfo';
       }
 
       final double anticipoPago = form.control('anticipoPago1').value ?? 0.0;
