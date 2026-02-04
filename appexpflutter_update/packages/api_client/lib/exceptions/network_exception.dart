@@ -45,30 +45,48 @@ class NetworkException extends Equatable implements Exception {
         final data = dioException.response?.data;
         statusCode = dioException.response?.statusCode;
 
-        if (statusCode == 404) {
-          if (data is Map<String, dynamic> && data.containsKey('detail')) {
-            message = data['detail'];
-          } else {
-            message =
-                'No se encontraron elementos que coincidan con la búsqueda';
+        String? parsedMessage;
+
+        if (data is Map<String, dynamic>) {
+          if (data.containsKey('detail') && data['detail'] != null) {
+            parsedMessage = data['detail'].toString();
+          } else if (data.containsKey('message') && data['message'] != null) {
+            parsedMessage = data['message'].toString();
+          } else if (data.containsKey('error') && data['error'] != null) {
+            parsedMessage = data['error'].toString();
+          } else if (data.containsKey('status_message') &&
+              data['status_message'] != null) {
+            parsedMessage = data['status_message'].toString();
+          } else if (data.containsKey('errors')) {
+            // Handle validation errors often returned as a map or list
+            final errors = data['errors'];
+            if (errors is Map) {
+              // Join all error messages
+              parsedMessage = errors.values.join('\n');
+            } else if (errors is List) {
+              parsedMessage = errors.join('\n');
+            } else {
+              parsedMessage = errors.toString();
+            }
           }
+        } else if (data is String) {
+          parsedMessage = data;
+        }
+
+        if (statusCode == 404) {
+          message = parsedMessage ??
+              'No se encontraron elementos que coincidan con la búsqueda';
         } else if (statusCode == 500) {
           message =
-              'Error del servidor. Por favor, inténtelo de nuevo más tarde.';
-        } else if (statusCode == 400) {
-          message = data['detail'];
+              'Error del servidor. ${parsedMessage ?? "Por favor, inténtelo de nuevo más tarde."}';
+        } else if (statusCode == 400 || statusCode == 422) {
+          message =
+              parsedMessage ?? 'Error en la solicitud. Verifique los datos.';
         } else if (statusCode == 403) {
-          message = data['detail'];
-        } else if (statusCode == 422) {
-          message = 'Error de validación (422): ${data['detail']}';
+          message = parsedMessage ?? 'No tiene permisos para realizar esta acción.';
         } else {
-          if (data is Map<String, dynamic>) {
-            final model = NetworkErrorModel.fromJson(data);
-            message = model.statusMessage ?? 'Error inesperado';
-          } else {
-            message =
-                'Error inesperado: ${dioException.response?.statusMessage ?? 'error desconocido'}';
-          }
+          message = parsedMessage ??
+              'Error inesperado: ${dioException.response?.statusMessage ?? 'Código $statusCode'}';
         }
         break;
 

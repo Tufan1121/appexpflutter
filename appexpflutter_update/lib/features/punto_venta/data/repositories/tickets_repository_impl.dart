@@ -26,7 +26,7 @@ class TicketsRepositoryImpl implements TicketsRepository {
       return Left(NetworkException.fromDioError(e));
     } catch (e) {
       return Left(
-          NetworkException.customMessage('Ocurrió un error inesperado. '));
+          NetworkException.customMessage('Error inesperado: $e'));
     }
   }
 }
