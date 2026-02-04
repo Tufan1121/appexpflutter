@@ -116,7 +116,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       // Trigger initial load of payment info
       context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
 
-      return null;
+      return () {
+        UtilsVenta.clearShipping();
+      };
     }, []);
 
     return Scaffold(
@@ -321,6 +323,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                 context
                                     .read<HistorialBloc>()
                                     .add(ClearHistorialEvent());
+
+                                // Limpiar datos de venta y envío estáticos
+                                UtilsVenta.clearAll();
                               } else if (state is PedidoError) {
                                 loading.value = false;
                                 ScaffoldMessenger.of(context).showSnackBar(

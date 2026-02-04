@@ -74,7 +74,9 @@ class ListaProductos extends HookWidget {
 
     useEffect(() {
       updateTotal(); // Initial calculation
-      return null; // No cleanup needed
+      return () {
+        UtilsVenta.clearShipping();
+      };
     }, [countList.value, selectedPriceList.value]);
 
     useEffect(() {

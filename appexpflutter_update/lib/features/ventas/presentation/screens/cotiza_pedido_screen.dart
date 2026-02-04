@@ -125,7 +125,9 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
           .valueChanges
           .listen((_) => updateDebePorPagar());
 
-      return null;
+      return () {
+        UtilsVenta.clearShipping();
+      };
     }, []);
 
     return GestureDetector(
@@ -312,6 +314,10 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                             .add(ClearPedidoCotizaEvent());
                                         context.read<InventarioBloc>().add(
                                             ClearInventarioProductoEvent());
+                                            
+                                        // Limpiar datos de venta y envío estáticos
+                                        UtilsVenta.clearAll();
+                                        
                                         HomeRoute().go(context);
                                       } else if (state is PedidoCotizaError) {
                                         loading.value = false;

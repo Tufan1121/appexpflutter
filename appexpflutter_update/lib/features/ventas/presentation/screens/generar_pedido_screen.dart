@@ -173,7 +173,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
           .valueChanges
           .listen((_) => updateDebePorPagar());
 
-      return null;
+      return () {
+        UtilsVenta.clearShipping();
+      };
     }, []);
 
     return Scaffold(
@@ -406,6 +408,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                 context
                                     .read<HistorialBloc>()
                                     .add(ClearHistorialEvent());
+                                
+                                // Limpiar datos de venta y envío estáticos
+                                UtilsVenta.clearAll();
                               } else if (state is PedidoError) {
                                 loading.value = false;
                                 ScaffoldMessenger.of(context).showSnackBar(
