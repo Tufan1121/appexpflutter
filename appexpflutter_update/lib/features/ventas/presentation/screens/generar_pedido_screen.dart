@@ -657,12 +657,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       final metodo3 = form.control('metodoDePago3').value != null
           ? getMetodoDePagoId(form.control('metodoDePago3').value)
           : 0;
-      // Construir observaciones incluyendo detalles de envío si hay
+      // Las observaciones ya incluyen el texto de envío si fue cotizado
       String observaciones = form.control('observaciones').value ?? '';
-      if (UtilsVenta.hasShipping) {
-        String envioInfo = 'Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}';
-        observaciones = observaciones.isEmpty ? envioInfo : '$observaciones $envioInfo';
-      }
 
       final double anticipoPago = form.control('anticipoPago1').value ?? 0.0;
       final double anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
