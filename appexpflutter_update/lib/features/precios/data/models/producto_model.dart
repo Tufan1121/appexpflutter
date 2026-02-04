@@ -52,6 +52,10 @@ class ProductoModel extends ProductoEntity
     required super.bodega2,
     required super.bodega3,
     required super.bodega4,
+    super.largop,
+    super.anchop,
+    super.altop,
+    super.peso,
   });
   factory ProductoModel.fromJson(Map<String, dynamic> json) {
    // la cadena de fecha en un objeto DateTime
@@ -62,6 +66,14 @@ class ProductoModel extends ProductoEntity
       } catch (e) {
         parsedDate = null; 
       }
+    }
+
+    // Helper para parsear campos de dimensiones de paquete (pueden ser null, 0.0 o ausentes)
+    double? parsePackageDimension(dynamic value) {
+      if (value == null) return null;
+      final parsed = (value as num?)?.toDouble();
+      // Tratar 0.0 como null (no hay dato)
+      return (parsed != null && parsed > 0) ? parsed : null;
     }
 
     return ProductoModel(
@@ -113,6 +125,10 @@ class ProductoModel extends ProductoEntity
       bodega2: json['bodega2'],
       bodega3: json['bodega3'],
       bodega4: json['bodega4'],
+      largop: parsePackageDimension(json['largop']),
+      anchop: parsePackageDimension(json['anchop']),
+      altop: parsePackageDimension(json['altop']),
+      peso: parsePackageDimension(json['peso']),
     );
   }
 
@@ -166,5 +182,9 @@ class ProductoModel extends ProductoEntity
         bodega2: bodega2,
         bodega3: bodega3,
         bodega4: bodega4,
+        largop: largop,
+        anchop: anchop,
+        altop: altop,
+        peso: peso,
       );
 }

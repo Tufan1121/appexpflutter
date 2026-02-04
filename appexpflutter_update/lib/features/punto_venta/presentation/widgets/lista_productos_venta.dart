@@ -107,13 +107,13 @@ class ListaProductosVenta extends HookWidget {
       for (int i = 0; i < productos.length; i++) {
         if (i < countList.value.length && countList.value[i] > 0) {
           final producto = productos[i];
-          // Usar dimensiones reales del producto
-          final double largo = (producto.largo ?? 0) > 0 ? producto.largo! : 30;
-          final double ancho = (producto.ancho ?? 0) > 0 ? producto.ancho! : 20;
-          // Estimar alto basado en el tipo de producto (tapetes suelen ser planos)
-          final double alto = 10.0; // Alto estimado por defecto
-          // Peso estimado: 1.5kg por unidad
-          final double peso = 1.5;
+          
+          // Usar dimensiones de paquete del backend si están disponibles (largop, anchop, altop, pesoEnvio)
+          // Si no están disponibles, usar fallback basado en medidas del producto
+          final double largo = producto.largop ?? ((producto.largo ?? 0) > 0 ? producto.largo! * 100 : 30); // convertir m a cm
+          final double ancho = producto.anchop ?? ((producto.ancho ?? 0) > 0 ? producto.ancho! * 100 : 20);
+          final double alto = producto.altop ?? 10.0; // Alto estimado por defecto si no viene del backend
+          final double peso = producto.pesoEnvio ?? 1.5; // Peso estimado por defecto si no viene del backend
           
           result.add(ProductShippingInfo(
             productKey: producto.producto1,

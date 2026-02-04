@@ -49,6 +49,11 @@ class ProductoEntity extends Equatable {
   final double bodega2;
   final double bodega3;
   final double bodega4;
+  // Dimensiones de paquete para envío (pueden ser null si no están disponibles)
+  final double? largop;
+  final double? anchop;
+  final double? altop;
+  final double? peso;
 
   const ProductoEntity({
     required this.producto,
@@ -99,6 +104,10 @@ class ProductoEntity extends Equatable {
     required this.bodega2,
     required this.bodega3,
     required this.bodega4,
+    this.largop,
+    this.anchop,
+    this.altop,
+    this.peso,
   });
 
   ProductoEntity copyWith({
@@ -140,6 +149,10 @@ class ProductoEntity extends Equatable {
     double? bodega2,
     double? bodega3,
     double? bodega4,
+    double? largop,
+    double? anchop,
+    double? altop,
+    double? peso,
   }) =>
       ProductoEntity(
         producto: producto ?? this.producto,
@@ -180,6 +193,10 @@ class ProductoEntity extends Equatable {
         bodega2: bodega2 ?? this.bodega2,
         bodega3: bodega3 ?? this.bodega3,
         bodega4: bodega4 ?? this.bodega4,
+        largop: largop ?? this.largop,
+        anchop: anchop ?? this.anchop,
+        altop: altop ?? this.altop,
+        peso: peso ?? this.peso,
       );
 
   @override
@@ -227,5 +244,9 @@ class ProductoEntity extends Equatable {
         descrip,
         skuph,
         precioph,
+        largop,
+        anchop,
+        altop,
+        peso,
       ];
 }
