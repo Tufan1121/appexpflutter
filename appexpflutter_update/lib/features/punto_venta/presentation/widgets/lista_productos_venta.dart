@@ -224,9 +224,9 @@ class ListaProductosVenta extends HookWidget {
           ),
         ),
 
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.55,
-          child: ListView.builder(
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
             itemCount: productos.length,
             itemBuilder: (context, index) {
               final producto = productos[index];
@@ -476,7 +476,6 @@ class ListaProductosVenta extends HookWidget {
               );
             },
           ),
-        ),
       ],
     );
   }

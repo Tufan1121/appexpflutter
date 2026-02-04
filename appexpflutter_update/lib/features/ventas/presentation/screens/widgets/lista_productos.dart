@@ -348,9 +348,9 @@ class ListaProductos extends HookWidget {
             ],
           ),
         ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.55,
-          child: ListView.builder(
+        ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: productos.length,
             // Importante: Usar key en el item para que Flutter mantenga el estado correcto al eliminar
             itemBuilder: (context, index) {
@@ -593,7 +593,6 @@ class ListaProductos extends HookWidget {
               );
             },
           ),
-        ),
       ],
     );
   }

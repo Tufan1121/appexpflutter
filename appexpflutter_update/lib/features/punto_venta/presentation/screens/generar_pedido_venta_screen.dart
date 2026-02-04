@@ -157,7 +157,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
-              height: 700, // 80 los dos sizebox
+              height: MediaQuery.of(context).size.height * 0.85, // 80 los dos sizebox, dinámico
               width: double.infinity,
               child: Card(
                 elevation: 4.0,

@@ -144,7 +144,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
-              height: 700, // 80 los dos sizebox
+              height: MediaQuery.of(context).size.height * 0.85, // 80 los dos sizebox
               width: double.infinity,
 
               child: Card(
