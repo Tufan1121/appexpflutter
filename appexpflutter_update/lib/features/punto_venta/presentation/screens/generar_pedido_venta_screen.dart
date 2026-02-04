@@ -716,6 +716,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
         'cuenta3': cuenta3?.cuenta ?? terminal3?.cuenta ?? '',
         'dig3': '',  // No existe en los endpoints, siempre vacío
         'terminal3': terminal3?.id ?? '',
+        'envio': UtilsVenta.shippingCost,
       };
 
       // DEBUG: Mostrar JSON completo que se enviará

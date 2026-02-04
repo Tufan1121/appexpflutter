@@ -797,6 +797,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         'cuenta3': cuenta3?.cuenta ?? terminal3?.cuenta ?? '',
         'dig3': '',  // No existe en los endpoints, siempre vacío
         'terminal3': terminal3?.id ?? '',
+        'envio': UtilsVenta.shippingCost,
       };
 
       context.read<PedidoBloc>().add(
