@@ -128,16 +128,49 @@ class ListaProductos extends HookWidget {
           print('      anchop: ${producto.anchop}');
           print('      altop: ${producto.altop}');
           print('      peso: ${producto.peso}');
-          print('   📐 Dimensiones de PRODUCTO (largo/ancho):');
+          print('   📐 Dimensiones de PRODUCTO (largo/ancho en metros):');
           print('      largo: ${producto.largo}');
           print('      ancho: ${producto.ancho}');
           
-          // Usar dimensiones de paquete del backend si están disponibles (largop, anchop, altop, peso)
-          // Si no están disponibles, usar fallback basado en medidas del producto
-          final double largo = producto.largop ?? (producto.largo > 0 ? producto.largo * 100 : 30); // convertir m a cm si es medida de producto
-          final double ancho = producto.anchop ?? (producto.ancho > 0 ? producto.ancho * 100 : 20);
-          final double alto = producto.altop ?? 10.0; // Alto estimado por defecto si no viene del backend
-          final double peso = producto.peso ?? 1.5; // Peso estimado por defecto si no viene del backend
+          // Prioridad: usar dimensiones de paquete si existen, si no usar dimensiones del producto
+          double largo;
+          double ancho;
+          double alto;
+          double peso;
+          
+          // Si tenemos dimensiones de paquete del backend, usarlas
+          if (producto.largop != null && producto.largop! > 0) {
+            largo = producto.largop!;
+          } else if (producto.largo > 0) {
+            // Convertir largo del producto de metros a cm
+            largo = producto.largo * 100;
+          } else {
+            largo = 30.0; // Valor por defecto
+          }
+          
+          if (producto.anchop != null && producto.anchop! > 0) {
+            ancho = producto.anchop!;
+          } else if (producto.ancho > 0) {
+            // Convertir ancho del producto de metros a cm
+            ancho = producto.ancho * 100;
+          } else {
+            ancho = 20.0; // Valor por defecto
+          }
+          
+          if (producto.altop != null && producto.altop! > 0) {
+            alto = producto.altop!;
+          } else {
+            // Estimar alto basado en si es un tapete enrollado (diámetro aprox)
+            alto = 15.0; // Valor por defecto para tapete enrollado
+          }
+          
+          if (producto.peso != null && producto.peso! > 0) {
+            peso = producto.peso!;
+          } else {
+            // Estimar peso basado en el área del producto (m2) * factor de peso por m2
+            final area = producto.largo * producto.ancho;
+            peso = area > 0 ? (area * 3.0).clamp(1.5, 50.0) : 2.0; // ~3kg por m2, mínimo 1.5kg, máximo 50kg
+          }
           
           // DEBUG: Imprimir valores calculados
           print('   ✅ Valores USADOS para cotización:');
