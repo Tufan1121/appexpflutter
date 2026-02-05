@@ -212,25 +212,26 @@ class _LoginFormState extends State<LoginForm> {
                                 width: double.infinity,
                                 onPressed: isLoading ? null : _submitForm,
                               ),
-                              const SizedBox(height: 16),
-                              ModernButton(
-                                text: 'Modo Demo',
-                                isGradient: false,
-                                isOutlined: true,
-                                width: double.infinity,
-                                icon: Icons.explore_rounded,
-                                onPressed: isLoading
-                                    ? null
-                                    : () {
-                                        // Use the specific demo token provided
-                                        const demoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIZWxtdXQgSGVpc2UiLCJkaWdzaWciOiIyMDgiLCJyZWdnIjoxMDAzLCJtb3ZpbCI6IiIsImtpbmQiOjEsImRlc2NyaXBjaW8iOiJFWFBPUyBHREwiLCJ0b2tlbiI6IiIsImNlbXAiOiJUVUZBTiIsImV4cCI6MTc2OTcyNjU5MX0.enEKLT4U13NT7UFwDX2Rga6oEQWTuO9apFQ5far7tug";
-                                        context.read<AuthBloc>().add(const DemoLoginEvent(demoToken));
-                                        // Navigation is handled by the BlocListener listening for AuthAuthenticated
-                                      },
-                              ),
+                              // Demo button - commented out for now, will be used later
+                              // const SizedBox(height: 16),
+                              // ModernButton(
+                              //   text: 'Modo Demo',
+                              //   isGradient: false,
+                              //   isOutlined: true,
+                              //   width: double.infinity,
+                              //   icon: Icons.explore_rounded,
+                              //   onPressed: isLoading
+                              //       ? null
+                              //       : () {
+                              //           // Use the specific demo token provided
+                              //           const demoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIZWxtdXQgSGVpc2UiLCJkaWdzaWciOiIyMDgiLCJyZWdnIjoxMDAzLCJtb3ZpbCI6IiIsImtpbmQiOjEsImRlc2NyaXBjaW8iOiJFWFBPUyBHREwiLCJ0b2tlbiI6IiIsImNlbXAiOiJUVUZBTiIsImV4cCI6MTc2OTcyNjU5MX0.enEKLT4U13NT7UFwDX2Rga6oEQWTuO9apFQ5far7tug";
+                              //           context.read<AuthBloc>().add(const DemoLoginEvent(demoToken));
+                              //           // Navigation is handled by the BlocListener listening for AuthAuthenticated
+                              //         },
+                              // ),
                               const SizedBox(height: 8),
                               Text(
-                                'v1.0.8',
+                                'v1.0.9',
                                 style: textStyles.bodySmall?.copyWith(
                                   color: Colores.textSecondary.withOpacity(0.6),
                                   fontSize: 12,
