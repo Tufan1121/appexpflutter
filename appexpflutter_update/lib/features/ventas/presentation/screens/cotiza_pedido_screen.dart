@@ -60,7 +60,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
     return metodosDePago.indexOf(metodo) + 1;
   }
 
-  final totalAPagar = UtilsVenta.total;
+  final totalAPagar = UtilsVenta.totalWithShipping;
 
   // Future<void> _openPDF(String pdfUrl) async {
   //   try {
@@ -112,6 +112,12 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
     }
 
     useEffect(() {
+      // Pre-llenar observaciones con detalles de envío si hay
+      if (UtilsVenta.hasShipping) {
+        String envioInfo = 'Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}';
+        form.control('observaciones').value = envioInfo;
+      }
+      
       form
           .control('anticipoPago1')
           .valueChanges
@@ -173,13 +179,20 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text('Total a pagar'),
+                                      Text(UtilsVenta.hasShipping ? 'Total (incluye envío)' : 'Total a pagar'),
                                       Text(
-                                        Utils.formatPrice(UtilsVenta.total),
+                                        Utils.formatPrice(UtilsVenta.totalWithShipping),
                                         style: const TextStyle(
                                             color: Colors.purple,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                      if (UtilsVenta.hasShipping)
+                                        Text(
+                                          'Envío: ${Utils.formatPrice(UtilsVenta.shippingCost)}',
+                                          style: const TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey),
+                                        ),
                                     ],
                                   ),
                                   Column(
