@@ -4,6 +4,8 @@ import 'package:appexpflutter_update/features/punto_venta/domain/entities/detall
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/shipping_quote_modal_v2.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/product_shipping_info.dart';
+import 'package:appexpflutter_update/features/precios/domain/repositories/producto_repository.dart';
+import 'package:get_it/get_it.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+
 
 class ListaProductosVenta extends HookWidget {
   const ListaProductosVenta({super.key, required this.productos});
@@ -104,18 +107,66 @@ class ListaProductosVenta extends HookWidget {
     }, [productos.length]);
 
     // Construye la lista de productos con dimensiones para cotización
-    List<ProductShippingInfo> buildProductsForQuote() {
+    // Si las dimensiones de paquete no están disponibles, las obtiene del endpoint /productScan/
+    Future<List<ProductShippingInfo>> buildProductsForQuote() async {
       final List<ProductShippingInfo> result = [];
+      final productoRepository = GetIt.instance<ProductoRepository>();
+      
       for (int i = 0; i < productos.length; i++) {
         if (i < countList.value.length && countList.value[i] > 0) {
           final producto = productos[i];
           
+          double? largop = producto.largop;
+          double? anchop = producto.anchop;
+          double? altop = producto.altop;
+          double? pesoEnvio = producto.pesoEnvio;
+          
+          // Si no hay dimensiones de paquete, obtenerlas del endpoint /productScan/
+          if (largop == null && anchop == null && altop == null && pesoEnvio == null) {
+            print('🔄 [PUNTO VENTA] Obteniendo dimensiones del endpoint /productScan/ para: ${producto.producto1}');
+            
+            final productInfoResult = await productoRepository.getProductInfo(producto.producto1);
+            productInfoResult.fold(
+              (error) {
+                print('⚠️ Error obteniendo dimensiones: ${error.message}');
+              },
+              (productInfo) {
+                largop = productInfo.largop;
+                anchop = productInfo.anchop;
+                altop = productInfo.altop;
+                pesoEnvio = productInfo.peso;
+                print('✅ Dimensiones obtenidas del backend:');
+                print('   largop: $largop, anchop: $anchop, altop: $altop, peso: $pesoEnvio');
+              },
+            );
+          }
+          
+          // DEBUG: Imprimir valores originales del producto
+          print('═══════════════════════════════════════════════════════════════');
+          print('🔍 [PUNTO VENTA] buildProductsForQuote - Producto: ${producto.producto1}');
+          print('   📦 Dimensiones de PAQUETE (largop/anchop/altop/pesoEnvio):');
+          print('      largop: $largop');
+          print('      anchop: $anchop');
+          print('      altop: $altop');
+          print('      pesoEnvio: $pesoEnvio');
+          print('   📐 Dimensiones de PRODUCTO (largo/ancho):');
+          print('      largo: ${producto.largo}');
+          print('      ancho: ${producto.ancho}');
+          
           // Usar dimensiones de paquete del backend si están disponibles (largop, anchop, altop, pesoEnvio)
           // Si no están disponibles, usar fallback basado en medidas del producto
-          final double largo = producto.largop ?? ((producto.largo ?? 0) > 0 ? producto.largo! * 100 : 30); // convertir m a cm
-          final double ancho = producto.anchop ?? ((producto.ancho ?? 0) > 0 ? producto.ancho! * 100 : 20);
-          final double alto = producto.altop ?? 10.0; // Alto estimado por defecto si no viene del backend
-          final double peso = producto.pesoEnvio ?? 1.5; // Peso estimado por defecto si no viene del backend
+          final double largo = largop ?? ((producto.largo ?? 0) > 0 ? producto.largo! * 100 : 30); // convertir m a cm
+          final double ancho = anchop ?? ((producto.ancho ?? 0) > 0 ? producto.ancho! * 100 : 20);
+          final double alto = altop ?? 10.0; // Alto estimado por defecto si no viene del backend
+          final double peso = pesoEnvio ?? 1.5; // Peso estimado por defecto si no viene del backend
+          
+          // DEBUG: Imprimir valores calculados
+          print('   ✅ Valores USADOS para cotización:');
+          print('      largo: $largo cm');
+          print('      ancho: $ancho cm');
+          print('      alto: $alto cm');
+          print('      peso: $peso kg');
+          print('═══════════════════════════════════════════════════════════════');
           
           result.add(ProductShippingInfo(
             productKey: producto.producto1,
@@ -154,7 +205,7 @@ class ListaProductosVenta extends HookWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () {
+                      onPressed: () async {
                          int totalCount = countList.value.fold(0, (sum, item) => sum + item);
                          if (totalCount == 0 && productos.isEmpty) {
                            ScaffoldMessenger.of(context).showSnackBar(
@@ -163,17 +214,42 @@ class ListaProductosVenta extends HookWidget {
                            return;
                          }
                         
-                         final productsForQuote = buildProductsForQuote();
-                         ShippingQuoteModalV2.show(
-                          context: context,
-                          products: productsForQuote,
-                          onShippingSelected: (price, carrier, description, breakdown) {
-                            UtilsVenta.setShipping(price, carrier, description, breakdown);
-                            shippingCost.value = price;
-                            updateTotal(); // Actualizar totales
-                          },
-                        );
-                      },
+                         // Mostrar indicador de carga mientras se obtienen las dimensiones
+                         showDialog(
+                           context: context,
+                           barrierDismissible: false,
+                           builder: (context) => const Center(
+                             child: CircularProgressIndicator(),
+                           ),
+                         );
+                         
+                         try {
+                           final productsForQuote = await buildProductsForQuote();
+                           
+                           // Cerrar el indicador de carga
+                           if (context.mounted) Navigator.of(context).pop();
+                           
+                           if (context.mounted) {
+                             ShippingQuoteModalV2.show(
+                               context: context,
+                               products: productsForQuote,
+                               onShippingSelected: (price, carrier, description, breakdown) {
+                                 UtilsVenta.setShipping(price, carrier, description, breakdown);
+                                 shippingCost.value = price;
+                                 updateTotal(); // Actualizar totales
+                               },
+                             );
+                           }
+                         } catch (e) {
+                           // Cerrar el indicador de carga en caso de error
+                           if (context.mounted) Navigator.of(context).pop();
+                           if (context.mounted) {
+                             ScaffoldMessenger.of(context).showSnackBar(
+                               SnackBar(content: Text('Error al obtener dimensiones: $e')),
+                             );
+                           }
+                         }
+                       },
                       icon: const Icon(Icons.local_shipping, size: 16, color: Colors.white),
                       label: const Text('Cotizar Envío', style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(

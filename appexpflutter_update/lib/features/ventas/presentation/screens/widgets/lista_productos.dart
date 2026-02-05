@@ -120,12 +120,32 @@ class ListaProductos extends HookWidget {
         if (i < countList.value.length && countList.value[i] > 0) {
           final producto = productos[i];
           
+          // DEBUG: Imprimir valores originales del producto
+          print('═══════════════════════════════════════════════════════════════');
+          print('🔍 [VENTAS] buildProductsForQuote - Producto: ${producto.producto1}');
+          print('   📦 Dimensiones de PAQUETE (largop/anchop/altop/peso):');
+          print('      largop: ${producto.largop}');
+          print('      anchop: ${producto.anchop}');
+          print('      altop: ${producto.altop}');
+          print('      peso: ${producto.peso}');
+          print('   📐 Dimensiones de PRODUCTO (largo/ancho):');
+          print('      largo: ${producto.largo}');
+          print('      ancho: ${producto.ancho}');
+          
           // Usar dimensiones de paquete del backend si están disponibles (largop, anchop, altop, peso)
           // Si no están disponibles, usar fallback basado en medidas del producto
           final double largo = producto.largop ?? (producto.largo > 0 ? producto.largo * 100 : 30); // convertir m a cm si es medida de producto
           final double ancho = producto.anchop ?? (producto.ancho > 0 ? producto.ancho * 100 : 20);
           final double alto = producto.altop ?? 10.0; // Alto estimado por defecto si no viene del backend
           final double peso = producto.peso ?? 1.5; // Peso estimado por defecto si no viene del backend
+          
+          // DEBUG: Imprimir valores calculados
+          print('   ✅ Valores USADOS para cotización:');
+          print('      largo: $largo cm');
+          print('      ancho: $ancho cm');
+          print('      alto: $alto cm');
+          print('      peso: $peso kg');
+          print('═══════════════════════════════════════════════════════════════');
           
           result.add(ProductShippingInfo(
             productKey: producto.producto1,
