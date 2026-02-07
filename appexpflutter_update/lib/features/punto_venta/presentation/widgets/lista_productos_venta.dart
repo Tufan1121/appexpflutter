@@ -76,9 +76,9 @@ class ListaProductosVenta extends HookWidget {
 
     useEffect(() {
       updateTotal(); // Initial calculation
-      return () {
-        UtilsVenta.clearShipping();
-      }; 
+      // NO limpiar el envío aquí al desmontar el widget
+      // El envío se limpia solo cuando se guarda exitosamente o se cancela el pedido completo
+      return null; 
     }, [countList.value, selectedPriceList.value]);
 
     useEffect(() {

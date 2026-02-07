@@ -530,7 +530,37 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
               if (method.contains('01') || method.contains('03')) {
                  return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
                    builder: (context, state) {
+                     if (state is PaymentInfoLoading) {
+                       return const Padding(
+                         padding: EdgeInsets.only(top: 10.0),
+                         child: Center(
+                           child: SizedBox(
+                             width: 20,
+                             height: 20,
+                             child: CircularProgressIndicator(strokeWidth: 2),
+                           ),
+                         ),
+                       );
+                     }
+                     if (state is PaymentInfoError) {
+                       return Padding(
+                         padding: const EdgeInsets.only(top: 10.0),
+                         child: Text(
+                           'Error cargando cuentas: ${state.message}',
+                           style: const TextStyle(color: Colors.red, fontSize: 12),
+                         ),
+                       );
+                     }
                      if (state is PaymentInfoLoaded) {
+                       if (state.cuentas.isEmpty) {
+                         return const Padding(
+                           padding: EdgeInsets.only(top: 10.0),
+                           child: Text(
+                             'No hay cuentas disponibles',
+                             style: TextStyle(color: Colors.orange, fontSize: 12),
+                           ),
+                         );
+                       }
                        return Padding(
                          padding: const EdgeInsets.only(top: 10.0),
                          child: Stack(
@@ -561,7 +591,19 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                          ),
                        );
                      }
-                     return const SizedBox.shrink(); // Hide or show loading
+                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                       context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
+                     });
+                     return const Padding(
+                       padding: EdgeInsets.only(top: 10.0),
+                       child: Center(
+                         child: SizedBox(
+                           width: 20,
+                           height: 20,
+                           child: CircularProgressIndicator(strokeWidth: 2),
+                         ),
+                       ),
+                     );
                    },
                  );
               }
@@ -570,11 +612,44 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
               if (method.contains('04') || method.contains('28')) {
                 return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
                    builder: (context, state) {
+                     if (state is PaymentInfoLoading) {
+                       return const Padding(
+                         padding: EdgeInsets.only(top: 10.0),
+                         child: Center(
+                           child: SizedBox(
+                             width: 20,
+                             height: 20,
+                             child: CircularProgressIndicator(strokeWidth: 2),
+                           ),
+                         ),
+                       );
+                     }
+                     if (state is PaymentInfoError) {
+                       return Padding(
+                         padding: const EdgeInsets.only(top: 10.0),
+                         child: Text(
+                           'Error cargando terminales: ${state.message}',
+                           style: const TextStyle(color: Colors.red, fontSize: 12),
+                         ),
+                       );
+                     }
                      if (state is PaymentInfoLoaded) {
                        // Filtrar terminales: para '28' solo mostrar los que contengan "REGULAR"
                        final terminalesFiltrados = method.contains('28')
                            ? state.terminales.where((t) => t.nombre.toUpperCase().contains('REGULAR')).toList()
                            : state.terminales;
+                       
+                       if (terminalesFiltrados.isEmpty) {
+                         return Padding(
+                           padding: const EdgeInsets.only(top: 10.0),
+                           child: Text(
+                             method.contains('28') 
+                               ? 'No hay terminales de débito (REGULAR) disponibles'
+                               : 'No hay terminales disponibles',
+                             style: const TextStyle(color: Colors.orange, fontSize: 12),
+                           ),
+                         );
+                       }
                        
                        return Padding(
                          padding: const EdgeInsets.only(top: 10.0),
@@ -606,7 +681,19 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                          ),
                        );
                      }
-                     return const SizedBox.shrink();
+                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                       context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
+                     });
+                     return const Padding(
+                       padding: EdgeInsets.only(top: 10.0),
+                       child: Center(
+                         child: SizedBox(
+                           width: 20,
+                           height: 20,
+                           child: CircularProgressIndicator(strokeWidth: 2),
+                         ),
+                       ),
+                     );
                    },
                  );
               }
