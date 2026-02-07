@@ -354,6 +354,8 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
 
   /// Cotización para múltiples tipos de productos (en paralelo)
   /// Muestra TODAS las combinaciones de servicios disponibles
+  /// Si un producto tiene dimensiones excesivas y no puede cotizarse, se excluye
+  /// pero los demás productos válidos sí se cotizan.
   Future<void> _cotizarMultiplesProductos(List<ProductShippingInfo> products) async {
     // Cotizar cada producto en paralelo
     final futures = products.map((product) async {
@@ -385,26 +387,30 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
     final aggregated = <String, _AggregatedQuote>{};
     
     for (final carrier in ShippingRepository.carriers) {
-      bool hasError = false;
-      String? errorMsg;
-      
       // Recopilar todas las tarifas de este carrier para cada producto
+      // Los productos con error se excluyen pero los demás sí se cotizan
       final productRatesMap = <ProductShippingInfo, List<ShippingRate>>{};
+      final excludedProducts = <ProductShippingInfo>[]; // Productos que no pudieron cotizarse
       
       for (final result in results) {
         final product = result.key;
         final carrierResponse = result.value[carrier];
         
         if (carrierResponse == null || carrierResponse.error != null || carrierResponse.data.isEmpty) {
-          hasError = true;
-          errorMsg = carrierResponse?.error ?? 'Error en producto ${product.productName}';
-          break;
+          // Este producto no pudo cotizarse para este carrier, pero continuamos con los demás
+          excludedProducts.add(product);
+          print('DEBUG: Producto ${product.productName} excluido de $carrier - ${carrierResponse?.error ?? "sin datos"}');
+          continue; // Continuar con los demás productos en lugar de break
         }
         
         productRatesMap[product] = carrierResponse.data;
       }
       
-      if (hasError) {
+      // Si TODOS los productos fallaron para este carrier, marcar como error
+      if (productRatesMap.isEmpty) {
+        final errorMsg = excludedProducts.isNotEmpty 
+            ? 'Productos con dimensiones no soportadas' 
+            : 'Sin cotizaciones disponibles';
         aggregated[carrier] = _AggregatedQuote(
           carrier: carrier,
           totalCost: 0,

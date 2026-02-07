@@ -68,10 +68,25 @@ class ShippingRepository {
       );
 
       try {
+        // DEBUG: Imprimir el request para Tresguerras
+        if (carrier == 'tresguerras') {
+          print('=== DEBUG TRESGUERRAS REQUEST ===');
+          print('JSON: ${request.toJson()}');
+          print('================================');
+        }
+        
         final response = await _apiClient.post(
           '/ship/rate/',
           data: request.toJson(),
         );
+
+        // DEBUG: Imprimir response para Tresguerras
+        if (carrier == 'tresguerras') {
+          print('=== DEBUG TRESGUERRAS RESPONSE ===');
+          print('StatusCode: ${response.statusCode}');
+          print('Data: ${response.data}');
+          print('==================================');
+        }
 
         if (response.statusCode == 200 && response.data != null) {
           return MapEntry(
@@ -85,6 +100,12 @@ class ShippingRepository {
           );
         }
       } catch (e) {
+        // DEBUG: Imprimir error para Tresguerras
+        if (carrier == 'tresguerras') {
+          print('=== DEBUG TRESGUERRAS ERROR ===');
+          print('Exception: $e');
+          print('===============================');
+        }
         return MapEntry(
           carrier,
           ShippingRateResponse.error('Error: ${e.toString()}'),
@@ -98,6 +119,10 @@ class ShippingRepository {
     // Convertir a Map
     return Map.fromEntries(rateResults);
   }
+
+  // NOTA: Ya no usamos _shouldUsePallet para otros carriers
+  // Solo Tresguerras requiere tarima (type: 2)
+  // Los demás carriers manejan sus propios límites y devuelven error si no pueden cotizar
 
   ShippingRateRequest _buildRequest({
     required String originPostalCode,
@@ -115,12 +140,25 @@ class ShippingRepository {
     required String carrier,
     required int packageAmount,
   }) {
+    // Solo Tresguerras usa tarima (type: 2)
+    // Los demás carriers (DHL, FedEx, Paquetexpress) usan caja (type: 1)
+    final bool isTresguerras = carrier == 'tresguerras';
+    
+    // Para Tresguerras (LTL), asegurar peso mínimo de 30kg
+    // Tresguerras no cotiza cargas muy ligeras
+    double effectiveWeight = weight;
+    if (isTresguerras && weight < 30) {
+      effectiveWeight = 30;
+      print('DEBUG TRESGUERRAS: Peso ajustado de $weight kg a 30 kg (mínimo LTL)');
+    }
+    
     return ShippingRateRequest(
       origin: Origin(
         postalCode: originPostalCode,
         city: originCity,
         state: originState,
         district: originDistrict,
+        // phone ya tiene valor por defecto '5555555555' para Tresguerras
       ),
       destination: Destination(
         postalCode: destinationPostalCode,
@@ -130,18 +168,19 @@ class ShippingRepository {
       ),
       packages: [
         Package(
-          amount: packageAmount, // Cantidad de productos/paquetes
+          amount: packageAmount,
+          type: isTresguerras ? 'pallet' : 'box', // Tresguerras = pallet, otros = box
           dimensions: Dimensions(
             length: length,
             width: width,
             height: height,
           ),
-          weight: weight,
+          weight: effectiveWeight,
         ),
       ],
       shipment: Shipment(
         carrier: carrier,
-        type: carrier == 'tresguerras' ? 2 : 1, // Tresguerras requiere type 2 (LTL/Pallet) para cotizar
+        type: isTresguerras ? 2 : 1, // 1 = caja, 2 = tarima/pallet (LTL)
       ),
       settings: Settings(),
     );

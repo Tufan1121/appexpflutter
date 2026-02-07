@@ -28,6 +28,14 @@ class Origin {
   final String country;
   final String postalCode;
   final String district;
+  final String name;
+  final String phone;
+  final String email;
+  final String company;
+  final String street; // Calle - Requerido por Tresguerras
+  final String street2; // Calle 2
+  final String reference; // Referencia
+  final String number; // Número exterior
 
   Origin({
     this.city = '',
@@ -35,15 +43,35 @@ class Origin {
     this.country = 'MX',
     required this.postalCode,
     this.district = '',
+    this.name = 'Tapetes Tufan',
+    this.phone = '5555555555',
+    this.email = 'ventas@tapetestufan.mx',
+    this.company = 'Tapetes Tufan',
+    this.street = 'Av. Principal', // Calle por defecto
+    this.street2 = '',
+    this.reference = 'Bodega',
+    this.number = '100', // Número por defecto
   });
 
-  Map<String, dynamic> toJson() => {
-        'city': city,
-        'state': state,
-        'country': country,
-        'postalCode': postalCode,
-        'district': district,
-      };
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{
+      'city': city,
+      'state': state,
+      'country': country,
+      'postalCode': postalCode,
+      'district': district,
+    };
+    // Campos adicionales para Tresguerras LTL
+    if (name.isNotEmpty) map['name'] = name;
+    if (phone.isNotEmpty) map['phone'] = phone;
+    if (email.isNotEmpty) map['email'] = email;
+    if (company.isNotEmpty) map['company'] = company;
+    if (street.isNotEmpty) map['street'] = street;
+    if (street2.isNotEmpty) map['street2'] = street2;
+    if (reference.isNotEmpty) map['reference'] = reference;
+    if (number.isNotEmpty) map['number'] = number;
+    return map;
+  }
 }
 
 class Destination {
@@ -52,6 +80,12 @@ class Destination {
   final String country;
   final String postalCode;
   final String district;
+  final String name;
+  final String phone;
+  final String email;
+  final String street;
+  final String reference;
+  final String number;
 
   Destination({
     this.city = '',
@@ -59,15 +93,31 @@ class Destination {
     this.country = 'MX',
     required this.postalCode,
     this.district = '',
+    this.name = 'Cliente',
+    this.phone = '5555555555',
+    this.email = 'cliente@email.com',
+    this.street = 'Calle Principal',
+    this.reference = '',
+    this.number = '1',
   });
 
-  Map<String, dynamic> toJson() => {
-        'city': city,
-        'state': state,
-        'country': country,
-        'postalCode': postalCode,
-        'district': district,
-      };
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{
+      'city': city,
+      'state': state,
+      'country': country,
+      'postalCode': postalCode,
+      'district': district,
+    };
+    // Campos adicionales para Tresguerras LTL
+    if (name.isNotEmpty) map['name'] = name;
+    if (phone.isNotEmpty) map['phone'] = phone;
+    if (email.isNotEmpty) map['email'] = email;
+    if (street.isNotEmpty) map['street'] = street;
+    if (reference.isNotEmpty) map['reference'] = reference;
+    if (number.isNotEmpty) map['number'] = number;
+    return map;
+  }
 }
 
 class Package {
