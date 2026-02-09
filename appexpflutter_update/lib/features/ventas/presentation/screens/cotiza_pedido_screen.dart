@@ -511,7 +511,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
         'total_pagar': totalAPagar.toInt(),
         'entregado': entregado,
         'id_metodopago2': metodo2,
-        'id_metodopago3': metodo3.toString(),
+        'id_metodopago3': metodo3,
         'envio': UtilsVenta.shippingCost,
       };
 
