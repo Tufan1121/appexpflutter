@@ -16,6 +16,7 @@ import '../../../../config/theme/app_theme.dart';
 import '../../../shared/widgets/layout_screens.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_event.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_state.dart';
 import 'package:appexpflutter_update/features/punto_venta/data/models/cuenta_model.dart';
 import 'package:appexpflutter_update/features/punto_venta/data/models/terminal_model.dart';
@@ -124,6 +125,9 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
     }
 
     useEffect(() {
+      // Cargar información de cuentas y terminales
+      context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
+      
       form
           .control('anticipoPago1')
           .valueChanges

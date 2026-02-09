@@ -46,6 +46,12 @@ class _PedidoScreenState extends State<TicketsScreen> {
     final controller = useTextEditingController();
     final dropdownValue = useState<String>(list.first);
     final productos = context.watch<ProductosTiendaBloc>().scannedProducts;
+    
+    // Cargar información de pago (cuentas y terminales) cuando el widget se monta
+    useEffect(() {
+      context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
+      return null;
+    }, []);
     return PopScope(
       canPop: true,
       // Permite la navegación hacia atrás nativa
@@ -323,13 +329,6 @@ class _PedidoScreenState extends State<TicketsScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Trigger initial load of payment info
-    context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
   }
 
   void _showModal(
