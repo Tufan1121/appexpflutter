@@ -512,7 +512,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
         'entregado': entregado,
         'id_metodopago2': metodo2,
         'id_metodopago3': metodo3,
-        'envio': UtilsVenta.shippingCost,
+        'envio': UtilsVenta.shippingCost.toString(),
       };
 
       context.read<CotizaPedidoBloc>().add(
