@@ -18,7 +18,15 @@ class DioClient {
       }
       ..options.connectTimeout = const Duration(milliseconds: 15000)
       ..options.receiveTimeout = const Duration(milliseconds: 15000)
-      ..options.responseType = ResponseType.json;
+      ..options.responseType = ResponseType.json
+      ..interceptors.add(LogInterceptor(
+        request: true,
+        requestHeader: false,
+        requestBody: true,
+        responseHeader: false,
+        responseBody: false,
+        logPrint: (obj) => print('>>> DIO: $obj'),
+      ));
   }
 
   Future<Response<dynamic>> _request(
