@@ -634,9 +634,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                        );
                      }
                      if (state is PaymentInfoLoaded) {
-                       // Filtrar terminales: para '28' solo mostrar los que contengan "REGULAR"
+                       // Filtrar terminales: para '28' (débito) excluir los que tienen MSI
                        final terminalesFiltrados = method.contains('28')
-                           ? state.terminales.where((t) => t.nombre.toUpperCase().contains('REGULAR')).toList()
+                           ? state.terminales.where((t) => !t.nombre.toUpperCase().contains('MSI')).toList()
                            : state.terminales;
                        
                        if (terminalesFiltrados.isEmpty) {
@@ -644,7 +644,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                            padding: const EdgeInsets.only(top: 10.0),
                            child: Text(
                              method.contains('28') 
-                               ? 'No hay terminales de débito (REGULAR) disponibles'
+                               ? 'No hay terminales de débito disponibles'
                                : 'No hay terminales disponibles',
                              style: const TextStyle(color: Colors.orange, fontSize: 12),
                            ),

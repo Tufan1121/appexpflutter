@@ -503,9 +503,9 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                 return BlocBuilder<PaymentInfoBloc, PaymentInfoState>(
                    builder: (context, state) {
                      if (state is PaymentInfoLoaded) {
-                       // Filtrar terminales: para '28' solo mostrar los que contengan "REGULAR"
+                       // Filtrar terminales: para '28' (débito) excluir los que tienen MSI
                        final terminalesFiltrados = method.contains('28')
-                           ? state.terminales.where((t) => t.nombre.toUpperCase().contains('REGULAR')).toList()
+                           ? state.terminales.where((t) => !t.nombre.toUpperCase().contains('MSI')).toList()
                            : state.terminales;
                        
                        return Padding(
