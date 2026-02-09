@@ -122,25 +122,41 @@ class LayoutScreens extends StatelessWidget {
             // AppBar with glassmorphism effect
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Row(
                   children: [
-                    // Back button with glass effect
+                    // Back button with enhanced glass effect
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(14),
+                        color: Colores.glassBackground,
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.25),
-                          width: 1,
+                          color: Colores.glassBorder,
+                          width: 1.5,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: IconButton(
-                        onPressed: onPressed,
-                        icon: const Icon(
-                          Icons.arrow_back_rounded,
-                          size: 24,
-                          color: Colors.white,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: onPressed,
+                            child: const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.arrow_back_rounded,
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Colores {
-  // Primary brand colors - Modern purple/blue palette
-  static const colorSeed = Color(0xff6366F1); // Indigo
-  static const Color primaryColor = Color(0xff6366F1); // Indigo 500
-  static const Color secondaryColor = Color(0xffEC4899); // Pink 500
-  static const Color accentColor = Color(0xff8B5CF6); // Purple 500
+  // Primary brand colors - Dark base with colorful accents
+  static const colorSeed = Color(0xFF1E293B); // Slate 800
+  static const Color primaryColor = Color(0xFF4F46E5); // Indigo 600
+  static const Color secondaryColor = Color(0xFF1E293B); // Slate 800 (dark gray for backgrounds)
+  static const Color accentColor = Color(0xFF8B5CF6); // Purple 500
   
   // Background colors
   static const scaffoldBackgroundColor = Color(0xFFF8FAFC); // Slate 50
@@ -24,20 +24,25 @@ class Colores {
   static const warningColor = Color(0xffF59E0B); // Amber 500
   static const infoColor = Color(0xff3B82F6); // Blue 500
   
-  // Gradients - Vibrant and modern
-  static const gradientStart = Color(0xff6366F1); // Indigo
-  static const gradientMiddle = Color(0xff8B5CF6); // Purple
-  static const gradientEnd = Color(0xffEC4899); // Pink
+  // Gradients - Dark slate base with subtle colorful transition
+  static const gradientStart = Color(0xFF0F172A); // Slate 900 (Negro profundo)
+  static const gradientMiddle = Color(0xFF1E1B4B); // Indigo 950 (toque sutil de indigo)
+  static const gradientEnd = Color(0xFF312E81); // Indigo 900 (transición a indigo)
   
-  // Glassmorphism colors
-  static const glassBackground = Color(0x40FFFFFF); // 25% white
-  static const glassBorder = Color(0x30FFFFFF); // 19% white
-  static const glassShadow = Color(0x1A000000); // 10% black
+  // Accent gradient for highlights (subtle Indigo → Purple → Pink)
+  static const accentGradientStart = Color(0xFF4F46E5); // Indigo 600
+  static const accentGradientMiddle = Color(0xFF7C3AED); // Violet 600
+  static const accentGradientEnd = Color(0xFFDB2777); // Pink 600
+  
+  // Glassmorphism colors - More visible
+  static const glassBackground = Color(0x30FFFFFF); // 19% white
+  static const glassBorder = Color(0x50FFFFFF); // 31% white - more visible border
+  static const glassShadow = Color(0x25000000); // 15% black
   
   // Input field colors
   static const inputBackground = Color(0xFFF1F5F9); // Slate 100
   static const inputBorder = Color(0xFFE2E8F0); // Slate 200
-  static const inputFocusBorder = Color(0xff6366F1); // Primary
+  static const inputFocusBorder = Color(0xFF4F46E5); // Indigo 600
   static const inputError = Color(0xffFEE2E2); // Red 100
 }
 

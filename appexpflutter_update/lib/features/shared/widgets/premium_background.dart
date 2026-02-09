@@ -234,6 +234,7 @@ class GlassCard extends StatelessWidget {
   final double borderRadius;
   final Color? backgroundColor;
   final bool hasShadow;
+  final bool showAccentBorder;
   
   const GlassCard({
     super.key,
@@ -243,6 +244,7 @@ class GlassCard extends StatelessWidget {
     this.borderRadius = 24,
     this.backgroundColor,
     this.hasShadow = true,
+    this.showAccentBorder = false,
   });
 
   @override
@@ -250,19 +252,31 @@ class GlassCard extends StatelessWidget {
     return Container(
       margin: margin ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: backgroundColor ?? Colors.white.withOpacity(0.95),
+        color: backgroundColor ?? Colors.white.withOpacity(0.98),
         borderRadius: BorderRadius.circular(borderRadius),
+        border: showAccentBorder ? Border.all(
+          color: Colores.accentGradientStart.withOpacity(0.2),
+          width: 1.5,
+        ) : Border.all(
+          color: Colors.grey.withOpacity(0.1),
+          width: 1,
+        ),
         boxShadow: hasShadow ? [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 25,
-            offset: const Offset(0, 10),
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colores.gradientEnd.withOpacity(0.1),
-            blurRadius: 35,
-            offset: const Offset(0, 15),
+            color: Colores.accentGradientStart.withOpacity(0.08),
+            blurRadius: 30,
+            offset: const Offset(0, 12),
+          ),
+          BoxShadow(
+            color: Colores.accentGradientEnd.withOpacity(0.05),
+            blurRadius: 40,
+            offset: const Offset(0, 16),
           ),
         ] : null,
       ),
@@ -299,17 +313,22 @@ class GradientIconContainer extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colores.gradientStart,
-            Colores.gradientMiddle,
-            Colores.gradientEnd,
+            Colores.accentGradientStart, // Indigo
+            Colores.accentGradientMiddle, // Purple  
+            Colores.accentGradientEnd, // Pink
           ],
         ),
         borderRadius: BorderRadius.circular(size * 0.35),
         boxShadow: [
           BoxShadow(
-            color: Colores.primaryColor.withOpacity(0.3),
+            color: Colores.accentGradientStart.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 6),
+          ),
+          BoxShadow(
+            color: Colores.accentGradientEnd.withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),

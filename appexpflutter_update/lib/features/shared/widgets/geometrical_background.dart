@@ -28,20 +28,19 @@ class GeometricalBackground extends StatelessWidget {
         children: [
           Positioned(child: Container(color: backgroundColor)),
 
-          // Background with brand gradient and shapes
+          // Background with dark gradient and subtle colorful transition
           Container(
             height: size.height,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF1E1B4B), // Indigo 950 (Deep indigo)
-                  Color(0xFF312E81), // Indigo 900
-                  Color(0xFF4C1D95), // Purple 900
-                  Color(0xFF581C87), // Purple 900 variant
+                  Color(0xFF0F172A), // Slate 900 (Negro profundo)
+                  Color(0xFF1E1B4B), // Indigo 950 (toque sutil de indigo)
+                  Color(0xFF312E81), // Indigo 900 (transición elegante)
                 ],
-                stops: [0.0, 0.35, 0.7, 1.0],
+                stops: [0.0, 0.5, 1.0],
               ),
             ),
             child: SingleChildScrollView(
