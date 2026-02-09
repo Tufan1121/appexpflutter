@@ -149,18 +149,11 @@ class SearchProducto extends HookWidget {
                               onTap: loading
                                   ? null
                                   : () {
-                                      final data = {
+                                       final data = {
                                         'id_cliente': idCliente,
-                                        // 'id_metodopago': metodo1,
-                                        // 'observaciones': observaciones,
                                         'estatus': estatusPedido,
-                                        // 'anticipo': anticipoPago.toInt(),
-                                        // 'anticipo2': anticipoPago2.toInt(),
-                                        // 'anticipo3': anticipoPago3.toInt(),
-                                        'total_pagar': UtilsVenta.total.toInt(),
-                                        // 'entregado': entregado,
-                                        // 'id_metodopago2': metodo2,
-                                        // 'id_metodopago3': metodo3.toString(),
+                                        'total_pagar': UtilsVenta.totalWithShipping.toInt(),
+                                        'envio': UtilsVenta.shippingCost.toString(),
                                       };
 
                                       context.read<SesionPedidoBloc>().add(
