@@ -59,9 +59,13 @@ class PedidoDataSourceImpl implements PedidoDataSource {
   Future<PedidoModel> addPedido(Map<String, dynamic> data) async {
     final token = await storage.read(key: 'accessToken');
     try {
+      // Construir query string manualmente para garantizar que todos los params lleguen
+      final queryString = data.entries
+          .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value.toString())}')
+          .join('&');
+      print('>>> PEDIDO URL: /insertPedido?$queryString');
       final result = await _dioClient.post(
-        '/insertPedido',
-        queryParameters: data,
+        '/insertPedido?$queryString',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -163,9 +167,13 @@ class PedidoDataSourceImpl implements PedidoDataSource {
   Future<CotizaModel> addCotizaPedido(Map<String, dynamic> data) async {
     final token = await storage.read(key: 'accessToken');
     try {
+      // Construir query string manualmente para garantizar que todos los params lleguen
+      final queryString = data.entries
+          .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value.toString())}')
+          .join('&');
+      print('>>> COTIZA URL: /insertCotiza?$queryString');
       final result = await _dioClient.post(
-        '/insertCotiza',
-        queryParameters: data,
+        '/insertCotiza?$queryString',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
