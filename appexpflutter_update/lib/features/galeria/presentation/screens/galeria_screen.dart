@@ -147,7 +147,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                             controller: _scrollController,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 1,
+                              crossAxisCount: 2,
                               crossAxisSpacing: 30,
                               mainAxisSpacing: 20,
                             ),
@@ -216,7 +216,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                                               const Duration(milliseconds: 300),
                                           fit: BoxFit.cover,
                                           image: NetworkImage(
-                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(galeria.pathima1)}',
+                                            'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(galeria.pathima1)}',
                                           ),
                                         ),
                                       ),

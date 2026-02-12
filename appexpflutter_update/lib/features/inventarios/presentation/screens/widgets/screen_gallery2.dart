@@ -88,14 +88,14 @@ class _FullScreenGallery2State extends State<FullScreenGallery2> {
         final file = File('${appDir.path}/share_$timestamp\_$fileNameWithExtension');
         
         // Construir la URL original de la imagen
-        final originalImageUrl = 'https://tapetestufan.mx:446/imagen/_web/$imageUrl';
+        final originalImageUrl = 'https://tapetestufan.mx/imagen/_web/$imageUrl';
         
         // Obtener token de autenticación
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
         
         // Endpoint de marca de agua - requiere POST
-        final watermarkUrl = 'https://tapetestufan.mx:6002/add-watermark/';
+        final watermarkUrl = 'https://e.tapetestufan.mx/add-watermark/';
         
         // Hacer POST request con autenticación y timeout extendido
         final response = await dio.post(
@@ -209,7 +209,7 @@ class _FullScreenGallery2State extends State<FullScreenGallery2> {
                   builder: (context, index) {
                     return PhotoViewGalleryPageOptions(
                       imageProvider: NetworkImage(
-                        'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(widget.imageUrls[index])}',
+                        'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(widget.imageUrls[index])}',
                       ),
                       initialScale: PhotoViewComputedScale.contained,
                       minScale: PhotoViewComputedScale.contained,

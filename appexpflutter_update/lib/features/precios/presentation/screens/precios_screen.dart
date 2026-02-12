@@ -83,7 +83,7 @@ class PreciosScreen extends StatelessWidget {
                                       const SizedBox(height: 50),
                                       ProductoCard(
                                         imagen:
-                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
+                                            'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
                                         producto: state.producto,
                                         existencia: existencia.toInt(),
                                         onTap: () => PhotoGalleryRoute(
@@ -130,7 +130,7 @@ class PreciosScreen extends StatelessWidget {
                                       const SizedBox(height: 5),
                                       ProductoCard(
                                         imagen:
-                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
+                                            'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
                                         producto: state.producto,
                                         existencia: existencia.toInt(),
                                         onTap: () => PhotoGalleryRoute(

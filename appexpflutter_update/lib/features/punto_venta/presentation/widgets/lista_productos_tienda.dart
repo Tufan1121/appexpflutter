@@ -51,7 +51,7 @@ class ListaProductosTiendaCard extends HookWidget {
                       image: producto.pathima1 != null &&
                               producto.pathima1!.isNotEmpty
                           ? NetworkImage(
-                              'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1 ?? '')}',
+                              'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(producto.pathima1 ?? '')}',
                             )
                           : const AssetImage('assets/images/no-image.jpg')
                               as ImageProvider,

@@ -116,14 +116,14 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
         final file = File('${appDir.path}/share_$timestamp\_$fileNameWithExtension');
         
         // Construir la URL original de la imagen
-        final originalImageUrl = 'https://tapetestufan.mx:446/imagen/_web/$imageUrl';
+        final originalImageUrl = 'https://tapetestufan.mx/imagen/_web/$imageUrl';
         
         // Obtener token de autenticación
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
         
         // Endpoint de marca de agua - requiere POST
-        final watermarkUrl = 'https://tapetestufan.mx:6002/add-watermark/';
+        final watermarkUrl = 'https://e.tapetestufan.mx/add-watermark/';
         
         // Hacer POST request con autenticación y timeout extendido
         final response = await dio.post(
@@ -256,7 +256,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                           Radius.circular(12.0)),
                                       child: FadeInImage(
                                         image: NetworkImage(
-                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(productoConMedidas.producto.pathima1)}'),
+                                            'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(productoConMedidas.producto.pathima1)}'),
                                         placeholder: const AssetImage(
                                             'assets/loaders/loading.gif'),
                                         width: double.infinity,
@@ -433,7 +433,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                           builder: (context, index) {
                                             return PhotoViewGalleryPageOptions(
                                               imageProvider: NetworkImage(
-                                                'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(imageUrls[index])}',
+                                                'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(imageUrls[index])}',
                                               ),
                                               initialScale:
                                                   PhotoViewComputedScale
