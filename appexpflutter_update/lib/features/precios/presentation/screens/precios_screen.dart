@@ -11,6 +11,7 @@ import 'package:appexpflutter_update/features/precios/presentation/screens/widge
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/shared/widgets/widgets.dart'
     show CustomFilledButton2;
+import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanning_animation.dart';
 
 class PreciosScreen extends StatelessWidget {
   const PreciosScreen({super.key});
@@ -53,14 +54,7 @@ class PreciosScreen extends StatelessWidget {
                             BlocBuilder<PreciosBloc, PreciosState>(
                               builder: (context, state) {
                                 if (state is PreciosLoading) {
-                                  return const Column(
-                                    children: [
-                                      SizedBox(height: 150),
-                                      CircularProgressIndicator(
-                                        color: Colores.secondaryColor,
-                                      ),
-                                    ],
-                                  );
+                                  return const ScanningAnimation();
                                 } else if (state is PreciosLoaded) {
                                   double existencia = state.producto.bodega1 +
                                       state.producto.bodega2 +
