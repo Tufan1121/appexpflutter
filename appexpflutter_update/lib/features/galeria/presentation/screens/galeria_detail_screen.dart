@@ -123,7 +123,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
         final token = await storage.read(key: 'accessToken');
         
         // Endpoint de marca de agua - requiere POST
-        final watermarkUrl = 'https://e.tapetestufan.mx/add-watermark/';
+        final watermarkUrl = 'https://api.tapetestufan.mx/add-watermark/';
         
         // Hacer POST request con autenticación y timeout extendido
         final response = await dio.post(
