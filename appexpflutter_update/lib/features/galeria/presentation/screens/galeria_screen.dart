@@ -148,10 +148,11 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              crossAxisSpacing: 30,
-                              mainAxisSpacing: 20,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              childAspectRatio: 0.58, // Hace las tarjetas más altas (rectangulares)
                             ),
-                            padding: const EdgeInsets.all(10.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                             itemCount: state.galeria.length +
                                 (_isLoadingMore && !galeriaBloc.isSearching
                                     ? 1
@@ -189,43 +190,48 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                                 },
                                 child: Card(
                                   clipBehavior: Clip.antiAlias,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
+                                  margin: EdgeInsets.zero,
                                   elevation: 4.0,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderRadius: BorderRadius.circular(12.0),
                                   ),
                                   child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
                                     children: [
                                       Expanded(
                                         child: FadeInImage(
                                           placeholder: const AssetImage(
                                               'assets/loaders/loading.gif'),
                                           width: double.infinity,
-                                          height: 120,
                                           imageErrorBuilder:
                                               (context, error, stackTrace) {
                                             return Image.asset(
                                               'assets/images/no-image.jpg',
-                                              width: 60,
-                                              height: 60,
-                                              fit: BoxFit.cover,
+                                              fit: BoxFit.contain,
                                             );
                                           },
                                           fadeInDuration:
                                               const Duration(milliseconds: 300),
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.contain,
                                           image: NetworkImage(
                                             'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(galeria.pathima1)}',
                                           ),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0,
+                                          vertical: 10.0,
+                                        ),
                                         child: Text(
                                           galeria.descripcio,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.start,
                                           style: GoogleFonts.montserrat(
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                            height: 1.2,
                                             color: Colores.secondaryColor,
                                           ),
                                         ),
