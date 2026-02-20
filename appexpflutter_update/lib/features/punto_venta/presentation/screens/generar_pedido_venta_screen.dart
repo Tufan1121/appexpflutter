@@ -78,11 +78,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final isEntregado = useState(false);
-    // Leer el total CADA VEZ que se construye el widget (no cachearlo como campo)
+    // Leer el total EN VIVO cada vez que se construye el widget
     final totalAPagar = UtilsVenta.totalWithShipping;
     final loading = useState(false);
-    // final isPendienteFinDeExpo = useState(true);
     final debePorPagar = useState(totalAPagar);
     final scrollController = useScrollController();
 
@@ -91,8 +89,15 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       final anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
       final anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
       final totalAnticipo = anticipoPago1 + anticipoPago2 + anticipoPago3;
+      // Siempre leer el total en vivo de UtilsVenta para tener el valor más actual
       debePorPagar.value = UtilsVenta.totalWithShipping - totalAnticipo;
     }
+
+    // Sincronizar debePorPagar cuando el total subyacente cambie (ej: usuario regresa y modifica precios)
+    useEffect(() {
+      updateDebePorPagar();
+      return null;
+    }, [totalAPagar]);
 
     useEffect(() {
       // Pre-llenar observaciones con detalles de envío si hay

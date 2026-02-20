@@ -85,11 +85,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     return metodosDePago.indexOf(metodo) + 1;
   }
 
-  final totalAPagar = UtilsVenta.totalWithShipping;
   final String username = '';
 
   @override
   Widget build(BuildContext context) {
+    // Leer el total EN VIVO cada vez que se construye el widget
+    final totalAPagar = UtilsVenta.totalWithShipping;
     final isEntregado = useState(false);
     final loading = useState(false);
     final isPendienteFinDeExpo = useState(true);
@@ -147,8 +148,15 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       final anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
       final anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
       final totalAnticipo = anticipoPago1 + anticipoPago2 + anticipoPago3;
-      debePorPagar.value = totalAPagar - totalAnticipo;
+      // Siempre leer el total en vivo de UtilsVenta para tener el valor más actual
+      debePorPagar.value = UtilsVenta.totalWithShipping - totalAnticipo;
     }
+
+    // Sincronizar debePorPagar cuando el total subyacente cambie (ej: usuario regresa y modifica precios)
+    useEffect(() {
+      updateDebePorPagar();
+      return null;
+    }, [totalAPagar]);
 
     useEffect(() {
       // Cargar información de cuentas y terminales
