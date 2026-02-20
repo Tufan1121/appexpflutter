@@ -81,6 +81,13 @@ class ListaProductosVenta extends HookWidget {
       return null; 
     }, [countList.value, selectedPriceList.value]);
 
+    // Recalcular total cuando cambian los datos de los productos (ej: precio manual)
+    final productPricesKey = productos.map((p) => '${p.producto1}:${p.precio2}').join(',');
+    useEffect(() {
+      updateTotal();
+      return null;
+    }, [productPricesKey]);
+
     useEffect(() {
       // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
       final newCountList = List<int>.from(countList.value);
