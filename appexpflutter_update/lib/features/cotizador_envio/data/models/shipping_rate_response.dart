@@ -54,10 +54,10 @@ class ShippingRate {
   });
 
   factory ShippingRate.fromJson(Map<String, dynamic> json) {
-    // Obtener el precio original y aplicar 30% de aumento con redondeo hacia arriba
+    // Obtener el precio original y aplicar 30% de aumento con redondeo hacia arriba (a la centena superior)
     final double originalPrice = (json['totalPrice'] ?? 0).toDouble();
     final double priceWithMarkup = originalPrice * 1.30; // +30%
-    final double roundedPrice = priceWithMarkup.ceilToDouble(); // Redondeo hacia arriba
+    final double roundedPrice = (priceWithMarkup / 100).ceilToDouble() * 100; // Redondeo a la centena superior
 
     return ShippingRate(
       carrierId: json['carrierId'] ?? 0,
