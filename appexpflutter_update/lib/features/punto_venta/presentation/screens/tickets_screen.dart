@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
+import 'package:appexpflutter_update/features/punto_venta/utils.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/search_producto_punto_venta.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_search.dart';
@@ -60,6 +61,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
         context
             .read<InventarioTiendaBloc>()
             .add(ClearInventarioProductoEvent());
+        UtilsVenta.clearAll();
       },
       child: Scaffold(
         appBar: PreferredSize(
@@ -73,6 +75,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                 context
                     .read<InventarioTiendaBloc>()
                     .add(ClearInventarioProductoEvent());
+                UtilsVenta.clearAll();
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.arrow_back_rounded),

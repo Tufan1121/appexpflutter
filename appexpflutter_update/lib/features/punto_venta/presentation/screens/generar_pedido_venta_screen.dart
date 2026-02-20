@@ -929,6 +929,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                 context
                     .read<InventarioTiendaBloc>()
                     .add(ClearInventarioProductoEvent());
+                UtilsVenta.clearAll();
                 HomeRoute().go(context);
                 Navigator.of(context).pop();
               },

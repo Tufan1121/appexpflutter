@@ -77,6 +77,13 @@ class ListaProductos extends HookWidget {
       return null;
     }, [countList.value, selectedPriceList.value]);
 
+    // Recalcular total cuando cambian los datos de los productos (ej: precio manual)
+    final productPricesKey = productos.map((p) => '${p.producto1}:${p.precio3}').join(',');
+    useEffect(() {
+      updateTotal();
+      return null;
+    }, [productPricesKey]);
+
     useEffect(() {
       // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
       final newCountList = List<int>.from(countList.value);
@@ -490,9 +497,9 @@ class ListaProductos extends HookWidget {
                                         icon: const Icon(Icons.add),
                                         onPressed: () {
                                           if (currentCount < existencia.toInt()) {
-                                            // Actualizamos la lista directamente
-                                            countList.value[index] = currentCount + 1;
-                                            updateTotal(); // Esto forzará rebuild
+                                            final newList = List<int>.from(countList.value);
+                                            newList[index] = currentCount + 1;
+                                            countList.value = newList;
                                           } else {
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               const SnackBar(content: Text('No hay más existencia disponible'), duration: Duration(milliseconds: 1000)),
@@ -508,8 +515,9 @@ class ListaProductos extends HookWidget {
                                         ),
                                         onPressed: () async {
                                           if (currentCount > 1) {
-                                            countList.value[index] = currentCount - 1;
-                                            updateTotal(); // Esto forzará rebuild
+                                            final newList = List<int>.from(countList.value);
+                                            newList[index] = currentCount - 1;
+                                            countList.value = newList;
                                           } else {
                                             // Si count == 1, confirmar eliminación
                                             final confirmar = await _dialogEliminar(context, producto);
@@ -538,8 +546,9 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio1.toDouble(),
                                         value: currentSelectedPrice == 1,
                                         onChanged: (bool? value) {
-                                          selectedPriceList.value[index] = 1;
-                                          updateTotal();
+                                          final newList = List<int>.from(selectedPriceList.value);
+                                          newList[index] = 1;
+                                          selectedPriceList.value = newList;
                                         },
                                       ),
                                       _buildPriceCheckbox(
@@ -548,8 +557,9 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio2.toDouble(),
                                         value: currentSelectedPrice == 2,
                                         onChanged: (bool? value) {
-                                          selectedPriceList.value[index] = 2;
-                                          updateTotal();
+                                          final newList = List<int>.from(selectedPriceList.value);
+                                          newList[index] = 2;
+                                          selectedPriceList.value = newList;
                                         },
                                       ),
                                       _buildPriceCheckbox(
@@ -558,8 +568,9 @@ class ListaProductos extends HookWidget {
                                         price: producto.precio3.toDouble(),
                                         value: currentSelectedPrice == 3,
                                         onChanged: (bool? value) {
-                                          selectedPriceList.value[index] = 3;
-                                          updateTotal();
+                                          final newList = List<int>.from(selectedPriceList.value);
+                                          newList[index] = 3;
+                                          selectedPriceList.value = newList;
                                         },
                                       ),
                                     ],
@@ -582,8 +593,9 @@ class ListaProductos extends HookWidget {
                                         },
                                         onSubmitted: (value) {
                                           if (customPrice.value != null) {
-                                            selectedPriceList.value[index] = 3;
-                                            updateTotal();
+                                            final newList = List<int>.from(selectedPriceList.value);
+                                            newList[index] = 3;
+                                            selectedPriceList.value = newList;
                                           }
                                         },
                                         decoration: const InputDecoration(
@@ -618,8 +630,9 @@ class ListaProductos extends HookWidget {
                                                 // Actualiza el producto en la lista original (referencia)
                                                 // Nota: Esto no persiste si el padre no se actualiza, pero aquí es suficiente
                                                 productos[index] = updatedProduct;
-                                                selectedPriceList.value[index] = 3;
-                                                updateTotal();
+                                                final newList = List<int>.from(selectedPriceList.value);
+                                                newList[index] = 3;
+                                                selectedPriceList.value = newList;
                                               }
                                             : null,
                                         child: const AutoSizeText(

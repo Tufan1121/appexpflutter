@@ -392,8 +392,9 @@ class ListaProductosVenta extends HookWidget {
                                         onPressed: () {
                                           if (currentCount <
                                               existencia.toInt()) {
-                                            countList.value[index] = currentCount + 1;
-                                            updateTotal();
+                                            final newList = List<int>.from(countList.value);
+                                            newList[index] = currentCount + 1;
+                                            countList.value = newList;
                                           } else {
                                              ScaffoldMessenger.of(context).showSnackBar(
                                               const SnackBar(content: Text('No hay más existencia disponible'), duration: Duration(milliseconds: 1000)),
@@ -409,8 +410,9 @@ class ListaProductosVenta extends HookWidget {
                                         ),
                                         onPressed: () async {
                                           if (currentCount > 1) {
-                                            countList.value[index] = currentCount - 1;
-                                            updateTotal();
+                                            final newList = List<int>.from(countList.value);
+                                            newList[index] = currentCount - 1;
+                                            countList.value = newList;
                                           } else {
                                             // Eliminar
                                             final confirm = await _dialogEliminar(context, producto);
@@ -439,8 +441,9 @@ class ListaProductosVenta extends HookWidget {
                                         price: producto.precio1.toDouble(),
                                         value: currentSelectedPrice == 1,
                                         onChanged: (bool? value) {
-                                          selectedPriceList.value[index] = 1;
-                                          updateTotal();
+                                          final newList = List<int>.from(selectedPriceList.value);
+                                          newList[index] = 1;
+                                          selectedPriceList.value = newList;
                                         },
                                       ),
                                       _buildPriceCheckbox(
@@ -450,8 +453,9 @@ class ListaProductosVenta extends HookWidget {
                                             producto.precio2?.toDouble() ?? 0.0,
                                         value: currentSelectedPrice == 2,
                                         onChanged: (bool? value) {
-                                            selectedPriceList.value[index] = 2;
-                                            updateTotal();
+                                          final newList = List<int>.from(selectedPriceList.value);
+                                          newList[index] = 2;
+                                          selectedPriceList.value = newList;
                                         },
                                       ),
                                     ],
