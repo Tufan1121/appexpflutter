@@ -21,6 +21,7 @@ class ListaProductosVenta extends HookWidget {
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
     final shippingCost = useState<double>(UtilsVenta.shippingCost);
+    print('🔴 [ListaProductosVenta] build() - UtilsVenta.shippingCost=${UtilsVenta.shippingCost}, shippingCost.value=${shippingCost.value}, UtilsVenta.total=${UtilsVenta.total}');
 
     // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
     final countList = useState<List<int>>(List.filled(productos.length, 1));
@@ -72,6 +73,7 @@ class ListaProductosVenta extends HookWidget {
       
       // Forzar redraw
       shippingCost.value = UtilsVenta.shippingCost;
+      print('🟢 [ListaProductosVenta] updateTotal() - subtotal: ${total.value}, UtilsVenta.shippingCost: ${UtilsVenta.shippingCost}, UtilsVenta.totalWithShipping: ${UtilsVenta.totalWithShipping}, shippingCost.value: ${shippingCost.value}');
     }
 
     useEffect(() {
@@ -231,11 +233,13 @@ class ListaProductosVenta extends HookWidget {
                          ShippingQuoteModalV2.show(
                            context: context,
                            products: productsForQuote,
-                           onShippingSelected: (price, carrier, description, breakdown) {
-                             UtilsVenta.setShipping(price, carrier, description, breakdown);
-                             shippingCost.value = price;
-                             updateTotal(); // Actualizar totales
-                           },
+                            onShippingSelected: (price, carrier, description, breakdown) {
+                              print('🟡 [ListaProductosVenta] onShippingSelected - price=$price, carrier=$carrier');
+                              UtilsVenta.setShipping(price, carrier, description, breakdown);
+                              print('🟡 [ListaProductosVenta] after setShipping - UtilsVenta.shippingCost=${UtilsVenta.shippingCost}');
+                              shippingCost.value = price;
+                              updateTotal(); // Actualizar totales
+                            },
                          );
                        },
                       icon: const Icon(Icons.local_shipping, size: 16, color: Colors.white),

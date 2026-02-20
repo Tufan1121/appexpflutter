@@ -181,9 +181,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
           .valueChanges
           .listen((_) => updateDebePorPagar());
 
-      return () {
-        UtilsVenta.clearShipping();
-      };
+      // NO limpiar el envío al navegar hacia atrás
+      // El envío se limpia solo cuando se guarda exitosamente o se cancela el pedido completo
+      return null;
     }, []);
 
     return Scaffold(
@@ -824,7 +824,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         return;
       }
 
-      final totalAPagarFinal = anticipoPago + anticipoPago2 + anticipoPago3;
+      final totalAnticipos = anticipoPago + anticipoPago2 + anticipoPago3;
       
       // Obtener información de cuentas y terminales desde el estado del Bloc
       final paymentInfoState = context.read<PaymentInfoBloc>().state;
@@ -875,7 +875,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         'anticipo': anticipoPago,
         'anticipo2': anticipoPago2,
         'anticipo3': anticipoPago3,
-        'total_pagar': totalAPagarFinal,
+        'total_pagar': UtilsVenta.totalWithShipping,
         'entregado': entregado,
         'id_metodopago2': metodo2,
         'banco2': cuenta2?.banco ?? terminal2?.banco ?? '',

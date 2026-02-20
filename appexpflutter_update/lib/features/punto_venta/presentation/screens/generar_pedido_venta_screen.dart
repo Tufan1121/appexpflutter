@@ -80,6 +80,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
   Widget build(BuildContext context) {
     // Leer el total EN VIVO cada vez que se construye el widget
     final totalAPagar = UtilsVenta.totalWithShipping;
+    print('🔵 [GenerarPedidoVentaScreen] build() - UtilsVenta.total: ${UtilsVenta.total}, shippingCost: ${UtilsVenta.shippingCost}, totalWithShipping: $totalAPagar');
     final loading = useState(false);
     final debePorPagar = useState(totalAPagar);
     final scrollController = useScrollController();
@@ -742,7 +743,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
         return;
       }
 
-      final totalAPagar = anticipoPago + anticipoPago2 + anticipoPago3;
+      final totalAnticipos = anticipoPago + anticipoPago2 + anticipoPago3;
       // Obtener información de cuentas y terminales desde el estado del Bloc
       final paymentInfoState = context.read<PaymentInfoBloc>().state;
       
@@ -795,7 +796,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
         'anticipo': anticipoPago,
         'anticipo2': anticipoPago2,
         'anticipo3': anticipoPago3,
-        'total_pagar': totalAPagar,
+        'total_pagar': UtilsVenta.totalWithShipping,
         'id_cliente': widget.dataCliente['id_cliente'] ?? 0,
         'entregado': entregado,
         'id_metodopago2': metodo2,
@@ -850,7 +851,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
         print('');
       }
       print('📊 TOTALES:');
-      print('  Total a Pagar: \$${data['total_pagar']}');
+      print('  Subtotal (productos): \$${UtilsVenta.total}');
+      print('  Envío: \$${UtilsVenta.shippingCost}');
+      print('  Total a Pagar (con envío): \$${data['total_pagar']}');
+      print('  Sum Anticipos: \$${anticipoPago + anticipoPago2 + anticipoPago3}');
       print('  Entregado: ${data['entregado'] == 1 ? 'Sí' : 'No'}');
       print('  Estatus: ${data['estatus']}');
       print('');

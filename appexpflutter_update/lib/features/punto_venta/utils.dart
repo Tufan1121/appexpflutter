@@ -30,6 +30,8 @@ class UtilsVenta {
   }
 
   static void clearShipping() {
+    print('⚠️ [UtilsVenta] clearShipping() CALLED! shippingCost was: $shippingCost');
+    print(StackTrace.current);
     shippingCost = 0;
     shippingCarrier = '';
     shippingServiceDescription = '';
@@ -37,6 +39,8 @@ class UtilsVenta {
   }
 
   static void clearAll() {
+    print('⚠️ [UtilsVenta] clearAll() CALLED! total=$total, shippingCost=$shippingCost');
+    print(StackTrace.current);
     total = 0;
     listProductsOrder = [];
     clearShipping();

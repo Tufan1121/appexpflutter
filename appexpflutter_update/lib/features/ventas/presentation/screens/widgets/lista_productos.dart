@@ -70,6 +70,9 @@ class ListaProductos extends HookWidget {
       }
       total.value = newTotal;
       UtilsVenta.total = total.value;
+      
+      // Sincronizar el shipping cost del widget con el de UtilsVenta
+      shippingCost.value = UtilsVenta.shippingCost;
     }
 
     useEffect(() {
@@ -334,6 +337,7 @@ class ListaProductos extends HookWidget {
                           breakdown: breakdown,
                         );
                         shippingCost.value = price;
+                        updateTotal(); // Recalcular totales con envío
                       },
                     );
                   },
