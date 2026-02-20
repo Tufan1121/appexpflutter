@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+﻿import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -102,7 +102,7 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                 padding: const EdgeInsets.all(8),
               ),
               child: Image.asset(
-                'assets/iconos/generar pedido- rosa.png',
+                'assets/iconos/generar_pedido_rosa.png',
                 scale: 4.5,
               ),
             );

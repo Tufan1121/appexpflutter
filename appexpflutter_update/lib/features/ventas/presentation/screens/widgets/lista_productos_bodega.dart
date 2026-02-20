@@ -40,7 +40,7 @@ class ListaProductosBodegaCard extends HookWidget {
                   FadeInImage.assetNetwork(
                     placeholder: 'assets/loaders/loading.gif',
                     image:
-                        'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
+                        'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
                     width: 70,
                     height: 70,
                     fit: BoxFit.cover,

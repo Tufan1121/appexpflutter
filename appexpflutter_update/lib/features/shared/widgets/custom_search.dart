@@ -23,17 +23,26 @@ class CustomSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 54,
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30.0),
-        boxShadow: const [
+        borderRadius: BorderRadius.circular(27.0),
+        border: Border.all(
+          color: Colores.primaryColor.withOpacity(0.1),
+          width: 1.5,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black26,
-            blurRadius: 6,
-            offset: Offset(2.0, 5.0),
-          )
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+          BoxShadow(
+            color: Colores.gradientEnd.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
         ],
       ),
       child: TextField(

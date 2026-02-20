@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
+﻿import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/mixin_products.dart';
@@ -73,7 +73,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
               // Otros estilos según sea necesario
             ),
             child: Image.asset(
-              'assets/iconos/qr/qr 72_.png',
+              'assets/iconos/qr/qr_72_.png',
               scale: 5,
             ),
           ),
@@ -97,7 +97,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
               padding: const EdgeInsets.all(8),
             ),
             child: Image.asset(
-              'assets/iconos/inventario bodegas - rosa2.png',
+              'assets/iconos/inventario_bodegas__rosa2.png',
               scale: 5,
             ),
           ),
@@ -151,7 +151,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
                             return CustomListTile(
                               text: loading ? 'GENERANDO...' : 'GENERAR SESION',
                               assetPathIcon:
-                                  'assets/iconos/pedidos - rosa gris.png',
+                                  'assets/iconos/pedidos_rosa_gris.png',
                               onTap: loading
                                   ? null
                                   : () {
@@ -238,7 +238,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
                                     ? 'GENERANDO...'
                                     : 'GENERAR COTIZACION',
                                 assetPathIcon:
-                                    'assets/iconos/pedidos - rosa gris.png',
+                                    'assets/iconos/pedidos_rosa_gris.png',
                                 onTap: loading
                                     ? null
                                     : () {
@@ -312,7 +312,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
             child: Padding(
               padding: const EdgeInsets.all(2.0),
               child: Image.asset(
-                'assets/iconos/pedidos - rosa gris.png',
+                'assets/iconos/pedidos_rosa_gris.png',
                 scale: 6,
               ),
             ),

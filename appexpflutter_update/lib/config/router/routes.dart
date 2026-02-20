@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/cotizador_envio/presentation/screens/cotizador_envio_screen.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_screen.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/historial_screen.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/pedido_sesion_screen.dart';
@@ -34,7 +35,7 @@ part 'routes.g.dart';
 @TypedGoRoute<LoginRoute>(
   path: LoginRoute.path,
 )
-class LoginRoute extends GoRouteData {
+class LoginRoute extends GoRouteData with $LoginRoute {
   static const path = '/login';
 
   @override
@@ -45,7 +46,7 @@ class LoginRoute extends GoRouteData {
 @TypedGoRoute<HomeRoute>(
   path: HomeRoute.path,
 )
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with $HomeRoute {
   HomeRoute();
   static const path = '/home';
   @override
@@ -55,7 +56,7 @@ class HomeRoute extends GoRouteData {
 @TypedGoRoute<PreciosRoute>(
   path: PreciosRoute.path,
 )
-class PreciosRoute extends GoRouteData {
+class PreciosRoute extends GoRouteData with $PreciosRoute {
   static const path = '/precios';
   @override
   Widget build(BuildContext context, GoRouterState state) =>
@@ -65,7 +66,7 @@ class PreciosRoute extends GoRouteData {
 @TypedGoRoute<PhotoGalleryRoute>(
   path: PhotoGalleryRoute.path,
 )
-class PhotoGalleryRoute extends GoRouteData {
+class PhotoGalleryRoute extends GoRouteData with $PhotoGalleryRoute {
   static const path = '/galeria';
   final List<String> imageUrls;
   final int initialIndex;
@@ -83,7 +84,7 @@ class PhotoGalleryRoute extends GoRouteData {
 @TypedGoRoute<PhotoGalleryIBodegasRoute>(
   path: PhotoGalleryIBodegasRoute.path,
 )
-class PhotoGalleryIBodegasRoute extends GoRouteData {
+class PhotoGalleryIBodegasRoute extends GoRouteData with $PhotoGalleryIBodegasRoute {
   static const path = '/galeria_ibodegas';
   final List<String> imageUrls;
   final int initialIndex;
@@ -112,7 +113,7 @@ class PhotoGalleryIBodegasRoute extends GoRouteData {
 @TypedGoRoute<PhotoGalleryRoute2>(
   path: PhotoGalleryRoute2.path,
 )
-class PhotoGalleryRoute2 extends GoRouteData {
+class PhotoGalleryRoute2 extends GoRouteData with $PhotoGalleryRoute2 {
   static const path = '/galeria_dos';
   final List<String> imageUrls;
   final int initialIndex;
@@ -134,7 +135,7 @@ class PhotoGalleryRoute2 extends GoRouteData {
 @TypedGoRoute<ClienteNuevoRoute>(
   path: ClienteNuevoRoute.path,
 )
-class ClienteNuevoRoute extends GoRouteData {
+class ClienteNuevoRoute extends GoRouteData with $ClienteNuevoRoute {
   static const path = '/cliente_nuevo';
 
   @override
@@ -145,7 +146,7 @@ class ClienteNuevoRoute extends GoRouteData {
 @TypedGoRoute<ClienteNuevoVentaRoute>(
   path: ClienteNuevoVentaRoute.path,
 )
-class ClienteNuevoVentaRoute extends GoRouteData {
+class ClienteNuevoVentaRoute extends GoRouteData with $ClienteNuevoVentaRoute {
   static const path = '/cliente_nuevo_venta';
 
   @override
@@ -156,7 +157,7 @@ class ClienteNuevoVentaRoute extends GoRouteData {
 @TypedGoRoute<ClienteExistenteRoute>(
   path: ClienteExistenteRoute.path,
 )
-class ClienteExistenteRoute extends GoRouteData {
+class ClienteExistenteRoute extends GoRouteData with $ClienteExistenteRoute {
   static const path = '/cliente_existente';
 
   @override
@@ -167,7 +168,7 @@ class ClienteExistenteRoute extends GoRouteData {
 @TypedGoRoute<PedidoRoute>(
   path: PedidoRoute.path,
 )
-class PedidoRoute extends GoRouteData {
+class PedidoRoute extends GoRouteData with $PedidoRoute {
   static const path = '/pedido';
   final int idCliente;
   final String nombreCliente;
@@ -189,7 +190,7 @@ class PedidoRoute extends GoRouteData {
 @TypedGoRoute<PedidoSesionRoute>(
   path: PedidoSesionRoute.path,
 )
-class PedidoSesionRoute extends GoRouteData {
+class PedidoSesionRoute extends GoRouteData with $PedidoSesionRoute {
   static const path = '/pedido_sesion';
   final int idCliente;
   final int estado;
@@ -217,7 +218,7 @@ class PedidoSesionRoute extends GoRouteData {
 @TypedGoRoute<GenerarPedidoRoute>(
   path: GenerarPedidoRoute.path,
 )
-class GenerarPedidoRoute extends GoRouteData {
+class GenerarPedidoRoute extends GoRouteData with $GenerarPedidoRoute {
   static const path = '/generar_pedido';
   final int idCliente;
   final int estadoPedido;
@@ -243,7 +244,7 @@ class GenerarPedidoRoute extends GoRouteData {
 @TypedGoRoute<GenerarPedidoVentaRoute>(
   path: GenerarPedidoVentaRoute.path,
 )
-class GenerarPedidoVentaRoute extends GoRouteData {
+class GenerarPedidoVentaRoute extends GoRouteData with $GenerarPedidoVentaRoute {
   static const path = '/generar_pedido_venta';
   // final int idCliente;
   final int estadoPedido;
@@ -270,7 +271,7 @@ class GenerarPedidoVentaRoute extends GoRouteData {
 @TypedGoRoute<SesionPedidoRoute>(
   path: SesionPedidoRoute.path,
 )
-class SesionPedidoRoute extends GoRouteData {
+class SesionPedidoRoute extends GoRouteData with $SesionPedidoRoute {
   static const path = '/sesion_pedido';
   final int idCliente;
   final int estadoPedido;
@@ -290,7 +291,7 @@ class SesionPedidoRoute extends GoRouteData {
 @TypedGoRoute<CotizaPedidoRoute>(
   path: CotizaPedidoRoute.path,
 )
-class CotizaPedidoRoute extends GoRouteData {
+class CotizaPedidoRoute extends GoRouteData with $CotizaPedidoRoute {
   static const path = '/cotiza_pedido';
   final int idCliente;
   final int estadoPedido;
@@ -310,7 +311,7 @@ class CotizaPedidoRoute extends GoRouteData {
 @TypedGoRoute<InvetarioExpoRoute>(
   path: InvetarioExpoRoute.path,
 )
-class InvetarioExpoRoute extends GoRouteData {
+class InvetarioExpoRoute extends GoRouteData with $InvetarioExpoRoute {
   static const path = '/inventario_expo';
 
   InvetarioExpoRoute();
@@ -323,7 +324,7 @@ class InvetarioExpoRoute extends GoRouteData {
 @TypedGoRoute<InvetarioBodegaRoute>(
   path: InvetarioBodegaRoute.path,
 )
-class InvetarioBodegaRoute extends GoRouteData {
+class InvetarioBodegaRoute extends GoRouteData with $InvetarioBodegaRoute {
   static const path = '/inventario_bodega';
 
   InvetarioBodegaRoute();
@@ -336,7 +337,7 @@ class InvetarioBodegaRoute extends GoRouteData {
 @TypedGoRoute<BusquedaGlobalRoute>(
   path: BusquedaGlobalRoute.path,
 )
-class BusquedaGlobalRoute extends GoRouteData {
+class BusquedaGlobalRoute extends GoRouteData with $BusquedaGlobalRoute {
   static const path = '/busqueda_global';
 
   BusquedaGlobalRoute();
@@ -349,7 +350,7 @@ class BusquedaGlobalRoute extends GoRouteData {
 @TypedGoRoute<HistorialRoute>(
   path: HistorialRoute.path,
 )
-class HistorialRoute extends GoRouteData {
+class HistorialRoute extends GoRouteData with $HistorialRoute {
   static const path = '/historial';
 
   HistorialRoute();
@@ -362,7 +363,7 @@ class HistorialRoute extends GoRouteData {
 @TypedGoRoute<ReportesScreenRoute>(
   path: ReportesScreenRoute.path,
 )
-class ReportesScreenRoute extends GoRouteData {
+class ReportesScreenRoute extends GoRouteData with $ReportesScreenRoute {
   static const path = '/reportes';
 
   ReportesScreenRoute();
@@ -375,7 +376,7 @@ class ReportesScreenRoute extends GoRouteData {
 @TypedGoRoute<AuthReportesScreenRoute>(
   path: AuthReportesScreenRoute.path,
 )
-class AuthReportesScreenRoute extends GoRouteData {
+class AuthReportesScreenRoute extends GoRouteData with $AuthReportesScreenRoute {
   static const path = '/auth_reportes';
 
   AuthReportesScreenRoute();
@@ -388,7 +389,7 @@ class AuthReportesScreenRoute extends GoRouteData {
 @TypedGoRoute<GaleriaRoute>(
   path: GaleriaRoute.path,
 )
-class GaleriaRoute extends GoRouteData {
+class GaleriaRoute extends GoRouteData with $GaleriaRoute {
   static const path = '/galeria_global';
 
   @override
@@ -399,7 +400,7 @@ class GaleriaRoute extends GoRouteData {
 @TypedGoRoute<PuntoVentaRoute>(
   path: PuntoVentaRoute.path,
 )
-class PuntoVentaRoute extends GoRouteData {
+class PuntoVentaRoute extends GoRouteData with $PuntoVentaRoute {
   static const path = '/punto_venta_global';
 
   @override
@@ -410,7 +411,7 @@ class PuntoVentaRoute extends GoRouteData {
 @TypedGoRoute<TicketsRoute>(
   path: TicketsRoute.path,
 )
-class TicketsRoute extends GoRouteData {
+class TicketsRoute extends GoRouteData with $TicketsRoute {
   static const path = '/tickets';
   final Map<String, dynamic> $extra ;
 
@@ -424,10 +425,22 @@ class TicketsRoute extends GoRouteData {
 @TypedGoRoute<PuntoVentaHistoryRoute>(
   path: PuntoVentaHistoryRoute.path,
 )
-class PuntoVentaHistoryRoute extends GoRouteData {
+class PuntoVentaHistoryRoute extends GoRouteData with $PuntoVentaHistoryRoute {
   static const path = '/historial_punto_venta';
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const PuntoVentaConsultaScreen();
 }
+
+@TypedGoRoute<CotizadorEnvioRoute>(
+  path: CotizadorEnvioRoute.path,
+)
+class CotizadorEnvioRoute extends GoRouteData with $CotizadorEnvioRoute {
+  static const path = '/cotizador_envio';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CotizadorEnvioScreen();
+}
+

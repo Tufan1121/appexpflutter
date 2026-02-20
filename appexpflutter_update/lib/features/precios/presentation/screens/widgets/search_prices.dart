@@ -1,4 +1,4 @@
-import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_page_precios.dart';
+﻿import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_page_precios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
@@ -118,7 +118,7 @@ class SearchPrices extends HookWidget {
             child: Padding(
               padding: const EdgeInsets.all(2.0),
               child: Image.asset(
-                'assets/iconos/qr/qr 72_.png',
+                'assets/iconos/qr/qr_72_.png',
                 scale: 5,
               ),
             ),

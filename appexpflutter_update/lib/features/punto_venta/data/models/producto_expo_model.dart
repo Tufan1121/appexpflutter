@@ -44,6 +44,10 @@ Map<String, dynamic> convertReducedJsonToFullJson(
     "precio2": (normalizedJson["precio2"]) ?? 0,
     "precio3": (normalizedJson["precio3"]) ?? 0,
     "desalmacen": normalizedJson["desalmacen"] ?? "",
+    "largop": normalizedJson["largop"],
+    "anchop": normalizedJson["anchop"],
+    "altop": normalizedJson["altop"],
+    "peso": normalizedJson["peso"],
   };
 }
 
@@ -81,7 +85,18 @@ class ProductoExpoModel extends ProductoExpoEntity
       required super.precio1,
       required super.precio2,
       required super.precio3,
-      required super.desalmacen});
+      required super.desalmacen,
+      super.largop,
+      super.anchop,
+      super.altop,
+      super.pesoEnvio});
+
+  // Helper para parsear campos de dimensiones de paquete
+  static double? _parsePackageDimension(dynamic value) {
+    if (value == null) return null;
+    final parsed = (value as num?)?.toDouble();
+    return (parsed != null && parsed > 0) ? parsed : null;
+  }
 
   factory ProductoExpoModel.fromJson(Map<String, dynamic> json) {
     return ProductoExpoModel(
@@ -118,6 +133,10 @@ class ProductoExpoModel extends ProductoExpoEntity
       precio2: json["precio2"],
       precio3: json["precio3"],
       desalmacen: json["desalmacen"],
+      largop: _parsePackageDimension(json["largop"]),
+      anchop: _parsePackageDimension(json["anchop"]),
+      altop: _parsePackageDimension(json["altop"]),
+      pesoEnvio: _parsePackageDimension(json["peso"]),
     );
   }
 
@@ -154,6 +173,10 @@ class ProductoExpoModel extends ProductoExpoEntity
         "precio2": precio2,
         "precio3": precio3,
         "desalmacen": desalmacen,
+        "largop": largop,
+        "anchop": anchop,
+        "altop": altop,
+        "peso": pesoEnvio,
       };
 
   @override
@@ -189,5 +212,9 @@ class ProductoExpoModel extends ProductoExpoEntity
       precio1: precio1,
       precio2: precio2,
       precio3: precio3,
-      desalmacen: desalmacen);
+      desalmacen: desalmacen,
+      largop: largop,
+      anchop: anchop,
+      altop: altop,
+      pesoEnvio: pesoEnvio);
 }

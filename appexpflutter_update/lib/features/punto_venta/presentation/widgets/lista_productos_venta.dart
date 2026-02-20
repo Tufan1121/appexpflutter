@@ -2,6 +2,8 @@ import 'package:appexpflutter_update/features/punto_venta/domain/entities/produc
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/shipping_quote_modal_v2.dart';
+import 'package:appexpflutter_update/features/cotizador_envio/data/models/product_shipping_info.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 
+
 class ListaProductosVenta extends HookWidget {
   const ListaProductosVenta({super.key, required this.productos});
   final List<ProductoExpoEntity> productos;
@@ -17,6 +20,8 @@ class ListaProductosVenta extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
+    final shippingCost = useState<double>(UtilsVenta.shippingCost);
+    print('🔴 [ListaProductosVenta] build() - UtilsVenta.shippingCost=${UtilsVenta.shippingCost}, shippingCost.value=${shippingCost.value}, UtilsVenta.total=${UtilsVenta.total}');
 
     // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
     final countList = useState<List<int>>(List.filled(productos.length, 1));
@@ -26,6 +31,8 @@ class ListaProductosVenta extends HookWidget {
     void updateTotal() {
       double newTotal = 0.0;
       UtilsVenta.listProductsOrder.clear();
+      int totalItems = 0;
+
       for (var i = 0; i < productos.length; i++) {
         if (i >= countList.value.length ||
             i >= selectedPriceList.value.length) {
@@ -34,9 +41,9 @@ class ListaProductosVenta extends HookWidget {
 
         final count = countList.value[i];
         final selectedPrice = selectedPriceList.value[i];
-        // print('Producto ${productos[i].producto}: count = $count, selectedPrice = $selectedPrice');
 
         if (count > 0) {
+          totalItems += count;
           double precioUnitario = 0.0;
           switch (selectedPrice) {
             case 1:
@@ -63,12 +70,25 @@ class ListaProductosVenta extends HookWidget {
       }
       total.value = newTotal;
       UtilsVenta.total = total.value;
+      
+      // Forzar redraw
+      shippingCost.value = UtilsVenta.shippingCost;
+      print('🟢 [ListaProductosVenta] updateTotal() - subtotal: ${total.value}, UtilsVenta.shippingCost: ${UtilsVenta.shippingCost}, UtilsVenta.totalWithShipping: ${UtilsVenta.totalWithShipping}, shippingCost.value: ${shippingCost.value}');
     }
 
     useEffect(() {
       updateTotal(); // Initial calculation
-      return null; // No cleanup needed
+      // NO limpiar el envío aquí al desmontar el widget
+      // El envío se limpia solo cuando se guarda exitosamente o se cancela el pedido completo
+      return null; 
     }, [countList.value, selectedPriceList.value]);
+
+    // Recalcular total cuando cambian los datos de los productos (ej: precio manual)
+    final productPricesKey = productos.map((p) => '${p.producto1}:${p.precio2}').join(',');
+    useEffect(() {
+      updateTotal();
+      return null;
+    }, [productPricesKey]);
 
     useEffect(() {
       // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
@@ -93,36 +113,203 @@ class ListaProductosVenta extends HookWidget {
       return null;
     }, [productos.length]);
 
+    // Construye la lista de productos con dimensiones para cotización
+    // Usa las dimensiones del producto y estima el peso basado en el área
+    List<ProductShippingInfo> buildProductsForQuote() {
+      final List<ProductShippingInfo> result = [];
+      
+      for (int i = 0; i < productos.length; i++) {
+        if (i < countList.value.length && countList.value[i] > 0) {
+          final producto = productos[i];
+          
+          // DEBUG: Imprimir valores originales del producto
+          print('═══════════════════════════════════════════════════════════════');
+          print('🔍 [PUNTO VENTA] buildProductsForQuote - Producto: ${producto.producto1}');
+          print('   📦 Dimensiones de PAQUETE (largop/anchop/altop/pesoEnvio):');
+          print('      largop: ${producto.largop}');
+          print('      anchop: ${producto.anchop}');
+          print('      altop: ${producto.altop}');
+          print('      pesoEnvio: ${producto.pesoEnvio}');
+          print('   📐 Dimensiones de PRODUCTO (largo/ancho en metros):');
+          print('      largo: ${producto.largo}');
+          print('      ancho: ${producto.ancho}');
+          
+          // Prioridad: usar dimensiones de paquete si existen, si no usar dimensiones del producto
+          double largo;
+          double ancho;
+          double alto;
+          double peso;
+          
+          // Si tenemos dimensiones de paquete del backend, usarlas
+          if (producto.largop != null && producto.largop! > 0) {
+            largo = producto.largop!;
+          } else if (producto.largo != null && producto.largo! > 0) {
+            // Convertir largo del producto de metros a cm
+            largo = producto.largo! * 100;
+          } else {
+            largo = 30.0; // Valor por defecto
+          }
+          
+          if (producto.anchop != null && producto.anchop! > 0) {
+            ancho = producto.anchop!;
+          } else if (producto.ancho != null && producto.ancho! > 0) {
+            // Convertir ancho del producto de metros a cm
+            ancho = producto.ancho! * 100;
+          } else {
+            ancho = 20.0; // Valor por defecto
+          }
+          
+          if (producto.altop != null && producto.altop! > 0) {
+            alto = producto.altop!;
+          } else {
+            // Estimar alto basado en si es un tapete enrollado (diámetro aprox)
+            alto = 15.0; // Valor por defecto para tapete enrollado
+          }
+          
+          if (producto.pesoEnvio != null && producto.pesoEnvio! > 0) {
+            peso = producto.pesoEnvio!;
+          } else {
+            // Estimar peso basado en el área del producto (m2) * factor de peso por m2
+            final area = ((producto.largo ?? 1.0) * (producto.ancho ?? 1.0));
+            peso = area > 0 ? (area * 3.0).clamp(1.5, 50.0) : 2.0; // ~3kg por m2, mínimo 1.5kg, máximo 50kg
+          }
+          
+          // DEBUG: Imprimir valores calculados
+          print('   ✅ Valores USADOS para cotización:');
+          print('      largo: $largo cm');
+          print('      ancho: $ancho cm');
+          print('      alto: $alto cm');
+          print('      peso: $peso kg');
+          print('═══════════════════════════════════════════════════════════════');
+          
+          result.add(ProductShippingInfo(
+            productKey: producto.producto1,
+            productName: producto.producto,
+            largo: largo,
+            ancho: ancho,
+            alto: alto,
+            peso: peso,
+            cantidad: countList.value[i],
+          ));
+        }
+      }
+      return result;
+    }
+
     return Column(
       children: [
-        Text('Total: ${Utils.formatPrice(total.value)}',
-            style: GoogleFonts.montserrat(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colores.scaffoldBackgroundColor,
-                shadows: [
-                  const BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(2.0, 5.0),
-                  )
-                ])),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.66,
-          child: ListView.builder(
+        // Card de Totales y Envío
+        Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Subtotal:', style: GoogleFonts.inter(fontSize: 14)),
+                    Text(Utils.formatPrice(total.value), style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                         int totalCount = countList.value.fold(0, (sum, item) => sum + item);
+                         if (totalCount == 0 && productos.isEmpty) {
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             const SnackBar(content: Text('Agrega productos para cotizar envío')),
+                           );
+                           return;
+                         }
+                        
+                         final productsForQuote = buildProductsForQuote();
+                         
+                         ShippingQuoteModalV2.show(
+                           context: context,
+                           products: productsForQuote,
+                            onShippingSelected: (price, carrier, description, breakdown) {
+                              print('🟡 [ListaProductosVenta] onShippingSelected - price=$price, carrier=$carrier');
+                              UtilsVenta.setShipping(price, carrier, description, breakdown);
+                              print('🟡 [ListaProductosVenta] after setShipping - UtilsVenta.shippingCost=${UtilsVenta.shippingCost}');
+                              shippingCost.value = price;
+                              updateTotal(); // Actualizar totales
+                            },
+                         );
+                       },
+                      icon: const Icon(Icons.local_shipping, size: 16, color: Colors.white),
+                      label: const Text('Cotizar Envío', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colores.primaryColor,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                    ),
+                    if (shippingCost.value > 0)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              UtilsVenta.shippingCarrier,
+                              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              Utils.formatPrice(shippingCost.value),
+                              style: GoogleFonts.inter(fontSize: 14, color: Colors.green, fontWeight: FontWeight.bold),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                UtilsVenta.clearShipping();
+                                shippingCost.value = 0;
+                                updateTotal();
+                              },
+                              child: const Text('Eliminar envío', style: TextStyle(color: Colors.red, fontSize: 10)),
+                            )
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                const Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('TOTAL:', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      Utils.formatPrice(total.value + shippingCost.value),
+                      style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colores.primaryColor),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
             itemCount: productos.length,
             itemBuilder: (context, index) {
               final producto = productos[index];
               final existencia = producto.hm;
+              
+              // Usar valores directos de las listas
+              final currentCount = countList.value.length > index ? countList.value[index] : 1;
+              final currentSelectedPrice = selectedPriceList.value.length > index ? selectedPriceList.value[index] : 1;
 
               return HookBuilder(
                 builder: (context) {
-                  final count = useState(countList.value[index]);
-                  final selectedPrice =
-                      useState<int>(selectedPriceList.value[index]);
                   final customPrice = useState<double?>(null);
                   final customPriceController = useTextEditingController(
                       text: producto.precio2.toString());
+                  final scrollController = useScrollController(); // Scroll por item
 
                   return ClipRect(
                     child: Card(
@@ -132,7 +319,7 @@ class ListaProductosVenta extends HookWidget {
                       clipBehavior: Clip.hardEdge,
                       child: Dismissible(
                         direction: DismissDirection.startToEnd,
-                        key: Key(producto.producto1),
+                        key: ValueKey('pv_${producto.producto1}'),
                         confirmDismiss: (direction) async {
                           return await _dialogEliminar(context, producto);
                         },
@@ -155,7 +342,7 @@ class ListaProductosVenta extends HookWidget {
                                     image: producto.pathima1 != null &&
                                             producto.pathima1!.isNotEmpty
                                         ? NetworkImage(
-                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1 ?? '')}',
+                                            'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(producto.pathima1 ?? '')}',
                                           )
                                         : const AssetImage(
                                                 'assets/images/no-image.jpg')
@@ -207,24 +394,33 @@ class ListaProductosVenta extends HookWidget {
                                       IconButton(
                                         icon: const Icon(Icons.add),
                                         onPressed: () {
-                                          if (count.value <
+                                          if (currentCount <
                                               existencia.toInt()) {
-                                            count.value++;
-                                            countList.value[index] =
-                                                count.value;
-                                            updateTotal();
+                                            final newList = List<int>.from(countList.value);
+                                            newList[index] = currentCount + 1;
+                                            countList.value = newList;
+                                          } else {
+                                             ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(content: Text('No hay más existencia disponible'), duration: Duration(milliseconds: 1000)),
+                                            );
                                           }
                                         },
                                       ),
-                                      Text('${count.value}'),
+                                      Text('$currentCount'),
                                       IconButton(
-                                        icon: const Icon(Icons.remove),
-                                        onPressed: () {
-                                          if (count.value > 1) {
-                                            count.value--;
-                                            countList.value[index] =
-                                                count.value;
-                                            updateTotal();
+                                        icon: Icon(
+                                          currentCount == 1 ? Icons.delete_outline : Icons.remove,
+                                          color: currentCount == 1 ? Colors.red : null,
+                                        ),
+                                        onPressed: () async {
+                                          if (currentCount > 1) {
+                                            final newList = List<int>.from(countList.value);
+                                            newList[index] = currentCount - 1;
+                                            countList.value = newList;
+                                          } else {
+                                            // Eliminar
+                                            final confirm = await _dialogEliminar(context, producto);
+                                            // Si confirma, Dismissible lo maneja o estado se actualiza por el bloc
                                           }
                                         },
                                       ),
@@ -234,7 +430,10 @@ class ListaProductosVenta extends HookWidget {
                               ),
                               const SizedBox(height: 4),
                               Scrollbar(
+                                controller: scrollController, // Usar controller unico por item
+                                thumbVisibility: true,
                                 child: SingleChildScrollView(
+                                  controller: scrollController,
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     mainAxisAlignment:
@@ -244,12 +443,11 @@ class ListaProductosVenta extends HookWidget {
                                         context: context,
                                         label: 'Precio de Lista',
                                         price: producto.precio1.toDouble(),
-                                        value: selectedPrice.value == 1,
+                                        value: currentSelectedPrice == 1,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 1;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal();
+                                          final newList = List<int>.from(selectedPriceList.value);
+                                          newList[index] = 1;
+                                          selectedPriceList.value = newList;
                                         },
                                       ),
                                       _buildPriceCheckbox(
@@ -257,19 +455,18 @@ class ListaProductosVenta extends HookWidget {
                                         label: 'Precio de Expo',
                                         price:
                                             producto.precio2?.toDouble() ?? 0.0,
-                                        value: selectedPrice.value == 2,
+                                        value: currentSelectedPrice == 2,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 2;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
-                                          updateTotal();
+                                          final newList = List<int>.from(selectedPriceList.value);
+                                          newList[index] = 2;
+                                          selectedPriceList.value = newList;
                                         },
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                              if (selectedPrice.value == 2)
+                              if (currentSelectedPrice == 2)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -285,9 +482,14 @@ class ListaProductosVenta extends HookWidget {
                                         },
                                         onSubmitted: (value) {
                                           if (customPrice.value != null) {
-                                            selectedPriceList.value[index] =
-                                                2; // Precio personalizado
-                                            updateTotal();
+                                             // Aquí solo actualizamos el precio localmente en la lógica
+                                             // Pero la lógica actual depende del precio en el producto entity
+                                             // Así que enviamos evento para actualizar producto en bloc
+                                             
+                                              final price = double.parse(customPriceController.text);
+                                              final updatedProduct = producto.copyWith(precio2: price.toInt());
+                                              context.read<ProductosTiendaBloc>().add(UpdateProductEvent(updatedProduct));
+                                              // Se actualizará por el BlocListener padre
                                           }
                                         },
                                         decoration: const InputDecoration(
@@ -320,11 +522,7 @@ class ListaProductosVenta extends HookWidget {
                                                     .read<ProductosTiendaBloc>()
                                                     .add(UpdateProductEvent(
                                                         updatedProduct));
-                                                // Actualiza el producto en la lista
-                                                productos[index] =
-                                                    updatedProduct;
-
-                                                updateTotal();
+                                                // La lista se reconstruirá cuando el estado del bloc cambie
                                               }
                                             : null,
                                         child: const AutoSizeText(
@@ -350,7 +548,6 @@ class ListaProductosVenta extends HookWidget {
               );
             },
           ),
-        ),
       ],
     );
   }
@@ -432,3 +629,4 @@ class ListaProductosVenta extends HookWidget {
     );
   }
 }
+

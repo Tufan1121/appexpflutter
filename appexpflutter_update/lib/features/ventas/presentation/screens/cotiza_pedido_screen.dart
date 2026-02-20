@@ -60,7 +60,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
     return metodosDePago.indexOf(metodo) + 1;
   }
 
-  final totalAPagar = UtilsVenta.total;
+  final totalAPagar = UtilsVenta.totalWithShipping;
 
   // Future<void> _openPDF(String pdfUrl) async {
   //   try {
@@ -112,6 +112,12 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
     }
 
     useEffect(() {
+      // Pre-llenar observaciones con detalles de envío si hay
+      if (UtilsVenta.hasShipping) {
+        String envioInfo = 'Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}';
+        form.control('observaciones').value = envioInfo;
+      }
+      
       form
           .control('anticipoPago1')
           .valueChanges
@@ -125,11 +131,17 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
           .valueChanges
           .listen((_) => updateDebePorPagar());
 
-      return null;
+      return () {
+        UtilsVenta.clearShipping();
+      };
     }, []);
-    return LayoutScreens(
-      onPressed: () => Navigator.pop(context),
-      titleScreen: 'COTIZACION PEDIDO',
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: LayoutScreens(
+        resizeToAvoidBottomInset: true,
+        onPressed: () => Navigator.pop(context),
+        titleScreen: 'COTIZACION PEDIDO',
       child: Column(
         children: [
           const SizedBox(
@@ -138,7 +150,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
-              height: 700, // 80 los dos sizebox
+              height: MediaQuery.of(context).size.height * 0.85, // 80 los dos sizebox
               width: double.infinity,
 
               child: Card(
@@ -167,13 +179,20 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text('Total a pagar'),
+                                      Text(UtilsVenta.hasShipping ? 'Total (incluye envío)' : 'Total a pagar'),
                                       Text(
-                                        Utils.formatPrice(UtilsVenta.total),
+                                        Utils.formatPrice(UtilsVenta.totalWithShipping),
                                         style: const TextStyle(
                                             color: Colors.purple,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                      if (UtilsVenta.hasShipping)
+                                        Text(
+                                          'Envío: ${Utils.formatPrice(UtilsVenta.shippingCost)}',
+                                          style: const TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey),
+                                        ),
                                     ],
                                   ),
                                   Column(
@@ -308,6 +327,10 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                             .add(ClearPedidoCotizaEvent());
                                         context.read<InventarioBloc>().add(
                                             ClearInventarioProductoEvent());
+                                            
+                                        // Limpiar datos de venta y envío estáticos
+                                        UtilsVenta.clearAll();
+                                        
                                         HomeRoute().go(context);
                                       } else if (state is PedidoCotizaError) {
                                         loading.value = false;
@@ -371,6 +394,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
           )
         ],
       ),
+    ),
     );
   }
 
@@ -481,13 +505,14 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
         'id_metodopago': metodo1,
         'observaciones': observaciones,
         'estatus': widget.estadoPedido,
-        'anticipo': anticipoPago.toInt(),
-        'anticipo2': anticipoPago2.toInt(),
-        'anticipo3': anticipoPago3.toInt(),
-        'total_pagar': totalAPagar.toInt(),
+        'anticipo': anticipoPago,
+        'anticipo2': anticipoPago2,
+        'anticipo3': anticipoPago3,
+        'total_pagar': totalAPagar,
         'entregado': entregado,
         'id_metodopago2': metodo2,
-        'id_metodopago3': metodo3.toString(),
+        'id_metodopago3': metodo3,
+        'envio': UtilsVenta.shippingCost.toString(),
       };
 
       context.read<CotizaPedidoBloc>().add(

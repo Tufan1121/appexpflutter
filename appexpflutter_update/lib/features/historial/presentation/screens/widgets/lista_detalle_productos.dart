@@ -162,7 +162,7 @@ class ListaDetalleProductos extends HookWidget {
                               Row(
                                 children: [
                                   Image.network(
-                                    'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
+                                    'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
                                     width: 60,
                                     height: 60,
                                     fit: BoxFit.cover,

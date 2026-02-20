@@ -16,6 +16,8 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/con
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/pedido/pedido_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_event.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/busqueda_global/busqueda_global_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_bodega/inventario_bodega_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
@@ -149,6 +151,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
         BlocProvider<MedidasCubit>(create: (_) => injector<MedidasCubit>()),
         BlocProvider<ConsultaBloc>(create: (_) => injector<ConsultaBloc>()),
+        BlocProvider<PaymentInfoBloc>(create: (_) => injector<PaymentInfoBloc>()..add(LoadPaymentInfoEvent())),
       ],
       child: FutureBuilder(
         future: _initFuture,

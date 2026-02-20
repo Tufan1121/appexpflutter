@@ -14,6 +14,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({required this.authUsecase}) : super(AuthInitial()) {
     on<LoginEvent>(_getToken);
     on<LogoutEvent>(_deleteAccessToken);
+    on<DemoLoginEvent>(_demoLogin);
+  }
+
+  Future<void> _demoLogin(DemoLoginEvent event, Emitter<AuthState> emit) async {
+     final prefs = await SharedPreferences.getInstance();
+     emit(AuthLoading());
+     
+     // Hardcoded values from the specific demo token payload
+     const username = "Helmut Heise";
+     const movil = "";
+     const almacen = "EXPOS GDL";
+     const digsig = "208";
+
+     await storage.write(key: 'accessToken', value: event.token);
+     await prefs.setString('username', username);
+     await prefs.setString('movil', movil);
+     await prefs.setString('almacen', almacen);
+     await prefs.setString('digsig', digsig);
+     
+     emit(const AuthAuthenticated(username: username));
   }
 
   Future<void> _getToken(LoginEvent event, Emitter<AuthState> emit) async {

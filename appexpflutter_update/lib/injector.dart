@@ -30,6 +30,8 @@ Future<void> init() async {
         () => GaleriaDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<ConsultaDatasource>(
         () => ConsultaDatasourceImp(dioClient: injector()))
+    ..registerLazySingleton<PaymentInfoDataSource>(
+        () => PaymentInfoDataSourceImpl(dioClient: injector()))
 
     //* Repositories
     ..registerLazySingleton<AuthRepository>(
@@ -54,6 +56,8 @@ Future<void> init() async {
         () => GaleriaRepositoryImpl(galeriaDataSource: injector()))
     ..registerLazySingleton<TicketsRepository>(
         () => TicketsRepositoryImpl(ticketsDataSource: injector()))
+    ..registerLazySingleton<PaymentInfoRepository>(
+        () => PaymentInfoRepositoryImpl(injector()))
 
     //* Usecases
     ..registerLazySingleton<AuthUsecase>(
@@ -125,6 +129,8 @@ Future<void> init() async {
         () => PedidoVentaBloc(pedidoUsecase: injector()))
     ..registerLazySingleton<ConsultaBloc>(
         () => ConsultaBloc(ticketsUsecase: injector()))
+    ..registerLazySingleton<PaymentInfoBloc>(
+        () => PaymentInfoBloc(repository: injector()))
     ..registerLazySingleton<PedidoBloc>(
         () => PedidoBloc(pedidoUsecase: injector()));
 }

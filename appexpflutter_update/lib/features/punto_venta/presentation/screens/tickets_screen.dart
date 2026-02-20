@@ -1,8 +1,9 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
+﻿import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_venta.dart';
+import 'package:appexpflutter_update/features/punto_venta/utils.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/search_producto_punto_venta.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_search.dart';
@@ -12,6 +13,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_bloc.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_event.dart';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_state.dart';
+import 'package:appexpflutter_update/features/punto_venta/data/models/cuenta_model.dart';
+import 'package:appexpflutter_update/features/punto_venta/data/models/terminal_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 const list = [
@@ -41,6 +47,12 @@ class _PedidoScreenState extends State<TicketsScreen> {
     final controller = useTextEditingController();
     final dropdownValue = useState<String>(list.first);
     final productos = context.watch<ProductosTiendaBloc>().scannedProducts;
+    
+    // Cargar información de pago (cuentas y terminales) cuando el widget se monta
+    useEffect(() {
+      context.read<PaymentInfoBloc>().add(LoadPaymentInfoEvent());
+      return null;
+    }, []);
     return PopScope(
       canPop: true,
       // Permite la navegación hacia atrás nativa
@@ -49,6 +61,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
         context
             .read<InventarioTiendaBloc>()
             .add(ClearInventarioProductoEvent());
+        UtilsVenta.clearAll();
       },
       child: Scaffold(
         appBar: PreferredSize(
@@ -62,6 +75,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                 context
                     .read<InventarioTiendaBloc>()
                     .add(ClearInventarioProductoEvent());
+                UtilsVenta.clearAll();
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.arrow_back_rounded),
@@ -123,7 +137,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
             padding: const EdgeInsets.all(8),
           ),
           child: Image.asset(
-            'assets/iconos/generar pedido- rosa.png',
+            'assets/iconos/generar_pedido_rosa.png',
             scale: 4.5,
           ),
         ),

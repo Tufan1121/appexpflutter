@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'dart:async';
 
 class SearchGallery extends HookWidget {
   const SearchGallery({
@@ -13,6 +14,7 @@ class SearchGallery extends HookWidget {
   Widget build(BuildContext context) {
     final controller = useTextEditingController();
     final textFieldValue = useState<String>('');
+    final debounceTimer = useState<Timer?>(null);
 
     useEffect(() {
       controller.addListener(() {
@@ -20,6 +22,27 @@ class SearchGallery extends HookWidget {
       });
       return null;
     }, [controller]);
+
+    // Limpiar el timer cuando el widget se desmonte
+    useEffect(() {
+      return () {
+        debounceTimer.value?.cancel();
+      };
+    }, []);
+
+    void onSearchChanged(String value) {
+      // Cancelar el timer anterior si existe
+      debounceTimer.value?.cancel();
+
+      // Crear un nuevo timer con un delay de 500ms
+      debounceTimer.value = Timer(const Duration(milliseconds: 500), () {
+        if (value.trim().isEmpty) {
+          context.read<GaleriaBloc>().add(const GetGaleriaEvent());
+        } else {
+          context.read<GaleriaBloc>().add(GetGaleriaEvent(descripcion: value.trim()));
+        }
+      });
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -48,9 +71,16 @@ class SearchGallery extends HookWidget {
                 ),
                 obscureText: false,
                 keyboardType: TextInputType.text,
-                onSubmitted: (value) => context
-                    .read<GaleriaBloc>()
-                    .add(GetGaleriaEvent(descripcion: value.trim())),
+                onChanged: onSearchChanged,
+                onSubmitted: (value) {
+                  // Cancelar el debounce y ejecutar inmediatamente
+                  debounceTimer.value?.cancel();
+                  if (value.trim().isEmpty) {
+                    context.read<GaleriaBloc>().add(const GetGaleriaEvent());
+                  } else {
+                    context.read<GaleriaBloc>().add(GetGaleriaEvent(descripcion: value.trim()));
+                  }
+                },
                 decoration: InputDecoration(
                   prefixIcon: const Padding(
                     padding: EdgeInsets.all(10.0),
@@ -62,6 +92,7 @@ class SearchGallery extends HookWidget {
                   suffixIcon: controller.text.isNotEmpty
                       ? IconButton(
                           onPressed: () {
+                            debounceTimer.value?.cancel();
                             controller.clear();
                             context
                                 .read<GaleriaBloc>()

@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -10,6 +11,7 @@ import 'package:appexpflutter_update/features/precios/presentation/screens/widge
 import 'package:appexpflutter_update/features/precios/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/shared/widgets/widgets.dart'
     show CustomFilledButton2;
+import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanning_animation.dart';
 
 class PreciosScreen extends StatelessWidget {
   const PreciosScreen({super.key});
@@ -35,14 +37,8 @@ class PreciosScreen extends StatelessWidget {
             title: 'PRECIOS',
           ),
         ),
-        body: Stack(
-          children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
-            ),
-            SizedBox(
+        body: GeometricalBackground(
+          child: SizedBox(
               height: screenHeight * 0.90,
               child: Column(
                 children: [
@@ -58,14 +54,7 @@ class PreciosScreen extends StatelessWidget {
                             BlocBuilder<PreciosBloc, PreciosState>(
                               builder: (context, state) {
                                 if (state is PreciosLoading) {
-                                  return const Column(
-                                    children: [
-                                      SizedBox(height: 150),
-                                      CircularProgressIndicator(
-                                        color: Colores.secondaryColor,
-                                      ),
-                                    ],
-                                  );
+                                  return const ScanningAnimation();
                                 } else if (state is PreciosLoaded) {
                                   double existencia = state.producto.bodega1 +
                                       state.producto.bodega2 +
@@ -88,7 +77,7 @@ class PreciosScreen extends StatelessWidget {
                                       const SizedBox(height: 50),
                                       ProductoCard(
                                         imagen:
-                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
+                                            'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
                                         producto: state.producto,
                                         existencia: existencia.toInt(),
                                         onTap: () => PhotoGalleryRoute(
@@ -135,7 +124,7 @@ class PreciosScreen extends StatelessWidget {
                                       const SizedBox(height: 5),
                                       ProductoCard(
                                         imagen:
-                                            'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
+                                            'https://tapetestufan.mx/imagen/_web/${Uri.encodeFull(state.producto.pathima1)}',
                                         producto: state.producto,
                                         existencia: existencia.toInt(),
                                         onTap: () => PhotoGalleryRoute(
@@ -192,7 +181,6 @@ class PreciosScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
         ),
       ),
     );
