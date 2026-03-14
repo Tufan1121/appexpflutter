@@ -29,6 +29,7 @@ List<RouteBase> get $appRoutes => [
       $puntoVentaRoute,
       $ticketsRoute,
       $puntoVentaHistoryRoute,
+      $cotizadorEnvioRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -740,6 +741,34 @@ mixin $PuntoVentaHistoryRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
         '/historial_punto_venta',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $cotizadorEnvioRoute => GoRouteData.$route(
+      path: '/cotizador_envio',
+      factory: $CotizadorEnvioRoute._fromState,
+    );
+
+mixin $CotizadorEnvioRoute on GoRouteData {
+  static CotizadorEnvioRoute _fromState(GoRouterState state) =>
+      CotizadorEnvioRoute();
+
+  @override
+  String get location => GoRouteData.$location(
+        '/cotizador_envio',
       );
 
   @override

@@ -275,6 +275,15 @@ class HomeScreen extends StatelessWidget {
                         Colores.secondaryColor.withOpacity(0.05),
                       ],
                     ),
+                    ModernItemCard(
+                      icon: Icons.local_shipping_rounded,
+                      label: 'Cotizador de Envíos',
+                      onTap: () => CotizadorEnvioRoute().push(context),
+                      gradientColors: [
+                        Colores.secondaryColor.withOpacity(0.1),
+                        Colores.accentColor.withOpacity(0.05),
+                      ],
+                    ),
                   ],
                 ),
               ),
