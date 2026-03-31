@@ -10,6 +10,7 @@ import 'package:precios/domain/entities/producto_entity.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class FullScreenGalleryIBodegas extends StatefulWidget {
   final ProductoEntity producto;
@@ -98,20 +99,114 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
     // }
 
     Future<void> shareImage(String imageUrl) async {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Text('Preparando imagen con marca de agua...'),
+              ],
+            ),
+            duration: Duration(seconds: 30),
+          ),
+        );
+      }
+
       try {
-        final appDownloadsDir = await getTemporaryDirectory();
-        final file =
-            File('${appDownloadsDir.path}/${imageUrl.split('/').last}');
-        await dio.download(
-            'https://tapetestufan.mx:446/imagen/_web/$imageUrl', file.path);
-        await Share.shareXFiles([XFile(file.path)],
-            text:
-                'te comparto la imagen del producto ${imageUrl.split('/').first}');
+        Directory appDir;
+        try {
+          appDir = await getTemporaryDirectory();
+        } catch (e) {
+          final appDocs = await getApplicationDocumentsDirectory();
+          appDir = appDocs;
+        }
+
+        final fileName = imageUrl.split('/').last;
+        final fileNameWithExtension =
+            fileName.contains('.') ? fileName : '$fileName.jpg';
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final file = File(
+            '${appDir.path}/share_${timestamp}_$fileNameWithExtension');
+
+        final originalImageUrl =
+            'https://tapetestufan.mx/imagen/_web/$imageUrl';
+
+        const storage = FlutterSecureStorage();
+        final token = await storage.read(key: 'accessToken');
+
+        final watermarkUrl = 'https://tapetestufan.com:5000/add-watermark/';
+
+        final response = await dio
+            .post(
+              watermarkUrl,
+              queryParameters: {'image_url': originalImageUrl},
+              options: Options(
+                responseType: ResponseType.bytes,
+                headers: {'Authorization': 'Bearer $token'},
+                receiveTimeout: const Duration(seconds: 30),
+                sendTimeout: const Duration(seconds: 30),
+              ),
+            )
+            .timeout(
+              const Duration(seconds: 35),
+              onTimeout: () {
+                throw Exception(
+                    'Tiempo de espera agotado. Por favor intenta de nuevo.');
+              },
+            );
+
+        if (response.data == null || (response.data as List<int>).isEmpty) {
+          throw Exception('No se recibió la imagen del servidor');
+        }
+
+        await file.writeAsBytes(response.data);
+
+        if (!await file.exists()) {
+          throw Exception('Error al guardar la imagen temporalmente');
+        }
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
+
+        await Share.shareXFiles(
+          [XFile(file.path, mimeType: 'image/jpeg')],
+          text:
+              'te comparto la imagen del producto ${imageUrl.split('/').first}',
+        );
+
+        try {
+          await Future.delayed(const Duration(seconds: 2));
+          if (await file.exists()) {
+            await file.delete();
+          }
+        } catch (e) {
+          // Ignorar errores al limpiar
+        }
       } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error al compartir la imagen: $e'),
+              content: Text('Error al compartir: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Reintentar',
+                textColor: Colors.white,
+                onPressed: () => shareImage(imageUrl),
+              ),
             ),
           );
         }
