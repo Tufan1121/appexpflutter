@@ -199,6 +199,33 @@ class PedidoDataSourceImpl implements PedidoDataSource {
   }
 
   @override
+  Future<String> generarCotizaPdf(String pedidos) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.get(
+        '/generarCotizaPdf/',
+        queryParameters: {
+          'pedidos': pedidos,
+          'mostrar_descuento': false,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+          followRedirects: true,
+          maxRedirects: 5,
+        ),
+      );
+      if (result.data is Map && result.data['success'] != null) {
+        return result.data['success'] as String;
+      }
+      return 'PDF generado con éxito';
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
   Future<String> finalSesion(int idSesion) async {
     final token = await storage.read(key: 'accessToken');
     try {

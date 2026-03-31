@@ -106,7 +106,7 @@ class _ClienteFormState extends State<ClienteFormEdit> {
               },
             ),
             SwitchListTile(
-              activeColor: Colores.secondaryColor,
+              activeThumbColor: Theme.of(context).colorScheme.primary,
               title: Text(widget.factura.value
                   ? 'Requiere Factura: Sí'
                   : 'Requiere Factura: No'),
@@ -133,7 +133,7 @@ class _ClienteFormState extends State<ClienteFormEdit> {
                 height: 60,
                 child: CustomFilledButton(
                     text: 'Aceptar',
-                    buttonColor: Colores.secondaryColor,
+                    buttonColor: Theme.of(context).colorScheme.primary,
                     onPressed: () => _submitForm(form, context))),
             const Spacer(flex: 1),
           ],

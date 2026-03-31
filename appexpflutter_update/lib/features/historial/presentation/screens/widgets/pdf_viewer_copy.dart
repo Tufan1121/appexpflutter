@@ -33,12 +33,12 @@ class _PdfViewerScreenState extends State<PdfViewerScreen>
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colores.secondaryColor.withOpacity(0.78),
+        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.78),
         title: Text(
           '${widget.search}:  ${widget.fileName}',
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.bold,
-            color: Colores.scaffoldBackgroundColor,
+            color: Colors.white,
             shadows: const [
               BoxShadow(
                 color: Colors.black26,
@@ -104,10 +104,10 @@ class _PdfViewerScreenState extends State<PdfViewerScreen>
         builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
           if (snapshot.hasData) {
             return FloatingActionButton.extended(
-              backgroundColor: Colores.secondaryColor,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               label: Text(
                 "ir a la pagina ${pages! ~/ 2}",
-                style: const TextStyle(color: Colores.scaffoldBackgroundColor),
+                style: const TextStyle(color: Colors.white),
               ),
               onPressed: () async {
                 await snapshot.data!.setPage(pages! ~/ 2);

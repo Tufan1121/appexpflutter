@@ -65,13 +65,16 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
 
   Future<void> _pedidoAddIdPedidoEvent(
       PedidoAddIdPedidoEvent event, Emitter<CotizaPedidoState> emit) async {
-        final prefs = await SharedPreferences.getInstance();
-    final result = await pedidoUsecase.addIdCotizaPedido(event.pedido.idCotiza);
+    final prefs = await SharedPreferences.getInstance();
+    // Generar el PDF de la cotización (reemplaza el viejo rtoCotiza/VFP)
+    final result =
+        await pedidoUsecase.generarCotizaPdf(event.pedido.pedidos);
     result.fold(
       (failure) => emit(PedidoCotizaError(message: failure.message)),
-      (success) {
-        emit(PedidoDetalleCotizaLoaded(username: prefs.getString('username')!, pedido: event.pedido, message: success));
-      },
+      (success) => emit(PedidoDetalleCotizaLoaded(
+          username: prefs.getString('username')!,
+          pedido: event.pedido,
+          message: success)),
     );
   }
 

@@ -117,6 +117,18 @@ class PedidoRepositoryImpl implements PedidoRepository {
   }
 
   @override
+  Future<Either<NetworkException, String>> generarCotizaPdf(String pedidos) async {
+    try {
+      final result = await pedidoDataSource.generarCotizaPdf(pedidos);
+      return Right(result);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
   Future<Either<NetworkException, String>> finalSesion(int idSesion) async {
     try {
       final result = await pedidoDataSource.finalSesion(idSesion);

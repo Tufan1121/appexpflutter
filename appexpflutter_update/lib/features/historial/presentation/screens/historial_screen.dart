@@ -23,13 +23,16 @@ class HistorialScreen extends StatelessWidget {
         body: Stack(
           children: [
             Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/images/fondo.png',
-                  ),
-                  scale: 10,
-                  fit: BoxFit.cover,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                    Theme.of(context).scaffoldBackgroundColor,
+                  ],
+                  stops: const [0.0, 0.4, 0.7],
                 ),
               ),
             ),
@@ -39,7 +42,7 @@ class HistorialScreen extends StatelessWidget {
                   preferredSize: const Size.fromHeight(40.0),
                   child: CustomAppBar(
                     backgroundColor: Colors.transparent,
-                    color: Colores.secondaryColor,
+                    color: Colors.white,
                     onPressed: () {
                       context.read<HistorialBloc>().add(ClearHistorialEvent());
                       Navigator.pop(context);
@@ -55,11 +58,11 @@ class HistorialScreen extends StatelessWidget {
                 BlocBuilder<HistorialBloc, HistorialState>(
                   builder: (context, state) {
                     if (state is HistorialLoading) {
-                      return const Column(
+                      return Column(
                         children: [
-                          SizedBox(height: 150),
+                          const SizedBox(height: 150),
                           CircularProgressIndicator(
-                            color: Colores.secondaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ],
                       );

@@ -98,7 +98,7 @@ class HistorialListPedido extends StatelessWidget {
                   height: 40,
                   width: 40,
                   decoration: const BoxDecoration(
-                      color: Colores.scaffoldBackgroundColor,
+                      color: Colors.white,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,
@@ -107,18 +107,18 @@ class HistorialListPedido extends StatelessWidget {
                         ),
                       ],
                       borderRadius: BorderRadius.all(Radius.circular(50))),
-                  child: const Center(
+                  child: Center(
                     child: FaIcon(
                       FontAwesomeIcons.userLarge,
-                      color: Colores.secondaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 20,
                     ),
                   ),
                 ),
                 title: AutoSizeText(
                   historial[index].pedidos,
-                  style: const TextStyle(
-                      color: Colores.secondaryColor,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                 ),

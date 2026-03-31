@@ -24,4 +24,6 @@ abstract interface class PedidoRepository {
 
   Future<Either<NetworkException, CotizaEntity>> addCotizaPedido(
       Map<String, dynamic> data);
+
+  Future<Either<NetworkException, String>> generarCotizaPdf(String pedidos);
 }

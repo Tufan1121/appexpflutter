@@ -27,13 +27,16 @@ class PreciosScreen extends StatelessWidget {
         body: Stack(
           children: [
             Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/images/fondo.png',
-                  ),
-                  fit: BoxFit
-                      .cover, // Asegura que la imagen de fondo se vea completa
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                    Theme.of(context).scaffoldBackgroundColor,
+                  ],
+                  stops: const [0.0, 0.4, 0.7],
                 ),
               ),
             ),
@@ -45,7 +48,7 @@ class PreciosScreen extends StatelessWidget {
                     preferredSize: const Size.fromHeight(40.0),
                     child: CustomAppBar(
                       backgroundColor: Colors.transparent,
-                      color: Colores.secondaryColor,
+                      color: Colors.white,
                       onPressed: () {
                         context.read<PreciosBloc>().add(
                             ClearPreciosStateEvent()); // Limpia el estado al salir de la pantalla
@@ -63,11 +66,11 @@ class PreciosScreen extends StatelessWidget {
                             BlocBuilder<PreciosBloc, PreciosState>(
                               builder: (context, state) {
                                 if (state is PreciosLoading) {
-                                  return const Column(
+                                  return Column(
                                     children: [
-                                      SizedBox(height: 150),
+                                      const SizedBox(height: 150),
                                       CircularProgressIndicator(
-                                        color: Colores.secondaryColor,
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
                                     ],
                                   );
@@ -107,7 +110,7 @@ class PreciosScreen extends StatelessWidget {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 8.0),
                                         child: CustomFilledButton2(
-                                          buttonColor: Colores.secondaryColor,
+                                          buttonColor: Theme.of(context).colorScheme.primary,
                                           onPressed: () => context
                                               .read<PreciosBloc>()
                                               .add(GetRelativedProductsEvent(

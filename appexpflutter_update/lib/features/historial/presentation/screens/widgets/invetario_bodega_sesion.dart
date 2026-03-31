@@ -59,7 +59,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                             style: GoogleFonts.montserrat(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
-                              color: Colores.secondaryColor,
+                              color: Theme.of(context).colorScheme.primary,
                               shadows: [
                                 const BoxShadow(
                                   color: Colors.black26,
@@ -120,16 +120,16 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                           formGroup: form,
                           child: Column(
                             children: [
-                              const Row(
+                              Row(
                                 children: [
-                                  Spacer(
+                                  const Spacer(
                                     flex: 1,
                                   ),
                                   Text(
                                     'Rango de medidas',
                                     style: TextStyle(
                                         fontSize: 15,
-                                        color: Colores.secondaryColor),
+                                        color: Theme.of(context).colorScheme.primary),
                                   ),
                                 ],
                               ),
@@ -223,7 +223,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                                     horizontal: 80.0),
                                 child: ElevatedButton(
                                   style: TextButton.styleFrom(
-                                      backgroundColor: Colores.secondaryColor,
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
                                       textStyle: Theme.of(context)
                                           .textTheme
                                           .labelLarge,
@@ -233,7 +233,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                                     children: [
                                       Icon(
                                         Icons.search,
-                                        color: Colores.scaffoldBackgroundColor,
+                                        color: Colors.white,
                                       ),
                                       SizedBox(width: 5),
                                       Text(
@@ -334,11 +334,11 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                         BlocBuilder<InventarioBloc, InventarioState>(
                           builder: (context, state) {
                             if (state is InventarioLoading) {
-                              return const Column(
+                              return Column(
                                 children: [
-                                  SizedBox(height: 150),
+                                  const SizedBox(height: 150),
                                   CircularProgressIndicator(
-                                    color: Colores.secondaryColor,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ],
                               );
@@ -452,7 +452,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                   width: 40,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: Colores.secondaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -485,12 +485,12 @@ class _InventarioBodega2State extends State<InventarioBodega2>
             Center(
               child: ElevatedButton(
                 style: TextButton.styleFrom(
-                  backgroundColor: Colores.secondaryColor,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   textStyle: Theme.of(context).textTheme.labelLarge,
                 ),
                 child: const Text(
                   'Aceptar',
-                  style: TextStyle(color: Colores.scaffoldBackgroundColor),
+                  style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () {
                   // opcion 1

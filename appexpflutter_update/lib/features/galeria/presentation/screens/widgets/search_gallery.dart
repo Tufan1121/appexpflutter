@@ -42,8 +42,8 @@ class SearchGallery extends HookWidget {
               ),
               child: TextField(
                 controller: controller,
-                style: const TextStyle(
-                  color: Colores.secondaryColor,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: 16,
                 ),
                 obscureText: false,
@@ -52,11 +52,11 @@ class SearchGallery extends HookWidget {
                     .read<GaleriaBloc>()
                     .add(GetGaleriaEvent(descripcion: value.trim())),
                 decoration: InputDecoration(
-                  prefixIcon: const Padding(
-                    padding: EdgeInsets.all(10.0),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(10.0),
                     child: Icon(
                       Icons.search,
-                      color: Colores.secondaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   suffixIcon: controller.text.isNotEmpty

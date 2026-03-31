@@ -32,13 +32,16 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
         body: Stack(
           children: [
             Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/images/fondo.png',
-                  ),
-                  fit: BoxFit
-                      .cover, // Asegura que la imagen de fondo se vea completa
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                    Theme.of(context).scaffoldBackgroundColor,
+                  ],
+                  stops: const [0.0, 0.4, 0.7],
                 ),
               ),
             ),
@@ -48,7 +51,7 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                   preferredSize: const Size.fromHeight(40.0),
                   child: CustomAppBar(
                     backgroundColor: Colors.transparent,
-                    color: Colores.secondaryColor,
+                    color: Colors.white,
                     onPressed: () {
                       context.read<ClienteBloc>().add(ClearClienteStateEvent());
                       context
@@ -78,11 +81,11 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                     },
                     builder: (context, state) {
                       if (state is ClienteLoading) {
-                        return const Column(
+                        return Column(
                           children: [
-                            SizedBox(height: 150),
+                            const SizedBox(height: 150),
                             CircularProgressIndicator(
-                              color: Colores.secondaryColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ],
                         );
@@ -107,7 +110,7 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                                         child: Container(
                                           height: 100,
                                           color:
-                                              Colores.scaffoldBackgroundColor,
+                                              Theme.of(context).colorScheme.surface,
                                           child: Container(
                                             padding: const EdgeInsets.all(10),
                                             child: ListView(
@@ -147,9 +150,9 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                                     leading: Container(
                                       height: 40,
                                       width: 40,
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                           color:
-                                              Colores.scaffoldBackgroundColor,
+                                              Theme.of(context).colorScheme.surface,
                                           boxShadow: [
                                             BoxShadow(
                                               color: Colors.grey,
@@ -160,10 +163,10 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                                           ],
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(50))),
-                                      child: const Center(
+                                      child: Center(
                                         child: FaIcon(
                                           FontAwesomeIcons.userLarge,
-                                          color: Colores.secondaryColor,
+                                          color: Theme.of(context).colorScheme.primary,
                                           size: 20,
                                         ),
                                       ),

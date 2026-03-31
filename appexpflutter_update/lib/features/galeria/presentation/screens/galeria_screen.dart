@@ -70,13 +70,16 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
           body: Stack(
             children: [
               Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/fondo.png',
-                    ),
-                    fit: BoxFit
-                        .cover, // Asegura que la imagen de fondo se vea completa
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                      Theme.of(context).scaffoldBackgroundColor,
+                    ],
+                    stops: const [0.0, 0.4, 0.7],
                   ),
                 ),
               ),
@@ -88,7 +91,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                       preferredSize: const Size.fromHeight(40.0),
                       child: CustomAppBar(
                         backgroundColor: Colors.transparent,
-                        color: Colores.secondaryColor,
+                        color: Colors.white,
                         onPressed: () {
                           context.read<GaleriaBloc>().add(ResetGaleriaEvent());
                           Navigator.pop(context);
@@ -105,12 +108,12 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                       final galeriaBloc = context.read<GaleriaBloc>();
 
                       if (state is GaleriaLoading && _page == 1) {
-                        return const Column(
+                        return Column(
                           children: [
-                            SizedBox(height: 250),
+                            const SizedBox(height: 250),
                             Center(
                               child: CircularProgressIndicator(
-                                color: Colores.secondaryColor,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ],
@@ -138,9 +141,10 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                             controller: _scrollController,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 1,
-                              crossAxisSpacing: 30,
-                              mainAxisSpacing: 20,
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 0.7,
                             ),
                             padding: const EdgeInsets.all(10.0),
                             itemCount: state.galeria.length +
@@ -193,19 +197,18 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                                           placeholder: const AssetImage(
                                               'assets/loaders/loading.gif'),
                                           width: double.infinity,
-                                          height: 120,
                                           imageErrorBuilder:
                                               (context, error, stackTrace) {
                                             return Image.asset(
                                               'assets/images/no-image.jpg',
                                               width: 60,
                                               height: 60,
-                                              fit: BoxFit.cover,
+                                              fit: BoxFit.contain,
                                             );
                                           },
                                           fadeInDuration:
                                               const Duration(milliseconds: 300),
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.contain,
                                           image: NetworkImage(
                                             'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(galeria.pathima1)}',
                                           ),
@@ -217,7 +220,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                                           galeria.descripcio,
                                           style: GoogleFonts.montserrat(
                                             fontWeight: FontWeight.bold,
-                                            color: Colores.secondaryColor,
+                                            color: Theme.of(context).colorScheme.primary,
                                           ),
                                         ),
                                       ),

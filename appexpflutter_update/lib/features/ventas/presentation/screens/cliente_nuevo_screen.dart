@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'widgets/widgets.dart';
@@ -14,13 +13,16 @@ class ClienteNuevoScreen extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  'assets/images/fondo.png',
-                ),
-                fit: BoxFit
-                    .cover, // Asegura que la imagen de fondo se vea completa
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                  Theme.of(context).scaffoldBackgroundColor,
+                ],
+                stops: const [0.0, 0.4, 0.7],
               ),
             ),
           ),
@@ -30,7 +32,7 @@ class ClienteNuevoScreen extends StatelessWidget {
                 preferredSize: const Size.fromHeight(40.0),
                 child: CustomAppBar(
                   backgroundColor: Colors.transparent,
-                  color: Colores.secondaryColor,
+                  color: Colors.white,
                   title: 'CLIENTE NUEVO',
                   onPressed: () => Navigator.pop(context),
                 ),

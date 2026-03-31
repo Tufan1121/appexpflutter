@@ -25,12 +25,16 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  'assets/images/fondo.png',
-                ),
-                fit: BoxFit.cover, // Ajusta la imagen para que no se corte
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                  Theme.of(context).scaffoldBackgroundColor,
+                ],
+                stops: const [0.0, 0.4, 0.7],
               ),
             ),
           ),
@@ -43,6 +47,20 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: Icon(
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Icons.light_mode
+                                : Icons.dark_mode,
+                            size: 28,
+                          ),
+                          tooltip: 'Cambiar tema',
+                          color: Colors.white,
+                          onPressed: () {
+                            context.read<ThemeCubit>().toggleTheme();
+                          },
+                        ),
                         const Spacer(),
                         IconButton(
                           icon: const Icon(
@@ -50,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                             size: 30,
                           ),
                           tooltip: 'Cerrar Sesión',
-                          color: Colores.scaffoldBackgroundColor,
+                          color: Colors.white,
                           onPressed: () {
                             context.read<AuthBloc>().add(const LogoutEvent());
                             LoginRoute().go(context);
@@ -82,8 +100,7 @@ class HomeScreen extends StatelessWidget {
                                       AutoSizeText('Bienvenido $username',
                                           style: GoogleFonts.montserrat(
                                             fontWeight: FontWeight.bold,
-                                            color:
-                                                Colors.black.withOpacity(0.8),
+                                            color: Colors.white,
                                             shadows: const [
                                               BoxShadow(
                                                 color: Colors.black26,
@@ -95,8 +112,7 @@ class HomeScreen extends StatelessWidget {
                                       AutoSizeText('Almacen: $almacen',
                                           style: GoogleFonts.montserrat(
                                             fontWeight: FontWeight.bold,
-                                            color: Colores.secondaryColor
-                                                .withOpacity(0.8),
+                                            color: Colors.white70,
                                             shadows: const [
                                               BoxShadow(
                                                 color: Colors.black26,
@@ -225,7 +241,7 @@ class HomeScreen extends StatelessWidget {
         return Popover(
           child: Container(
             height: height,
-            color: Colores.scaffoldBackgroundColor,
+            color: Theme.of(context).colorScheme.surface,
             child: Container(
               padding: const EdgeInsets.all(10),
               child: child,

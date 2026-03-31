@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galeria/domain/entities/producto_inv_entity.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:appexpflutter_update/config/config.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
@@ -185,6 +185,8 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
       }
     }
 
+    final theme = Theme.of(context);
+
     return PopScope(
       canPop: true,
       onPopInvoked: (didPop) async {
@@ -192,18 +194,41 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
         context.read<DetalleProductoBloc>().add(ResetDetalleProductoEvent());
       },
       child: Scaffold(
-        appBar: AppBar(
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor: Colores.secondaryColor.withOpacity(0.78),
-          title: Text(
-            'Galería',
-            style: GoogleFonts.montserrat(
-              fontWeight: FontWeight.bold,
-              color: Colores.scaffoldBackgroundColor,
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    theme.colorScheme.primary,
+                    theme.colorScheme.primary.withValues(alpha: 0.7),
+                    theme.scaffoldBackgroundColor,
+                  ],
+                  stops: const [0.0, 0.4, 0.7],
+                ),
+              ),
             ),
-          ),
-        ),
-        body: BlocBuilder<DetalleGaleriaBloc, DetalleGaleriaState>(
+            Column(
+              children: [
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40.0),
+                  child: CustomAppBar(
+                    backgroundColor: Colors.transparent,
+                    color: Colors.white,
+                    onPressed: () {
+                      context.read<DetalleGaleriaBloc>().add(ResetDetalleGaleriaEvent());
+                      context.read<DetalleProductoBloc>().add(ResetDetalleProductoEvent());
+                      Navigator.pop(context);
+                    },
+                    title: 'GALERÍA',
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Expanded(
+                  child: BlocBuilder<DetalleGaleriaBloc, DetalleGaleriaState>(
           builder: (context, state) {
             if (state is DetalleGaleriaLoaded) {
               // Inicializar la lista de carga si aún no está inicializada
@@ -269,7 +294,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                         style: GoogleFonts.montserrat(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
-                                          color: Colores.secondaryColor,
+                                          color: theme.colorScheme.primary,
                                         ),
                                       ),
                                     ),
@@ -284,10 +309,10 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                             style: GoogleFonts.montserrat(
                                               fontWeight: FontWeight.w500,
                                               fontSize: 11,
-                                              color: Colores.secondaryColor,
+                                              color: theme.colorScheme.primary,
                                             ),
                                           ),
-                                          backgroundColor: Colores
+                                          backgroundColor: theme
                                               .scaffoldBackgroundColor
                                               .withOpacity(0.1),
                                         );
@@ -337,8 +362,8 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 12.0,
                                                 vertical: 6.0),
-                                            backgroundColor: Colores
-                                                .secondaryColor
+                                            backgroundColor: theme
+                                                .colorScheme.primary
                                                 .withOpacity(0.1),
                                           ),
                                           child: Text(
@@ -348,7 +373,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                             style: GoogleFonts.montserrat(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 13,
-                                              color: Colores.secondaryColor,
+                                              color: theme.colorScheme.primary,
                                             ),
                                           ),
                                         ),
@@ -363,12 +388,12 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                         BlocBuilder<DetalleProductoBloc, DetalleProductoState>(
                           builder: (context, state) {
                             if (state is DetalleProductoLoading) {
-                              return const Column(
+                              return Column(
                                 children: [
-                                  SizedBox(height: 100),
+                                  const SizedBox(height: 100),
                                   Center(
                                     child: CircularProgressIndicator(
-                                      color: Colores.secondaryColor,
+                                      color: theme.colorScheme.primary,
                                     ),
                                   ),
                                 ],
@@ -436,9 +461,9 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                             );
                                           },
                                           backgroundDecoration:
-                                              const BoxDecoration(
+                                              BoxDecoration(
                                             color:
-                                                Colores.scaffoldBackgroundColor,
+                                                theme.scaffoldBackgroundColor,
                                           ),
                                           onPageChanged: (index) {
                                             setState(() {
@@ -461,7 +486,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                               backgroundColor:
                                                   WidgetStateProperty.all<
                                                           Color>(
-                                                      Colores.secondaryColor),
+                                                      theme.colorScheme.primary),
                                               shape: WidgetStateProperty.all(
                                                 RoundedRectangleBorder(
                                                   borderRadius:
@@ -472,9 +497,9 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                             ),
                                             onPressed: () => shareImage(
                                                 imageUrls[_currentIndex]),
-                                            icon: const FaIcon(
+                                            icon: FaIcon(
                                               FontAwesomeIcons.shareNodes,
-                                              color: Colores
+                                              color: theme
                                                   .scaffoldBackgroundColor,
                                               size: 30,
                                             ),
@@ -489,7 +514,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                           .descripcio,
                                       style: GoogleFonts.montserrat(
                                         fontWeight: FontWeight.bold,
-                                        color: Colores.secondaryColor,
+                                        color: theme.colorScheme.primary,
                                       ),
                                     ),
                                     subtitle: Text(
@@ -497,22 +522,22 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                           .diseno,
                                       style: GoogleFonts.montserrat(
                                         fontWeight: FontWeight.w500,
-                                        color: Colores.secondaryColor,
+                                        color: theme.colorScheme.primary,
                                       ),
                                     ),
                                   ),
                                   Column(
                                     children: [
-                                      const Divider(
-                                        color: Colores.secondaryColor,
+                                      Divider(
+                                        color: theme.colorScheme.primary,
                                         thickness: 1.0,
                                       ),
                                       ListTile(
-                                        title: const Text(
+                                        title: Text(
                                           'Origen:',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colores.secondaryColor,
+                                            color: theme.colorScheme.primary,
                                           ),
                                         ),
                                         subtitle: Text(
@@ -524,11 +549,11 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                         ),
                                       ),
                                       ListTile(
-                                        title: const Text(
+                                        title: Text(
                                           'Composición:',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colores.secondaryColor,
+                                            color: theme.colorScheme.primary,
                                           ),
                                         ),
                                         subtitle: Text(
@@ -539,11 +564,11 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                         ),
                                       ),
                                       ListTile(
-                                        title: const Text(
+                                        title: Text(
                                           'Lavado:',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colores.secondaryColor,
+                                            color: theme.colorScheme.primary,
                                           ),
                                         ),
                                         subtitle: Text(
@@ -553,8 +578,8 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                           ),
                                         ),
                                       ),
-                                      const Divider(
-                                        color: Colores.secondaryColor,
+                                      Divider(
+                                        color: theme.colorScheme.primary,
                                         thickness: 1.0,
                                       ),
                                       Column(
@@ -565,7 +590,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                             'Medidas y Precios en Existencia',
                                             style: GoogleFonts.montserrat(
                                               fontWeight: FontWeight.bold,
-                                              color: Colores.secondaryColor,
+                                              color: theme.colorScheme.primary,
                                             ),
                                           ),
                                           const SizedBox(height: 10),
@@ -581,13 +606,13 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     alignment: Alignment.center,
-                                                    child: const Text(
+                                                    child: Text(
                                                       'Medidas',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colores
-                                                            .secondaryColor,
+                                                        color: theme
+                                                            .colorScheme.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -599,13 +624,13 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     alignment: Alignment.center,
-                                                    child: const Text(
+                                                    child: Text(
                                                       'Precio Normal',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colores
-                                                            .secondaryColor,
+                                                        color: theme
+                                                            .colorScheme.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -617,13 +642,13 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     alignment: Alignment.center,
-                                                    child: const Text(
+                                                    child: Text(
                                                       '-20%',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colores
-                                                            .secondaryColor,
+                                                        color: theme
+                                                            .colorScheme.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -635,13 +660,13 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     alignment: Alignment.center,
-                                                    child: const Text(
+                                                    child: Text(
                                                       '-30%',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colores
-                                                            .secondaryColor,
+                                                        color: theme
+                                                            .colorScheme.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -653,13 +678,13 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     alignment: Alignment.center,
-                                                    child: const Text(
+                                                    child: Text(
                                                       '-40%',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colores
-                                                            .secondaryColor,
+                                                        color: theme
+                                                            .colorScheme.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -671,13 +696,13 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     alignment: Alignment.center,
-                                                    child: const Text(
+                                                    child: Text(
                                                       '-50%',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colores
-                                                            .secondaryColor,
+                                                        color: theme
+                                                            .colorScheme.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -689,13 +714,13 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     alignment: Alignment.center,
-                                                    child: const Text(
+                                                    child: Text(
                                                       '-70%',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colores
-                                                            .secondaryColor,
+                                                        color: theme
+                                                            .colorScheme.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -703,8 +728,8 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                               ],
                                             ),
                                           ),
-                                          const Divider(
-                                            color: Colores.secondaryColor,
+                                          Divider(
+                                            color: theme.colorScheme.primary,
                                             thickness: 1.0,
                                           ),
                                           ...state.productosConExistencias
@@ -735,7 +760,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                   style: GoogleFonts.montserrat(
                                                     fontWeight: FontWeight.bold,
                                                     color:
-                                                        Colores.secondaryColor,
+                                                        theme.colorScheme.primary,
                                                   ),
                                                 ),
                                                 children: [
@@ -769,9 +794,9 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                 ),
               );
             } else if (state is DetalleGaleriaLoading) {
-              return const Center(
+              return Center(
                   child: CircularProgressIndicator(
-                color: Colores.secondaryColor,
+                color: theme.colorScheme.primary,
               ));
             } else if (state is DetalleGaleriaError) {
               return Center(child: Text(state.message));
@@ -779,6 +804,11 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
               return const SizedBox();
             }
           },
+                ),
+              ),
+            ],
+          ),
+          ],
         ),
       ),
     );

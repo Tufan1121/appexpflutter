@@ -1,7 +1,6 @@
 import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_page_precios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -44,8 +43,8 @@ class SearchPrices extends HookWidget {
               ),
               child: TextField(
                 controller: controller,
-                style: const TextStyle(
-                  color: Colores.secondaryColor,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: 16,
                 ),
                 obscureText: false,
@@ -59,11 +58,11 @@ class SearchPrices extends HookWidget {
                     .read<PreciosBloc>()
                     .add(GetProductEvent(clave: value)),
                 decoration: InputDecoration(
-                  prefixIcon: const Padding(
-                    padding: EdgeInsets.all(10.0),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(10.0),
                     child: Icon(
                       Icons.search,
-                      color: Colores.secondaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   suffixIcon: controller.text.isNotEmpty

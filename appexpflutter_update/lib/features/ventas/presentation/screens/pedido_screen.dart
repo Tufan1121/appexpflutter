@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/search_producto.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos.dart';
@@ -37,6 +36,8 @@ class _PedidoScreenState extends State<PedidoScreen> {
   Widget build(BuildContext context) {
     final dropdownValue = useState<String>(list.first);
 
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus
           ?.unfocus(), // Para cerrar el teclado al hacer tap
@@ -45,51 +46,55 @@ class _PedidoScreenState extends State<PedidoScreen> {
             true, // Permitir que la pantalla se ajuste cuando el teclado esté visible
         body: Stack(
           children: [
-            // Imagen de fondo
             Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/fondo.png'),
-                  fit: BoxFit.cover,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    theme.colorScheme.primary,
+                    theme.colorScheme.primary.withValues(alpha: 0.7),
+                    theme.scaffoldBackgroundColor,
+                  ],
+                  stops: const [0.0, 0.4, 0.7],
                 ),
               ),
             ),
-            SafeArea(
-              child: Column(
-                children: [
-                  PreferredSize(
-                    preferredSize: const Size.fromHeight(40.0),
-                    child: CustomAppBar(
-                      backgroundColor: Colors.transparent,
-                      color: Colores.secondaryColor,
-                      onPressed: () => Navigator.pop(context),
-                      title: 'COTIZACIÓN',
-                    ),
+            Column(
+              children: [
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40.0),
+                  child: CustomAppBar(
+                    backgroundColor: Colors.transparent,
+                    color: Colors.white,
+                    onPressed: () => Navigator.pop(context),
+                    title: 'COTIZACIÓN',
                   ),
-                  const SizedBox(height: 5),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Cliente: ',
-                                style: TextStyle(
-                                    color: Colores.secondaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
-                              AutoSizeText(
-                                maxLines: 2,
-                                widget.nombreCliente,
-                                style: const TextStyle(
-                                    color: Colores.secondaryColor,
-                                    fontSize: 20),
-                              ),
-                            ],
-                          ),
+                ),
+                const SizedBox(height: 5),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Cliente: ',
+                              style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                            AutoSizeText(
+                              maxLines: 2,
+                              widget.nombreCliente,
+                              style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontSize: 20),
+                            ),
+                          ],
+                        ),
                           const SizedBox(height: 20),
                           // Buscador de productos
                           SearchProducto(
@@ -133,7 +138,6 @@ class _PedidoScreenState extends State<PedidoScreen> {
                   ),
                 ],
               ),
-            ),
           ],
         ),
       ),

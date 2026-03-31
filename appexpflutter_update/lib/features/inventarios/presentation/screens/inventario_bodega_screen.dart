@@ -60,13 +60,16 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
         body: Stack(
           children: [
             Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/images/fondo.png',
-                  ),
-                  fit: BoxFit
-                      .cover, // Asegura que la imagen de fondo se vea completa
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                    Theme.of(context).scaffoldBackgroundColor,
+                  ],
+                  stops: const [0.0, 0.4, 0.7],
                 ),
               ),
             ),
@@ -76,7 +79,7 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                 PreferredSize(
                   preferredSize: const Size.fromHeight(40.0),
                   child: CustomAppBar(
-                    color: Colores.secondaryColor,
+                    color: Colors.white,
                     backgroundColor: Colors.transparent,
                     onPressed: () {
                       context
@@ -147,8 +150,8 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                        color: Colores.secondaryColor,
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context).colorScheme.primary,
                                         width: 2),
                                   ),
                                   floatingLabelStyle: const TextStyle(
@@ -289,7 +292,7 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                           padding: const EdgeInsets.symmetric(horizontal: 80.0),
                           child: ElevatedButton(
                             style: TextButton.styleFrom(
-                                backgroundColor: Colores.secondaryColor,
+                                backgroundColor: Theme.of(context).colorScheme.primary,
                                 textStyle:
                                     Theme.of(context).textTheme.labelLarge,
                                 elevation: 4),
@@ -298,7 +301,7 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                               children: [
                                 Icon(
                                   Icons.search,
-                                  color: Colores.scaffoldBackgroundColor,
+                                  color: Colors.white,
                                 ),
                                 SizedBox(width: 5),
                                 Text(
@@ -384,11 +387,11 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                       BlocBuilder<InventarioBodegaBloc, InventarioBodegaState>(
                     builder: (context, state) {
                       if (state is InventarioLoading) {
-                        return const Column(
+                        return Column(
                           children: [
-                            SizedBox(height: 150),
+                            const SizedBox(height: 150),
                             CircularProgressIndicator(
-                              color: Colores.secondaryColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ],
                         );

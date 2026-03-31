@@ -108,7 +108,7 @@ class ListaDetalleProductos extends HookWidget {
             style: GoogleFonts.montserrat(
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
-                color: Colores.scaffoldBackgroundColor,
+                color: Colors.white,
                 shadows: [
                   const BoxShadow(
                     color: Colors.black26,
@@ -307,7 +307,7 @@ class ListaDetalleProductos extends HookWidget {
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                Colores.secondaryColor),
+                                                Theme.of(context).colorScheme.primary),
                                         onPressed: customPrice.value != null
                                             ? () {
                                                 FocusScope.of(context)
@@ -378,19 +378,19 @@ class ListaDetalleProductos extends HookWidget {
               onPressed: () {
                 Navigator.of(context).pop(false); // Cancelar la eliminación
               },
-              child: const Text(
+              child: Text(
                 'Cancelar',
-                style: TextStyle(color: Colores.secondaryColor),
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ),
             ElevatedButton(
               style: TextButton.styleFrom(
-                backgroundColor: Colores.secondaryColor,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
               child: const Text(
                 'Aceptar',
-                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
                 context
@@ -423,7 +423,7 @@ class ListaDetalleProductos extends HookWidget {
             Checkbox(
               value: value,
               onChanged: onChanged,
-              activeColor: Colores.secondaryColor,
+              activeColor: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(width: 5),
             AutoSizeText(Utils.formatPrice(price),

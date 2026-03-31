@@ -100,7 +100,7 @@ class _LoginFormState extends State<ClienteForm> {
               },
             ),
             SwitchListTile(
-              activeColor: Colores.secondaryColor,
+              activeThumbColor: Theme.of(context).colorScheme.primary,
               title: Text(factura.value
                   ? 'Requiere Factura: Sí'
                   : 'Requiere Factura: No'),
@@ -160,7 +160,7 @@ class _LoginFormState extends State<ClienteForm> {
                     height: 60,
                     child: CustomFilledButton(
                         text: 'Guardar',
-                        buttonColor: Colores.secondaryColor,
+                        buttonColor: Theme.of(context).colorScheme.primary,
                         onPressed: () => _submitForm(form)));
               },
             ),

@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -37,8 +36,8 @@ class CustomSearch extends StatelessWidget {
         ],
       ),
       child: TextField(
-        style: const TextStyle(
-          color: Colores.secondaryColor,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
           fontSize: 16,
         ),
         obscureText: false,
@@ -71,13 +70,13 @@ class CustomSearch extends StatelessWidget {
                       Center(
                         child: ElevatedButton(
                           style: TextButton.styleFrom(
-                            backgroundColor: Colores.secondaryColor,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
                             textStyle: Theme.of(context).textTheme.labelLarge,
                           ),
-                          child: const Text(
+                          child: Text(
                             'Aceptar',
                             style: TextStyle(
-                                color: Colores.scaffoldBackgroundColor),
+                                color: Theme.of(context).colorScheme.onPrimary),
                           ),
                           onPressed: () {
                             // opcion 1
@@ -95,11 +94,11 @@ class CustomSearch extends StatelessWidget {
           onSubmitted(value);
         },
         decoration: InputDecoration(
-          prefixIcon: const Padding(
-            padding: EdgeInsets.all(10.0),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(10.0),
             child: Icon(
               Icons.search,
-              color: Colores.secondaryColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           hintText: hintText ?? 'Buscar...',

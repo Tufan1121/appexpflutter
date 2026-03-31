@@ -98,7 +98,7 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                     const Text(
                       'Cliente: ',
                       style: TextStyle(
-                          color: Colores.scaffoldBackgroundColor,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 20),
                     ),
@@ -106,7 +106,7 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                       maxLines: 2,
                       widget.nombreCliente,
                       style: const TextStyle(
-                          color: Colores.scaffoldBackgroundColor, fontSize: 20),
+                          color: Colors.white, fontSize: 20),
                     ),
                   ],
                 ),
@@ -116,16 +116,16 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                     value: dropdownValue.value,
                     hint: 'Selecciona Estatus del pedido',
                     styleHint: const TextStyle(fontSize: 15),
-                    prefixIcon: const FaIcon(
+                    prefixIcon: FaIcon(
                       FontAwesomeIcons.bagShopping,
-                      color: Colores.secondaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     onChanged: (value) {
                       dropdownValue.value = value!;
                     },
-                    icon: const FaIcon(
+                    icon: FaIcon(
                       FontAwesomeIcons.diagramNext,
-                      color: Colores.secondaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     items: list.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
@@ -151,11 +151,11 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                       return ListaDetalleProductos(
                           productos: state.detalleSesion);
                     } else if (state is SesionLoading) {
-                      return const Column(
+                      return Column(
                         children: [
-                          SizedBox(height: 150),
+                          const SizedBox(height: 150),
                           CircularProgressIndicator(
-                            color: Colores.secondaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ],
                       );

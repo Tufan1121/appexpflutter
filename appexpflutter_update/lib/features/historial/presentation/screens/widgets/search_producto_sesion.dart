@@ -279,14 +279,14 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
                       actions: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colores.secondaryColor),
+                              backgroundColor: Theme.of(context).colorScheme.primary),
                           onPressed: () {
                             Navigator.pop(context);
                           },
                           child: const Text(
                             'Aceptar',
                             style: TextStyle(
-                                color: Colores.scaffoldBackgroundColor),
+                                color: Colors.white),
                           ),
                         )
                       ],

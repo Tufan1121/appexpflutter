@@ -98,13 +98,37 @@ class _LoginFormState extends State<LoginForm> {
                   }
                 },
                 builder: (context, state) {
+                  final isLoading = state is AuthLoading;
                   return SizedBox(
                       width: double.infinity,
                       height: 60,
-                      child: CustomFilledButton(
-                          text: 'Iniciar sesión',
-                          buttonColor: Colores.secondaryColor,
-                          onPressed: _submitForm));
+                      child: isLoading
+                          ? FilledButton(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
+                                    topLeft: Radius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              onPressed: null,
+                              child: const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              ),
+                            )
+                          : CustomFilledButton(
+                              text: 'Iniciar sesión',
+                              buttonColor: Theme.of(context).colorScheme.primary,
+                              onPressed: _submitForm));
                 },
               ),
               const SizedBox(height: 20),

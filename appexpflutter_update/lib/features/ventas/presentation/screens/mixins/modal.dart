@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:sesion_ventas/domain/entities/cliente_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/cliente_form_edit.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +26,7 @@ mixin Modal {
               'Editar Cliente',
               style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.bold,
-                  color: Colores.secondaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   shadows: [
                     const BoxShadow(
                       color: Colors.black26,

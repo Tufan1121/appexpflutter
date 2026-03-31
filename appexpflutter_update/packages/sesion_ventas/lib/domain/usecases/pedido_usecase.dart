@@ -51,4 +51,8 @@ class PedidoUsecase {
       Map<String, dynamic> data) {
     return pedidoRepository.addCotizaPedido(data);
   }
+
+  Future<Either<NetworkException, String>> generarCotizaPdf(String pedidos) {
+    return pedidoRepository.generarCotizaPdf(pedidos);
+  }
 }

@@ -6,7 +6,7 @@ class BackgroundPainter2 extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colores.secondaryColor.withOpacity(0.78)
+      ..color = const Color(0xFF37474F)
       ..style = PaintingStyle.fill;
 
     final path = Path();

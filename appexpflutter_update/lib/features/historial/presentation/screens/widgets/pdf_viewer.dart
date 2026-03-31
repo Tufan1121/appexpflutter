@@ -142,13 +142,13 @@ class PdfViewerScreen extends HookWidget {
           false, // Desactiva el ajuste del contenido al abrir el teclado o modal
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colores.secondaryColor.withOpacity(0.78),
+        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.78),
         title: AutoSizeText(
           '$search:  $fileName',
           maxLines: 1,
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.bold,
-            color: Colores.scaffoldBackgroundColor,
+            color: Colors.white,
             shadows: const [
               BoxShadow(
                 color: Colors.black26,

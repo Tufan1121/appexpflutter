@@ -145,18 +145,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<MedidasCubit>(create: (_) => injector<MedidasCubit>()),
         BlocProvider<ConsultaBloc>(create: (_) => injector<ConsultaBloc>()),
       ],
-      child: FutureBuilder(
-        future: _init(),
-        builder: (context, state) {
-          if (state.connectionState == ConnectionState.waiting) {
-            return Container();
-          }
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            title: 'Tufan',
-            routerConfig: _router,
-          );
-        },
+      child: BlocProvider(
+        create: (_) => ThemeCubit(),
+        child: FutureBuilder(
+          future: _init(),
+          builder: (context, state) {
+            if (state.connectionState == ConnectionState.waiting) {
+              return Container();
+            }
+            return BlocBuilder<ThemeCubit, ThemeMode>(
+              builder: (context, themeMode) {
+                return MaterialApp.router(
+                  debugShowCheckedModeBanner: false,
+                  title: 'Tufan',
+                  theme: AppTheme.lightTheme(),
+                  darkTheme: AppTheme.darkTheme(),
+                  themeMode: themeMode,
+                  routerConfig: _router,
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,19 +1,17 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
+import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cotiza_pedido/cotiza_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
-// import 'package:appexpflutter_update/features/ventas/data/data_sources/pedido/getpdf.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/pdf_viewer_pedido.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-// import 'package:url_launcher/url_launcher.dart';
-import '../../../../config/theme/app_theme.dart';
-import '../../../shared/widgets/layout_screens.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CotizaPedidoScreen extends StatefulHookWidget {
   const CotizaPedidoScreen({
@@ -127,21 +125,42 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
 
       return null;
     }, []);
-    return LayoutScreens(
-      onPressed: () => Navigator.pop(context),
-      titleScreen: 'COTIZACION PEDIDO',
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: SizedBox(
-              height: 700, // 80 los dos sizebox
-              width: double.infinity,
+    final theme = Theme.of(context);
 
-              child: Card(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.primary.withValues(alpha: 0.7),
+                  theme.scaffoldBackgroundColor,
+                ],
+                stops: const [0.0, 0.4, 0.7],
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              PreferredSize(
+                preferredSize: const Size.fromHeight(40.0),
+                child: CustomAppBar(
+                  backgroundColor: Colors.transparent,
+                  color: Colors.white,
+                  onPressed: () => Navigator.pop(context),
+                  title: 'COTIZACIÓN PEDIDO',
+                ),
+              ),
+              const SizedBox(height: 5),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Card(
                 elevation: 4.0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -170,8 +189,8 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                       const Text('Total a pagar'),
                                       Text(
                                         Utils.formatPrice(UtilsVenta.total),
-                                        style: const TextStyle(
-                                            color: Colors.purple,
+                                        style: TextStyle(
+                                            color: theme.colorScheme.primary,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -235,7 +254,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                 children: [
                                   Checkbox(
                                     value: isEntregado.value,
-                                    activeColor: Colores.secondaryColor,
+                                    activeColor: theme.colorScheme.primary,
                                     onChanged: (value) =>
                                         toggleCheckbox('entregado'),
                                     shape: RoundedRectangleBorder(
@@ -246,7 +265,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                   const SizedBox(width: 20.0),
                                   Checkbox(
                                     value: isPendienteFinDeExpo.value,
-                                    activeColor: Colores.secondaryColor,
+                                    activeColor: theme.colorScheme.primary,
                                     onChanged: (value) =>
                                         toggleCheckbox('pendienteFinDeExpo'),
                                     shape: RoundedRectangleBorder(
@@ -263,7 +282,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                 children: [
                                   BlocConsumer<CotizaPedidoBloc,
                                       CotizaPedidoState>(
-                                    listener: (context, state) {
+                                    listener: (context, state) async {
                                       if (state is PedidoCotizaLoading) {
                                         loading.value = true;
                                       }
@@ -288,15 +307,6 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                         form.control('anticipoPago3').reset();
                                         form.control('entregado').reset();
 
-                                        // Aquí  la URL donde está ubicado el PDF
-                                        // String pdfUrl =
-                                        //     'https://tapetestufan.mx/expo/${state.pedido.idExpo}/pdf/${state.pedido.pedidos}.pdf'; // Sustituye con tu URL real
-                                        // _openPDF(pdfUrl);
-
-                                        // _showDownloadModal(context, pdfUrl,
-                                        //     state.pedido.pedidos);
-
-                                        //  form.reset();
                                         context
                                             .read<ClienteBloc>()
                                             .add(ClearClienteStateEvent());
@@ -308,7 +318,28 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                             .add(ClearPedidoCotizaEvent());
                                         context.read<InventarioBloc>().add(
                                             ClearInventarioProductoEvent());
-                                        HomeRoute().go(context);
+
+                                        // Navegar al visor de PDF de la cotización
+                                        final prefs = await SharedPreferences
+                                            .getInstance();
+                                        final pdfUrl =
+                                            'https://tapetestufan.mx/cotiza/${prefs.getString('digsig')}/pdf/${state.pedido.pedidos}.pdf';
+                                        if (context.mounted) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PdfViewerPedidoScreen(
+                                                fileName:
+                                                    state.pedido.pedidos,
+                                                search: 'Cotización',
+                                                url: pdfUrl,
+                                                userName: state.username,
+                                                clientPhoneNumber: '',
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       } else if (state is PedidoCotizaError) {
                                         loading.value = false;
                                         ScaffoldMessenger.of(context)
@@ -324,10 +355,10 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                       return ElevatedButton.icon(
                                         onPressed:
                                             loading.value ? null : _submitForm,
-                                        icon: const Icon(
+                                        icon: Icon(
                                           Icons.save,
                                           color:
-                                              Colores.scaffoldBackgroundColor,
+                                              theme.scaffoldBackgroundColor,
                                         ),
                                         label: Text(
                                           loading.value
@@ -335,24 +366,24 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                               : 'GUARDAR',
                                           style: TextStyle(
                                               color: loading.value
-                                                  ? Colores.secondaryColor
-                                                  : Colores
+                                                  ? theme.colorScheme.primary
+                                                  : theme
                                                       .scaffoldBackgroundColor),
                                         ),
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                Colores.secondaryColor),
+                                                theme.colorScheme.primary),
                                       );
                                     },
                                   ),
                                   ElevatedButton.icon(
                                     onPressed: _dialogCancel,
-                                    icon: const Icon(Icons.close,
-                                        color: Colores.secondaryColor),
-                                    label: const Text(
+                                    icon: Icon(Icons.close,
+                                        color: theme.colorScheme.primary),
+                                    label: Text(
                                       'CANCELAR',
                                       style: TextStyle(
-                                          color: Colores.secondaryColor),
+                                          color: theme.colorScheme.primary),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.grey),
@@ -368,7 +399,9 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                 ),
               ),
             ),
-          )
+          ),
+          ],
+        ),
         ],
       ),
     );
@@ -498,6 +531,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
   }
 
   Future<void> _dialogCancel() {
+    final theme = Theme.of(context);
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -535,9 +569,9 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text(
+              child: Text(
                 'Cancelar',
-                style: TextStyle(color: Colores.secondaryColor),
+                style: TextStyle(color: theme.colorScheme.primary),
               ),
               onPressed: () {
                 FocusScope.of(context).unfocus();
@@ -546,12 +580,12 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
             ),
             ElevatedButton(
               style: TextButton.styleFrom(
-                backgroundColor: Colores.secondaryColor,
+                backgroundColor: theme.colorScheme.primary,
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text(
+              child: Text(
                 'Aceptar',
-                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+                style: TextStyle(color: theme.scaffoldBackgroundColor),
               ),
               onPressed: () {
                 // FocusScope.of(context).unfocus();
@@ -594,12 +628,12 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
   //           Center(
   //             child: ElevatedButton(
   //               style: TextButton.styleFrom(
-  //                 backgroundColor: Colores.secondaryColor,
+  //                 backgroundColor: theme.colorScheme.primary,
   //                 textStyle: Theme.of(context).textTheme.labelLarge,
   //               ),
   //               child: const Text(
   //                 'Aceptar',
-  //                 style: TextStyle(color: Colores.scaffoldBackgroundColor),
+  //                 style: TextStyle(color: theme.scaffoldBackgroundColor),
   //               ),
   //               onPressed: () {
   //                 FocusScope.of(context).unfocus();

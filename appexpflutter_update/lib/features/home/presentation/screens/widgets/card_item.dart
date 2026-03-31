@@ -18,13 +18,17 @@ class CardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cardColor = theme.colorScheme.surface;
+    final iconColor = theme.colorScheme.primary;
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        color: Colores.scaffoldBackgroundColor,
-        elevation: 5,
+        color: cardColor,
+        elevation: 3,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(12.0),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -34,28 +38,33 @@ class CardItem extends StatelessWidget {
               Container(
                   height: 50,
                   width: 50,
-                  decoration: const BoxDecoration(
-                      color: Colores.scaffoldBackgroundColor,
+                  decoration: BoxDecoration(
+                      color: cardColor,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey,
-
+                          color: theme.shadowColor.withValues(alpha: 0.3),
                           blurRadius: 1,
-                          offset: Offset(0, 4), // changes position of shadow
+                          offset: const Offset(0, 4),
                         ),
                       ],
-                      borderRadius: BorderRadius.all(Radius.circular(50))),
+                      borderRadius: const BorderRadius.all(Radius.circular(50))),
                   child: assetPathIcon != null
                       ? Image.asset(assetPathIcon ?? '', scale: 6)
                       : Center(
                           child: Icon(icon,
-                              size: 30, color: Colores.secondaryColor))),
+                              size: 30, color: iconColor))),
               const SizedBox(height: 10),
-              AutoSizeText(label,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                  maxLines: 2),
-              const SizedBox(height: 10),
+              Expanded(
+                child: Center(
+                  child: AutoSizeText(label,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface),
+                      textAlign: TextAlign.center,
+                      maxLines: 2),
+                ),
+              ),
             ],
           ),
         ),

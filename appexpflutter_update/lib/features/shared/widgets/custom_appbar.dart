@@ -21,28 +21,22 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return AppBar(
       leading: IconButton(
         onPressed: onPressed,
         icon: const Icon(Icons.arrow_back_rounded),
       ),
-      iconTheme: IconThemeData(color: color ?? Colors.white),
+      iconTheme: IconThemeData(color: color ?? theme.colorScheme.onPrimary),
       backgroundColor:
-          backgroundColor ?? Colores.secondaryColor.withOpacity(0.9),
+          backgroundColor ?? theme.colorScheme.primary,
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: AutoSizeText(
           title,
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.bold,
-            color: color ?? Colores.scaffoldBackgroundColor,
-            shadows: const [
-              BoxShadow(
-                color: Colors.black87,
-                blurRadius: 6,
-                offset: Offset(2.0, 2.0),
-              )
-            ],
+            color: color ?? theme.colorScheme.onPrimary,
           ),
           maxLines: 1,
         ),

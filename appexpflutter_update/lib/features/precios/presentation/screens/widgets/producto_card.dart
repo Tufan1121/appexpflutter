@@ -1,4 +1,3 @@
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
@@ -88,13 +87,15 @@ class ProductoCard extends StatelessWidget {
                   width: 180,
                   child: ExpansionTile(
                     expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                    title: AutoSizeText(
-                      'Promoción',
-                      style: GoogleFonts.montserrat(
-                          fontWeight: FontWeight.bold,
-                          color: Colores.secondaryColor,
-                          fontSize: 18),
-                      maxLines: 1,
+                    title: Builder(
+                      builder: (context) => AutoSizeText(
+                        'Promoción',
+                        style: GoogleFonts.montserrat(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 18),
+                        maxLines: 1,
+                      ),
                     ),
                     children: [
                       SizedBox(

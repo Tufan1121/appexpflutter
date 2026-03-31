@@ -41,14 +41,14 @@ class LayoutScreens extends StatelessWidget {
                 IconButton(
                     onPressed: onPressed,
                     icon: const Icon(Icons.arrow_back_rounded,
-                        size: 30, color: Colores.scaffoldBackgroundColor)),
+                        size: 30, color: Colors.white)),
                 const SizedBox(width: 50),
                 Text(
                   titleScreen ?? 'title',
                   style: GoogleFonts.montserrat(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: Colores.scaffoldBackgroundColor,
+                      color: Colors.white,
                       shadows: [
                         const BoxShadow(
                           color: Colors.black26,
