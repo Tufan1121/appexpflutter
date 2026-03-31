@@ -115,7 +115,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
 
-        final watermarkUrl = 'https://tapetestufan.com:5000/add-watermark/';
+        final watermarkUrl = 'https://tapetestufan.com:6003/add-watermark/';
 
         final response = await dio
             .post(
