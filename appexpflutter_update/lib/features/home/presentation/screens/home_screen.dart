@@ -135,86 +135,51 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 1.0,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 30.0),
-                  children: [
-                    CardItem(
-                      assetPathIcon: 'assets/iconos/precios - rosa gris.png',
-                      label: 'Cotizaciones',
-                      onTap: () => homeModalButtom(
-                          height: 160,
-                          context: context,
-                          child: ListView(
-                            children: [
-                              CustomListTile(
-                                text: 'CLIENTE NUEVO',
-                                assetPathIcon:
-                                    'assets/iconos/cliente nuevo - rosa gris.png',
-                                onTap: () => ClienteNuevoRoute().push(context),
-                              ),
-                              const Divider(),
-                              CustomListTile(
-                                text: 'CLIENTE EXISTENTE',
-                                assetPathIcon:
-                                    'assets/iconos/cliente existente - rosa gris.png',
-                                onTap: () =>
-                                    ClienteExistenteRoute().push(context),
-                              ),
-                            ],
-                          )),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(40.0),
+                    child: FractionallySizedBox(
+                      widthFactor: 0.6,
+                      child: AspectRatio(
+                        aspectRatio: 1.0,
+                        child: CardItem(
+                          assetPathIcon:
+                              'assets/iconos/inventarios - rosa gris.png',
+                          label: 'Inventarios',
+                          onTap: () => homeModalButtom(
+                              context: context,
+                              height: 220,
+                              child: ListView(
+                                children: [
+                                  CustomListTile(
+                                    text: 'INVENTARIO TIENDA',
+                                    assetPathIcon:
+                                        'assets/iconos/inventario expo - rosa.png',
+                                    onTap: () =>
+                                        InvetarioExpoRoute().push(context),
+                                  ),
+                                  const Divider(),
+                                  CustomListTile(
+                                      text: 'INVENTARIO BODEGAS',
+                                      assetPathIcon:
+                                          'assets/iconos/inventario bodegas - rosa2.png',
+                                      onTap: () {
+                                        InvetarioBodegaRoute().push(context);
+                                      }),
+                                  const Divider(),
+                                  CustomListTile(
+                                    text: 'BUSQUEDA GLOBAL',
+                                    assetPathIcon:
+                                        'assets/iconos/busqueda global - rosa.png',
+                                    onTap: () =>
+                                        BusquedaGlobalRoute().push(context),
+                                  ),
+                                ],
+                              )),
+                        ),
+                      ),
                     ),
-                    CardItem(
-                      assetPathIcon:
-                          'assets/iconos/inventarios - rosa gris.png',
-                      label: 'Inventarios',
-                      onTap: () => homeModalButtom(
-                          context: context,
-                          height: 220,
-                          child: ListView(
-                            children: [
-                              CustomListTile(
-                                text: 'INVENTARIO TIENDA',
-                                assetPathIcon:
-                                    'assets/iconos/inventario expo - rosa.png',
-                                onTap: () => InvetarioExpoRoute().push(context),
-                              ),
-                              const Divider(),
-                              CustomListTile(
-                                  text: 'INVENTARIO BODEGAS',
-                                  assetPathIcon:
-                                      'assets/iconos/inventario bodegas - rosa2.png',
-                                  onTap: () {
-                                    InvetarioBodegaRoute().push(context);
-                                  }),
-                              const Divider(),
-                              CustomListTile(
-                                text: 'BUSQUEDA GLOBAL',
-                                assetPathIcon:
-                                    'assets/iconos/busqueda global - rosa.png',
-                                onTap: () =>
-                                    BusquedaGlobalRoute().push(context),
-                              ),
-                            ],
-                          )),
-                    ),
-                    CardItem(
-                      icon: Icons.history_rounded,
-                      label: 'Historial',
-                      onTap: () => HistorialRoute().push(context),
-                    ),
-                    CardItem(
-                      icon: Icons.photo_library,
-                      label: 'Galería',
-                      onTap: () {
-                        GaleriaRoute().push(context);
-                      },
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
