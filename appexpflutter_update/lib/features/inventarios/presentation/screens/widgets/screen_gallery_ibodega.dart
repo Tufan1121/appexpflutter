@@ -143,7 +143,7 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
 
-        final watermarkUrl = 'https://tapetestufan.mx:6003/add-watermark/';
+        final watermarkUrl = 'https://tapetestufan.mx:6007/add-watermark/';
 
         final response = await dio
             .post(

@@ -1,4 +1,4 @@
-package com.tapetestufan.tienda
+package com.tapetestufan.promotores
 
 import io.flutter.embedding.android.FlutterActivity
 

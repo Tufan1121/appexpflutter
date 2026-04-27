@@ -7,7 +7,7 @@
 
 
     <application
-        android:label="Tufan Tienda"
+        android:label="Tufan Promotores"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

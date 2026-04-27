@@ -137,15 +137,12 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 30,
+                  crossAxisSpacing: 20,
                   mainAxisSpacing: 20,
-                  padding: const EdgeInsets.all(20.0),
+                  childAspectRatio: 1.0,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 30.0),
                   children: [
-                    CardItem(
-                      assetPathIcon: 'assets/iconos/qr/qr 72_.png',
-                      label: 'Precios',
-                      onTap: () => PreciosRoute().push(context),
-                    ),
                     CardItem(
                       assetPathIcon: 'assets/iconos/precios - rosa gris.png',
                       label: 'Cotizaciones',
@@ -216,11 +213,6 @@ class HomeScreen extends StatelessWidget {
                       onTap: () {
                         GaleriaRoute().push(context);
                       },
-                    ),
-                    CardItem(
-                      icon: Icons.point_of_sale_sharp,
-                      label: 'Punto de Venta',
-                      onTap: () => PuntoVentaRoute().push(context),
                     ),
                   ],
                 ),
