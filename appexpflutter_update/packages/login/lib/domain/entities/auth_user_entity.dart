@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:login/domain/entities/permisos_entity.dart';
 
 class AuthUserEntity extends Equatable {
   final String accessToken;
@@ -8,6 +9,7 @@ class AuthUserEntity extends Equatable {
   final int regg;
   final String movil;
   final String descripcio;
+  final PermisosEntity permisos;
 
   const AuthUserEntity({
     required this.accessToken,
@@ -17,8 +19,18 @@ class AuthUserEntity extends Equatable {
     required this.regg,
     required this.movil,
     required this.descripcio,
+    required this.permisos,
   });
 
   @override
-  List<Object> get props => [accessToken, tokenType, nombre, digsig, regg, movil,  descripcio];
+  List<Object> get props => [
+        accessToken,
+        tokenType,
+        nombre,
+        digsig,
+        regg,
+        movil,
+        descripcio,
+        permisos,
+      ];
 }

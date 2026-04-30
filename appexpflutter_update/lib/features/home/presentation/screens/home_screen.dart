@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -15,6 +16,20 @@ class HomeScreen extends StatelessWidget {
     return (
       prefs.getString('username') ?? '',
       prefs.getString('almacen') ?? ''
+    );
+  }
+
+  /// Lee los flags de permisos persistidos por AuthBloc tras /token.
+  /// Si no existen (login con API vieja, primer arranque, etc.) cae al
+  /// default restringido: solo inventarios.
+  Future<PermisosEntity> _loadPermisos() async {
+    final prefs = await SharedPreferences.getInstance();
+    return PermisosEntity(
+      inventarios: prefs.getBool('perm_inventarios') ?? true,
+      precios: prefs.getBool('perm_precios') ?? false,
+      cotizaciones: prefs.getBool('perm_cotizaciones') ?? false,
+      historial: prefs.getBool('perm_historial') ?? false,
+      galeria: prefs.getBool('perm_galeria') ?? false,
     );
   }
 
@@ -135,57 +150,144 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: FractionallySizedBox(
-                      widthFactor: 0.6,
-                      child: AspectRatio(
-                        aspectRatio: 1.0,
-                        child: CardItem(
-                          assetPathIcon:
-                              'assets/iconos/inventarios - rosa gris.png',
-                          label: 'Inventarios',
-                          onTap: () => homeModalButtom(
-                              context: context,
-                              height: 220,
-                              child: ListView(
-                                children: [
-                                  CustomListTile(
-                                    text: 'INVENTARIO TIENDA',
-                                    assetPathIcon:
-                                        'assets/iconos/inventario expo - rosa.png',
-                                    onTap: () =>
-                                        InvetarioExpoRoute().push(context),
-                                  ),
-                                  const Divider(),
-                                  CustomListTile(
-                                      text: 'INVENTARIO BODEGAS',
-                                      assetPathIcon:
-                                          'assets/iconos/inventario bodegas - rosa2.png',
-                                      onTap: () {
-                                        InvetarioBodegaRoute().push(context);
-                                      }),
-                                  const Divider(),
-                                  CustomListTile(
-                                    text: 'BUSQUEDA GLOBAL',
-                                    assetPathIcon:
-                                        'assets/iconos/busqueda global - rosa.png',
-                                    onTap: () =>
-                                        BusquedaGlobalRoute().push(context),
-                                  ),
-                                ],
-                              )),
+                child: FutureBuilder<PermisosEntity>(
+                  future: _loadPermisos(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final permisos = snapshot.data!;
+                    final cards = <Widget>[
+                      if (permisos.cotizaciones) _cotizacionesCard(context),
+                      if (permisos.inventarios) _inventariosCard(context),
+                      if (permisos.historial) _historialCard(context),
+                      if (permisos.galeria) _galeriaCard(context),
+                    ];
+
+                    if (cards.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text(
+                            'Sin secciones disponibles para este usuario',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
+                      );
+                    }
+
+                    if (cards.length == 1) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(40.0),
+                          child: FractionallySizedBox(
+                            widthFactor: 0.6,
+                            child: AspectRatio(
+                              aspectRatio: 1.0,
+                              child: cards.first,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    return GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 1.0,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 30.0),
+                      children: cards,
+                    );
+                  },
                 ),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _inventariosCard(BuildContext context) {
+    return CardItem(
+      assetPathIcon: 'assets/iconos/inventarios - rosa gris.png',
+      label: 'Inventarios',
+      onTap: () => homeModalButtom(
+          context: context,
+          height: 220,
+          child: ListView(
+            children: [
+              CustomListTile(
+                text: 'INVENTARIO TIENDA',
+                assetPathIcon: 'assets/iconos/inventario expo - rosa.png',
+                onTap: () => InvetarioExpoRoute().push(context),
+              ),
+              const Divider(),
+              CustomListTile(
+                  text: 'INVENTARIO BODEGAS',
+                  assetPathIcon:
+                      'assets/iconos/inventario bodegas - rosa2.png',
+                  onTap: () {
+                    InvetarioBodegaRoute().push(context);
+                  }),
+              const Divider(),
+              CustomListTile(
+                text: 'BUSQUEDA GLOBAL',
+                assetPathIcon: 'assets/iconos/busqueda global - rosa.png',
+                onTap: () => BusquedaGlobalRoute().push(context),
+              ),
+            ],
+          )),
+    );
+  }
+
+  Widget _cotizacionesCard(BuildContext context) {
+    return CardItem(
+      assetPathIcon: 'assets/iconos/precios - rosa gris.png',
+      label: 'Cotizaciones',
+      onTap: () => homeModalButtom(
+          height: 160,
+          context: context,
+          child: ListView(
+            children: [
+              CustomListTile(
+                text: 'CLIENTE NUEVO',
+                assetPathIcon: 'assets/iconos/cliente nuevo - rosa gris.png',
+                onTap: () => ClienteNuevoRoute().push(context),
+              ),
+              const Divider(),
+              CustomListTile(
+                text: 'CLIENTE EXISTENTE',
+                assetPathIcon:
+                    'assets/iconos/cliente existente - rosa gris.png',
+                onTap: () => ClienteExistenteRoute().push(context),
+              ),
+            ],
+          )),
+    );
+  }
+
+  Widget _historialCard(BuildContext context) {
+    return CardItem(
+      icon: Icons.history_rounded,
+      label: 'Historial',
+      onTap: () => HistorialRoute().push(context),
+    );
+  }
+
+  Widget _galeriaCard(BuildContext context) {
+    return CardItem(
+      icon: Icons.photo_library,
+      label: 'Galería',
+      onTap: () {
+        GaleriaRoute().push(context);
+      },
     );
   }
 

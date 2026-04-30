@@ -28,6 +28,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await prefs.setString('movil', user.movil);
       await prefs.setString('almacen', user.descripcio);
       await prefs.setString('digsig', user.digsig);
+      // Permisos del usuario para condicionar el menu principal.
+      await prefs.setBool('perm_inventarios', user.permisos.inventarios);
+      await prefs.setBool('perm_precios', user.permisos.precios);
+      await prefs.setBool('perm_cotizaciones', user.permisos.cotizaciones);
+      await prefs.setBool('perm_historial', user.permisos.historial);
+      await prefs.setBool('perm_galeria', user.permisos.galeria);
       emit(AuthAuthenticated(username: user.nombre));
     });
   }
