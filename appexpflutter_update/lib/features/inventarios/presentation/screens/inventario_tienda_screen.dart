@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
@@ -215,12 +216,18 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                                     hintStyle: TextStyle(fontSize: 15),
                                     errorStyle: TextStyle(
                                         color: Colores.scaffoldBackgroundColor),
+                                    inputFormatters: [
+                                      UpperCaseTextFormatter()
+                                    ],
                                   ),
                                   SizedBox(height: 10),
                                   CustomReactiveTextField(
                                     formControlName: 'diseno',
                                     hint: 'Color',
                                     hintStyle: TextStyle(fontSize: 15),
+                                    inputFormatters: [
+                                      UpperCaseTextFormatter()
+                                    ],
                                   ),
                                 ],
                               ),

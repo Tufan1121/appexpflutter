@@ -215,12 +215,18 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                                     hintStyle: TextStyle(fontSize: 15),
                                     errorStyle: TextStyle(
                                         color: Colores.scaffoldBackgroundColor),
+                                    inputFormatters: [
+                                      UpperCaseTextFormatter()
+                                    ],
                                   ),
                                   SizedBox(height: 10),
                                   CustomReactiveTextField(
                                     formControlName: 'diseno',
                                     hint: 'Color',
                                     hintStyle: TextStyle(fontSize: 15),
+                                    inputFormatters: [
+                                      UpperCaseTextFormatter()
+                                    ],
                                   ),
                                 ],
                               ),
