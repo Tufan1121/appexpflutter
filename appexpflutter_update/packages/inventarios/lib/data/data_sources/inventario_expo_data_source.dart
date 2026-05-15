@@ -5,4 +5,8 @@ abstract interface class InventarioExpoDataSource {
   Future<List<ProductoExpoModel>> getProductoExpo(Map<String, dynamic> data);
   Future<List<ProductoExpoModel>> getProductoGlobal(Map<String, dynamic> data);
   Future<List<MedidasModelInv>> getMedidas();
+
+  /// Lista de calidades (`descripcio`) distintas con existencia > 0.
+  /// Se usa para sugerencias "¿quiso decir?" cuando no hay resultados.
+  Future<List<String>> getCalidades();
 }

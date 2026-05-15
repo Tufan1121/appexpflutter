@@ -49,6 +49,14 @@ class ProductoEntity extends Equatable {
   final double bodega2;
   final double bodega3;
   final double bodega4;
+  // Datos de empaque (largo/ancho/alto del rollo, en metros) y peso (kg).
+  // Vienen de `gproducto.largop`, `gproducto.anchop`, `gproducto.altop`,
+  // `gproducto.peso` en MariaDB. Nullable porque algunos productos
+  // antiguos pueden no tenerlos cargados.
+  final double? largop;
+  final double? anchop;
+  final double? altop;
+  final double? peso;
 
   const ProductoEntity({
     required this.producto,
@@ -99,6 +107,10 @@ class ProductoEntity extends Equatable {
     required this.bodega2,
     required this.bodega3,
     required this.bodega4,
+    this.largop,
+    this.anchop,
+    this.altop,
+    this.peso,
   });
 
   ProductoEntity copyWith({
@@ -231,5 +243,9 @@ class ProductoEntity extends Equatable {
         descrip,
         skuph,
         precioph,
+        largop,
+        anchop,
+        altop,
+        peso,
       ];
 }

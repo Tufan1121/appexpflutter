@@ -1,10 +1,12 @@
-import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/blocs/inventario_expo/inventario_expo_bloc.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
-import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/lista_productos_expo.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/busqueda_layout.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_card_data.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/productos_result_grid.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/quiso_decir.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -39,6 +41,10 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
   late double mancho1;
   late double mancho2;
   String? selectedMedida;
+  // Última calidad/descripcio buscada. Se usa para alimentar `QuisoDecir`
+  // cuando el bloc emite `InventarioError`.
+  String _lastDescripcio = '';
+  final ValueNotifier<bool> _filtrosAbiertos = ValueNotifier<bool>(true);
 
   @override
   void initState() {
@@ -47,8 +53,80 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
   }
 
   @override
+  void dispose() {
+    _filtrosAbiertos.dispose();
+    super.dispose();
+  }
+
+  void _clearFilters() {
+    form.reset();
+    setState(() {
+      selectedMedida = null;
+      _lastDescripcio = '';
+    });
+    _filtrosAbiertos.value = true;
+    context.read<InventarioExpoBloc>().add(ClearInventarioProductoEvent());
+    FocusScope.of(context).unfocus();
+  }
+
+  void _runSearch() {
+    descripcio = form.control('descripcio').value ?? '';
+    diseno = form.control('diseno').value ?? '';
+    mlargo1 =
+        double.tryParse(form.control('mlargo1').value ?? '0.0') ?? 0.0;
+    mlargo2 =
+        double.tryParse(form.control('mlargo2').value ?? '0.0') ?? 0.0;
+    mancho1 =
+        double.tryParse(form.control('mancho1').value ?? '0.0') ?? 0.0;
+    mancho2 =
+        double.tryParse(form.control('mancho2').value ?? '0.0') ?? 0.0;
+    FocusScope.of(context).unfocus();
+    if (!isNotEmptyOrWhitespace(descripcio) &&
+        !isNotEmptyOrWhitespace(diseno) &&
+        mlargo1 == 0.0 &&
+        mlargo2 == 0.0 &&
+        mancho1 == 0.0 &&
+        mancho2 == 0.0) {
+      form.markAllAsTouched();
+      return;
+    }
+    Map<String, dynamic> data;
+    if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
+        (mancho1 == 0.0 && mancho2 == 0.0)) {
+      data = {
+        'descripcio': descripcio,
+        'diseno': diseno,
+        'mlargo1': mlargo1,
+        'mlargo2': mlargo2,
+      };
+    } else if ((mancho1 > 0.0 && mancho2 > 0.0) &&
+        (mlargo1 == 0.0 && mlargo2 == 0.0)) {
+      data = {
+        'descripcio': descripcio,
+        'diseno': diseno,
+        'mancho1': mancho1,
+        'mancho2': mancho2,
+      };
+    } else if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
+        (mancho1 > 0.0 && mancho2 > 0.0)) {
+      data = {
+        'descripcio': descripcio,
+        'diseno': diseno,
+        'mlargo1': mlargo1,
+        'mlargo2': mlargo2,
+        'mancho1': mancho1,
+        'mancho2': mancho2,
+      };
+    } else {
+      data = {'descripcio': descripcio, 'diseno': diseno};
+    }
+    setState(() => _lastDescripcio = descripcio);
+    _filtrosAbiertos.value = false; // auto-colapsa para ver resultados
+    context.read<InventarioExpoBloc>().add(GetInventarioProductEvent(data: data));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return PopScope(
       canPop: true,
       // Permite la navegación hacia atrás nativa
@@ -91,7 +169,10 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                   ),
                 ),
                 const SizedBox(height: 5),
-                Padding(
+                Expanded(
+                  child: BusquedaLayout(
+                    abiertoNotifier: _filtrosAbiertos,
+                    form: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: ReactiveForm(
                     formGroup: form,
@@ -122,21 +203,20 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                               selectedMedida = null;
                             }
 
-                            return Container(
-                              width: size.width * 0.9,
-                              height: 45,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 45),
-                              child: DropdownButtonFormField<String>(
+                            return DropdownButtonFormField<String>(
                                 value: selectedMedida,
+                                isExpanded: true,
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.white,
+                                  isDense: true,
                                   labelText: "Seleccione una medida",
                                   labelStyle: const TextStyle(
-                                      fontSize: 15, color: Colors.black),
+                                      fontSize: 15, color: Colors.black54),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.auto,
                                   contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 10),
+                                      vertical: 14, horizontal: 12),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide:
@@ -154,7 +234,7 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                                         width: 2),
                                   ),
                                   floatingLabelStyle: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 13,
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -188,8 +268,7 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                                             .toStringAsFixed(2);
                                   });
                                 },
-                              ),
-                            );
+                              );
                           },
                         ),
                         const Row(
@@ -293,8 +372,8 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                           ],
                         ),
                         const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                        SizedBox(
+                          width: double.infinity,
                           child: ElevatedButton(
                             style: TextButton.styleFrom(
                                 backgroundColor: Theme.of(context).colorScheme.primary,
@@ -316,148 +395,83 @@ class _InventarioTiendaScreenState extends State<InventarioTiendaScreen>
                                 ),
                               ],
                             ),
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                              descripcio =
-                                  form.control('descripcio').value ?? '';
-                              diseno = form.control('diseno').value ?? '';
-                              mlargo1 = double.tryParse(
-                                      form.control('mlargo1').value ?? '0.0') ??
-                                  0.0;
-                              mlargo2 = double.tryParse(
-                                      form.control('mlargo2').value ?? '0.0') ??
-                                  0.0;
-                              mancho1 = double.tryParse(
-                                      form.control('mancho1').value ?? '0.0') ??
-                                  0.0;
-                              mancho2 = double.tryParse(
-                                      form.control('mancho2').value ?? '0.0') ??
-                                  0.0;
-                              if (!isNotEmptyOrWhitespace(descripcio) &&
-                                  !isNotEmptyOrWhitespace(diseno) &&
-                                  mlargo1 == 0.0 &&
-                                  mlargo2 == 0.0 &&
-                                  mancho1 == 0.0 &&
-                                  mancho2 == 0.0) {
-                                form.markAllAsTouched();
-                                return;
-                              }
-                              Map<String, dynamic> data = {};
-
-                              if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
-                                  (mancho1 == 0.0 && mancho2 == 0.0)) {
-                                data = {
-                                  'descripcio': descripcio,
-                                  'diseno': diseno,
-                                  'mlargo1': mlargo1,
-                                  'mlargo2': mlargo2,
-                                  // 'mlargo1': mlargo1 - 0.01,
-                                  // 'mlargo2': mlargo2 + 0.01,
-                                };
-                              } else if ((mancho1 > 0.0 && mancho2 > 0.0) &&
-                                  (mlargo1 == 0.0 && mlargo2 == 0.0)) {
-                                data = {
-                                  'descripcio': descripcio,
-                                  'diseno': diseno,
-                                  'mancho1': mancho1,
-                                  'mancho2': mancho2,
-                                };
-                              } else if ((mlargo1 > 0.0 && mlargo2 > 0.0) &&
-                                  (mlargo1 > 0.0 && mlargo2 > 0.0)) {
-                                data = {
-                                  'descripcio': descripcio,
-                                  'diseno': diseno,
-                                  'mlargo1': mlargo1,
-                                  'mlargo2': mlargo2,
-                                  'mancho1': mancho1,
-                                  'mancho2': mancho2,
-                                };
-                              } else {
-                                data = {
-                                  'descripcio': descripcio,
-                                  'diseno': diseno,
-                                };
-                              }
-                              context
-                                  .read<InventarioExpoBloc>()
-                                  .add(GetInventarioProductEvent(data: data));
-                            },
+                            onPressed: _runSearch,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: _clearFilters,
+                            icon: const Icon(Icons.clear_all, size: 18),
+                            label: const Text('Limpiar filtros'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: const BorderSide(color: Colors.white70),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 5),
-                Expanded(
-                  child: BlocBuilder<InventarioExpoBloc, InventarioExpoState>(
-                    builder: (context, state) {
-                      if (state is InventarioLoading) {
-                        return Column(
-                          children: [
-                            const SizedBox(height: 150),
-                            CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ],
-                        );
-                      }
-                      if (state is InventarioProductosLoaded) {
-                        final productos = state.productos;
-
-                        return ListView.builder(
-                          itemCount: productos.length,
-                          itemBuilder: (context, index) {
-                            final producto = productos[index];
-
-                            List<String> imagePaths = [
-                              productos[index].pathima1,
-                              productos[index].pathima2,
-                              productos[index].pathima3,
-                              productos[index].pathima4,
-                              productos[index].pathima5,
-                              productos[index].pathima6,
-                            ].where((path) => path.isNotEmpty).toList();
-
-                            return ListaProductosExpo(
-                              producto: producto,
-                              onTap: () => PhotoGalleryRoute2(
-                                $extra: productos[index],
-                                imageUrls: imagePaths,
-                                initialIndex: 0,
-                              ).push(context),
-                            );
-                          },
-                        );
-                      }
-                      if (state is InventarioError) {
-                        return Column(
-                          children: [
-                            const SizedBox(height: 150),
-                            Center(
-                              child: SizedBox(
-                                height: 60,
-                                width: 300,
-                                child: Card(
-                                  child: AutoSizeText(
-                                    state.message,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
+                    results: BlocBuilder<InventarioExpoBloc,
+                        InventarioExpoState>(
+                      builder: (context, state) {
+                        if (state is InventarioLoading) {
+                          return Column(
+                            children: [
+                              const SizedBox(height: 150),
+                              CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ],
+                          );
+                        }
+                        if (state is InventarioProductosLoaded) {
+                          final productos =
+                              ProductoCardData.groupExpo(state.productos);
+                          return ProductosResultGrid(productos: productos);
+                        }
+                        if (state is InventarioError) {
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 80),
+                                Center(
+                                  child: SizedBox(
+                                    height: 60,
+                                    width: 300,
+                                    child: Card(
+                                      child: AutoSizeText(
+                                        state.message,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
+                                QuisoDecir(
+                                  descripcio: _lastDescripcio,
+                                  onSelected: (sugerencia) {
+                                    form.control('descripcio').value =
+                                        sugerencia;
+                                    _runSearch();
+                                  },
+                                ),
+                              ],
                             ),
-                          ],
+                          );
+                        }
+                        return Center(
+                          child: Container(),
                         );
-                      }
-                      return Center(
-                        child: Container(),
-                      );
-                    },
+                      },
+                    ),
                   ),
                 ),
               ],

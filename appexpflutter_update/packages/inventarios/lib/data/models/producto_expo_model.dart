@@ -40,7 +40,11 @@ class ProductoExpoModel extends ProductoExpoEntity {
       required super.precio8,
       required super.precio9,
       required super.precio10,
-      required super.desalmacen});
+      required super.desalmacen,
+      super.largop,
+      super.anchop,
+      super.altop,
+      super.peso});
 
   factory ProductoExpoModel.fromJson(Map<String, dynamic> json) =>
       ProductoExpoModel(
@@ -84,6 +88,10 @@ class ProductoExpoModel extends ProductoExpoEntity {
         precio9: json["precio9"],
         precio10: json["precio10"],
         desalmacen: json["desalmacen"],
+        largop: (json["largop"] as num?)?.toDouble(),
+        anchop: (json["anchop"] as num?)?.toDouble(),
+        altop: (json["altop"] as num?)?.toDouble(),
+        peso: (json["peso"] as num?)?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -160,5 +168,9 @@ class ProductoExpoModel extends ProductoExpoEntity {
       precio8: precio8,
       precio9: precio9,
       precio10: precio10,
-      desalmacen: desalmacen);
+      desalmacen: desalmacen,
+      largop: largop,
+      anchop: anchop,
+      altop: altop,
+      peso: peso);
 }

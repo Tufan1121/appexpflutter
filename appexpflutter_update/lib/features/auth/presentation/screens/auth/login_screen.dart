@@ -51,27 +51,32 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.black.withValues(alpha: 0.3),
             ),
             SafeArea(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: size.height,
-                ),
-                child: SingleChildScrollView(
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 90),
-                        Image.asset(
-                          'assets/images/tufan_logo.png',
-                          scale: 2.5,
+              child: Center(
+                child: ConstrainedBox(
+                  // En landscape / tablet / desktop limito el ancho del
+                  // contenido del login a 480 px y lo centro. En portrait
+                  // phone (ancho ~360-414) este maxWidth no aplica y se ve
+                  // como antes.
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: size.height),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 40),
+                            Image.asset(
+                              'assets/images/tufan_logo.png',
+                              scale: 2.5,
+                            ),
+                            const SizedBox(height: 30),
+                            const LoginForm(),
+                            const SizedBox(height: 40),
+                          ],
                         ),
-                        const SizedBox(height: 40),
-                        SizedBox(
-                          height: size.height - 340,
-                          width: double.infinity,
-                          child: const LoginForm(),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

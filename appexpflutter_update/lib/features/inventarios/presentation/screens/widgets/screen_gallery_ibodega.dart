@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
@@ -138,7 +137,7 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
             '${appDir.path}/share_${timestamp}_$fileNameWithExtension');
 
         final originalImageUrl =
-            'https://tapetestufan.mx/imagen/_web/$imageUrl';
+            'https://tapetestufan.mx/imagen/$imageUrl';
 
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
@@ -298,7 +297,7 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
                   builder: (context, index) {
                     return PhotoViewGalleryPageOptions(
                       imageProvider: NetworkImage(
-                        'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(widget.imageUrls[index])}',
+                        'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(widget.imageUrls[index])}',
                       ),
                       initialScale: PhotoViewComputedScale.contained,
                       minScale: PhotoViewComputedScale.contained,
@@ -328,17 +327,41 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Precio Normal: ${Utils.formatPrice(widget.producto.precio1.toDouble())}',
-                  style: const TextStyle(fontSize: 16.0),
-                ),
-                Text(
                   'Existencia: ${existencia.toInt()}',
                   style: const TextStyle(fontSize: 16.0),
                 ),
-                // Text(
-                //   producto.desalmacen,
-                //   style: TextStyle(fontSize: 16.0),
-                // ),
+                if (widget.producto.compo1.trim().isNotEmpty ||
+                    widget.producto.compo2.trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'Composición: ${[
+                        widget.producto.compo1,
+                        widget.producto.compo2
+                      ].where((e) => e.trim().isNotEmpty).join(', ')}.',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                if (widget.producto.lava1.trim().isNotEmpty ||
+                    widget.producto.lava2.trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'Cuidados: ${[
+                        widget.producto.lava1,
+                        widget.producto.lava2
+                      ].where((e) => e.trim().isNotEmpty).join(', ')}.',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                if (widget.producto.origenn.trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'País de origen: ${widget.producto.origenn}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
               ],
             ),
           ),

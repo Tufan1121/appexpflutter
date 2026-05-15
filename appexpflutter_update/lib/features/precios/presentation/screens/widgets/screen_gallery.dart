@@ -81,7 +81,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
             '${appDir.path}/share_${timestamp}_$fileNameWithExtension');
 
         final originalImageUrl =
-            'https://tapetestufan.mx/imagen/_web/$imageUrl';
+            'https://tapetestufan.mx/imagen/$imageUrl';
 
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
@@ -191,7 +191,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
             builder: (context, index) {
               return PhotoViewGalleryPageOptions(
                 imageProvider: NetworkImage(
-                  'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(widget.imageUrls[index])}',
+                  'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(widget.imageUrls[index])}',
                 ),
                 initialScale: PhotoViewComputedScale.contained,
                 minScale: PhotoViewComputedScale.contained,

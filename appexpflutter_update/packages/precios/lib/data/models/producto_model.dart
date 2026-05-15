@@ -52,6 +52,10 @@ class ProductoModel extends ProductoEntity {
     required super.bodega2,
     required super.bodega3,
     required super.bodega4,
+    super.largop,
+    super.anchop,
+    super.altop,
+    super.peso,
   });
   factory ProductoModel.fromJson(Map<String, dynamic> json) {
    // la cadena de fecha en un objeto DateTime
@@ -113,6 +117,10 @@ class ProductoModel extends ProductoEntity {
       bodega2: json['bodega2'],
       bodega3: json['bodega3'],
       bodega4: json['bodega4'],
+      largop: (json['largop'] as num?)?.toDouble(),
+      anchop: (json['anchop'] as num?)?.toDouble(),
+      altop: (json['altop'] as num?)?.toDouble(),
+      peso: (json['peso'] as num?)?.toDouble(),
     );
   }
 
@@ -166,5 +174,9 @@ class ProductoModel extends ProductoEntity {
         bodega2: bodega2,
         bodega3: bodega3,
         bodega4: bodega4,
+        largop: largop,
+        anchop: anchop,
+        altop: altop,
+        peso: peso,
       );
 }
