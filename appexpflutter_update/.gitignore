@@ -6,6 +6,8 @@
 *.pyc
 *.swp
 .DS_Store
+# Claude Code: config/estado local de la herramienta (no es del proyecto)
+.claude/
 .atom/
 .build/
 .buildlog/
