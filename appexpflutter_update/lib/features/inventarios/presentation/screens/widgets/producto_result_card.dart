@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_card_data.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_detalle_sheet.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/visualizar_tapete.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -52,7 +53,20 @@ class ProductoResultCard extends HookWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _Thumb(data: data),
+            _Thumb(
+              data: data,
+              onVisualizar: () => VisualizarTapete.iniciar(
+                context,
+                tapeteUrl: data.fotos.isEmpty ? '' : data.fotos.first,
+                anchoM: active.ancho,
+                largoM: active.largo,
+                titulo: [
+                  data.descripcio,
+                  data.diseno,
+                  active.medidas,
+                ].where((e) => e.isNotEmpty).join(' · '),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
               child: Column(
@@ -187,7 +201,8 @@ class ProductoResultCard extends HookWidget {
 
 class _Thumb extends StatelessWidget {
   final ProductoCardData data;
-  const _Thumb({required this.data});
+  final VoidCallback onVisualizar;
+  const _Thumb({required this.data, required this.onVisualizar});
 
   @override
   Widget build(BuildContext context) {
@@ -222,6 +237,28 @@ class _Thumb extends StatelessWidget {
           top: 8,
           left: 8,
           child: _Badge(disponible: data.disponible),
+        ),
+        // Botón "Ver en mi espacio" (visualizar tapete con foto del cliente).
+        Positioned(
+          top: 6,
+          right: 6,
+          child: Material(
+            color: Colors.black.withValues(alpha: 0.55),
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onVisualizar,
+              child: const Tooltip(
+                message: 'Ver en mi espacio',
+                child: SizedBox(
+                  width: 38,
+                  height: 38,
+                  child: Icon(Icons.weekend_outlined,
+                      color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
