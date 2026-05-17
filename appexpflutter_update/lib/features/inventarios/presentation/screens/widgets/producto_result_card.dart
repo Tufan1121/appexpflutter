@@ -239,27 +239,30 @@ class _Thumb extends StatelessWidget {
           child: _Badge(disponible: data.disponible),
         ),
         // Botón "Ver en mi espacio" (visualizar tapete con foto del cliente).
-        Positioned(
-          top: 6,
-          right: 6,
-          child: Material(
-            color: Colors.black.withValues(alpha: 0.55),
-            shape: const CircleBorder(),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: onVisualizar,
-              child: const Tooltip(
-                message: 'Ver en mi espacio',
-                child: SizedBox(
-                  width: 38,
-                  height: 38,
-                  child: Icon(Icons.weekend_outlined,
-                      color: Colors.white, size: 20),
+        // Solo se muestra si el tapete tiene imagen (pahima1 != ""): sin
+        // foto del catálogo no hay nada que combinar con Gemini.
+        if (firstFoto != null)
+          Positioned(
+            top: 6,
+            right: 6,
+            child: Material(
+              color: Colors.black.withValues(alpha: 0.55),
+              shape: const CircleBorder(),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: onVisualizar,
+                child: const Tooltip(
+                  message: 'Ver en mi espacio',
+                  child: SizedBox(
+                    width: 38,
+                    height: 38,
+                    child: Icon(Icons.weekend_outlined,
+                        color: Colors.white, size: 20),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

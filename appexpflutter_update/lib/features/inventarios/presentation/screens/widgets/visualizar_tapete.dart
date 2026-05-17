@@ -60,7 +60,30 @@ class VisualizarTapete {
     if (picked == null) return; // canceló
 
     if (!context.mounted) return;
-    _mostrarLoading(context, titulo);
+    // El loading se cierra usando SU PROPIO contexto (loadingCtx), nunca el
+    // de la card: así es imposible popear por error la pantalla de búsqueda
+    // y terminar en el home. PopScope(canPop:false) evita que el botón atrás
+    // del sistema descarte el loading durante la generación (15-150s) y deje
+    // un pop "huérfano" que después sacaría de la pantalla de búsqueda.
+    BuildContext? loadingCtx;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        loadingCtx = ctx;
+        return PopScope(
+          canPop: false,
+          child: _loadingDialog(ctx, titulo),
+        );
+      },
+    );
+
+    void cerrarLoading() {
+      if (loadingCtx != null && loadingCtx!.mounted) {
+        Navigator.of(loadingCtx!).pop();
+        loadingCtx = null;
+      }
+    }
 
     try {
       final bytes = await _llamarEndpoint(
@@ -69,12 +92,12 @@ class VisualizarTapete {
         anchoCm: anchoM * 100,
         largoCm: largoM * 100,
       );
-      if (context.mounted) Navigator.of(context).pop(); // cierra loading
+      cerrarLoading();
       if (context.mounted) {
         _mostrarResultado(context, bytes, titulo);
       }
     } catch (e) {
-      if (context.mounted) Navigator.of(context).pop(); // cierra loading
+      cerrarLoading();
       if (context.mounted) {
         _toast(context, 'No se pudo generar: ${_msgError(e)}', error: true);
       }
@@ -99,10 +122,21 @@ class VisualizarTapete {
       sendTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 150),
     ));
+    // Dio NO infiere el MIME por el nombre de archivo: sin `contentType`
+    // explícito sube la foto como `application/octet-stream`, y el backend
+    // reenvía ese tipo a Gemini, que lo rechaza con HTTP 400
+    // ("Unsupported MIME type: application/octet-stream").
+    final ext = espacioPath.toLowerCase();
+    final subtype = ext.endsWith('.png')
+        ? 'png'
+        : ext.endsWith('.webp')
+            ? 'webp'
+            : 'jpeg';
     final form = FormData.fromMap({
       'espacio': await MultipartFile.fromFile(
         espacioPath,
-        filename: 'espacio.jpg',
+        filename: 'espacio.$subtype',
+        contentType: DioMediaType('image', subtype),
       ),
       'tapete_url': tapeteUrl,
       'ancho_cm': anchoCm.toStringAsFixed(0),
@@ -171,40 +205,36 @@ class VisualizarTapete {
     );
   }
 
-  static void _mostrarLoading(BuildContext context, String titulo) {
+  static Widget _loadingDialog(BuildContext context, String titulo) {
     final theme = Theme.of(context);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(color: theme.colorScheme.primary),
-              const SizedBox(height: 18),
-              Text(
-                'Generando visualización…',
-                style: GoogleFonts.montserrat(fontWeight: FontWeight.bold),
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: theme.colorScheme.primary),
+            const SizedBox(height: 18),
+            Text(
+              'Generando visualización…',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              titulo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.textTheme.bodySmall?.color
+                    ?.withValues(alpha: 0.7),
               ),
-              const SizedBox(height: 6),
-              Text(
-                titulo,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: theme.textTheme.bodySmall?.color
-                      ?.withValues(alpha: 0.7),
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Esto tarda 15-30 segundos',
-                style: TextStyle(fontSize: 11, color: Colors.grey),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Esto tarda 15-30 segundos',
+              style: TextStyle(fontSize: 11, color: Colors.grey),
+            ),
+          ],
         ),
       ),
     );
@@ -261,17 +291,32 @@ class VisualizarTapete {
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.share),
-                    label: const Text('Compartir'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: Colors.white,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.download),
+                        label: const Text('Descargar'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.colorScheme.primary,
+                          side: BorderSide(color: theme.colorScheme.primary),
+                        ),
+                        onPressed: () => _descargar(ctx, bytes),
+                      ),
                     ),
-                    onPressed: () => _compartir(ctx, bytes),
-                  ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.share),
+                        label: const Text('Compartir'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: () => _compartir(ctx, bytes),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -279,6 +324,38 @@ class VisualizarTapete {
         );
       },
     );
+  }
+
+  /// Guarda la imagen generada en la carpeta de descargas pública.
+  /// Misma convención que los visores de PDF del proyecto:
+  /// `Download/TufanApp` en Android, `getDownloadsDirectory()/TufanApp`
+  /// en iOS/escritorio.
+  static Future<void> _descargar(
+      BuildContext context, Uint8List bytes) async {
+    try {
+      Directory destDir;
+      if (Platform.isAndroid) {
+        destDir = Directory('/storage/emulated/0/Download/TufanApp');
+      } else {
+        final downloads = await getDownloadsDirectory();
+        final base =
+            downloads ?? await getApplicationDocumentsDirectory();
+        destDir = Directory('${base.path}/TufanApp');
+      }
+      if (!await destDir.exists()) {
+        await destDir.create(recursive: true);
+      }
+      final file = File(
+          '${destDir.path}/visualizacion_${DateTime.now().millisecondsSinceEpoch}.png');
+      await file.writeAsBytes(bytes);
+      if (context.mounted) {
+        _toast(context, 'Imagen guardada en ${file.path}');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _toast(context, 'Error al descargar: $e', error: true);
+      }
+    }
   }
 
   static Future<void> _compartir(
