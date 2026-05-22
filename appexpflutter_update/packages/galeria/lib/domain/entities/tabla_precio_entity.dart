@@ -12,6 +12,8 @@ class TablaPreciosEntity extends Equatable {
   final int precio8;
   final int? precio9;
   final int? precio10;
+  // precio11 = tarifa -15% (gproducto.precio11 en mainTienda).
+  final int? precio11;
 
   const TablaPreciosEntity({
     required this.medidas,
@@ -25,6 +27,7 @@ class TablaPreciosEntity extends Equatable {
     required this.precio8,
     this.precio9,
     this.precio10,
+    this.precio11,
   });
 
   @override
@@ -40,5 +43,6 @@ class TablaPreciosEntity extends Equatable {
         precio8,
         precio9,
         precio10,
+        precio11,
       ];
 }

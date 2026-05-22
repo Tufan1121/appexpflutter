@@ -77,4 +77,26 @@ class InventarioExpoDataSourceImpl implements InventarioExpoDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<List<String>> getCalidades() async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.get(
+        '/calidades/',
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      final List<dynamic> jsonList = result.data;
+      return jsonList
+          .map((e) => (e ?? '').toString().trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+    } catch (_) {
+      // Si falla, devolvemos lista vacía. El llamador decidirá si mostrar
+      // sugerencias o no.
+      return const [];
+    }
+  }
 }

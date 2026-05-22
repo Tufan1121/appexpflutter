@@ -14,6 +14,7 @@ class TablaPrecioModel extends TablaPreciosEntity {
     required super.precio8,
     super.precio9,
     super.precio10,
+    super.precio11,
   });
 
   factory TablaPrecioModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +30,7 @@ class TablaPrecioModel extends TablaPreciosEntity {
       precio8: json['precio8'] ?? 0,
       precio9: json['precio9'] ?? 0,
       precio10: json['precio10'] ?? 0,
+      precio11: json['precio11'] ?? 0,
     );
   }
 
@@ -44,5 +46,6 @@ class TablaPrecioModel extends TablaPreciosEntity {
         precio8: precio8,
         precio9: precio9,
         precio10: precio10,
+        precio11: precio11,
       );
 }

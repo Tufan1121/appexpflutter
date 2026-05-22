@@ -40,6 +40,8 @@ class ProductoEntity extends Equatable {
   final int precio8;
   final int? precio9;
   final int? precio10;
+  // precio11 = tarifa -15% (gproducto.precio11 en mainTienda).
+  final int? precio11;
   final String? fulldescrip;
   final String descrip;
   final dynamic skuph;
@@ -49,6 +51,14 @@ class ProductoEntity extends Equatable {
   final double bodega2;
   final double bodega3;
   final double bodega4;
+  // Datos de empaque (largo/ancho/alto del rollo, en metros) y peso (kg).
+  // Vienen de `gproducto.largop`, `gproducto.anchop`, `gproducto.altop`,
+  // `gproducto.peso` en MariaDB. Nullable porque algunos productos
+  // antiguos pueden no tenerlos cargados.
+  final double? largop;
+  final double? anchop;
+  final double? altop;
+  final double? peso;
 
   const ProductoEntity({
     required this.producto,
@@ -90,6 +100,7 @@ class ProductoEntity extends Equatable {
     required this.precio8,
     this.precio9,
     this.precio10,
+    this.precio11,
     this.fulldescrip,
     required this.descrip,
     this.skuph,
@@ -99,6 +110,10 @@ class ProductoEntity extends Equatable {
     required this.bodega2,
     required this.bodega3,
     required this.bodega4,
+    this.largop,
+    this.anchop,
+    this.altop,
+    this.peso,
   });
 
   ProductoEntity copyWith({
@@ -137,6 +152,7 @@ class ProductoEntity extends Equatable {
     int? precio8,
     int? precio9,
     int? precio10,
+    int? precio11,
     String? descrip,
     double? bodega1,
     double? bodega2,
@@ -179,6 +195,7 @@ class ProductoEntity extends Equatable {
         precio8: precio8 ?? this.precio8,
         precio9: precio9 ?? this.precio9,
         precio10: precio10 ?? this.precio10,
+        precio11: precio11 ?? this.precio11,
         descrip: descrip ?? this.descrip,
         bodega1: bodega1 ?? this.bodega1,
         bodega2: bodega2 ?? this.bodega2,
@@ -227,9 +244,14 @@ class ProductoEntity extends Equatable {
         precio8,
         precio9,
         precio10,
+        precio11,
         fulldescrip,
         descrip,
         skuph,
         precioph,
+        largop,
+        anchop,
+        altop,
+        peso,
       ];
 }

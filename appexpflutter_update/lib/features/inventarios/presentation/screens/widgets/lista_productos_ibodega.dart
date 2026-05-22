@@ -1,10 +1,8 @@
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:precios/domain/entities/producto_entity.dart';
 
 class ListaProductosIBodegaCard extends HookWidget {
@@ -22,25 +20,7 @@ class ListaProductosIBodegaCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<double> promociones = [
-      producto.precio8.toDouble(),
-      if (producto.precio9 != null) producto.precio9!.toDouble(),
-      producto.precio4.toDouble(),
-      if (producto.precio10 != null) producto.precio10!.toDouble(),
-      producto.precio5.toDouble(),
-      producto.precio6.toDouble(),
-      producto.precio7.toDouble(),
-    ];
-
-    final descuentos = [
-      '-20%',
-      '-25%',
-      '-30%',
-      '-35%',
-      '-40%',
-      '-50%',
-      '-70%',
-    ];
+    final showPrice = useState(false);
 
     return GestureDetector(
       onTap: onTap,
@@ -58,7 +38,7 @@ class ListaProductosIBodegaCard extends HookWidget {
                     FadeInImage.assetNetwork(
                       placeholder: 'assets/loaders/loading.gif',
                       image:
-                          'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(producto.pathima1)}',
+                          'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(producto.pathima1)}',
                       width: 70,
                       height: 70,
                       fit: BoxFit.cover,
@@ -135,53 +115,11 @@ class ListaProductosIBodegaCard extends HookWidget {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  children: [
-                    _buildPriceCheckbox(
-                      context: context,
-                      label: 'Precio de Lista',
-                      price: producto.precio1.toDouble(),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: SizedBox(
-                        width: 180,
-                        child: ExpansionTile(
-                          expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                          title: AutoSizeText(
-                            'Promoción',
-                            style: GoogleFonts.montserrat(
-                              fontWeight: FontWeight.bold,
-                              color: Colores.secondaryColor,
-                            ),
-                            maxLines: 1,
-                          ),
-                          children: [
-                            SizedBox(
-                              height: 150,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: promociones.length,
-                                itemBuilder: (context, index) {
-                                  final precio = promociones[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0),
-                                    child: _buildPriceCheckbox(
-                                      context: context,
-                                      label: descuentos[index],
-                                      price: precio,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                _buildPriceToggle(
+                  context: context,
+                  price: producto.precio1.toDouble(),
+                  expanded: showPrice.value,
+                  onToggle: () => showPrice.value = !showPrice.value,
                 ),
               ],
             ),
@@ -191,23 +129,28 @@ class ListaProductosIBodegaCard extends HookWidget {
     );
   }
 
-  Widget _buildPriceCheckbox({
+  Widget _buildPriceToggle({
     required BuildContext context,
-    required String label,
     required double price,
+    required bool expanded,
+    required VoidCallback onToggle,
   }) {
-    return Row(
-      children: [
-        AutoSizeText(
-          label,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(width: 10),
-        AutoSizeText(
-          Utils.formatPrice(price),
-          maxLines: 2,
-        ),
-      ],
+    return InkWell(
+      onTap: onToggle,
+      child: Row(
+        children: [
+          Icon(
+            expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            size: 22,
+          ),
+          const SizedBox(width: 8),
+          if (expanded)
+            AutoSizeText(
+              Utils.formatPrice(price),
+              maxLines: 2,
+            ),
+        ],
+      ),
     );
   }
 }

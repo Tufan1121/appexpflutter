@@ -136,15 +136,26 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                           }
                         }
 
+                        // En horizontal mostramos 5 columnas para aprovechar
+                        // el ancho; en vertical 2 (default original). La
+                        // relación 0.7 sirve bien para 2 columnas (cards más
+                        // altas); con 5 columnas usamos 0.85 para que no
+                        // queden demasiado altas.
+                        final isLandscape =
+                            MediaQuery.of(context).orientation ==
+                                Orientation.landscape;
+                        final crossAxisCount = isLandscape ? 5 : 2;
+                        final aspectRatio = isLandscape ? 0.85 : 0.7;
+
                         return Expanded(
                           child: GridView.builder(
                             controller: _scrollController,
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              childAspectRatio: 0.7,
+                              childAspectRatio: aspectRatio,
                             ),
                             padding: const EdgeInsets.all(10.0),
                             itemCount: state.galeria.length +

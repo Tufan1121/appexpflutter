@@ -39,7 +39,18 @@ class ProductoExpoEntity extends Equatable {
   final int precio8;
   final int precio9;
   final int precio10;
+  // precio11 = tarifa -15% (gproducto.precio11 en mainTienda). Nullable por
+  // si algún registro/endpoint aún no lo trae.
+  final int? precio11;
   final String desalmacen;
+  // Datos de empaque (largo/ancho/alto del rollo, en metros) y peso (kg).
+  // Vienen de `gproducto.largop`, `gproducto.anchop`, `gproducto.altop`,
+  // `gproducto.peso` en MariaDB. Nullable porque algunos productos
+  // antiguos pueden no tenerlos cargados.
+  final double? largop;
+  final double? anchop;
+  final double? altop;
+  final double? peso;
 
   const ProductoExpoEntity({
     required this.producto,
@@ -80,7 +91,12 @@ class ProductoExpoEntity extends Equatable {
     required this.precio8,
     required this.precio9,
     required this.precio10,
+    this.precio11,
     required this.desalmacen,
+    this.largop,
+    this.anchop,
+    this.altop,
+    this.peso,
   });
 
   ProductoExpoEntity copyWith({
@@ -122,7 +138,12 @@ class ProductoExpoEntity extends Equatable {
     int? precio8,
     int? precio9,
     int? precio10,
+    int? precio11,
     String? desalmacen,
+    double? largop,
+    double? anchop,
+    double? altop,
+    double? peso,
   }) =>
       ProductoExpoEntity(
         producto: producto ?? this.producto,
@@ -163,7 +184,12 @@ class ProductoExpoEntity extends Equatable {
         precio8: precio8 ?? this.precio8,
         precio9: precio9 ?? this.precio9,
         precio10: precio10 ?? this.precio10,
+        precio11: precio11 ?? this.precio11,
         desalmacen: desalmacen ?? this.desalmacen,
+        largop: largop ?? this.largop,
+        anchop: anchop ?? this.anchop,
+        altop: altop ?? this.altop,
+        peso: peso ?? this.peso,
       );
 
   @override
@@ -206,6 +232,11 @@ class ProductoExpoEntity extends Equatable {
         precio8,
         precio9,
         precio10,
+        precio11,
         desalmacen,
+        largop,
+        anchop,
+        altop,
+        peso,
       ];
 }

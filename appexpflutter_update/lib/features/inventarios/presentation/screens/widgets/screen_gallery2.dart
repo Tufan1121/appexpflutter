@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -83,12 +82,12 @@ class _FullScreenGallery2State extends State<FullScreenGallery2> {
             '${appDir.path}/share_${timestamp}_$fileNameWithExtension');
 
         final originalImageUrl =
-            'https://tapetestufan.mx/imagen/_web/$imageUrl';
+            'https://tapetestufan.mx/imagen/$imageUrl';
 
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
 
-        final watermarkUrl = 'https://tapetestufan.mx:6003/add-watermark/';
+        final watermarkUrl = 'https://tapetestufan.mx:6007/add-watermark/';
 
         final response = await dio
             .post(
@@ -196,7 +195,7 @@ class _FullScreenGallery2State extends State<FullScreenGallery2> {
                   builder: (context, index) {
                     return PhotoViewGalleryPageOptions(
                       imageProvider: NetworkImage(
-                        'https://tapetestufan.mx:446/imagen/_web/${Uri.encodeFull(widget.imageUrls[index])}',
+                        'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(widget.imageUrls[index])}',
                       ),
                       initialScale: PhotoViewComputedScale.contained,
                       minScale: PhotoViewComputedScale.contained,
@@ -226,10 +225,6 @@ class _FullScreenGallery2State extends State<FullScreenGallery2> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Precio Normal: ${Utils.formatPrice(widget.producto.precio1.toDouble())}',
-                  style: const TextStyle(fontSize: 16.0),
-                ),
-                Text(
                   'Existencia: ${widget.producto.hm}',
                   style: const TextStyle(fontSize: 16.0),
                 ),
@@ -237,6 +232,34 @@ class _FullScreenGallery2State extends State<FullScreenGallery2> {
                   'Almacen: ${widget.producto.almacen} - ${widget.producto.desalmacen}',
                   style: const TextStyle(fontSize: 16),
                 ),
+                if ((widget.producto.compos ?? '').trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'Composición: ${widget.producto.compos}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                if (widget.producto.lava1.trim().isNotEmpty ||
+                    widget.producto.lava2.trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'Cuidados: ${[
+                        widget.producto.lava1,
+                        widget.producto.lava2
+                      ].where((e) => e.trim().isNotEmpty).join(', ')}.',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                if ((widget.producto.origen ?? '').trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'País de origen: ${widget.producto.origen}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
               ],
             ),
           ),
