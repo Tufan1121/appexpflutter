@@ -1004,90 +1004,94 @@ class _PreciosTabla extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final headerColor =
-        theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6);
+    final mutedColor = theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7);
     final selectedBg = theme.colorScheme.primary.withValues(alpha: 0.10);
 
-    // Tarifas de tienda: precio de lista + 7 escalones de descuento.
-    final tiers = <({String label, int Function(Variante) get})>[
-      (label: 'Normal', get: (v) => v.precio1),
-      (label: '-15%', get: (v) => v.precio11),
-      (label: '-20%', get: (v) => v.precio8),
-      (label: '-25%', get: (v) => v.precio9),
-      (label: '-30%', get: (v) => v.precio4),
-      (label: '-35%', get: (v) => v.precio10),
-      (label: '-40%', get: (v) => v.precio5),
-      (label: '-50%', get: (v) => v.precio6),
-      (label: '-70%', get: (v) => v.precio7),
-    ];
+    // Descuentos de tienda (el Precio Normal se muestra aparte, arriba de
+    // cada medida).
+    List<({String label, int precio})> descuentosDe(Variante v) => [
+          (label: '-20%', precio: v.precio8),
+          (label: '-25%', precio: v.precio9),
+          (label: '-30%', precio: v.precio4),
+          (label: '-35%', precio: v.precio10),
+          (label: '-40%', precio: v.precio5),
+          (label: '-50%', precio: v.precio6),
+          (label: '-70%', precio: v.precio7),
+        ];
 
-    const medidaW = 88.0;
-    const tierW = 78.0;
+    String money(int n) => Utils.formatPrice(n.toDouble());
 
-    final headerStyle = TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w700,
-      color: headerColor,
-    );
-
-    // Scroll horizontal: con 8 columnas de precio no caben en el ancho de
-    // un teléfono, así que la tabla se desplaza lateralmente.
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    // Una tarjeta por medida; los descuentos se acomodan en un Wrap que baja
+    // de renglón, así todo cabe en el ancho del teléfono sin scroll lateral.
+    return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 12, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: medidaW,
-                  child: Text('Medida', style: headerStyle),
-                ),
-                for (final t in tiers)
-                  SizedBox(
-                    width: tierW,
-                    child: Text(t.label,
-                        textAlign: TextAlign.end, style: headerStyle),
-                  ),
-              ],
-            ),
-          ),
-          Divider(height: 1, color: theme.dividerColor),
-          // Rows
           for (var i = 0; i < variantes.length; i++)
             Container(
-              color: i == activeIndex ? selectedBg : null,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: medidaW,
-                      child: Text(
-                        variantes[i].medidas.isEmpty
-                            ? '—'
-                            : variantes[i].medidas,
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ),
-                    for (final t in tiers)
-                      SizedBox(
-                        width: tierW,
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: i == activeIndex ? selectedBg : null,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
                         child: Text(
-                          Utils.formatPrice(t.get(variantes[i]).toDouble()),
-                          textAlign: TextAlign.end,
+                          variantes[i].medidas.isEmpty
+                              ? '—'
+                              : variantes[i].medidas,
                           style: const TextStyle(
-                            fontSize: 13,
-                            fontFeatures: [FontFeature.tabularFigures()],
-                          ),
+                              fontSize: 13, fontWeight: FontWeight.w600),
                         ),
                       ),
-                  ],
-                ),
+                      Text('Normal ',
+                          style: TextStyle(fontSize: 11, color: mutedColor)),
+                      Text(
+                        money(variantes[i].precio1),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 14,
+                    runSpacing: 6,
+                    children: [
+                      for (final d in descuentosDe(variantes[i]))
+                        Text.rich(
+                          TextSpan(children: [
+                            TextSpan(
+                              text: '${d.label}  ',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: mutedColor,
+                              ),
+                            ),
+                            TextSpan(
+                              text: money(d.precio),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                fontFeatures: [FontFeature.tabularFigures()],
+                              ),
+                            ),
+                          ]),
+                        ),
+                    ],
+                  ),
+                ],
               ),
             ),
         ],

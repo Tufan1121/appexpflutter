@@ -502,8 +502,6 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                             Utils.formatPrice(
                                                 e.precio1.toDouble()),
                                             Utils.formatPrice(
-                                                (e.precio11 ?? 0).toDouble()),
-                                            Utils.formatPrice(
                                                 e.precio8.toDouble()),
                                             Utils.formatPrice(
                                                 e.precio4.toDouble()),
@@ -770,30 +768,6 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                                           ),
                                                           GridColumn(
                                                             columnName:
-                                                                'descuento15',
-                                                            label: Container(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              child: Text(
-                                                                '-15%',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: theme
-                                                                      .colorScheme
-                                                                      .primary,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          GridColumn(
-                                                            columnName:
                                                                 'descuento20',
                                                             label: Container(
                                                               padding:
@@ -1046,12 +1020,11 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
 
 // Clase para representar los datos de la tabla
 class Medidas {
-  Medidas(this.medida, this.precioNormal, this.descuento15, this.descuento20,
-      this.descuento30, this.descuento40, this.descuento50, this.descuento70);
+  Medidas(this.medida, this.precioNormal, this.descuento20, this.descuento30,
+      this.descuento40, this.descuento50, this.descuento70);
 
   final String medida;
   final String precioNormal;
-  final String descuento15;
   final String descuento20;
   final String descuento30;
   final String descuento40;
@@ -1066,7 +1039,6 @@ class MedidasDataSource extends DataGridSource {
       return DataGridRow(cells: [
         DataGridCell<String>(columnName: 'medida', value: e.medida),
         DataGridCell<String>(columnName: 'precioNormal', value: e.precioNormal),
-        DataGridCell<String>(columnName: 'descuento15', value: e.descuento15),
         DataGridCell<String>(columnName: 'descuento20', value: e.descuento20),
         DataGridCell<String>(columnName: 'descuento30', value: e.descuento30),
         DataGridCell<String>(columnName: 'descuento40', value: e.descuento40),
