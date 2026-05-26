@@ -228,7 +228,10 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
               return Scrollbar(
                 child: SingleChildScrollView(
                   controller: _scrollController,
-                  child: Padding(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 900),
+                      child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       children: [
@@ -778,6 +781,8 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                           },
                         ),
                       ],
+                    ),
+                  ),
                     ),
                   ),
                 ),

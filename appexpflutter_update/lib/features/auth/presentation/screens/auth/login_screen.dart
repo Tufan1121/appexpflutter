@@ -9,6 +9,9 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    // En tablet/landscape limitamos el ancho del panel blanco a 560 px y lo
+    // centramos. En phone (ancho < 600 px) ocupa todo como antes.
+    final isWide = size.width >= 600;
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -27,15 +30,21 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 80),
 
-            Container(
-              height: size.height - 260, // 80 los dos sizebox y 100 el ícono
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: scaffoldBackgroundColor,
-                borderRadius:
-                    const BorderRadius.only(topRight: Radius.circular(100)),
+            Center(
+              child: ConstrainedBox(
+                constraints:
+                    BoxConstraints(maxWidth: isWide ? 560 : double.infinity),
+                child: Container(
+                  height: size.height - 260,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: scaffoldBackgroundColor,
+                    borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(100)),
+                  ),
+                  child: const LoginForm(),
+                ),
               ),
-              child: const LoginForm(),
             )
           ],
         ),

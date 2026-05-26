@@ -143,14 +143,39 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                         }
 
                         return Expanded(
-                          child: GridView.builder(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final w = constraints.maxWidth;
+                              // 5 cols ≥1500 px, 4 ≥1200, 3 ≥800, 2 < 800
+                              // (phone). En desktop ancho hago las cards menos
+                              // alargadas (aspect ~0.7) para que no queden
+                              // delgadas como tira; en phone mantengo 0.58.
+                              final crossAxisCount = w >= 1500
+                                  ? 5
+                                  : w >= 1200
+                                      ? 4
+                                      : w >= 800
+                                          ? 3
+                                          : 2;
+                              final childAspectRatio =
+                                  crossAxisCount >= 3 ? 0.7 : 0.58;
+                              final maxGridWidth = crossAxisCount >= 4
+                                  ? 1600.0
+                                  : crossAxisCount == 3
+                                      ? 1100.0
+                                      : double.infinity;
+                              return Center(
+                                child: ConstrainedBox(
+                                  constraints:
+                                      BoxConstraints(maxWidth: maxGridWidth),
+                                  child: GridView.builder(
                             controller: _scrollController,
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
                               crossAxisSpacing: 8,
                               mainAxisSpacing: 8,
-                              childAspectRatio: 0.58, // Hace las tarjetas más altas (rectangulares)
+                              childAspectRatio: childAspectRatio,
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                             itemCount: state.galeria.length +
@@ -238,6 +263,10 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                                       ),
                                     ],
                                   ),
+                                ),
+                              );
+                            },
+                          ),
                                 ),
                               );
                             },

@@ -45,12 +45,21 @@ class PreciosScreen extends StatelessWidget {
                   const SizedBox(
                     height: 5,
                   ),
-                  const SearchPrices(),
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 560),
+                      child: const SearchPrices(),
+                    ),
+                  ),
                   Expanded(
                     child: Scrollbar(
                       child: SingleChildScrollView(
-                        child: Column(
-                          children: [
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints:
+                                const BoxConstraints(maxWidth: 560),
+                            child: Column(
+                              children: [
                             BlocBuilder<PreciosBloc, PreciosState>(
                               builder: (context, state) {
                                 if (state is PreciosLoading) {
@@ -174,6 +183,8 @@ class PreciosScreen extends StatelessWidget {
                               },
                             ),
                           ],
+                        ),
+                          ),
                         ),
                       ),
                     ),

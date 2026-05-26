@@ -50,7 +50,10 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                   MediaQuery.of(context).size.height),
               painter: BackgroundPainter(),
             ),
-            Column(
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: Column(
               children: [
                 const SizedBox(height: 5),
                 const SearchClientes(),
@@ -200,6 +203,8 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                   },
                 )
               ],
+            ),
+              ),
             ),
           ],
         ),

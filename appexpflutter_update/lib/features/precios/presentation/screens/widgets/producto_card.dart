@@ -38,7 +38,7 @@ class ProductoCard extends StatelessWidget {
                   ),
                   placeholder: const AssetImage('assets/loaders/loading.gif'),
                   width: double.infinity,
-                  height: 120,
+                  height: 220,
                   fadeInDuration: const Duration(milliseconds: 300),
                   fit: BoxFit.cover,
                 )),

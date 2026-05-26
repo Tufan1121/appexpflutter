@@ -170,8 +170,27 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // 4 columnas en desktop/tablet ancho, 3 en tablet medio,
+                    // 2 en phone. Cap del grid a 1100 px para que en pantallas
+                    // anchas las cards no queden gigantes.
+                    final w = constraints.maxWidth;
+                    final crossAxisCount = w >= 1100
+                        ? 4
+                        : w >= 800
+                            ? 3
+                            : 2;
+                    final maxGridWidth = crossAxisCount == 4
+                        ? 1100.0
+                        : crossAxisCount == 3
+                            ? 850.0
+                            : double.infinity;
+                    return Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: maxGridWidth),
+                        child: GridView.count(
+                  crossAxisCount: crossAxisCount,
                   crossAxisSpacing: 30,
                   mainAxisSpacing: 20,
                   padding: const EdgeInsets.all(20.0),
@@ -267,6 +286,10 @@ class HomeScreen extends StatelessWidget {
                       onTap: () => CotizadorEnvioRoute().push(context),
                     ),
                   ],
+                ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

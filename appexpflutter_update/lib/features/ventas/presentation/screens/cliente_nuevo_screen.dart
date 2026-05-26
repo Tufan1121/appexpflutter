@@ -27,7 +27,10 @@ class ClienteNuevoScreen extends StatelessWidget {
           Column(
             children: [
               const SizedBox(height: 20),
-              Padding(
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
                   height: 470,
@@ -46,6 +49,8 @@ class ClienteNuevoScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
+                ),
                   ),
                 ),
               ),
