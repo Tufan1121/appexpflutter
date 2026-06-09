@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:api_client/api_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -10,12 +13,30 @@ class AuthDataSourceImpl implements AuthDatasource {
   AuthDataSourceImpl({required DioClient dioClient}) : _dioClient = dioClient;
   final storage = const FlutterSecureStorage();
 
+  // Construye un identificador único y estable del dispositivo que inicia
+  // sesión, con formato "<modelo>-<idUnico>". El modelo da legibilidad y el
+  // id nativo garantiza unicidad por aparato físico (dos teléfonos del mismo
+  // modelo no colisionan).
+  Future<String> _getDeviceId() async {
+    final deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      return '${androidInfo.model}-${androidInfo.id}'; // model + ANDROID_ID
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      return '${iosInfo.model}-${iosInfo.identifierForVendor ?? ''}';
+    }
+    return '';
+  }
+
   @override
   Future<AuthUserModel> login(String email, String password) async {
+    final device = await _getDeviceId();
     final Map<String, dynamic> body = {
       'grant_type': '',
       'username': email,
       'password': password,
+      'device': device,
       'scope': '',
       'client_id': '',
       'client_secret': '',
@@ -29,7 +50,6 @@ class AuthDataSourceImpl implements AuthDatasource {
       );
 
       final authUserModel = AuthUserModel.fromJson(response.data);
-      //print(authUserModel.accessToken);
       return authUserModel;
     } catch (_) {
       rethrow;
