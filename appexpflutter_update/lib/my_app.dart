@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:api_client/api_client.dart';
 import 'package:appexpflutter_update/features/auth/config/config_token.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
@@ -69,6 +70,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       routes: $appRoutes,
     );
 
+    // Maneja cualquier 401 de la API (token caducado/inválido): borra el token
+    // y manda al login automáticamente. El login (/token) queda excluido en el
+    // interceptor para no interferir con el mensaje de credenciales inválidas.
+    DioClient.onUnauthorized = () {
+      if (!mounted) return;
+      _redirectToLogin();
+    };
+
     // Inicia el Stream de verificación de sesión si el token existe
     if (token != null) {
       _startSessionStream();
@@ -96,6 +105,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   // Detener el Stream al salir de la app o al pausar
   @override
   void dispose() {
+    DioClient.onUnauthorized = null; // Evita referencias colgantes al State
     sessionStream?.cancel(); // Cancela el stream si se destruye el widget
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
