@@ -9,6 +9,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 class DioClient {
   late final Dio _dio;
 
+  /// Callback global que la app configura para manejar un 401 (token caducado
+  /// o inválido): típicamente borra el token local y redirige al login.
+  /// Se invoca para cualquier 401 EXCEPTO el del propio login (`/token`), que
+  /// debe seguir mostrando el mensaje de credenciales inválidas en pantalla.
+  static void Function()? onUnauthorized;
+
   DioClient() {
     _dio = Dio();
     _dio
@@ -18,7 +24,21 @@ class DioClient {
       }
       ..options.connectTimeout = const Duration(milliseconds: 15000)
       ..options.receiveTimeout = const Duration(milliseconds: 15000)
-      ..options.responseType = ResponseType.json;
+      ..options.responseType = ResponseType.json
+      ..interceptors.add(InterceptorsWrapper(
+        onError: (error, handler) {
+          // El login (/token) y el cierre de sesión (/logout) se excluyen: el
+          // primero debe mostrar el error de credenciales en pantalla y el
+          // segundo ya está cerrando sesión (evita recursión en el redirect).
+          final path = error.requestOptions.path;
+          final isAuthRequest =
+              path.contains('/token') || path.contains('/logout');
+          if (error.response?.statusCode == 401 && !isAuthRequest) {
+            onUnauthorized?.call();
+          }
+          return handler.next(error);
+        },
+      ));
   }
 
   Future<bool> _hasInternetConnection() async {
