@@ -11,6 +11,7 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/w
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +27,7 @@ class BusquedaGlobalScreen extends StatefulWidget {
 class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
     with VerificarCampos {
   final form = FormGroup({
+    'clave': FormControl<String>(),
     'descripcio': FormControl<String>(),
     'diseno': FormControl<String>(),
     'mlargo1': FormControl<String>(),
@@ -43,6 +45,8 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
   late double mancho2;
   String? selectedMedida;
   final ValueNotifier<bool> _filtrosAbiertos = ValueNotifier<bool>(true);
+  // Spinner del botón "buscar por clave" mientras se resuelve `/productScan/`.
+  final ValueNotifier<bool> _buscandoClave = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -53,6 +57,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
   @override
   void dispose() {
     _filtrosAbiertos.dispose();
+    _buscandoClave.dispose();
     super.dispose();
   }
 
@@ -117,6 +122,76 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
         .add(GetInventarioProductEvent(data: data));
   }
 
+  /// Abre la cámara (scanner) y, al detectar un código, lo coloca en el
+  /// campo de clave y dispara la búsqueda por clave. Reutiliza el
+  /// `ScannerProductoPage` que ya usan ventas/precios.
+  Future<void> _escanearClave() async {
+    // `onDetect` se dispara en cada frame que detecta el código. Sin este
+    // guard, el segundo disparo haría un `pop` de más y cerraría la pantalla.
+    bool procesado = false;
+    await showDialog(
+      context: context,
+      builder: (dialogContext) => ScannerProductoPage(
+        onDetect: (barcode) {
+          if (procesado || barcode.barcodes.isEmpty) return;
+          final code = (barcode.barcodes.first.rawValue ?? '').trim();
+          if (code.isEmpty) return;
+          procesado = true;
+          Navigator.of(dialogContext).pop();
+          form.control('clave').value = code.toUpperCase();
+          _buscarPorClave();
+        },
+      ),
+    );
+  }
+
+  /// Resuelve la clave escaneada/tecleada contra `/productScan/`, autollena
+  /// los filtros (calidad, color/diseño, largo y ancho) con los datos del
+  /// producto y dispara la búsqueda global. Inspirado en `buscarPorClave()`
+  /// de la búsqueda global web (`F:\python\galeria\busquedaglobal.html`).
+  Future<void> _buscarPorClave() async {
+    final clave = (form.control('clave').value as String? ?? '').trim();
+    if (clave.isEmpty) return;
+    FocusScope.of(context).unfocus();
+    _buscandoClave.value = true;
+
+    final usecase = context.read<BusquedaGlobalBloc>().productoUsecase;
+    final result = await usecase.getProductoScan(clave);
+    if (!mounted) return;
+    _buscandoClave.value = false;
+
+    result.fold(
+      (failure) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(
+            backgroundColor: Colors.red.shade700,
+            content: Text(failure.message),
+          ));
+      },
+      (producto) {
+        // Autollenar los filtros con los datos del producto encontrado.
+        form.control('descripcio').value = producto.descripcio.trim();
+        form.control('diseno').value = producto.diseno.trim();
+        if (producto.largo > 0) {
+          final v = producto.largo.toStringAsFixed(2);
+          form.control('mlargo1').value = v;
+          form.control('mlargo2').value = v;
+        }
+        if (producto.ancho > 0) {
+          final v = producto.ancho.toStringAsFixed(2);
+          form.control('mancho1').value = v;
+          form.control('mancho2').value = v;
+        }
+        // La clave ya cumplió su función: limpiarla, resetear la medida
+        // (ahora el rango viene del producto) y lanzar la búsqueda.
+        form.control('clave').value = '';
+        setState(() => selectedMedida = null);
+        _runSearch();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -159,6 +234,44 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                     child: Column(
                       children: [
                         const SizedBox(height: 3),
+                        // ── Buscar por clave: resuelve el producto y autollena
+                        //    los filtros antes de la búsqueda global. ──
+                        CustomReactiveTextField(
+                          formControlName: 'clave',
+                          hint: 'Buscar por clave',
+                          hintStyle: const TextStyle(fontSize: 15),
+                          inputFormatters: const [UpperCaseTextFormatter()],
+                          onSubmitted: (_) => _buscarPorClave(),
+                          prefixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.qr_code_scanner,
+                              color: Colores.secondaryColor,
+                            ),
+                            tooltip: 'Escanear clave',
+                            onPressed: _escanearClave,
+                          ),
+                          suffixIcon: ValueListenableBuilder<bool>(
+                            valueListenable: _buscandoClave,
+                            builder: (context, buscando, _) => buscando
+                                ? const Padding(
+                                    padding: EdgeInsets.all(14),
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2.5),
+                                    ),
+                                  )
+                                : IconButton(
+                                    icon: const Icon(
+                                      Icons.search,
+                                      color: Colores.secondaryColor,
+                                    ),
+                                    onPressed: _buscarPorClave,
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         BlocBuilder<MedidasCubit, MedidasState>(
                           builder: (context, state) {
                             if (state is MedidasLoaded) {

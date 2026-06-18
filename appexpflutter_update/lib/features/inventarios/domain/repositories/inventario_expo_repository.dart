@@ -8,5 +8,7 @@ abstract interface class InventarioExpoRepository {
       Map<String, dynamic> data);
   Future<Either<NetworkException, List<ProductoExpoEntity>>> getProductoGlobal(
       Map<String, dynamic> data);
+  Future<Either<NetworkException, ProductoExpoEntity>> getProductoScan(
+      String clave);
   Future<Either<NetworkException, List<MedidasEntityInv>>> getMedidas();
 }
