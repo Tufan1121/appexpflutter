@@ -51,6 +51,22 @@ class InventarioExpoRepositoryImpl implements InventarioExpoRepository {
   }
 
   @override
+  Future<Either<NetworkException, ProductoExpoEntity>> getProductoScan(
+      String clave) async {
+    try {
+      final result = await inventarioExpoDataSource.getProductoScan(clave);
+      return Right(result.toEntity());
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    } catch (e) {
+      return Left(
+          NetworkException.customMessage('Ocurrió un error inesperado. '));
+    }
+  }
+
+  @override
   Future<Either<NetworkException, List<MedidasEntityInv>>> getMedidas() async {
     try {
       final result = await inventarioExpoDataSource.getMedidas();
