@@ -1,6 +1,7 @@
 import 'package:api_client/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:inventarios/config/exceptions/not_found_expection.dart';
 import 'package:inventarios/data/data_sources/inventario_expo_data_source.dart';
 import 'package:inventarios/data/models/medidas_model.dart';
 import 'package:inventarios/data/models/producto_expo_model.dart';
@@ -55,6 +56,28 @@ class InventarioExpoDataSourceImpl implements InventarioExpoDataSource {
           )
           .toList();
       return productosBodega;
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ProductoExpoModel> getProductoScan(String clave) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.get('/productScan/',
+          queryParameters: {'producto': clave},
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ));
+      final List<dynamic> jsonList = result.data;
+      if (jsonList.isNotEmpty) {
+        return ProductoExpoModel.fromScanJson(jsonList[0]);
+      } else {
+        throw NotFoundException('Clave no encontrada');
+      }
     } catch (_) {
       rethrow;
     }

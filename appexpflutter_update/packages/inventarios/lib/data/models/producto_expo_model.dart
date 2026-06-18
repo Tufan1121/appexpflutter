@@ -96,6 +96,58 @@ class ProductoExpoModel extends ProductoExpoEntity {
         peso: (json["peso"] as num?)?.toDouble(),
       );
 
+  /// Parser tolerante para la respuesta de `/productScan/`, cuya forma
+  /// difiere de `/busquedaGlobal/` (no trae `hm`, `almacen`, `observac`,
+  /// etc.). Sólo necesitamos `descripcio`, `diseno`, `largo` y `ancho` para
+  /// autollenar los filtros, así que el resto se rellena con valores por
+  /// defecto seguros para no romper el `fromJson` estricto.
+  factory ProductoExpoModel.fromScanJson(Map<String, dynamic> json) =>
+      ProductoExpoModel(
+        producto: json["producto"] ?? '',
+        producto1: json["producto1"] ?? '',
+        descripcio: json["descripcio"] ?? '',
+        diseno: json["diseno"] ?? '',
+        medidas: json["medidas"] ?? '',
+        hm: json["hm"] ?? 0,
+        largo: (json["largo"] as num?)?.toDouble() ?? 0.0,
+        ancho: (json["ancho"] as num?)?.toDouble() ?? 0.0,
+        precio: (json["precio"] as num?)?.toDouble(),
+        fulldescrip: json["fulldescrip"] ?? '',
+        almacen: json["almacen"] ?? '',
+        compos: json["compos"],
+        origen: json["origen"],
+        rojo: json["rojo"],
+        observac: json["observac"] ?? '',
+        hobserva: null,
+        pathima1: json["pathima1"] ?? '',
+        pathima2: json["pathima2"] ?? '',
+        pathima3: json["pathima3"] ?? '',
+        pathima4: json["pathima4"] ?? '',
+        pathima5: json["pathima5"] ?? '',
+        pathima6: json["pathima6"] ?? '',
+        video1: json["video1"] ?? '',
+        color1: json["color1"] ?? '',
+        color2: json["color2"] ?? '',
+        color3: json["color3"] ?? '',
+        lava1: json["lava1"] ?? '',
+        lava2: json["lava2"] ?? '',
+        precio1: json["precio1"] ?? 0,
+        precio2: json["precio2"] ?? 0,
+        precio3: json["precio3"] ?? 0,
+        precio4: json["precio4"] ?? 0,
+        precio5: json["precio5"] ?? 0,
+        precio6: json["precio6"] ?? 0,
+        precio7: json["precio7"] ?? 0,
+        precio8: json["precio8"] ?? 0,
+        precio9: json["precio9"] ?? 0,
+        precio10: json["precio10"] ?? 0,
+        desalmacen: json["desalmacen"] ?? '',
+        largop: (json["largop"] as num?)?.toDouble(),
+        anchop: (json["anchop"] as num?)?.toDouble(),
+        altop: (json["altop"] as num?)?.toDouble(),
+        peso: (json["peso"] as num?)?.toDouble(),
+      );
+
   Map<String, dynamic> toJson() => {
         "producto": producto,
         "producto1": producto1,

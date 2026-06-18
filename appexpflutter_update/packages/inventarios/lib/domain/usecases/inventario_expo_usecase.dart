@@ -18,6 +18,11 @@ class InventarioExpoUsecase {
     return await inventarioExpoRepository.getProductoGlobal(data);
   }
 
+  Future<Either<NetworkException, ProductoExpoEntity>> getProductoScan(
+      String clave) async {
+    return await inventarioExpoRepository.getProductoScan(clave);
+  }
+
   Future<Either<NetworkException, List<MedidasEntityInv>>> getMedidas() async {
     return await inventarioExpoRepository.getMedidas();
   }
