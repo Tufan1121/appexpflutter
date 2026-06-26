@@ -49,14 +49,26 @@ class DioClient {
       ));
   }
 
-  /// ¿El error es de CONEXIÓN (túnel/fibra caída) y no una respuesta del
-  /// servidor? Solo en ese caso vale la pena intentar la otra URL.
-  bool _isConnectionError(DioException e) {
-    return e.type == DioExceptionType.connectionError ||
+  /// ¿Conviene reintentar con la otra URL? Sí cuando:
+  /// - Hay un error de CONEXIÓN (túnel/fibra caída, timeouts, socket).
+  /// - El gateway respondió pero el backend detrás está caído: 502 Bad Gateway,
+  ///   503 Service Unavailable, 504 Gateway Timeout (típico de nginx cuando el
+  ///   upstream/túnel no responde).
+  /// NO salta ante errores de aplicación (400/401/404/500), porque ahí el
+  /// backend sí está vivo y respondiendo.
+  bool _shouldFailover(DioException e) {
+    if (e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.sendTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
-        e.error is SocketException;
+        e.error is SocketException) {
+      return true;
+    }
+    if (e.type == DioExceptionType.badResponse) {
+      final code = e.response?.statusCode ?? 0;
+      return code == 502 || code == 503 || code == 504;
+    }
+    return false;
   }
 
   Future<Response<dynamic>> _request(
@@ -78,8 +90,8 @@ class DioClient {
       } on DioException catch (e) {
         lastError = e;
         final hayOtra = i < urls.length - 1;
-        if (_isConnectionError(e) && hayOtra) {
-          continue; // la URL no respondió: prueba la de respaldo
+        if (_shouldFailover(e) && hayOtra) {
+          continue; // la URL no respondió (o gateway caído): prueba el respaldo
         }
         rethrow;
       }
