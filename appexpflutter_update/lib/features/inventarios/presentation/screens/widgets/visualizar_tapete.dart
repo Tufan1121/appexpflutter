@@ -22,6 +22,38 @@ import 'package:share_plus/share_plus.dart';
 class VisualizarTapete {
   static final ImagePicker _picker = ImagePicker();
 
+  /// Icono según la superficie, para que el usuario sepa DÓNDE se colocará el
+  /// producto: pared (colgado), mesa (sobremesa) o piso.
+  static IconData iconoSuperficie(String? superficie) {
+    switch ((superficie ?? '').trim().toLowerCase()) {
+      case 'pared':
+        return Icons.filter_frames; // colgado en la pared (cuadro/marco)
+      case 'mesa':
+        return Icons.table_restaurant; // apoyado en una mesa
+      case 'fuente_piso':
+      case 'fuente_mesa':
+        return Icons.water_drop_outlined; // fuente (parada)
+      case 'piso':
+      default:
+        return Icons.weekend_outlined; // en el piso
+    }
+  }
+
+  /// Texto del tooltip según la superficie.
+  static String etiquetaSuperficie(String? superficie) {
+    switch ((superficie ?? '').trim().toLowerCase()) {
+      case 'pared':
+        return 'Ver en la pared';
+      case 'mesa':
+      case 'fuente_mesa':
+        return 'Ver en una mesa';
+      case 'piso':
+      case 'fuente_piso':
+      default:
+        return 'Ver en el piso';
+    }
+  }
+
   /// Punto de entrada. Muestra el selector de fuente (cámara/galería),
   /// el loading y finalmente el resultado.
   static Future<void> iniciar(
@@ -29,6 +61,7 @@ class VisualizarTapete {
     required String tapeteUrl,
     required double anchoM,
     required double largoM,
+    required String superficie,
     required String titulo,
   }) async {
     if (tapeteUrl.trim().isEmpty) {
@@ -36,7 +69,8 @@ class VisualizarTapete {
       return;
     }
     if (anchoM <= 0 || largoM <= 0) {
-      _toast(context, 'El tapete no tiene medidas válidas', error: true);
+      _toast(context, 'El producto no tiene medidas y no puede visualizarse',
+          error: true);
       return;
     }
 
@@ -88,8 +122,9 @@ class VisualizarTapete {
       final bytes = await _llamarEndpoint(
         espacioPath: picked.path,
         tapeteUrl: tapeteUrl,
-        anchoCm: anchoM * 100,
-        largoCm: largoM * 100,
+        anchoM: anchoM,
+        largoM: largoM,
+        superficie: superficie,
       );
       cerrarLoading();
       if (context.mounted) {
@@ -108,8 +143,9 @@ class VisualizarTapete {
   static Future<Uint8List> _llamarEndpoint({
     required String espacioPath,
     required String tapeteUrl,
-    required double anchoCm,
-    required double largoCm,
+    required double anchoM,
+    required double largoM,
+    required String superficie,
   }) async {
     final token = await const FlutterSecureStorage().read(key: 'accessToken');
     // Dio dedicado: la generación con Gemini tarda 15-30s, el DioClient
@@ -130,6 +166,24 @@ class VisualizarTapete {
         : ext.endsWith('.webp')
             ? 'webp'
             : 'jpeg';
+    // Unidades por superficie: el backend espera CENTIMETROS para 'piso' y
+    // METROS para 'pared'/'mesa' (ahí multiplica x100 internamente). Por eso
+    // pared/mesa van con decimales (0.507) y piso como entero en cm (340).
+    final sup = superficie.trim().toLowerCase();
+    // Unidades por superficie:
+    //  - pared/mesa: el producto viene en METROS (el backend multiplica x100).
+    //  - fuente_piso/fuente_mesa: las fuentes YA vienen en CM (se mandan tal cual).
+    //  - piso (tapete): viene en metros y se convierte a cm aquí (x100).
+    final esMetros = sup == 'pared' || sup == 'mesa';
+    final esFuente = sup == 'fuente_piso' || sup == 'fuente_mesa';
+    String fmt(double v) {
+      if (esMetros) return v.toStringAsFixed(3); // metros (0.507)
+      if (esFuente) return v.toStringAsFixed(0); // ya en cm (60)
+      return (v * 100).toStringAsFixed(0); // piso: metros -> cm
+    }
+
+    final anchoStr = fmt(anchoM);
+    final largoStr = fmt(largoM);
     final form = FormData.fromMap({
       'espacio': await MultipartFile.fromFile(
         espacioPath,
@@ -137,8 +191,9 @@ class VisualizarTapete {
         contentType: DioMediaType('image', subtype),
       ),
       'tapete_url': tapeteUrl,
-      'ancho_cm': anchoCm.toStringAsFixed(0),
-      'largo_cm': largoCm.toStringAsFixed(0),
+      'ancho_cm': anchoStr,
+      'largo_cm': largoStr,
+      'superficie': sup,
       'orientacion': 'auto',
     });
     final resp = await dio.post(

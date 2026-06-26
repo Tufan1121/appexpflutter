@@ -1,3 +1,5 @@
+import 'package:appexpflutter_update/features/cotizador_envio/data/models/product_shipping_info.dart';
+import 'package:appexpflutter_update/features/cotizador_envio/presentation/widgets/cotizar_envio_button.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_card_data.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_detalle_sheet.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/visualizar_tapete.dart';
@@ -42,6 +44,20 @@ class ProductoResultCard extends HookWidget {
       }
     }
 
+    final shippingInfo = ProductShippingInfo.fromDimensions(
+      productKey: active.claveCorta,
+      productName: [
+        data.descripcio,
+        active.medidas,
+      ].where((e) => e.isNotEmpty).join(' · '),
+      largop: active.largop,
+      anchop: active.anchop,
+      altop: active.altop,
+      peso: active.peso,
+      largoM: active.largo,
+      anchoM: active.ancho,
+    );
+
     return Card(
       clipBehavior: Clip.antiAlias,
       elevation: 2,
@@ -57,6 +73,7 @@ class ProductoResultCard extends HookWidget {
               tapeteUrl: data.fotos.isEmpty ? '' : data.fotos.first,
               anchoM: active.ancho,
               largoM: active.largo,
+              superficie: data.surface ?? '',
               titulo: [
                 data.descripcio,
                 data.diseno,
@@ -189,6 +206,11 @@ class ProductoResultCard extends HookWidget {
                     _VerDetalleButton(onTap: openSheet),
                   ],
                 ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: CotizarEnvioButton(product: shippingInfo),
+                ),
               ],
             ),
           ),
@@ -201,7 +223,10 @@ class ProductoResultCard extends HookWidget {
 class _Thumb extends StatelessWidget {
   final ProductoCardData data;
   final VoidCallback onVisualizar;
-  const _Thumb({required this.data, required this.onVisualizar});
+  const _Thumb({
+    required this.data,
+    required this.onVisualizar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -238,8 +263,9 @@ class _Thumb extends StatelessWidget {
           child: _Badge(disponible: data.disponible),
         ),
         // Botón "Ver en mi espacio" (visualizador con foto del cliente).
-        // Solo si el tapete tiene imagen.
-        if (firstFoto != null)
+        // Solo si el tapete tiene imagen y el diseño trae `surface` (textura
+        // para el visualizador); si `surface` viene vacío no se muestra.
+        if (firstFoto != null && data.tieneVisualizador)
           Positioned(
             top: 6,
             right: 6,
@@ -249,12 +275,12 @@ class _Thumb extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: onVisualizar,
-                child: const Tooltip(
-                  message: 'Ver en mi espacio',
+                child: Tooltip(
+                  message: VisualizarTapete.etiquetaSuperficie(data.surface),
                   child: SizedBox(
                     width: 38,
                     height: 38,
-                    child: Icon(Icons.weekend_outlined,
+                    child: Icon(VisualizarTapete.iconoSuperficie(data.surface),
                         color: Colors.white, size: 20),
                   ),
                 ),
