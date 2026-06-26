@@ -27,11 +27,14 @@ class ClienteNuevoVentaScreen extends StatelessWidget {
           Column(
             children: [
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SizedBox(
-                  height: 410,
-                  child: Card(
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: SizedBox(
+                      height: 410,
+                      child: Card(
                     child: Scrollbar(
                       child: SingleChildScrollView(
                         child: SizedBox(
@@ -47,6 +50,8 @@ class ClienteNuevoVentaScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                ),
+              ),
                 ),
               ),
             ],

@@ -2,6 +2,8 @@ import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_pedidos_entity.dart';
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_tickets_entity.dart';
 import 'package:appexpflutter_update/features/reportes/presentation/bloc/reportes_bloc.dart';
+import 'package:appexpflutter_update/features/reportes/presentation/screen/widgets/vendedor_donut_chart.dart';
+import 'package:appexpflutter_update/features/reportes/presentation/screen/widgets/meta_gauge_chart.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,45 @@ class ReportesScreen extends HookWidget {
       symbol: '\$',
       decimalDigits: 0,
     );
+    final dateControllerDesde = useTextEditingController();
+    final dateControllerHasta = useTextEditingController();
+    final selectedDateDesde = useState<DateTime?>(null);
+    final selectedDateHasta = useState<DateTime?>(null);
+    final tabController = useTabController(initialLength: 3);
+
+    Future<void> selectDate(ValueNotifier<DateTime?> selectedDate,
+        TextEditingController controller) async {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate.value ?? DateTime.now(),
+        firstDate: DateTime(2020),
+        lastDate: DateTime(2100),
+        initialEntryMode: DatePickerEntryMode.calendarOnly,
+      );
+      if (picked != null) {
+        selectedDate.value = picked;
+        controller.text = DateFormat('dd/MM/yyyy').format(picked);
+      }
+    }
+
+    void buscar() {
+      final fi = selectedDateDesde.value != null
+          ? DateFormat('yyyy-MM-dd').format(selectedDateDesde.value!)
+          : null;
+      final ff = selectedDateHasta.value != null
+          ? DateFormat('yyyy-MM-dd').format(selectedDateHasta.value!)
+          : null;
+      context
+          .read<ReportesBloc>()
+          .add(GetReportesPedidosEvent(fechaini: fi, fechafin: ff));
+      context
+          .read<ReportesBloc>()
+          .add(GetReportesTicketsEvent(fechaini: fi, fechafin: ff));
+      context
+          .read<ReportesBloc>()
+          .add(GetReportesVendedorEvent(fechaini: fi, fechafin: ff));
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
@@ -38,8 +79,86 @@ class ReportesScreen extends HookWidget {
             ),
             painter: BackgroundPainter(),
           ),
-          BlocBuilder<ReportesBloc, ReportesState>(
-            builder: (context, state) {
+          Column(
+            children: [
+              const SizedBox(height: 8),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: dateControllerDesde,
+                            readOnly: true,
+                            onTap: () => selectDate(
+                                selectedDateDesde, dateControllerDesde),
+                            decoration: InputDecoration(
+                              labelText: 'Fecha desde',
+                              isDense: true,
+                              suffixIcon:
+                                  const Icon(Icons.calendar_today, size: 18),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            controller: dateControllerHasta,
+                            readOnly: true,
+                            onTap: () => selectDate(
+                                selectedDateHasta, dateControllerHasta),
+                            decoration: InputDecoration(
+                              labelText: 'Fecha hasta',
+                              isDense: true,
+                              suffixIcon:
+                                  const Icon(Icons.calendar_today, size: 18),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: buscar,
+                          icon: const Icon(Icons.search),
+                          color: Colors.white,
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colores.secondaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              TabBar(
+                controller: tabController,
+                labelColor: Colores.secondaryColor,
+                unselectedLabelColor: Colors.white,
+                indicatorColor: Colores.secondaryColor,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                isScrollable: true,
+                tabs: const [
+                  Tab(text: 'Por día'),
+                  Tab(text: 'Por vendedor'),
+                  Tab(text: 'Meta'),
+                ],
+              ),
+              Expanded(
+                child: BlocBuilder<ReportesBloc, ReportesState>(
+                  builder: (context, state) {
               if (state is ReportesLoading) {
                 return const Center(
                     child: CircularProgressIndicator(
@@ -100,79 +219,178 @@ class ReportesScreen extends HookWidget {
                 }
 
                 final totalGlobal = totalPedidos + totalTickets;
+                final numDias = orderedDates.length;
 
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                // Formato compacto para ejes y etiquetas ($1.2M, $850K)
+                final NumberFormat compactCurrency =
+                    NumberFormat.compactCurrency(
+                  locale: 'en_US',
+                  symbol: '\$',
+                  decimalDigits: 1,
+                );
+
+                // ===== Tab 1: gráfica por día =====
+                final Widget chartPorDia = (totalGlobal <= 0)
+                    ? const Center(
+                        child: Text(
+                          'No hay ventas en el rango seleccionado',
+                          style: TextStyle(
+                            color: Colores.secondaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      )
+                    : Padding(
+                  padding: const EdgeInsets.all(12.0),
                   child: Card(
-                    child: SfCartesianChart(
-                      primaryXAxis: const CategoryAxis(),
-                      primaryYAxis: NumericAxis(
-                        numberFormat: NumberFormat.currency(
-                          locale: 'en_US',
-                          symbol: '\$',
-                          decimalDigits: 0,
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 16, 16, 8),
+                      child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(
+                          labelRotation: -45,
+                          labelIntersectAction:
+                              AxisLabelIntersectAction.multipleRows,
+                          majorGridLines: const MajorGridLines(width: 0),
+                          axisLine: const AxisLine(width: 0.5),
+                          majorTickLines: const MajorTickLines(size: 0),
+                          axisLabelFormatter:
+                              (AxisLabelRenderDetails details) {
+                            // details.text viene como yyyy-MM-dd -> dd/MM
+                            final parts = details.text.split('-');
+                            final short = parts.length == 3
+                                ? '${parts[2]}/${parts[1]}'
+                                : details.text;
+                            return ChartAxisLabel(
+                                short, const TextStyle(fontSize: 10));
+                          },
                         ),
-                        maximum:
-                            totalGlobal > 400000 ? (totalGlobal * 0.5) : 400000,
-                      ),
-                      title: ChartTitle(
+                        primaryYAxis: NumericAxis(
+                          numberFormat: compactCurrency,
+                          axisLine: const AxisLine(width: 0),
+                          majorTickLines: const MajorTickLines(size: 0),
+                          majorGridLines: MajorGridLines(
+                            width: 0.6,
+                            color: Colors.grey.shade300,
+                            dashArray: const <double>[4, 4],
+                          ),
+                          labelStyle: const TextStyle(fontSize: 11),
+                        ),
+                        title: ChartTitle(
                           text:
-                              'Sales Pedidos y Tickets \n total: ${currencyFormat.format(totalPedidos + totalTickets)}',
-                          textStyle:
-                              const TextStyle(color: Colores.secondaryColor)),
-                      legend: const Legend(isVisible: true),
-                      onTooltipRender: (TooltipArgs args) {
-                        final List<String> seriesNames = ['Pedidos', 'Tickets'];
-                        final int seriesIndex = args.seriesIndex!.toInt();
-                        args.text =
-                            ' ${seriesNames[seriesIndex]}\n ${args.dataPoints![args.pointIndex!.toInt()].x} : ${currencyFormat.format(args.dataPoints![args.pointIndex!.toInt()].y)}';
-                      },
-                      tooltipBehavior: TooltipBehavior(
-                        enable: true,
-                        canShowMarker: true,
-                        header: '', // Esto elimina el encabezado.
-                        format:
-                            'point.x : point.y', // Esto solo muestra la fecha y el valor de gtotal.
-                      ),
-                      series: [
-                        ColumnSeries<SalesPedidosEntity, String>(
-                          dataSource: alignedPedidos,
-                          xValueMapper: (SalesPedidosEntity data, _) =>
-                              data.fecham,
-                          yValueMapper: (SalesPedidosEntity data, _) =>
-                              data.gtotal,
-                          name:
-                              'Pedidos \ntotal: ${currencyFormat.format(totalPedidos)}',
-                          color: Colors.blue,
+                              'Ventas por día\nTotal: ${currencyFormat.format(totalGlobal)}',
+                          textStyle: const TextStyle(
+                            color: Colores.secondaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
-                        ColumnSeries<SalesTicketsEntity, String>(
-                          dataSource: alignedTickets,
-                          xValueMapper: (SalesTicketsEntity data, _) =>
-                              data.fecham,
-                          yValueMapper: (SalesTicketsEntity data, _) =>
-                              data.gtotal,
-                          name:
-                              'Tickets \ntotal: ${currencyFormat.format(totalTickets)}',
-                          color: Colors.green,
-                        )
-                      ],
-                      annotations: <CartesianChartAnnotation>[
-                        // Añadiendo anotaciones por cada fecha
-                        for (var entry in sumasPorFecha.entries)
-                          CartesianChartAnnotation(
-                              widget: Text(
-                                currencyFormat.format(entry.value),
-                                style: const TextStyle(fontSize: 12),
+                        legend: const Legend(
+                          isVisible: true,
+                          position: LegendPosition.bottom,
+                          overflowMode: LegendItemOverflowMode.wrap,
+                        ),
+                        trackballBehavior: TrackballBehavior(
+                          enable: true,
+                          activationMode: ActivationMode.singleTap,
+                          tooltipSettings: const InteractiveTooltip(
+                            format: 'series.name : point.y',
+                          ),
+                        ),
+                        tooltipBehavior: TooltipBehavior(
+                          enable: true,
+                          canShowMarker: true,
+                          header: '',
+                          format: 'point.x : point.y',
+                        ),
+                        series: [
+                          StackedColumnSeries<SalesPedidosEntity, String>(
+                            dataSource: alignedPedidos,
+                            xValueMapper: (SalesPedidosEntity data, _) =>
+                                data.fecham,
+                            yValueMapper: (SalesPedidosEntity data, _) =>
+                                data.gtotal,
+                            name: 'Pedidos',
+                            color: const Color(0xFF42A5F5),
+                            width: 0.7,
+                            spacing: 0.15,
+                          ),
+                          StackedColumnSeries<SalesTicketsEntity, String>(
+                            dataSource: alignedTickets,
+                            xValueMapper: (SalesTicketsEntity data, _) =>
+                                data.fecham,
+                            yValueMapper: (SalesTicketsEntity data, _) =>
+                                data.gtotal,
+                            name: 'Punto de Venta',
+                            color: const Color(0xFF66BB6A),
+                            width: 0.7,
+                            spacing: 0.15,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(6),
+                              topRight: Radius.circular(6),
+                            ),
+                          ),
+                        ],
+                        annotations: <CartesianChartAnnotation>[
+                          // Total por día encima de cada barra (solo si caben)
+                          if (numDias <= 12)
+                            for (var entry in sumasPorFecha.entries)
+                              CartesianChartAnnotation(
+                                widget: Text(
+                                  compactCurrency.format(entry.value),
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colores.secondaryColor,
+                                  ),
+                                ),
+                                coordinateUnit: CoordinateUnit.point,
+                                x: entry.key,
+                                y: entry.value,
+                                verticalAlignment: ChartAlignment.far,
                               ),
-                              coordinateUnit: CoordinateUnit.point,
-                              x: entry.key, // La fecha
-                              y: sumasPorFecha[entry.key],
-                              verticalAlignment: ChartAlignment
-                                  .near // Asegúrate de colocar la anotación debajo de las barras
-                              ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
+                );
+
+                // ===== Tab 2: gráfica por vendedor (dona) =====
+                final listaVendedor = state.salesVendedor;
+                final Widget chartPorVendedor = listaVendedor.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No hay ventas por vendedor en el rango',
+                          style: TextStyle(
+                            color: Colores.secondaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      )
+                    : VendedorDonutChart(
+                        data: listaVendedor,
+                        currencyFormat: currencyFormat,
+                      );
+
+                // ===== Tab 3: avance hacia la meta =====
+                final metaExpo = state.metaExpo;
+                final Widget chartMeta = metaExpo == null
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Colores.secondaryColor,
+                        ),
+                      )
+                    : MetaGaugeChart(
+                        meta: metaExpo,
+                        currencyFormat: currencyFormat,
+                      );
+
+                return TabBarView(
+                  controller: tabController,
+                  children: [chartPorDia, chartPorVendedor, chartMeta],
                 );
               } else if (state is ReportesError) {
                 return Center(child: Text(state.message));
@@ -180,6 +398,9 @@ class ReportesScreen extends HookWidget {
 
               return Container();
             },
+          ),
+              ),
+            ],
           ),
         ],
       ),

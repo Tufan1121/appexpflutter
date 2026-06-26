@@ -52,23 +52,38 @@ class PuntoVentaScreen extends HookWidget {
                   MediaQuery.of(context).size.height),
               painter: BackgroundPainter(),
             ),
-            GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 30,
-              mainAxisSpacing: 20,
-              padding: const EdgeInsets.all(20.0),
-              children: [
-                CardItem(
-                  icon: Icons.point_of_sale_sharp,
-                  label: 'TICKETS',
-                  onTap: () => ClienteNuevoVentaRoute().push(context),
-                ),
-                CardItem(
-                  icon: Icons.history_rounded,
-                  label: 'CONSULTA',
-                  onTap: () => PuntoVentaHistoryRoute().push(context),
-                ),
-              ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                // En pantallas anchas (desktop/tablet) limitamos el ancho del
+                // grid para que las 2 cards queden del mismo tamano que en el
+                // home y no se vean gigantes. En phone usan el ancho completo.
+                final maxGridWidth =
+                    constraints.maxWidth >= 600 ? 560.0 : double.infinity;
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxGridWidth),
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 30,
+                      mainAxisSpacing: 20,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(20.0),
+                      children: [
+                        CardItem(
+                          icon: Icons.point_of_sale_sharp,
+                          label: 'TICKETS',
+                          onTap: () => ClienteNuevoVentaRoute().push(context),
+                        ),
+                        CardItem(
+                          icon: Icons.history_rounded,
+                          label: 'CONSULTA',
+                          onTap: () => PuntoVentaHistoryRoute().push(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

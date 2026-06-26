@@ -18,11 +18,11 @@ class DioClient {
   DioClient() {
     _dio = Dio();
     _dio
-      ..options.baseUrl = Environment.apiUrl
+      ..options.baseUrl = Environment.activeApiUrl
       ..options.headers = {
         HttpHeaders.contentTypeHeader: ContentType.json.mimeType,
       }
-      ..options.connectTimeout = const Duration(milliseconds: 15000)
+      ..options.connectTimeout = const Duration(milliseconds: 10000)
       ..options.receiveTimeout = const Duration(milliseconds: 15000)
       ..options.responseType = ResponseType.json
       ..interceptors.add(InterceptorsWrapper(
@@ -49,14 +49,42 @@ class DioClient {
       ));
   }
 
+  /// ¿El error es de CONEXIÓN (túnel/fibra caída) y no una respuesta del
+  /// servidor? Solo en ese caso vale la pena intentar la otra URL.
+  bool _isConnectionError(DioException e) {
+    return e.type == DioExceptionType.connectionError ||
+        e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.sendTimeout ||
+        e.type == DioExceptionType.receiveTimeout ||
+        e.error is SocketException;
+  }
+
   Future<Response<dynamic>> _request(
     Future<Response<dynamic>> Function() requestFunction,
   ) async {
-    try {
-      return await requestFunction();
-    } on DioException {
-      rethrow;
+    final urls = Environment.apiUrls;
+    final start = Environment.activeIndex;
+    DioException? lastError;
+
+    // Intenta con la URL activa; ante un error de conexión, prueba la siguiente
+    // (failover). Si responde el servidor (4xx/5xx) NO cambia de URL.
+    for (var i = 0; i < urls.length; i++) {
+      final idx = (start + i) % urls.length;
+      _dio.options.baseUrl = urls[idx];
+      try {
+        final response = await requestFunction();
+        Environment.activeIndex = idx; // recuerda la URL que sí respondió
+        return response;
+      } on DioException catch (e) {
+        lastError = e;
+        final hayOtra = i < urls.length - 1;
+        if (_isConnectionError(e) && hayOtra) {
+          continue; // la URL no respondió: prueba la de respaldo
+        }
+        rethrow;
+      }
     }
+    throw lastError!;
   }
 
   Future<Response<dynamic>> get(

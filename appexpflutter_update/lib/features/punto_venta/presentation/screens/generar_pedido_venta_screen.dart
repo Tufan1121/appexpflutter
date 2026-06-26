@@ -396,14 +396,21 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     Map<String, String Function(Object)>? validationMessages,
   }) {
     final enable = useState(false);
+    // En horizontal / pantallas anchas, 80% del ancho deja la píldora enorme y
+    // el texto del dropdown (que no estaba acotado) se salía y se encimaba.
+    // Capamos el ancho y limitamos el campo a ese mismo ancho.
+    final w80 = ScreenUtils.percentWidth(context, 80);
+    final fieldWidth = w80 > 520.0 ? 520.0 : w80;
     return Center(
       child: Column(
         children: [
-          Stack(
+          SizedBox(
+            width: fieldWidth,
+            child: Stack(
             alignment: AlignmentDirectional.center,
             children: [
               Container(
-                  width: ScreenUtils.percentWidth(context, 80),
+                  width: double.infinity,
                   height: ScreenUtils.percentHeight(context, 5),
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -432,16 +439,25 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                   onChanged: (control) {
                     form.control(controlNameTextField).markAsEnabled();
                     enable.value = form.control(controlNameTextField).disabled;
-                    
+
                     // Reset conditional fields when main payment method changes
                     form.control(controlNameCuenta).reset();
                     form.control(controlNameTerminal).reset();
+
+                    // Si el pago es con tarjeta (04 Crédito / 28 Débito),
+                    // pre-llenar el monto con el total a pagar.
+                    final metodo = control.value ?? '';
+                    if (metodo.contains('04') || metodo.contains('28')) {
+                      form.control(controlNameTextField).value =
+                          UtilsVenta.totalWithShipping;
+                    }
                   },
                 ),
               ),
             ],
           ),
-          
+          ),
+
           // Conditional Dropdowns using ReactiveValueListenableBuilder
           ReactiveValueListenableBuilder<String?>(
             formControlName: controlNameDropdown,
@@ -487,11 +503,13 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                        }
                        return Padding(
                          padding: const EdgeInsets.only(top: 10.0),
-                         child: Stack(
+                         child: SizedBox(
+                           width: fieldWidth,
+                           child: Stack(
                            alignment: AlignmentDirectional.center,
                            children: [
                              Container(
-                                 width: ScreenUtils.percentWidth(context, 80),
+                                 width: double.infinity,
                                  height: ScreenUtils.percentHeight(context, 5),
                                  decoration: BoxDecoration(
                                      color: Colors.white,
@@ -512,6 +530,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                ),
                              ),
                            ],
+                         ),
                          ),
                        );
                      }
@@ -579,11 +598,13 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                        
                        return Padding(
                          padding: const EdgeInsets.only(top: 10.0),
-                         child: Stack(
+                         child: SizedBox(
+                           width: fieldWidth,
+                           child: Stack(
                            alignment: AlignmentDirectional.center,
                            children: [
                              Container(
-                                 width: ScreenUtils.percentWidth(context, 80),
+                                 width: double.infinity,
                                  height: ScreenUtils.percentHeight(context, 5),
                                  decoration: BoxDecoration(
                                      color: Colors.white,
@@ -604,6 +625,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                ),
                              ),
                            ],
+                         ),
                          ),
                        );
                      }
@@ -630,10 +652,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
           ),
 
           const SizedBox(height: 4.0),
-          Stack(
+          SizedBox(
+            width: fieldWidth,
+            child: Stack(
             children: [
               SizedBox(
-                  width: ScreenUtils.percentWidth(context, 80),
+                  width: double.infinity,
                   height: ScreenUtils.percentHeight(context, 4.0)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -657,6 +681,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                 ),
               ),
             ],
+          ),
           ),
         ],
       ),

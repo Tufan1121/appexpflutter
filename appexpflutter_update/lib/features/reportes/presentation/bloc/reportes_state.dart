@@ -14,12 +14,18 @@ class ReportesLoading extends ReportesState {}
 class ReportesLoaded extends ReportesState {
   final List<SalesPedidosEntity> salesPedidos;
   final List<SalesTicketsEntity> salesTickets;
+  final List<SalesVendedorEntity> salesVendedor;
+  final MetaExpoEntity? metaExpo;
 
   const ReportesLoaded(
-      {required this.salesPedidos, required this.salesTickets});
+      {required this.salesPedidos,
+      required this.salesTickets,
+      this.salesVendedor = const [],
+      this.metaExpo});
 
   @override
-  List<Object> get props => [salesPedidos, salesTickets];
+  List<Object> get props =>
+      [salesPedidos, salesTickets, salesVendedor, metaExpo ?? ''];
 }
 
 class ReportesTicketsLoaded extends ReportesState {

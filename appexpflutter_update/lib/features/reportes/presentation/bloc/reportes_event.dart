@@ -7,9 +7,37 @@ sealed class ReportesEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetReportesPedidosEvent extends ReportesEvent {}
+class GetReportesPedidosEvent extends ReportesEvent {
+  final String? fechaini;
+  final String? fechafin;
 
-class GetReportesTicketsEvent extends ReportesEvent {}
+  const GetReportesPedidosEvent({this.fechaini, this.fechafin});
+
+  @override
+  List<Object> get props => [fechaini ?? '', fechafin ?? ''];
+}
+
+class GetReportesTicketsEvent extends ReportesEvent {
+  final String? fechaini;
+  final String? fechafin;
+
+  const GetReportesTicketsEvent({this.fechaini, this.fechafin});
+
+  @override
+  List<Object> get props => [fechaini ?? '', fechafin ?? ''];
+}
+
+class GetReportesVendedorEvent extends ReportesEvent {
+  final String? fechaini;
+  final String? fechafin;
+
+  const GetReportesVendedorEvent({this.fechaini, this.fechafin});
+
+  @override
+  List<Object> get props => [fechaini ?? '', fechafin ?? ''];
+}
+
+class GetReportesMetaEvent extends ReportesEvent {}
 
 
 

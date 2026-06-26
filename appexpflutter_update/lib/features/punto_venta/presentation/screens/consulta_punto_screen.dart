@@ -23,8 +23,9 @@ class PuntoVentaConsultaScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     // final size = MediaQuery.of(context).size;
-    final dateControllerDesde = useTextEditingController();
-    final dateControllerHasta = useTextEditingController();
+    final hoy = DateFormat("dd/MM/yyyy").format(DateTime.now());
+    final dateControllerDesde = useTextEditingController(text: hoy);
+    final dateControllerHasta = useTextEditingController(text: hoy);
     final selectedDateDesde = useState<DateTime>(DateTime.now());
     final selectedDateHasta = useState<DateTime>(DateTime.now());
     final totalTickets = useState<double>(0.0);
@@ -105,6 +106,29 @@ class PuntoVentaConsultaScreen extends HookWidget {
                           itemCount: state.tickets.length,
                           itemBuilder: (context, index) {
                             final ticket = state.tickets[index];
+
+                            Future<void> verPdf() async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              final String pdfUrl =
+                                  'https://tapetestufan.mx/tickets/${prefs.getString('digsig')}/pdf/${ticket.documen}.pdf';
+                              if (context.mounted) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PdfViewerScreen(
+                                      fileName: ticket.documen,
+                                      userName:
+                                          prefs.getString('username') ??
+                                              'TUFAN TAPETES',
+                                      clientPhoneNumber: ticket.telefono,
+                                      url: pdfUrl,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+
                             return Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16.0, vertical: 4.0),
@@ -114,6 +138,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: ListTile(
+                                  onTap: verPdf,
                                   onLongPress: () => homeModalButtom(
                                     height: 85,
                                     context: context,
@@ -122,28 +147,9 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                         CustomListTile(
                                             text: 'VISUALIZAR',
                                             icon: Icons.remove_red_eye,
-                                            onTap: () async {
-                                              final prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              final String pdfUrl =
-                                                  'https://tapetestufan.mx/tickets/${prefs.getString('digsig')}/pdf/${ticket.documen}.pdf';
-                                              if (context.mounted) {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PdfViewerScreen(
-                                                      fileName: ticket.documen,
-                                                      userName: prefs.getString(
-                                                              'username') ??
-                                                          'TUFAN TAPETES',
-                                                          clientPhoneNumber: ticket.telefono,
-                                                      url: pdfUrl,
-                                                    ),
-                                                  ),
-                                                );
-                                              }
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              verPdf();
                                             }),
                                       ],
                                     ),
@@ -163,6 +169,10 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                           'Total: ${Utils.formatPrice(ticket.total)}'),
                                       const SizedBox(height: 8),
                                     ],
+                                  ),
+                                  trailing: const Icon(
+                                    Icons.remove_red_eye,
+                                    color: Colores.secondaryColor,
                                   ),
                                 ),
                               ),
@@ -211,7 +221,10 @@ class PuntoVentaConsultaScreen extends HookWidget {
       }
     }
 
-    return Column(
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
@@ -303,6 +316,8 @@ class PuntoVentaConsultaScreen extends HookWidget {
               }),
         ),
       ],
+        ),
+      ),
     );
   }
 
