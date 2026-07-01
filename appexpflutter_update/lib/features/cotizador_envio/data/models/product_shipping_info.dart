@@ -33,6 +33,56 @@ class ProductShippingInfo {
     required this.cantidad,
   });
 
+  /// Construye un `ProductShippingInfo` a partir de las dimensiones crudas de
+  /// un producto, aplicando la MISMA prioridad que la sesión de ventas
+  /// (`lista_productos.dart` / `lista_productos_venta.dart`):
+  ///
+  /// - Largo/ancho: usa las dimensiones de PAQUETE (`largop`/`anchop` en cm) si
+  ///   vienen; si no, convierte las del PRODUCTO (`largoM`/`anchoM` en metros) a
+  ///   cm; si no hay nada, usa valores por defecto (30 / 20 cm).
+  /// - Alto: `altop` en cm si viene; si no, 15 cm (tapete enrollado).
+  /// - Peso: `peso` en kg si viene; si no, se estima por área (~3 kg/m²,
+  ///   acotado entre 1.5 y 50 kg).
+  factory ProductShippingInfo.fromDimensions({
+    required String productKey,
+    required String productName,
+    double? largop,
+    double? anchop,
+    double? altop,
+    double? peso,
+    required double largoM,
+    required double anchoM,
+    int cantidad = 1,
+  }) {
+    final double largo = (largop != null && largop > 0)
+        ? largop
+        : (largoM > 0 ? largoM * 100 : 30.0);
+
+    final double ancho = (anchop != null && anchop > 0)
+        ? anchop
+        : (anchoM > 0 ? anchoM * 100 : 20.0);
+
+    final double alto = (altop != null && altop > 0) ? altop : 15.0;
+
+    final double pesoFinal;
+    if (peso != null && peso > 0) {
+      pesoFinal = peso;
+    } else {
+      final area = largoM * anchoM;
+      pesoFinal = area > 0 ? (area * 3.0).clamp(1.5, 50.0) : 2.0;
+    }
+
+    return ProductShippingInfo(
+      productKey: productKey,
+      productName: productName,
+      largo: largo,
+      ancho: ancho,
+      alto: alto,
+      peso: pesoFinal,
+      cantidad: cantidad,
+    );
+  }
+
   /// Crea una copia con valores actualizados
   ProductShippingInfo copyWith({
     String? productKey,

@@ -248,12 +248,27 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen>
                             );
                           },
                         ),
-                        const Row(
+                        Row(
                           children: [
-                            Spacer(
-                              flex: 1,
+                            // "Limpiar" reubicado aquí (lejos del botón
+                            // "Buscar" del fondo) para evitar toques por error.
+                            TextButton.icon(
+                              onPressed: _clearFilters,
+                              icon: const Icon(Icons.clear_all,
+                                  size: 18, color: Colors.white70),
+                              label: const Text('Limpiar',
+                                  style: TextStyle(color: Colors.white70)),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white70,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              ),
                             ),
-                            Text(
+                            const Spacer(flex: 1),
+                            const Text(
                               'Rango de medidas',
                               style:
                                   TextStyle(fontSize: 15, color: Colors.white),
@@ -368,19 +383,6 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen>
                                       color: Colores.scaffoldBackgroundColor),
                                 ),
                               ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: _clearFilters,
-                            icon: const Icon(Icons.clear_all, size: 18),
-                            label: const Text('Limpiar filtros'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              side: const BorderSide(color: Colors.white70),
                             ),
                           ),
                         ),

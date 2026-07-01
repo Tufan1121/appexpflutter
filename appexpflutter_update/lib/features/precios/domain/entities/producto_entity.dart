@@ -54,6 +54,7 @@ class ProductoEntity extends Equatable {
   final double? anchop;
   final double? altop;
   final double? peso;
+  final String? surface;
 
   const ProductoEntity({
     required this.producto,
@@ -108,6 +109,7 @@ class ProductoEntity extends Equatable {
     this.anchop,
     this.altop,
     this.peso,
+    this.surface,
   });
 
   ProductoEntity copyWith({
@@ -153,6 +155,7 @@ class ProductoEntity extends Equatable {
     double? anchop,
     double? altop,
     double? peso,
+    String? surface,
   }) =>
       ProductoEntity(
         producto: producto ?? this.producto,
@@ -197,6 +200,7 @@ class ProductoEntity extends Equatable {
         anchop: anchop ?? this.anchop,
         altop: altop ?? this.altop,
         peso: peso ?? this.peso,
+        surface: surface ?? this.surface,
       );
 
   @override
@@ -248,5 +252,6 @@ class ProductoEntity extends Equatable {
         anchop,
         altop,
         peso,
+        surface,
       ];
 }

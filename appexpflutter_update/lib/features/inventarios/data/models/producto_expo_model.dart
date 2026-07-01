@@ -35,7 +35,21 @@ class ProductoExpoModel extends ProductoExpoEntity
       required super.precio1,
       required super.precio2,
       required super.precio3,
-      required super.desalmacen});
+      required super.desalmacen,
+      super.surface,
+      super.largop,
+      super.anchop,
+      super.altop,
+      super.peso});
+
+  /// Parseo tolerante de dimensiones de paquete: acepta num o String numérico
+  /// ("300", "17.4") y devuelve null si viene vacío o no es numérico.
+  static double? _dim(dynamic v) {
+    if (v == null) return null;
+    if (v is num) return v.toDouble();
+    if (v is String) return double.tryParse(v.trim());
+    return null;
+  }
 
   factory ProductoExpoModel.fromJson(Map<String, dynamic> json) =>
       ProductoExpoModel(
@@ -71,6 +85,11 @@ class ProductoExpoModel extends ProductoExpoEntity
         precio2: json["precio2"],
         precio3: json["precio3"],
         desalmacen: json["desalmacen"],
+        surface: json["surface"],
+        largop: _dim(json["largop"]),
+        anchop: _dim(json["anchop"]),
+        altop: _dim(json["altop"]),
+        peso: _dim(json["peso"]),
       );
 
   /// Parser tolerante para la respuesta de `/productScan/`, cuya forma
@@ -112,6 +131,11 @@ class ProductoExpoModel extends ProductoExpoEntity
         precio2: json["precio2"] ?? 0,
         precio3: json["precio3"] ?? 0,
         desalmacen: json["desalmacen"] ?? '',
+        surface: json["surface"],
+        largop: _dim(json["largop"]),
+        anchop: _dim(json["anchop"]),
+        altop: _dim(json["altop"]),
+        peso: _dim(json["peso"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -147,6 +171,11 @@ class ProductoExpoModel extends ProductoExpoEntity
         "precio2": precio2,
         "precio3": precio3,
         "desalmacen": desalmacen,
+        "surface": surface,
+        "largop": largop,
+        "anchop": anchop,
+        "altop": altop,
+        "peso": peso,
       };
 
   @override
@@ -182,5 +211,10 @@ class ProductoExpoModel extends ProductoExpoEntity
       precio1: precio1,
       precio2: precio2,
       precio3: precio3,
-      desalmacen: desalmacen);
+      desalmacen: desalmacen,
+      surface: surface,
+      largop: largop,
+      anchop: anchop,
+      altop: altop,
+      peso: peso);
 }

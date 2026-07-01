@@ -294,11 +294,22 @@ class VisualizarTapete {
 
   static void _mostrarResultado(
       BuildContext context, Uint8List bytes, String titulo) {
+    // No se descarta tocando fuera ni con "atrás": ambos pasan por la
+    // confirmación, así no se pierde la imagen generada por error.
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (ctx) {
         final theme = Theme.of(ctx);
-        return Dialog(
+        return PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) async {
+            if (didPop) return;
+            if (await _confirmarCerrar(ctx) && ctx.mounted) {
+              Navigator.of(ctx).pop();
+            }
+          },
+          child: Dialog(
           insetPadding: const EdgeInsets.all(12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -321,7 +332,11 @@ class VisualizarTapete {
                     IconButton(
                       tooltip: 'Cerrar',
                       icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(ctx).pop(),
+                      onPressed: () async {
+                        if (await _confirmarCerrar(ctx) && ctx.mounted) {
+                          Navigator.of(ctx).pop();
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -373,9 +388,34 @@ class VisualizarTapete {
               ),
             ],
           ),
+        ),
         );
       },
     );
+  }
+
+  /// Confirma antes de cerrar el resultado para no perder la imagen generada
+  /// por un toque accidental (botón ✕, tocar fuera o "atrás").
+  static Future<bool> _confirmarCerrar(BuildContext context) async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Cerrar visualización?'),
+        content: const Text(
+            'Se cerrará la imagen generada. Si no la has descargado, se perderá.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+    return confirmar ?? false;
   }
 
   /// Guarda la imagen generada en la carpeta de descargas pública.

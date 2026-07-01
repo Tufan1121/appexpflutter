@@ -56,6 +56,7 @@ class ProductoModel extends ProductoEntity
     super.anchop,
     super.altop,
     super.peso,
+    super.surface,
   });
   factory ProductoModel.fromJson(Map<String, dynamic> json) {
    // la cadena de fecha en un objeto DateTime
@@ -129,6 +130,7 @@ class ProductoModel extends ProductoEntity
       anchop: parsePackageDimension(json['anchop']),
       altop: parsePackageDimension(json['altop']),
       peso: parsePackageDimension(json['peso']),
+      surface: json['surface'],
     );
   }
 
@@ -186,5 +188,6 @@ class ProductoModel extends ProductoEntity
         anchop: anchop,
         altop: altop,
         peso: peso,
+        surface: surface,
       );
 }

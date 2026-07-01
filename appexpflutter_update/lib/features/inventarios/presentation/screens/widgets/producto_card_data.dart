@@ -17,6 +17,10 @@ class ProductoCardData {
   final List<String> colores;
   final List<String> fotos;
 
+  /// Textura/superficie para el visualizador "Ver en mi espacio". Si viene
+  /// vacía (o null) el diseño no tiene visualizador y la card oculta el icono.
+  final String? surface;
+
   // Variantes (1 por medida).
   final List<Variante> variantes;
 
@@ -28,8 +32,12 @@ class ProductoCardData {
     required this.cuidados,
     required this.colores,
     required this.fotos,
+    this.surface,
     required this.variantes,
   });
+
+  /// `true` si el diseño trae superficie para visualizar en el espacio.
+  bool get tieneVisualizador => (surface ?? '').trim().isNotEmpty;
 
   int get existenciaTotal =>
       variantes.fold<double>(0, (s, v) => s + v.existencia).toInt();
@@ -71,6 +79,10 @@ class ProductoCardData {
         precio1: f.precio1,
         precio2: f.precio2,
         precio3: f.precio3,
+        largop: f.largop,
+        anchop: f.anchop,
+        altop: f.altop,
+        peso: f.peso,
       );
     }).toList()
       ..sort((a, b) => a.medidas.compareTo(b.medidas));
@@ -91,6 +103,7 @@ class ProductoCardData {
         first.pathima5,
         first.pathima6,
       ]),
+      surface: first.surface,
       variantes: variantes,
     );
   }
@@ -164,6 +177,7 @@ class ProductoCardData {
         first.pathima5,
         first.pathima6,
       ]),
+      surface: first.surface,
       variantes: variantes,
     );
   }

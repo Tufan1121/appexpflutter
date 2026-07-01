@@ -8,9 +8,9 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/w
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_card_data.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/productos_result_grid.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/quiso_decir.dart';
-import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
+import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -214,14 +214,8 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
             title: 'BUSQUEDA GLOBAL',
           ),
         ),
-        body: Stack(
-          children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.height),
-              painter: BackgroundPainter(),
-            ),
-            Column(
+        body: GeometricalBackground(
+          child: Column(
               children: [
                 const SizedBox(height: 5),
                 Expanded(
@@ -367,12 +361,27 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                             );
                           },
                         ),
-                        const Row(
+                        Row(
                           children: [
-                            Spacer(
-                              flex: 1,
+                            // "Limpiar" reubicado aquí (lejos del botón
+                            // "Buscar" del fondo) para evitar toques por error.
+                            TextButton.icon(
+                              onPressed: _clearFilters,
+                              icon: const Icon(Icons.clear_all,
+                                  size: 18, color: Colors.white70),
+                              label: const Text('Limpiar',
+                                  style: TextStyle(color: Colors.white70)),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white70,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              ),
                             ),
-                            Text(
+                            const Spacer(flex: 1),
+                            const Text(
                               'Rango de medidas',
                               style:
                                   TextStyle(fontSize: 15, color: Colors.white),
@@ -490,19 +499,6 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: _clearFilters,
-                            icon: const Icon(Icons.clear_all, size: 18),
-                            label: const Text('Limpiar filtros'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              side: const BorderSide(color: Colors.white70),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -575,7 +571,6 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                 ),
               ],
             ),
-          ],
         ),
       ),
     );

@@ -56,14 +56,17 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     ]),
     'cuenta1': FormControl<String>(),
     'terminal1': FormControl<String>(),
+    'pagado1': FormControl<bool>(value: false),
     'metodoDePago2': FormControl<String>(),
     'anticipoPago2': FormControl<double>(disabled: true),
     'cuenta2': FormControl<String>(),
     'terminal2': FormControl<String>(),
+    'pagado2': FormControl<bool>(value: false),
     'metodoDePago3': FormControl<String>(),
     'anticipoPago3': FormControl<double>(disabled: true),
     'cuenta3': FormControl<String>(),
     'terminal3': FormControl<String>(),
+    'pagado3': FormControl<bool>(value: false),
     'observaciones': FormControl<String>(
       validators: [
         Validators.required,
@@ -289,6 +292,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                     controlNameTextField: 'anticipoPago1',
                                     controlNameCuenta: 'cuenta1',
                                     controlNameTerminal: 'terminal1',
+                                    controlNamePagado: 'pagado1',
                                     validationMessages: {
                                       ValidationMessage.required: (error) =>
                                           'Este campo es requerido'
@@ -301,6 +305,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                   controlNameTextField: 'anticipoPago2',
                                   controlNameCuenta: 'cuenta2',
                                   controlNameTerminal: 'terminal2',
+                                  controlNamePagado: 'pagado2',
                                 ),
                                 const SizedBox(height: 10.0),
                                 buildDropdownAndTextField(
@@ -310,6 +315,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                   controlNameTextField: 'anticipoPago3',
                                   controlNameCuenta: 'cuenta3',
                                   controlNameTerminal: 'terminal3',
+                                  controlNamePagado: 'pagado3',
                                 ),
                                 const SizedBox(height: 10.0),
                                 ReactiveTextField(
@@ -479,16 +485,24 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       required String controlNameTextField,
       required String controlNameCuenta,
       required String controlNameTerminal,
+      required String controlNamePagado,
       Map<String, String Function(Object)>? validationMessages}) {
     final enable = useState(false);
+    // En horizontal / pantallas anchas, 80% del ancho deja la píldora enorme y
+    // el texto del dropdown (que no estaba acotado) se salía y se encimaba.
+    // Capamos el ancho y limitamos el campo a ese mismo ancho.
+    final w80 = ScreenUtils.percentWidth(context, 80);
+    final fieldWidth = w80 > 520.0 ? 520.0 : w80;
     return Center(
       child: Column(
         children: [
-          Stack(
+          SizedBox(
+            width: fieldWidth,
+            child: Stack(
             alignment: AlignmentDirectional.center,
             children: [
               Container(
-                  width: ScreenUtils.percentWidth(context, 80),
+                  width: double.infinity,
                   height: ScreenUtils.percentHeight(context, 5),
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -526,7 +540,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
               ),
             ],
           ),
-          
+          ),
+
           // Conditional Dropdowns using ReactiveValueListenableBuilder
           ReactiveValueListenableBuilder<String?>(
             formControlName: controlNameDropdown,
@@ -571,11 +586,13 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                        }
                        return Padding(
                          padding: const EdgeInsets.only(top: 10.0),
-                         child: Stack(
+                         child: SizedBox(
+                           width: fieldWidth,
+                           child: Stack(
                            alignment: AlignmentDirectional.center,
                            children: [
                              Container(
-                                 width: ScreenUtils.percentWidth(context, 80),
+                                 width: double.infinity,
                                  height: ScreenUtils.percentHeight(context, 5),
                                  decoration: BoxDecoration(
                                      color: Colors.white,
@@ -596,6 +613,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                ),
                              ),
                            ],
+                         ),
                          ),
                        );
                      }
@@ -661,11 +679,13 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                        
                        return Padding(
                          padding: const EdgeInsets.only(top: 10.0),
-                         child: Stack(
+                         child: SizedBox(
+                           width: fieldWidth,
+                           child: Stack(
                            alignment: AlignmentDirectional.center,
                            children: [
                              Container(
-                                 width: ScreenUtils.percentWidth(context, 80),
+                                 width: double.infinity,
                                  height: ScreenUtils.percentHeight(context, 5),
                                  decoration: BoxDecoration(
                                      color: Colors.white,
@@ -686,6 +706,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                ),
                              ),
                            ],
+                         ),
                          ),
                        );
                      }
@@ -711,10 +732,12 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
           ),
 
           const SizedBox(height: 4.0),
-          Stack(
+          SizedBox(
+            width: fieldWidth,
+            child: Stack(
             children: [
               SizedBox(
-                  width: ScreenUtils.percentWidth(context, 80),
+                  width: double.infinity,
                   height: ScreenUtils.percentHeight(context, 4.0)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -738,6 +761,26 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                 ),
               ),
             ],
+          ),
+          ),
+          // Casilla "Pagado": marca si este pago se cobró realmente. Solo se
+          // muestra cuando hay un método de pago seleccionado. El backend debe
+          // usar esta bandera para sumar en reportes únicamente lo cobrado.
+          SizedBox(
+            width: fieldWidth,
+            child: ReactiveValueListenableBuilder<String?>(
+              formControlName: controlNameDropdown,
+              builder: (context, control, child) {
+                if (control.value == null) return const SizedBox.shrink();
+                return ReactiveCheckboxListTile(
+                  formControlName: controlNamePagado,
+                  title: const Text('Pagado', style: TextStyle(fontSize: 14)),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  activeColor: Colores.secondaryColor,
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -764,6 +807,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       final double anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
       final double anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
       final entregado = form.control('entregado').value ? 1 : 0;
+      // Banderas de "pagado" por método: 1 = cobrado realmente, 0 = pendiente.
+      final pagado1 = (form.control('pagado1').value ?? false) ? 1 : 0;
+      final pagado2 = (form.control('pagado2').value ?? false) ? 1 : 0;
+      final pagado3 = (form.control('pagado3').value ?? false) ? 1 : 0;
 
       // VALIDACIÓN: Verificar que se haya seleccionado cuenta o terminal según el método
       String? errorMessage;
@@ -875,6 +922,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         'anticipo': anticipoPago,
         'anticipo2': anticipoPago2,
         'anticipo3': anticipoPago3,
+        'pagado1': pagado1,
+        'pagado2': pagado2,
+        'pagado3': pagado3,
         'total_pagar': UtilsVenta.totalWithShipping,
         'entregado': entregado,
         'id_metodopago2': metodo2,
@@ -890,19 +940,80 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         'envio': UtilsVenta.shippingCost,
       };
 
-      context.read<PedidoBloc>().add(
-          PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
-      if (widget.idSesion != 0 && widget.idSesion != null) {
-        context
-            .read<SesionPedidoBloc>()
-            .add(PedidoAddIdSesionEvent(idSesion: widget.idSesion!));
+      void enviarPedido() {
+        context.read<PedidoBloc>().add(
+            PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
+        if (widget.idSesion != 0 && widget.idSesion != null) {
+          context
+              .read<SesionPedidoBloc>()
+              .add(PedidoAddIdSesionEvent(idSesion: widget.idSesion!));
+        }
+      }
+
+      // Si no se marcó ningún pago como cobrado, el pedido no aparta mercancía
+      // ni cuenta como venta: se avisa y se pide confirmación antes de guardar.
+      final algunPagado = pagado1 == 1 || pagado2 == 1 || pagado3 == 1;
+      if (!algunPagado) {
+        _dialogSinPago(onConfirm: enviarPedido);
+      } else {
+        enviarPedido();
       }
     } else {
       form.markAllAsTouched();
     }
   }
 
+  Future<void> _dialogSinPago({required VoidCallback onConfirm}) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.warning, color: Colors.orange),
+              SizedBox(width: 10),
+              Text('Atención', style: TextStyle(color: Colors.orange)),
+            ],
+          ),
+          content: const Text(
+            'No marcaste ningún pago como cobrado.\n\n'
+            'Este pedido NO apartará mercancía ni será considerado como venta.\n\n'
+            '¿Está seguro? Si continúa, se guardará sin considerar el pago.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          actions: [
+            TextButton(
+              child: const Text(
+                'No, regresar',
+                style: TextStyle(color: Colores.secondaryColor),
+              ),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colores.secondaryColor,
+              ),
+              child: const Text(
+                'Sí, guardar',
+                style: TextStyle(color: Colores.scaffoldBackgroundColor),
+              ),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                onConfirm();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _dialogCancel() {
+    // Navegador de la pantalla (host de las páginas): se usa para regresar a
+    // la lista de mercancía (PedidoScreen), desde donde se hizo el push.
+    final pageNav = Navigator.of(context);
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -960,14 +1071,10 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
               ),
               onPressed: () {
                 FocusScope.of(context).unfocus();
-                context.read<ClienteBloc>().add(ClearClienteStateEvent());
-                context.read<ProductosBloc>().add(ClearProductoStateEvent());
-                context.read<PedidoBloc>().add(ClearPedidoStateEvent());
-                context
-                    .read<InventarioBloc>()
-                    .add(ClearInventarioProductoEvent());
-                HomeRoute().go(context);
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // cierra el diálogo
+                // Regresa a la lista de mercancía (no al home) conservando los
+                // productos seleccionados, igual que el botón de retroceso.
+                pageNav.pop();
               },
             ),
           ],
@@ -1027,6 +1134,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                   form.control('anticipoPago1').reset();
                   form.control('anticipoPago2').reset();
                   form.control('anticipoPago3').reset();
+                  form.control('pagado1').reset();
+                  form.control('pagado2').reset();
+                  form.control('pagado3').reset();
                   form.control('entregado').reset();
                   Navigator.of(context).pop();
                   HomeRoute().go(context);

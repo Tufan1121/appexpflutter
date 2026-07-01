@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/cubits/medias/medidas_cubit.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/mixin.dart';
@@ -252,12 +253,18 @@ class _InventarioBodegaState extends State<InventarioBodega>
                                           formControlName: 'descripcio',
                                           hint: 'Calidad',
                                           hintStyle: TextStyle(fontSize: 15),
+                                          inputFormatters: [
+                                            UpperCaseTextFormatter()
+                                          ],
                                         ),
                                         SizedBox(height: 10),
                                         CustomReactiveTextField(
                                           formControlName: 'diseno',
                                           hint: 'Color',
                                           hintStyle: TextStyle(fontSize: 15),
+                                          inputFormatters: [
+                                            UpperCaseTextFormatter()
+                                          ],
                                         ),
                                       ],
                                     ),
