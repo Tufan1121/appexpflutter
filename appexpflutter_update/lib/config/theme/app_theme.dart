@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Colores {
   // Primary brand colors - Dark base with colorful accents
@@ -24,10 +25,10 @@ class Colores {
   static const warningColor = Color(0xffF59E0B); // Amber 500
   static const infoColor = Color(0xff3B82F6); // Blue 500
   
-  // Gradients - Dark slate base with subtle colorful transition
-  static const gradientStart = Color(0xFF0F172A); // Slate 900 (Negro profundo)
-  static const gradientMiddle = Color(0xFF1E1B4B); // Indigo 950 (toque sutil de indigo)
-  static const gradientEnd = Color(0xFF312E81); // Indigo 900 (transición a indigo)
+  // Gradients - "Índigo luminoso": índigo saturado y notorio
+  static const gradientStart = Color(0xFF312E81); // Indigo 900
+  static const gradientMiddle = Color(0xFF4338CA); // Indigo 700
+  static const gradientEnd = Color(0xFF6366F1); // Indigo 400 (luminoso)
   
   // Accent gradient for highlights (subtle Indigo → Purple → Pink)
   static const accentGradientStart = Color(0xFF4F46E5); // Indigo 600
@@ -66,8 +67,8 @@ class AppTheme {
         onError: Colors.white,
       ),
 
-      ///* Texts - Mayor contraste con fuentes del sistema
-      textTheme: const TextTheme(
+      ///* Texts - Montserrat unificada en todo el tema
+      textTheme: GoogleFonts.montserratTextTheme(const TextTheme(
         // Headlines
         headlineLarge: TextStyle(
           fontSize: 40,
@@ -143,24 +144,24 @@ class AppTheme {
           color: Colores.textSecondary,
           letterSpacing: 0.5,
         ),
-      ),
+      )),
 
       ///* Scaffold Background Color
       scaffoldBackgroundColor: Colores.scaffoldBackgroundColor,
 
       ///* AppBar - Mayor contraste
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
         foregroundColor: Colores.textPrimary,
         elevation: 0,
         shadowColor: Colors.black12,
         surfaceTintColor: Colors.transparent,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.montserrat(
           fontSize: 20,
           fontWeight: FontWeight.w700,
           color: Colores.textPrimary,
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colores.textPrimary,
           size: 24,
         ),
@@ -178,41 +179,11 @@ class AppTheme {
         margin: const EdgeInsets.all(8),
       ),
 
-      ///* Input Decoration - Alto contraste
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colores.inputBackground,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colores.inputBorder, width: 1.5),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colores.inputBorder, width: 1.5),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colores.inputFocusBorder, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colores.errorColor, width: 1.5),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colores.errorColor, width: 2),
-        ),
-        labelStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: Colores.textSecondary,
-        ),
-        hintStyle: const TextStyle(
-          fontSize: 14,
-          color: Colores.textTertiary,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      ),
+      // Nota: se omite `inputDecorationTheme` a propósito. Las pantallas de
+      // esta app definen el estilo de sus campos individualmente (pastillas
+      // blancas, bordes propios). Un tema global de inputs inyectaba relleno
+      // gris y bordes sobre esos campos ("encimado"), así que se deja que cada
+      // campo conserve su diseño.
 
       ///* Buttons - Mayor contraste
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -225,7 +196,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          textStyle: const TextStyle(
+          textStyle: GoogleFonts.montserrat(
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),

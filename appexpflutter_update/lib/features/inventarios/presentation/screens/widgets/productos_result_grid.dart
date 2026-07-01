@@ -32,6 +32,8 @@ class ProductosResultGrid extends StatelessWidget {
         } else if (w >= 600) {
           columns = 2;
         } else {
+          // En teléfono: 1 columna (un resultado por línea). Cada tarjeta trae
+          // bastante info y a 2 columnas quedaba apretada.
           columns = 1;
         }
 

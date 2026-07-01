@@ -172,6 +172,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Tufan',
+            theme: AppTheme().getTheme(),
             routerConfig: _router,
           );
         },

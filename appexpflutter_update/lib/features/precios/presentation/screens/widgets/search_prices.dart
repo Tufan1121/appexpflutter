@@ -80,8 +80,19 @@ class SearchPrices extends HookWidget {
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
                   filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                  // Se definen TODOS los estados de borde sin línea para que el
+                  // `inputDecorationTheme` global no inyecte su borde (radio 12)
+                  // encima de la pastilla redonda (efecto "encimado").
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
                     borderSide: BorderSide.none,
                   ),
                   contentPadding:

@@ -262,21 +262,12 @@ class GlassCard extends StatelessWidget {
           width: 1,
         ),
         boxShadow: hasShadow ? [
+          // Sombra única, suave y neutra (pulido "Nocturno")
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: const Color(0xFF0F172A).withOpacity(0.07),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
             spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: Colores.accentGradientStart.withOpacity(0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 12),
-          ),
-          BoxShadow(
-            color: Colores.accentGradientEnd.withOpacity(0.05),
-            blurRadius: 40,
-            offset: const Offset(0, 16),
           ),
         ] : null,
       ),

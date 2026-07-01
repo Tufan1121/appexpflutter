@@ -107,7 +107,23 @@ class _BusquedaLayoutState extends State<BusquedaLayout> {
                 const SizedBox(height: 4),
                 Expanded(
                   child: abierto
-                      ? SingleChildScrollView(child: widget.form)
+                      ? SingleChildScrollView(
+                          padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                          // Panel translúcido que agrupa los filtros sobre el
+                          // fondo índigo (mismo lenguaje "glass" del header).
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.10),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.15),
+                              ),
+                            ),
+                            child: widget.form,
+                          ),
+                        )
                       : widget.results,
                 ),
               ],
