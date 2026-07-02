@@ -78,7 +78,7 @@ class ForceUpdateScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Tu versión: $kAppVersion'
+                    'Tu versión: ${AppInfo.version}'
                     '${info.latestVersion.isNotEmpty ? '  ·  Nueva: ${info.latestVersion}' : ''}',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(

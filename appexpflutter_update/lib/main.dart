@@ -91,10 +91,12 @@ import 'package:appexpflutter_update/features/precios/presentation/bloc/precios_
 
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/ventas/presentation/blocs/producto/productos_bloc.dart';
+import 'package:appexpflutter_update/config/app_info.dart';
 part './injector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppInfo.init(); // versión de la app (fuente única: pubspec)
   await Environment.initEnvironment();
   await ConfigToken().checkAndDeleteTokenIfNeeded();
   await init();
