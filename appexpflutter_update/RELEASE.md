@@ -43,6 +43,25 @@ No hay otro número que mantener.
    - Resultado: `build/app/outputs/flutter-apk/app-release.apk`
 3. Súbelo a **Firebase App Distribution** (grupo `vendedores`).
 
+## Cómo instalan / actualizan los usuarios
+Para que un usuario **baje o actualice** la app, compártele el **invite link**
+de Firebase (es el mismo que va en `APP_UPDATE_URL`):
+
+```
+https://appdistribution.firebase.dev/i/b3a2c8d6c3775f6c
+```
+
+- El **mismo link sirve siempre**: nuevas instalaciones y todas las versiones
+  futuras. No se cambia.
+- **Primera vez** (setup único del usuario):
+  1. Abre el link en su teléfono **Android**.
+  2. Inicia sesión con una **cuenta de Google** (acepta la invitación de tester).
+  3. Instala la app **"Firebase App Tester"**.
+  4. Desde ahí instala la app; Android puede pedir permitir *"fuentes desconocidas"*.
+- Después, cada versión nueva le llega como **notificación** en App Tester.
+- Regla mental: **"que baje/actualice" → comparto el invite link**.
+- Solo Android. iOS necesitaría TestFlight (ver nota abajo).
+
 ## Obligar a actualizar
 El interruptor es `APP_MIN_BUILD` en `mainExpo.py` (servidor).
 
