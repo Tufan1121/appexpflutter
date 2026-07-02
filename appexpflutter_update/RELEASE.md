@@ -1,120 +1,108 @@
 # Guía de release y actualización obligatoria — Tufan Expo
 
-## Checklist rápido (sacar versión)
+Distribución actual: **APK servido desde el propio servidor** (Apache) en
+`https://tapetestufan.mx/apps/expo/app-release.apk`. El link es **fijo**: en
+cada release solo reemplazas ese archivo. Firebase App Distribution queda como
+opción de pruebas, no para usuarios finales.
+
+## Checklist rápido (sacar una versión)
 
 **Siempre (publicar la versión):**
-1. Sube el número en `pubspec.yaml` (ej. `1.1.10+10110` → `1.1.11+10111`). ← manual, antes de compilar
-2. Compila: `flutter build apk --release --target-platform android-arm64`
-3. Sube el APK a **Firebase App Distribution** (grupo `vendedores`).
-   > Hasta aquí la versión ya está disponible; la gente actualiza cuando quiera.
+1. Sube el número en `pubspec.yaml` (ej. `1.1.11+10111` → `1.1.12+10112`). ← manual, antes de compilar
+2. Compila: `flutter build apk --release`  (APK "gordo", cubre todos los dispositivos)
+3. **Reemplaza** el APK en el servidor con el nuevo `app-release.apk`, en:
+   `apps/expo/app-release.apk`  (mismo nombre → el link no cambia)
+   > Hasta aquí la versión ya está disponible; quien abra el link la instala.
 
-**Solo si quieres OBLIGAR a actualizar a esta versión:**
-4. En el **servidor**, en `mainExpo.py`, pon el mismo build que acabas de subir:
-   ```python
-   APP_MIN_BUILD = 10111
-   APP_LATEST_VERSION = "1.1.11"
-   ```
+**Solo si quieres OBLIGAR / avisar:** en `mainExpo.py` (servidor):
+4. Para **avisar** (banner suave): `APP_LATEST_BUILD = 10112`, `APP_LATEST_VERSION = "1.1.12"`.
+   Para **obligar** (bloqueo): además `APP_MIN_BUILD = 10112`.
 5. `git pull` + **reinicia** `mainExpo`.
-   > Ahora todos con un build menor verán "Actualización requerida".
 
-> ⚠️ El paso 4 va **después** del paso 3 (la regla de oro): nunca subas
-> `APP_MIN_BUILD` a un build que todavía no está publicado en Firebase.
+> ⚠️ **REGLA DE ORO:** primero reemplaza el APK del servidor (paso 3) y **luego**
+> sube `APP_MIN_BUILD`. Si obligas a un build que no está servido, dejas a la
+> gente en bucle.
 
 ## Versión: un solo lugar
 La versión vive **únicamente** en `pubspec.yaml`:
 
 ```yaml
-version: 1.1.10+10110   # nombre+build
+version: 1.1.11+10111   # nombre+build
 ```
 
-- `1.1.10` (nombre) → se ve en el login y en Firebase.
-- `10110` (build) → entero que compara el gate. Convención: `major*10000 + minor*100 + patch`.
+- `1.1.11` (nombre) → se ve en el login.
+- `10111` (build) → entero que compara el gate. Convención: `major*10000 + minor*100 + patch`.
 
-El login, Firebase y el gate de actualización leen de aquí (vía `package_info_plus`).
-No hay otro número que mantener.
+El login y el gate leen de aquí (vía `package_info_plus`). No hay otro número
+que mantener en la app.
 
-## Publicar una versión nueva
-1. Sube `version:` en `pubspec.yaml` (ej. `1.1.11+10111`).
-2. Compila el APK:
-   ```
-   flutter build apk --release --target-platform android-arm64
-   ```
-   - `arm64` cubre prácticamente todos los teléfonos de ~2015+ y usa menos RAM al compilar.
-   - Resultado: `build/app/outputs/flutter-apk/app-release.apk`
-3. Súbelo a **Firebase App Distribution** (grupo `vendedores`).
+## Compilar el APK
+```
+flutter build apk --release
+```
+- Genera el APK **multi-arquitectura** (arm64 + arm32 + x86_64) → funciona en
+  prácticamente cualquier Android. Pesa ~116 MB.
+- Resultado: `build/app/outputs/flutter-apk/app-release.apk`
+- Alternativa más ligera (solo teléfonos modernos, ~66 MB, menos RAM al
+  compilar): `flutter build apk --release --target-platform android-arm64`.
 
 ## Cómo instalan / actualizan los usuarios
-Para que un usuario **baje o actualice** la app, compártele el **invite link**
-de Firebase (es el mismo que va en `APP_UPDATE_URL`):
-
+Comparte este link (fijo, nunca cambia):
 ```
-https://appdistribution.firebase.dev/i/b3a2c8d6c3775f6c
+https://tapetestufan.mx/apps/expo/app-release.apk
 ```
+- El usuario lo abre en Android → **descarga** el APK → **instala**.
+- La primera vez Android pide permitir *"instalar apps de fuentes desconocidas"*
+  para el navegador → aceptar.
+- **Sin cuentas, sin App Tester.** El mismo link siempre trae la última versión
+  (porque reemplazas el archivo en el servidor).
+- Regla mental: **"que baje/actualice" → comparto ese link**.
+- Es actualización **manual** (el usuario toca). Para forzar, usa el gate (abajo).
 
-- El **mismo link sirve siempre**: nuevas instalaciones y todas las versiones
-  futuras. No se cambia.
-- **Primera vez** (setup único del usuario):
-  1. Abre el link en su teléfono **Android**.
-  2. Inicia sesión con una **cuenta de Google** (acepta la invitación de tester).
-  3. Instala la app **"Firebase App Tester"**.
-  4. Desde ahí instala la app; Android puede pedir permitir *"fuentes desconocidas"*.
-- Después, cada versión nueva le llega como **notificación** en App Tester.
-- Regla mental: **"que baje/actualice" → comparto el invite link**.
-- Solo Android. iOS necesitaría TestFlight (ver nota abajo).
+## Obligar a actualizar (bloqueo)
+Interruptor: `APP_MIN_BUILD` en `mainExpo.py`.
 
-## Obligar a actualizar
-El interruptor es `APP_MIN_BUILD` en `mainExpo.py` (servidor).
-
-> **REGLA DE ORO:** primero publica el APK nuevo en Firebase y **luego** sube
-> `APP_MIN_BUILD`. Nunca lo pongas más alto que el último build ya disponible,
-> o bloquearías a todos sin salida.
-
-Para forzar a la 1.1.11 (build 10111), ya publicada:
+Para forzar a la 1.1.11 (build 10111), **ya reemplazado el APK en el servidor**:
 ```python
 APP_MIN_BUILD = 10111
 APP_LATEST_VERSION = "1.1.11"
 ```
-Luego en el servidor: `git pull` + reiniciar `mainExpo`.
-
-Todos con build < 10111 verán **"Actualización requerida"**; el botón abre el
-invite link de Firebase (última versión). Para **bajar** el bloqueo: regresa
+`git pull` + reiniciar `mainExpo`. Todos con build < 10111 verán
+**"Actualización requerida"**; el botón "Actualizar ahora" abre el link del
+servidor → descarga e instala. Para **bajar** el bloqueo: regresa
 `APP_MIN_BUILD` a un valor menor y reinicia.
 
 ## Aviso suave (opcional, no obligatorio)
-Además del bloqueo, la app puede mostrar un **banner descartable** ("hay versión
-nueva", con botones *Actualizar* / *Ahora no*) sin obligar. Lo controla
-`APP_LATEST_BUILD` en `mainExpo.py`:
+Banner descartable ("hay versión nueva", *Actualizar* / *Ahora no*) sin obligar.
+Lo controla `APP_LATEST_BUILD`:
 
-- `APP_LATEST_BUILD` = build de la última versión publicada.
 - Si el build instalado es **menor** que `APP_LATEST_BUILD` pero **≥**
   `APP_MIN_BUILD` → banner suave. (Si es menor que `APP_MIN_BUILD` → bloqueo.)
 
-Ejemplo al publicar 1.1.11 **avisando pero sin forzar**:
+Ejemplo al publicar 1.1.12 **avisando pero sin forzar**:
 ```python
-APP_MIN_BUILD    = 10110   # no obliga
-APP_LATEST_BUILD = 10111   # avisa (suave)
-APP_LATEST_VERSION = "1.1.11"
+APP_MIN_BUILD    = 10111   # no obliga
+APP_LATEST_BUILD = 10112   # avisa (suave)
+APP_LATEST_VERSION = "1.1.12"
 ```
 
-> El aviso suave, igual que el bloqueo, solo aparece en apps que ya traen el
-> código (de la 1.1.10/gate en adelante), y una sola vez por arranque.
-
-## Probar el bloqueo (sin publicar nada)
+## Probar el bloqueo
 1. En el servidor, `APP_MIN_BUILD = <build mayor al instalado>` y reinicia `mainExpo`.
-2. En el teléfono: **cierra la app por completo** y ábrela de nuevo.
-   El gate se verifica al **arranque en frío** (no al volver de segundo plano).
+2. En el teléfono: **cierra la app por completo** y ábrela de nuevo (el gate se
+   verifica al **arranque en frío**, no al volver de segundo plano).
 3. Debe salir la pantalla de actualización. **Revierte** `APP_MIN_BUILD` al terminar.
 
 ## Notas importantes
 - **Solo aplica a versiones con el gate** (1.1.10 en adelante). A quien esté en
-  una versión previa (sin gate) **no** se le puede forzar: hay que migrarlo a la
-  1.1.10 una vez a mano (invite link de Firebase / Drive).
+  una versión previa (sin gate) **no** se le puede forzar: hay que llevarlo una
+  vez a la ≥1.1.10 a mano (comparte el link del servidor).
 - **Fail-open**: si el backend no responde o falla, la app **no bloquea**.
 - **Endpoint** (sin token): `GET /appVersion` →
-  `{min_build, latest_version, update_url, message}`.
-- `APP_UPDATE_URL` = invite link estable de Firebase (no cambia entre releases).
+  `{min_build, latest_build, latest_version, update_url, message}`.
+- `APP_UPDATE_URL` = link estático del servidor (no cambia entre releases).
 - **Memoria de compilación**: `android/gradle.properties` usa `-Xmx2G` + 1 worker
-  porque esta máquina tiene poca RAM libre. En una máquina con más RAM puedes
-  subirlo (o compilar sin `--target-platform` para el APK multi-arquitectura).
-- Los backends `mainTienda.py` / `mainPromos.py` **aún no** tienen el endpoint
-  `/appVersion` (pendiente si esas apps también deben forzar).
+  (esta máquina tiene poca RAM libre). En una máquina con más RAM puedes subirlo.
+- Los backends `mainTienda.py` / `mainPromos.py` **aún no** tienen `/appVersion`
+  (pendiente si esas apps también deben forzar/avisar).
+- Firebase App Distribution sigue disponible para **pruebas internas**, pero su
+  onboarding (cuenta Google + App Tester) es engorroso para usuarios finales.
