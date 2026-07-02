@@ -1,5 +1,25 @@
 # Guía de release y actualización obligatoria — Tufan Expo
 
+## Checklist rápido (sacar versión)
+
+**Siempre (publicar la versión):**
+1. Sube el número en `pubspec.yaml` (ej. `1.1.10+10110` → `1.1.11+10111`). ← manual, antes de compilar
+2. Compila: `flutter build apk --release --target-platform android-arm64`
+3. Sube el APK a **Firebase App Distribution** (grupo `vendedores`).
+   > Hasta aquí la versión ya está disponible; la gente actualiza cuando quiera.
+
+**Solo si quieres OBLIGAR a actualizar a esta versión:**
+4. En el **servidor**, en `mainExpo.py`, pon el mismo build que acabas de subir:
+   ```python
+   APP_MIN_BUILD = 10111
+   APP_LATEST_VERSION = "1.1.11"
+   ```
+5. `git pull` + **reinicia** `mainExpo`.
+   > Ahora todos con un build menor verán "Actualización requerida".
+
+> ⚠️ El paso 4 va **después** del paso 3 (la regla de oro): nunca subas
+> `APP_MIN_BUILD` a un build que todavía no está publicado en Firebase.
+
 ## Versión: un solo lugar
 La versión vive **únicamente** en `pubspec.yaml`:
 
