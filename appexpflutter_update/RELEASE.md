@@ -80,6 +80,25 @@ Todos con build < 10111 verán **"Actualización requerida"**; el botón abre el
 invite link de Firebase (última versión). Para **bajar** el bloqueo: regresa
 `APP_MIN_BUILD` a un valor menor y reinicia.
 
+## Aviso suave (opcional, no obligatorio)
+Además del bloqueo, la app puede mostrar un **banner descartable** ("hay versión
+nueva", con botones *Actualizar* / *Ahora no*) sin obligar. Lo controla
+`APP_LATEST_BUILD` en `mainExpo.py`:
+
+- `APP_LATEST_BUILD` = build de la última versión publicada.
+- Si el build instalado es **menor** que `APP_LATEST_BUILD` pero **≥**
+  `APP_MIN_BUILD` → banner suave. (Si es menor que `APP_MIN_BUILD` → bloqueo.)
+
+Ejemplo al publicar 1.1.11 **avisando pero sin forzar**:
+```python
+APP_MIN_BUILD    = 10110   # no obliga
+APP_LATEST_BUILD = 10111   # avisa (suave)
+APP_LATEST_VERSION = "1.1.11"
+```
+
+> El aviso suave, igual que el bloqueo, solo aparece en apps que ya traen el
+> código (de la 1.1.10/gate en adelante), y una sola vez por arranque.
+
 ## Probar el bloqueo (sin publicar nada)
 1. En el servidor, `APP_MIN_BUILD = <build mayor al instalado>` y reinicia `mainExpo`.
 2. En el teléfono: **cierra la app por completo** y ábrela de nuevo.

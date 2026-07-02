@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// cuando `checkForceUpdate()` detecta una versión por debajo del mínimo.
 /// No hay forma de saltarla (PopScope sin pop y sin navegación).
 class ForceUpdateScreen extends StatelessWidget {
-  final ForceUpdateInfo info;
+  final UpdateStatus info;
 
   const ForceUpdateScreen({super.key, required this.info});
 

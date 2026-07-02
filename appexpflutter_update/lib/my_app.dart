@@ -10,6 +10,7 @@ import 'package:appexpflutter_update/main.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/shared/services/version_gate.dart';
 import 'package:appexpflutter_update/features/shared/widgets/force_update_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
@@ -59,9 +60,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   StreamSubscription? sessionStream;
   late final Future<void> _initFuture;
 
-  // Si no es null, la app quedó por debajo de la versión mínima soportada y se
-  // muestra la pantalla bloqueante de actualización en lugar del router.
-  ForceUpdateInfo? _forceUpdate;
+  // Nivel de actualización decidido por el backend: none / soft / force.
+  // `force` bloquea la app; `soft` muestra un banner descartable una vez.
+  UpdateStatus _update = UpdateStatus.none;
+  bool _softShown = false;
 
   @override
   void initState() {
@@ -73,10 +75,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _init() async {
-    // Gate de actualización: si la versión instalada quedó por debajo del
-    // mínimo que reporta el backend, se bloquea la app. Fail-open: si no se
-    // puede verificar (sin red / backend caído) devuelve null y no bloquea.
-    _forceUpdate = await checkForceUpdate();
+    // Chequeo de versión: decide si no hay nada, aviso suave o bloqueo.
+    // Fail-open: si no se puede verificar devuelve `none` y no molesta.
+    _update = await checkUpdate();
 
     final token = await storage.read(key: 'accessToken');
 
@@ -126,6 +127,42 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         content: Text(aviso),
         duration: const Duration(seconds: 4),
       ));
+  }
+
+  // Aviso suave "hay versión nueva": banner descartable, no bloqueante.
+  // Aparece una sola vez por arranque; el usuario puede posponerlo.
+  void _mostrarAvisoActualizacion() {
+    final messenger = rootScaffoldMessengerKey.currentState;
+    if (messenger == null) return;
+    final ver =
+        _update.latestVersion.isNotEmpty ? ' (${_update.latestVersion})' : '';
+    messenger.showMaterialBanner(
+      MaterialBanner(
+        leading: const Icon(Icons.system_update),
+        content: Text('Hay una versión nueva disponible$ver.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              messenger.hideCurrentMaterialBanner();
+              _abrirUrlActualizacion(_update.updateUrl);
+            },
+            child: const Text('Actualizar'),
+          ),
+          TextButton(
+            onPressed: messenger.hideCurrentMaterialBanner,
+            child: const Text('Ahora no'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _abrirUrlActualizacion(String url) async {
+    final u = url.trim();
+    if (u.isEmpty) return;
+    final uri = Uri.tryParse(u);
+    if (uri == null) return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   // Detener el Stream al salir de la app o al pausar
@@ -195,15 +232,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           if (state.connectionState == ConnectionState.waiting) {
             return Container();
           }
-          // Gate de actualización: bloquea la app con la pantalla de "Actualiza"
-          // si la versión instalada quedó por debajo del mínimo soportado.
-          if (_forceUpdate != null) {
+          // Actualización obligatoria: bloquea la app con la pantalla "Actualiza".
+          if (_update.kind == UpdateKind.force) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Tufan',
               theme: AppTheme().getTheme(),
-              home: ForceUpdateScreen(info: _forceUpdate!),
+              home: ForceUpdateScreen(info: _update),
             );
+          }
+          // Aviso suave: banner descartable, una sola vez, sobre la app normal.
+          if (_update.kind == UpdateKind.soft && !_softShown) {
+            _softShown = true;
+            WidgetsBinding.instance
+                .addPostFrameCallback((_) => _mostrarAvisoActualizacion());
           }
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,

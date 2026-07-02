@@ -3,45 +3,76 @@ import 'dart:async';
 import 'package:api_client/api_client.dart';
 import 'package:appexpflutter_update/config/app_info.dart';
 
-/// Datos para forzar actualización cuando la versión instalada quedó por debajo
-/// del mínimo soportado que reporta el backend en `/appVersion`.
-class ForceUpdateInfo {
+/// Nivel de actualización que decide el backend según la versión instalada.
+enum UpdateKind {
+  /// Al día: no se muestra nada.
+  none,
+
+  /// Hay versión nueva pero no es obligatoria → aviso suave y descartable.
+  soft,
+
+  /// La versión instalada quedó por debajo del mínimo → bloqueo total.
+  force,
+}
+
+/// Resultado del chequeo de versión contra `/appVersion`.
+class UpdateStatus {
+  final UpdateKind kind;
   final String updateUrl;
   final String message;
   final String latestVersion;
 
-  const ForceUpdateInfo({
-    required this.updateUrl,
-    required this.message,
-    required this.latestVersion,
+  const UpdateStatus({
+    required this.kind,
+    this.updateUrl = '',
+    this.message = '',
+    this.latestVersion = '',
   });
+
+  static const none = UpdateStatus(kind: UpdateKind.none);
 }
 
-/// Consulta `/appVersion` y decide si hay que forzar actualización.
+/// Consulta `/appVersion` y decide el nivel de actualización.
 ///
-/// Devuelve `null` si la app está al día **o** si no se pudo verificar
-/// (fail-open a propósito: un problema de red o del backend nunca debe dejar
-/// la app inutilizable). Solo devuelve datos cuando `kAppBuild < min_build`.
-Future<ForceUpdateInfo?> checkForceUpdate() async {
-  // Si no se pudo leer la versión instalada, no bloquear (fail-open).
-  if (AppInfo.build <= 0) return null;
+/// - `build < min_build`   → [UpdateKind.force] (bloqueo).
+/// - `build < latest_build`→ [UpdateKind.soft] (aviso descartable).
+/// - en otro caso          → [UpdateKind.none].
+///
+/// Fail-open: si no se puede leer la versión instalada o el backend no
+/// responde, devuelve [UpdateStatus.none] (nunca bloquea por un error).
+Future<UpdateStatus> checkUpdate() async {
+  if (AppInfo.build <= 0) return UpdateStatus.none;
   try {
-    // Timeout corto: el gate corre al arrancar; si el backend tarda, no debe
-    // retrasar el inicio (se resuelve como "al día" por el catch de abajo).
+    // Timeout corto: corre al arrancar; si el backend tarda, no retrasa el inicio.
     final res =
         await DioClient().get('/appVersion').timeout(const Duration(seconds: 6));
     final data = res.data;
-    if (data is! Map) return null;
+    if (data is! Map) return UpdateStatus.none;
 
     final minBuild = (data['min_build'] as num?)?.toInt() ?? 0;
-    if (AppInfo.build >= minBuild) return null; // al día
+    final latestBuild = (data['latest_build'] as num?)?.toInt() ?? minBuild;
+    final url = (data['update_url'] ?? '').toString();
+    final msg = (data['message'] ?? '').toString();
+    final latestVer = (data['latest_version'] ?? '').toString();
 
-    return ForceUpdateInfo(
-      updateUrl: (data['update_url'] ?? '').toString(),
-      message: (data['message'] ?? '').toString(),
-      latestVersion: (data['latest_version'] ?? '').toString(),
-    );
+    if (AppInfo.build < minBuild) {
+      return UpdateStatus(
+        kind: UpdateKind.force,
+        updateUrl: url,
+        message: msg,
+        latestVersion: latestVer,
+      );
+    }
+    if (AppInfo.build < latestBuild) {
+      return UpdateStatus(
+        kind: UpdateKind.soft,
+        updateUrl: url,
+        message: msg,
+        latestVersion: latestVer,
+      );
+    }
+    return UpdateStatus.none;
   } catch (_) {
-    return null; // fail-open: no bloquear si no se puede verificar
+    return UpdateStatus.none; // fail-open
   }
 }
