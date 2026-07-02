@@ -8,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/main.dart';
 import 'package:appexpflutter_update/config/config.dart';
+import 'package:appexpflutter_update/features/shared/services/version_gate.dart';
+import 'package:appexpflutter_update/features/shared/widgets/force_update_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
@@ -57,6 +59,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   StreamSubscription? sessionStream;
   late final Future<void> _initFuture;
 
+  // Si no es null, la app quedó por debajo de la versión mínima soportada y se
+  // muestra la pantalla bloqueante de actualización en lugar del router.
+  ForceUpdateInfo? _forceUpdate;
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +73,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _init() async {
+    // Gate de actualización: si la versión instalada quedó por debajo del
+    // mínimo que reporta el backend, se bloquea la app. Fail-open: si no se
+    // puede verificar (sin red / backend caído) devuelve null y no bloquea.
+    _forceUpdate = await checkForceUpdate();
+
     final token = await storage.read(key: 'accessToken');
 
     // Inicializa el router con la ruta de inicio de sesión o la ruta principal.
@@ -183,6 +194,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         builder: (context, state) {
           if (state.connectionState == ConnectionState.waiting) {
             return Container();
+          }
+          // Gate de actualización: bloquea la app con la pantalla de "Actualiza"
+          // si la versión instalada quedó por debajo del mínimo soportado.
+          if (_forceUpdate != null) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Tufan',
+              theme: AppTheme().getTheme(),
+              home: ForceUpdateScreen(info: _forceUpdate!),
+            );
           }
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
