@@ -13,7 +13,9 @@ class DioClient {
   /// o inválido): típicamente borra el token local y redirige al login.
   /// Se invoca para cualquier 401 EXCEPTO el del propio login (`/token`), que
   /// debe seguir mostrando el mensaje de credenciales inválidas en pantalla.
-  static void Function()? onUnauthorized;
+  /// [message] trae el `detail` del backend (p.ej. "Sesión iniciada en otro
+  /// dispositivo") para poder avisarlo antes de redirigir al login.
+  static void Function(String? message)? onUnauthorized;
 
   DioClient() {
     _dio = Dio();
@@ -34,7 +36,12 @@ class DioClient {
           final isAuthRequest =
               path.contains('/token') || path.contains('/logout');
           if (error.response?.statusCode == 401 && !isAuthRequest) {
-            onUnauthorized?.call();
+            String? detail;
+            final data = error.response?.data;
+            if (data is Map && data['detail'] is String) {
+              detail = data['detail'] as String;
+            }
+            onUnauthorized?.call(detail);
           }
           return handler.next(error);
         },

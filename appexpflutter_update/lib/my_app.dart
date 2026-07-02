@@ -33,6 +33,11 @@ import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.d
 
 import 'features/historial/presentation/blocs/historial/historial_bloc.dart';
 
+/// Messenger global para mostrar avisos (p.ej. "sesión iniciada en otro
+/// dispositivo") que deben sobrevivir a la navegación al login.
+final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -73,9 +78,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     // Maneja cualquier 401 de la API (token caducado/inválido): borra el token
     // y manda al login automáticamente. El login (/token) queda excluido en el
     // interceptor para no interferir con el mensaje de credenciales inválidas.
-    DioClient.onUnauthorized = () {
+    DioClient.onUnauthorized = (message) {
       if (!mounted) return;
-      _redirectToLogin();
+      _redirectToLogin(message: message);
     };
 
     // Inicia el Stream de verificación de sesión si el token existe
@@ -95,11 +100,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
   }
 
-  // Redirige al usuario a la pantalla de inicio de sesión
-  void _redirectToLogin() {
+  // Redirige al usuario a la pantalla de inicio de sesión, mostrando el motivo
+  // (p.ej. "Sesión iniciada en otro dispositivo") en un aviso sobre el login.
+  void _redirectToLogin({String? message}) {
     sessionStream?.cancel(); // Cancela el stream al cerrar sesión
     authBloc.add(const LogoutEvent());
     _router.go(LoginRoute.path);
+    final aviso = (message != null && message.trim().isNotEmpty)
+        ? message
+        : 'Tu sesión finalizó. Inicia sesión de nuevo.';
+    rootScaffoldMessengerKey.currentState
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(aviso),
+        duration: const Duration(seconds: 4),
+      ));
   }
 
   // Detener el Stream al salir de la app o al pausar
@@ -173,6 +188,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             debugShowCheckedModeBanner: false,
             title: 'Tufan',
             theme: AppTheme().getTheme(),
+            scaffoldMessengerKey: rootScaffoldMessengerKey,
             routerConfig: _router,
           );
         },
