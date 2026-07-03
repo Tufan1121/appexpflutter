@@ -8,6 +8,7 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/s
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_search.dart';
 import 'package:flutter/material.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -309,9 +310,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                             return const Column(
                               children: [
                                 SizedBox(height: 150),
-                                CircularProgressIndicator(
-                                  color: Colores.secondaryColor,
-                                ),
+                                LoadingIndicator(color: Colors.white),
                               ],
                             );
                           } else if (state is ProductoError) {

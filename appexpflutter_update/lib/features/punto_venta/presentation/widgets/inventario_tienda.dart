@@ -8,6 +8,7 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/l
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 
 import 'package:flutter/material.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -488,9 +489,7 @@ class _InventarioTiendaState extends State<InventarioTienda>
                                     return const Column(
                                       children: [
                                         SizedBox(height: 150),
-                                        CircularProgressIndicator(
-                                          color: Colores.secondaryColor,
-                                        ),
+                                        LoadingIndicator(color: Colors.white),
                                       ],
                                     );
                                   }

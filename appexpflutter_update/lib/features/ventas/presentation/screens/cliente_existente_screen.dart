@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:flutter/material.dart';
@@ -73,9 +74,7 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                       return const Column(
                         children: [
                           SizedBox(height: 150),
-                          CircularProgressIndicator(
-                            color: Colores.secondaryColor,
-                          ),
+                          LoadingIndicator(color: Colors.white),
                         ],
                       );
                     }

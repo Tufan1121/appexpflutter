@@ -6,6 +6,7 @@ import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_fi
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lista_productos_bodega.dart';
 import 'package:flutter/material.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -452,9 +453,7 @@ class _InventarioBodegaState extends State<InventarioBodega>
                               return const Column(
                                 children: [
                                   SizedBox(height: 150),
-                                  CircularProgressIndicator(
-                                    color: Colores.secondaryColor,
-                                  ),
+                                  LoadingIndicator(color: Colors.white),
                                 ],
                               );
                             }

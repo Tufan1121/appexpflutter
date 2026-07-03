@@ -4,6 +4,7 @@ import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_detail_screen.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/screens/widgets/search_gallery.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -118,9 +119,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                           children: [
                             SizedBox(height: 250),
                             Center(
-                              child: CircularProgressIndicator(
-                                color: Colores.secondaryColor,
-                              ),
+                              child: LoadingIndicator(color: Colors.white),
                             ),
                           ],
                         );
@@ -188,7 +187,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                                   !galeriaBloc.isSearching) {
                                 // Mostrar CircularProgressIndicator al final si está cargando más datos
                                 return const Center(
-                                  child: CircularProgressIndicator(),
+                                  child: LoadingIndicator(),
                                 );
                               }
 

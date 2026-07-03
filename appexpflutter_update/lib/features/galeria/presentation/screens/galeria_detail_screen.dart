@@ -5,6 +5,7 @@ import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -384,9 +385,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                 children: [
                                   SizedBox(height: 100),
                                   Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colores.secondaryColor,
-                                    ),
+                                    child: LoadingIndicator(color: Colors.white),
                                   ),
                                 ],
                               );
@@ -789,9 +788,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
               );
             } else if (state is DetalleGaleriaLoading) {
               return const Center(
-                  child: CircularProgressIndicator(
-                color: Colores.secondaryColor,
-              ));
+                  child: LoadingIndicator(color: Colors.white));
             } else if (state is DetalleGaleriaError) {
               return Center(child: Text(state.message));
             } else {

@@ -7,6 +7,7 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/p
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -97,9 +98,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                     builder: (context, state) {
                       if (state is ConsultaLoading) {
                         return const Center(
-                          child: CircularProgressIndicator(
-                            color: Colores.secondaryColor,
-                          ),
+                          child: LoadingIndicator(color: Colors.white),
                         );
                       } else if (state is ConsultaLoaded) {
                         return ListView.builder(

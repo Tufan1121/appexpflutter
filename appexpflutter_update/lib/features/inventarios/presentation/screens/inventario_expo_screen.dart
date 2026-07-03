@@ -9,6 +9,7 @@ import 'package:appexpflutter_update/features/inventarios/presentation/screens/w
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/productos_result_grid.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/quiso_decir.dart';
 import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -396,9 +397,7 @@ class _InventarioExpoScreenState extends State<InventarioExpoScreen>
                       return const Column(
                         children: [
                           SizedBox(height: 150),
-                          CircularProgressIndicator(
-                            color: Colores.secondaryColor,
-                          ),
+                          LoadingIndicator(color: Colors.white),
                         ],
                       );
                     }

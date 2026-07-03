@@ -6,6 +6,7 @@ import 'package:appexpflutter_update/features/reportes/presentation/screen/widge
 import 'package:appexpflutter_update/features/reportes/presentation/screen/widgets/meta_gauge_chart.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
+import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -161,9 +162,7 @@ class ReportesScreen extends HookWidget {
                   builder: (context, state) {
               if (state is ReportesLoading) {
                 return const Center(
-                    child: CircularProgressIndicator(
-                  color: Colores.secondaryColor,
-                ));
+                    child: LoadingIndicator(color: Colors.white));
               } else if (state is ReportesLoaded) {
                 final listaPedidos = state.salesPedidos;
                 final listaTickets = state.salesTickets;
@@ -379,9 +378,7 @@ class ReportesScreen extends HookWidget {
                 final metaExpo = state.metaExpo;
                 final Widget chartMeta = metaExpo == null
                     ? const Center(
-                        child: CircularProgressIndicator(
-                          color: Colores.secondaryColor,
-                        ),
+                        child: LoadingIndicator(color: Colors.white),
                       )
                     : MetaGaugeChart(
                         meta: metaExpo,
