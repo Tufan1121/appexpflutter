@@ -98,7 +98,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                     builder: (context, state) {
                       if (state is ConsultaLoading) {
                         return const Center(
-                          child: LoadingIndicator(color: Colors.white),
+                          child: LoadingIndicator(),
                         );
                       } else if (state is ConsultaLoaded) {
                         return ListView.builder(

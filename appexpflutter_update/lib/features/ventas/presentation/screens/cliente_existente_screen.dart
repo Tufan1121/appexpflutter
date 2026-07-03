@@ -74,7 +74,7 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                       return const Column(
                         children: [
                           SizedBox(height: 150),
-                          LoadingIndicator(color: Colors.white),
+                          LoadingIndicator(),
                         ],
                       );
                     }

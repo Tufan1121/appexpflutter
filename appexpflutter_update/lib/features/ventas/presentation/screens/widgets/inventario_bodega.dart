@@ -453,7 +453,7 @@ class _InventarioBodegaState extends State<InventarioBodega>
                               return const Column(
                                 children: [
                                   SizedBox(height: 150),
-                                  LoadingIndicator(color: Colors.white),
+                                  LoadingIndicator(),
                                 ],
                               );
                             }

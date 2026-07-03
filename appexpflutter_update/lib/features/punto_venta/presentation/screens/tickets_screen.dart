@@ -310,7 +310,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                             return const Column(
                               children: [
                                 SizedBox(height: 150),
-                                LoadingIndicator(color: Colors.white),
+                                LoadingIndicator(),
                               ],
                             );
                           } else if (state is ProductoError) {

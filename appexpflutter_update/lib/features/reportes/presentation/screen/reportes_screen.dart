@@ -162,7 +162,7 @@ class ReportesScreen extends HookWidget {
                   builder: (context, state) {
               if (state is ReportesLoading) {
                 return const Center(
-                    child: LoadingIndicator(color: Colors.white));
+                    child: LoadingIndicator());
               } else if (state is ReportesLoaded) {
                 final listaPedidos = state.salesPedidos;
                 final listaTickets = state.salesTickets;
@@ -378,7 +378,7 @@ class ReportesScreen extends HookWidget {
                 final metaExpo = state.metaExpo;
                 final Widget chartMeta = metaExpo == null
                     ? const Center(
-                        child: LoadingIndicator(color: Colors.white),
+                        child: LoadingIndicator(),
                       )
                     : MetaGaugeChart(
                         meta: metaExpo,

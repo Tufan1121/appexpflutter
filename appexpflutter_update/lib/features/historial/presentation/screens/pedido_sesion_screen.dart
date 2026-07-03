@@ -187,7 +187,7 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                             return const Column(
                               children: [
                                 SizedBox(height: 150),
-                                LoadingIndicator(color: Colors.white),
+                                LoadingIndicator(),
                               ],
                             );
                           }

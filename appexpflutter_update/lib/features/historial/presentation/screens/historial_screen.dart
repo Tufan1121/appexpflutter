@@ -55,7 +55,7 @@ class HistorialScreen extends StatelessWidget {
                       return const Column(
                         children: [
                           SizedBox(height: 150),
-                          LoadingIndicator(color: Colors.white),
+                          LoadingIndicator(),
                         ],
                       );
                     }
