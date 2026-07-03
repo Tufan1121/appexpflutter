@@ -146,9 +146,9 @@ class ReportesScreen extends HookWidget {
               ),
               TabBar(
                 controller: tabController,
-                labelColor: Colores.secondaryColor,
-                unselectedLabelColor: Colors.white,
-                indicatorColor: Colores.secondaryColor,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white70,
+                indicatorColor: Colors.white,
                 labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                 isScrollable: true,
                 tabs: const [
