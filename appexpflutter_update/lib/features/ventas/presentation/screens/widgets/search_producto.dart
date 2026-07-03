@@ -64,6 +64,7 @@ class SearchProducto extends HookWidget {
               ),
             ),
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
               elevation: 2,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
@@ -89,6 +90,7 @@ class SearchProducto extends HookWidget {
               );
             },
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
               elevation: 2,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
@@ -284,6 +286,7 @@ class SearchProducto extends HookWidget {
             //   estadoPedido: estatusPedido,
             // ).push(context),
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
               elevation: 2,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),

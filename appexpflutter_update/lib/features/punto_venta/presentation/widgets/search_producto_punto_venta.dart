@@ -51,6 +51,7 @@ class PuntoVentaProductSearch extends HookWidget {
               ),
             ),
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
               elevation: 2,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
@@ -76,6 +77,7 @@ class PuntoVentaProductSearch extends HookWidget {
               );
             },
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
               elevation: 2,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
