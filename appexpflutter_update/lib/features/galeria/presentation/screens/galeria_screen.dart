@@ -119,7 +119,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                           children: [
                             SizedBox(height: 250),
                             Center(
-                              child: LoadingIndicator(color: Colors.white),
+                              child: LoadingIndicator(),
                             ),
                           ],
                         );

@@ -385,7 +385,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                 children: [
                                   SizedBox(height: 100),
                                   Center(
-                                    child: LoadingIndicator(color: Colors.white),
+                                    child: LoadingIndicator(),
                                   ),
                                 ],
                               );
@@ -788,7 +788,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
               );
             } else if (state is DetalleGaleriaLoading) {
               return const Center(
-                  child: LoadingIndicator(color: Colors.white));
+                  child: LoadingIndicator());
             } else if (state is DetalleGaleriaError) {
               return Center(child: Text(state.message));
             } else {
