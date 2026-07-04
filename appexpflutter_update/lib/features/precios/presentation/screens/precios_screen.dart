@@ -12,6 +12,8 @@ import 'package:appexpflutter_update/features/precios/domain/entities/producto_e
 import 'package:appexpflutter_update/features/shared/widgets/widgets.dart'
     show CustomFilledButton2;
 import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanning_animation.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_card_data.dart';
+import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_result_card.dart';
 
 class PreciosScreen extends StatelessWidget {
   const PreciosScreen({super.key});
@@ -64,6 +66,10 @@ class PreciosScreen extends StatelessWidget {
                               builder: (context, state) {
                                 if (state is PreciosLoading) {
                                   return const ScanningAnimation();
+                                } else if (state is PreciosFichaLoaded) {
+                                  // Misma ficha agrupada que en búsqueda global:
+                                  // todas las medidas del diseño escaneado.
+                                  return _buildFichaGlobal(state);
                                 } else if (state is PreciosLoaded) {
                                   double existencia = state.producto.bodega1 +
                                       state.producto.bodega2 +
@@ -194,6 +200,42 @@ class PreciosScreen extends StatelessWidget {
             ),
         ),
       ),
+    );
+  }
+
+  /// Ficha agrupada (idéntica a la de búsqueda global) para el producto
+  /// escaneado: agrupa por diseño, elige la card que contiene la clave
+  /// escaneada y arranca con esa medida activa.
+  Widget _buildFichaGlobal(PreciosFichaLoaded state) {
+    final cards = ProductoCardData.groupExpo(state.productos);
+    if (cards.isEmpty) return Container();
+
+    final claveL = state.producto.producto.trim().toUpperCase();
+    final claveC = state.producto.producto1.trim().toUpperCase();
+    bool esLaEscaneada(Variante v) =>
+        v.claveLarga.toUpperCase() == claveL ||
+        (claveC.isNotEmpty && v.claveCorta.toUpperCase() == claveC);
+
+    var cardIdx = cards.indexWhere((c) => c.variantes.any(esLaEscaneada));
+    if (cardIdx < 0) cardIdx = 0;
+    final card = cards[cardIdx];
+    var varIdx = card.variantes.indexWhere(esLaEscaneada);
+    if (varIdx < 0) varIdx = 0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ProductoResultCard(
+            key: ValueKey('ficha-$claveL'),
+            data: card,
+            initialVarianteIndex: varIdx,
+          ),
+        ),
+        const SizedBox(height: 5),
+      ],
     );
   }
 

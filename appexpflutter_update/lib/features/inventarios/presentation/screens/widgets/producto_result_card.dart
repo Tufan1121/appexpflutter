@@ -20,16 +20,22 @@ class ProductoResultCard extends HookWidget {
   final ProductoCardData data;
   final VoidCallback? onTap;
 
+  /// Variante (medida) pre-seleccionada al construir la card. Útil cuando se
+  /// llega desde un escaneo: la medida escaneada arranca activa.
+  final int initialVarianteIndex;
+
   const ProductoResultCard({
     super.key,
     required this.data,
     this.onTap,
+    this.initialVarianteIndex = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final activeIndex = useState(0);
+    final activeIndex =
+        useState(initialVarianteIndex.clamp(0, data.variantes.length - 1));
     final active = data.variantes[activeIndex.value];
 
     void openSheet() {

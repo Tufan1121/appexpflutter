@@ -20,6 +20,18 @@ class PreciosLoaded extends PreciosState {
   List<Object> get props => [producto];
 }
 
+/// Ficha agrupada estilo búsqueda global: el producto escaneado + todas las
+/// medidas del mismo diseño encontradas en gspock (existencia > 0).
+class PreciosFichaLoaded extends PreciosState {
+  final ProductoEntity producto;
+  final List<ProductoExpoEntity> productos;
+
+  const PreciosFichaLoaded({required this.producto, required this.productos});
+
+  @override
+  List<Object> get props => [producto, productos];
+}
+
 class PreciosRelativosLoaded extends PreciosState {
   final ProductoEntity producto;
   final List<ProductoEntity> productos;
