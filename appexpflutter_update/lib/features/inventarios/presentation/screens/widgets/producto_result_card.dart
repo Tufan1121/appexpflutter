@@ -110,8 +110,8 @@ class ProductoResultCard extends HookWidget {
                         data.diseno.isEmpty ? '—' : data.diseno,
                         style: TextStyle(
                           fontSize: 11,
-                          color: theme.textTheme.bodySmall?.color
-                              ?.withValues(alpha: 0.7),
+                          fontWeight: FontWeight.w500,
+                          color: theme.textTheme.bodyMedium?.color,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -122,8 +122,7 @@ class ProductoResultCard extends HookWidget {
                       '${data.variantes.length == 1 ? '' : 's'}',
                       style: TextStyle(
                         fontSize: 11,
-                        color: theme.textTheme.bodySmall?.color
-                            ?.withValues(alpha: 0.5),
+                        color: theme.textTheme.bodyMedium?.color,
                       ),
                     ),
                   ],
@@ -140,8 +139,7 @@ class ProductoResultCard extends HookWidget {
                       ].whereType<String>().join(' · '),
                       style: TextStyle(
                         fontSize: 10,
-                        color: theme.textTheme.bodySmall?.color
-                            ?.withValues(alpha: 0.55),
+                        color: theme.textTheme.bodyMedium?.color,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -192,8 +190,7 @@ class ProductoResultCard extends HookWidget {
                         style: GoogleFonts.firaMono(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: theme.textTheme.bodySmall?.color
-                              ?.withValues(alpha: 0.8),
+                          color: theme.textTheme.bodyLarge?.color,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -468,7 +465,7 @@ class _PriceFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final mutedColor = theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7);
+    final mutedColor = theme.textTheme.bodyMedium?.color;
 
     final precios = <({String label, int precio})>[
       (label: 'Normal', precio: variante.precio1),
