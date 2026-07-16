@@ -33,7 +33,7 @@ class ListaProductosExpo extends HookWidget {
                     FadeInImage.assetNetwork(
                       placeholder: 'assets/loaders/loading.gif',
                       image:
-                          'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(producto.pathima1)}',
+                          'https://tapetestufan.mx/imagen/${Uri.encodeFull(producto.pathima1)}',
                       width: 70,
                       height: 70,
                       fit: BoxFit.cover,

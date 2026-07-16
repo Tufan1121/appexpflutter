@@ -200,7 +200,7 @@ class ListaProductos extends HookWidget {
                                           'assets/loaders/loading.gif'),
                                       image: producto.pathima1.isNotEmpty
                                           ? NetworkImage(
-                                              'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(producto.pathima1)}',
+                                              'https://tapetestufan.mx/imagen/${Uri.encodeFull(producto.pathima1)}',
                                             )
                                           : const AssetImage(
                                                   'assets/images/no-image.jpg')

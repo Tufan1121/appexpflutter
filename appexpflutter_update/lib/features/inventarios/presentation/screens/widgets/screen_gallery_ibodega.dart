@@ -5,6 +5,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/shared/utils/screenshot_guard.dart';
 import 'package:precios/domain/entities/producto_entity.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -32,7 +33,8 @@ class FullScreenGalleryIBodegas extends StatefulWidget {
       _FullScreenGalleryIBodegasState();
 }
 
-class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
+class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas>
+    with ScreenshotBlock {
   final dio = Dio();
   late PageController _pageController;
   late int _currentIndex;
@@ -142,7 +144,7 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
 
-        final watermarkUrl = 'https://tapetestufan.mx:6007/add-watermark/';
+        final watermarkUrl = 'https://tapetestufan.mx:6008/add-watermark/';
 
         final response = await dio
             .post(
@@ -297,7 +299,7 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
                   builder: (context, index) {
                     return PhotoViewGalleryPageOptions(
                       imageProvider: NetworkImage(
-                        'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(widget.imageUrls[index])}',
+                        'https://tapetestufan.mx/imagen/${Uri.encodeFull(widget.imageUrls[index])}',
                       ),
                       initialScale: PhotoViewComputedScale.contained,
                       minScale: PhotoViewComputedScale.contained,

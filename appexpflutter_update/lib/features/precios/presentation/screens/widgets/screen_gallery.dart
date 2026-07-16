@@ -8,6 +8,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/shared/utils/screenshot_guard.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -27,7 +28,8 @@ class FullScreenGallery extends StatefulWidget {
   State<FullScreenGallery> createState() => _FullScreenGalleryState();
 }
 
-class _FullScreenGalleryState extends State<FullScreenGallery> {
+class _FullScreenGalleryState extends State<FullScreenGallery>
+    with ScreenshotBlock {
   final dio = Dio();
   late PageController _pageController;
   late int _currentIndex;
@@ -86,7 +88,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
 
-        final watermarkUrl = 'https://tapetestufan.mx:6007/add-watermark/';
+        final watermarkUrl = 'https://tapetestufan.mx:6008/add-watermark/';
 
         final response = await dio
             .post(
@@ -191,7 +193,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
             builder: (context, index) {
               return PhotoViewGalleryPageOptions(
                 imageProvider: NetworkImage(
-                  'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(widget.imageUrls[index])}',
+                  'https://tapetestufan.mx/imagen/${Uri.encodeFull(widget.imageUrls[index])}',
                 ),
                 initialScale: PhotoViewComputedScale.contained,
                 minScale: PhotoViewComputedScale.contained,

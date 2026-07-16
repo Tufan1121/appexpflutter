@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/inventarios/presentation/screens/widgets/producto_card_data.dart';
+import 'package:appexpflutter_update/features/shared/utils/screenshot_guard.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +46,9 @@ class ProductoDetalleSheet extends HookWidget {
     ProductoCardData data, {
     int initialVarianteIndex = 0,
   }) {
+    // Bloquea capturas mientras el detalle (con fotos) esté abierto; se
+    // libera al cerrar el sheet, sea por botón, atrás o tap fuera.
+    ScreenshotGuard.block();
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -55,7 +59,7 @@ class ProductoDetalleSheet extends HookWidget {
         data: data,
         initialVarianteIndex: initialVarianteIndex,
       ),
-    );
+    ).whenComplete(ScreenshotGuard.unblock);
   }
 
   @override
@@ -506,7 +510,7 @@ class _Lightbox extends StatefulWidget {
   State<_Lightbox> createState() => _LightboxState();
 }
 
-class _LightboxState extends State<_Lightbox> {
+class _LightboxState extends State<_Lightbox> with ScreenshotBlock {
   late final PageController _controller;
   late int _index;
 
@@ -1146,7 +1150,7 @@ class _InventarioList extends StatelessWidget {
 }
 
 String _urlFoto(String path) =>
-    'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(path)}';
+    'https://tapetestufan.mx/imagen/${Uri.encodeFull(path)}';
 
 /// Descarga la imagen con marca de agua del backend y abre la hoja nativa
 /// de compartir. Visible para que la usen el sheet y el lightbox.
@@ -1182,7 +1186,7 @@ Future<void> compartirFoto(BuildContext context, String imageUrl) async {
     final token = await storage.read(key: 'accessToken');
     final originalUrl = 'https://tapetestufan.mx/imagen/$imageUrl';
     final response = await dio.post(
-      'https://tapetestufan.mx:6007/add-watermark/',
+      'https://tapetestufan.mx:6008/add-watermark/',
       queryParameters: {'image_url': originalUrl},
       options: Options(
         responseType: ResponseType.bytes,

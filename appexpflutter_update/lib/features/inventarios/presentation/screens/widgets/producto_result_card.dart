@@ -204,6 +204,11 @@ class _Thumb extends StatelessWidget {
   final VoidCallback onVisualizar;
   const _Thumb({required this.data, required this.onVisualizar});
 
+  // Botón "Ver en mi espacio" oculto a petición del usuario (jul 2026).
+  // Se conserva todo el flujo (VisualizarTapete) por si se reactiva:
+  // basta con volver a poner esto en true.
+  static const _mostrarVisualizador = false;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -224,7 +229,7 @@ class _Thumb extends StatelessWidget {
                 : FadeInImage.assetNetwork(
                     placeholder: 'assets/loaders/loading.gif',
                     image:
-                        'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(firstFoto)}',
+                        'https://tapetestufan.mx/imagen/${Uri.encodeFull(firstFoto)}',
                     fit: BoxFit.cover,
                     imageErrorBuilder: (_, __, ___) => Image.asset(
                       'assets/images/no-image.jpg',
@@ -241,7 +246,7 @@ class _Thumb extends StatelessWidget {
         // Botón "Ver en mi espacio" (visualizar tapete con foto del cliente).
         // Solo se muestra si el tapete tiene imagen (pahima1 != ""): sin
         // foto del catálogo no hay nada que combinar con Gemini.
-        if (firstFoto != null)
+        if (_mostrarVisualizador && firstFoto != null)
           Positioned(
             top: 6,
             right: 6,

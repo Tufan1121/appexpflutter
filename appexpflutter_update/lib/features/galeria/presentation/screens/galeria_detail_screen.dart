@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_galeria/detalle_galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle_producto/detalle_producto_bloc.dart';
+import 'package:appexpflutter_update/features/shared/utils/screenshot_guard.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,8 @@ class GaleriaDetailScreen extends StatefulWidget {
   State<GaleriaDetailScreen> createState() => _GaleriaDetailScreenState();
 }
 
-class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
+class _GaleriaDetailScreenState extends State<GaleriaDetailScreen>
+    with ScreenshotBlock {
   final dio = Dio();
   late PageController _pageController;
   late int _currentIndex;
@@ -110,7 +112,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
         const storage = FlutterSecureStorage();
         final token = await storage.read(key: 'accessToken');
 
-        final watermarkUrl = 'https://tapetestufan.mx:6007/add-watermark/';
+        final watermarkUrl = 'https://tapetestufan.mx:6008/add-watermark/';
 
         final response = await dio
             .post(
@@ -453,7 +455,7 @@ class _GaleriaDetailScreenState extends State<GaleriaDetailScreen> {
                                           builder: (context, index) {
                                             return PhotoViewGalleryPageOptions(
                                               imageProvider: NetworkImage(
-                                                'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(imageUrls[index])}',
+                                                'https://tapetestufan.mx/imagen/${Uri.encodeFull(imageUrls[index])}',
                                               ),
                                               initialScale:
                                                   PhotoViewComputedScale
@@ -797,7 +799,7 @@ class _FotoCarouselState extends State<_FotoCarousel> {
               physics: const BouncingScrollPhysics(),
               itemBuilder: (_, i) => FadeInImage(
                 image: NetworkImage(
-                    'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(widget.fotos[i])}'),
+                    'https://tapetestufan.mx/imagen/${Uri.encodeFull(widget.fotos[i])}'),
                 placeholder: const AssetImage('assets/loaders/loading.gif'),
                 fit: BoxFit.contain,
                 width: double.infinity,

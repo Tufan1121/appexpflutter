@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:api_client/api_client.dart' show Environment;
+import 'package:appexpflutter_update/features/shared/utils/screenshot_guard.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -242,6 +243,9 @@ class VisualizarTapete {
 
   static void _mostrarResultado(
       BuildContext context, Uint8List bytes, String titulo) {
+    // Bloquea capturas mientras el resultado esté visible; se libera al
+    // cerrar el diálogo (whenComplete cubre cierre por botón y por atrás).
+    ScreenshotGuard.block();
     showDialog(
       context: context,
       builder: (ctx) {
@@ -323,7 +327,7 @@ class VisualizarTapete {
           ),
         );
       },
-    );
+    ).whenComplete(ScreenshotGuard.unblock);
   }
 
   /// Guarda la imagen generada en la carpeta de descargas pública.

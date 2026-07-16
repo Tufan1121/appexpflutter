@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/features/galeria/presentation/blocs/detalle
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/screens/galeria_detail_screen.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/screens/widgets/search_gallery.dart';
+import 'package:appexpflutter_update/features/shared/utils/screenshot_guard.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,7 @@ class GaleriaScreen extends StatefulWidget {
   State<GaleriaScreen> createState() => _GaleriaScreenState();
 }
 
-class _GaleriaScreenState extends State<GaleriaScreen> {
+class _GaleriaScreenState extends State<GaleriaScreen> with ScreenshotBlock {
   final ScrollController _scrollController = ScrollController();
   int _page = 1; // Página o límite inicial
   bool _isLoadingMore = false; // Control del indicador de carga adicional
@@ -221,7 +222,7 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                                               const Duration(milliseconds: 300),
                                           fit: BoxFit.contain,
                                           image: NetworkImage(
-                                            'https://tapetestufan.mx:446/imagen/${Uri.encodeFull(galeria.pathima1)}',
+                                            'https://tapetestufan.mx/imagen/${Uri.encodeFull(galeria.pathima1)}',
                                           ),
                                         ),
                                       ),
