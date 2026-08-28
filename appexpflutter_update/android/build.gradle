@@ -7,7 +7,13 @@ allprojects {
 
 rootProject.buildDir = "../build"
 subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    // Solo redirigir el buildDir cuando el subproyecto vive en la misma unidad
+    // que el buildDir raiz. Los plugins del pub cache estan en C: y el proyecto
+    // en F:, y AGP truena al relativizar rutas entre unidades distintas
+    // ("this and base files have different roots").
+    if (project.projectDir.toPath().root == rootProject.buildDir.toPath().root) {
+        project.buildDir = "${rootProject.buildDir}/${project.name}"
+    }
 }
 subprojects {
     project.evaluationDependsOn(":app")

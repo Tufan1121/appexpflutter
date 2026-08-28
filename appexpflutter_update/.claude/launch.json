@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "flutter-web",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8080"],
+      "port": 8080
+    },
+    {
+      "name": "api-expo",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "mainExpo:app", "--app-dir", "F:/python/apidev", "--port", "6002", "--reload"],
+      "port": 6002
+    },
+    {
+      "name": "api-tienda",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "mainTienda:app", "--app-dir", "F:/python/apidev", "--port", "6003", "--reload"],
+      "port": 6003
+    },
+    {
+      "name": "api-promos",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "mainPromos:app", "--app-dir", "F:/python/apidev", "--port", "6007", "--reload"],
+      "port": 6007
+    }
+  ]
+}
