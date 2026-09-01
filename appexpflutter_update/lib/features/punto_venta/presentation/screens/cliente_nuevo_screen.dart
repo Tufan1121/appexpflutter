@@ -33,12 +33,14 @@ class ClienteNuevoVentaScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: SizedBox(
-                      height: 410,
+                      // Altura para dar cabida al botón de cliente existente;
+                      // el contenido interno sigue siendo scrolleable.
+                      height: 500,
                       child: Card(
                     child: Scrollbar(
                       child: SingleChildScrollView(
                         child: SizedBox(
-                          height: size.height * 0.70,
+                          height: size.height * 0.85,
                           child: const Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [

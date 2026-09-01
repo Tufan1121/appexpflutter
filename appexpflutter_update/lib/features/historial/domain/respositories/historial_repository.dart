@@ -13,6 +13,9 @@ abstract interface class HistorialRepository {
       getHistorialSesion(String parameter);
   Future<Either<NetworkException, List<DetalleSesionEntity>>>
       getHistorialDetalleSesion(String idSesion);
+
+  /// Envío cotizado guardado con la sesión (0 si no tiene).
+  Future<Either<NetworkException, double>> getEnvioSesion(String idSesion);
   Future<Either<NetworkException, List<HistorialCotizaEntity>>>
       getHistorialCotiza(String parameter);
 

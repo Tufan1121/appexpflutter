@@ -1,5 +1,7 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
+import 'package:appexpflutter_update/config/miles_input_formatter.dart';
+import 'package:appexpflutter_update/config/utils/limite_importe_formatter.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/historial/historial_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
@@ -74,6 +76,64 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     return metodosDePago.indexOf(metodo) + 1;
   }
 
+  /// Tolerancia para comparar importes (evita falsos positivos por redondeo).
+  static const double _tolerancia = 0.01;
+
+  double _anticipoDe(String controlName) {
+    final valor = form.control(controlName).value;
+    if (valor is num) return valor.toDouble();
+    return 0.0;
+  }
+
+  /// Suma de los anticipos capturados, opcionalmente sin uno de los campos.
+  double sumaAnticipos({String? excepto}) {
+    double suma = 0.0;
+    for (final control in const [
+      'anticipoPago1',
+      'anticipoPago2',
+      'anticipoPago3'
+    ]) {
+      if (control == excepto) continue;
+      suma += _anticipoDe(control);
+    }
+    return suma;
+  }
+
+  /// Máximo que se puede capturar en un campo de pago: lo que falta por pagar
+  /// considerando lo ya capturado en los otros dos campos.
+  double maximoCapturable(String controlName) {
+    final restante =
+        UtilsVenta.totalWithShipping - sumaAnticipos(excepto: controlName);
+    return restante > 0 ? restante : 0.0;
+  }
+
+  /// Marca de tiempo del último aviso de límite, para no saturar de snackbars
+  /// mientras el usuario sigue tecleando.
+  DateTime? _ultimoAvisoLimite;
+
+  void _avisarLimite(BuildContext context, double maximo) {
+    final ahora = DateTime.now();
+    if (_ultimoAvisoLimite != null &&
+        ahora.difference(_ultimoAvisoLimite!) < const Duration(seconds: 2)) {
+      return;
+    }
+    _ultimoAvisoLimite = ahora;
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+              'El pago no puede exceder lo que falta por pagar: ${Utils.formatPrice(maximo)}'),
+          backgroundColor: Colors.orange,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+  }
+
+  /// Evita que un doble toque en GUARDAR genere dos tickets: el estado
+  /// de carga del bloc llega un microtask después del primer toque.
+  bool _enviando = false;
+
   final String username = '';
 
   @override
@@ -101,10 +161,24 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
     }, [totalAPagar]);
 
     useEffect(() {
-      // Pre-llenar observaciones con detalles de envío si hay
+      // Pre-llenar observaciones con envío y descuentos autorizados, para que
+      // quede rastro en el registro.
+      final notas = <String>[];
       if (UtilsVenta.hasShipping) {
-        String envioInfo = 'Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}';
-        form.control('observaciones').value = envioInfo;
+        notas.add('Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}');
+      }
+      if (UtilsVenta.descuentoGeneral > 0) {
+        notas.add(
+            'Desc. general: ${UtilsVenta.descuentoGeneral.toStringAsFixed(2)}%');
+      }
+      if (UtilsVenta.descuentosPorClave.isNotEmpty) {
+        final porPartida = UtilsVenta.descuentosPorClave.entries
+            .map((e) => '${e.key} -${e.value.toStringAsFixed(2)}%')
+            .join(', ');
+        notas.add('Desc. partida: $porPartida');
+      }
+      if (notas.isNotEmpty) {
+        form.control('observaciones').value = notas.join(' | ');
       }
 
       form
@@ -215,13 +289,23 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
                                       children: [
-                                        const Text('Debe por pagar'),
+                                        Text(debePorPagar.value < -_tolerancia
+                                            ? 'Cobro de más'
+                                            : 'Debe por pagar'),
                                         Text(
-                                          Utils.formatPrice(debePorPagar.value),
+                                          Utils.formatPrice(
+                                              debePorPagar.value.abs()),
                                           style: const TextStyle(
                                               color: Colors.red,
                                               fontWeight: FontWeight.bold),
                                         ),
+                                        if (debePorPagar.value < -_tolerancia)
+                                          const Text(
+                                            'El pago excede el total',
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                color: Colors.red),
+                                          ),
                                       ],
                                     ),
                                   ],
@@ -291,6 +375,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                               }
                               if (state is PedidoDetalleLoaded) {
                                 loading.value = false;
+                                _enviando = false;
                                 debePorPagar.value = 0.0;
 
                                 ScaffoldMessenger.of(context)
@@ -335,6 +420,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                                 UtilsVenta.clearAll();
                               } else if (state is PedidoError) {
                                 loading.value = false;
+                                _enviando = false;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(state.message),
@@ -445,11 +531,15 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                     form.control(controlNameTerminal).reset();
 
                     // Si el pago es con tarjeta (04 Crédito / 28 Débito),
-                    // pre-llenar el monto con el total a pagar.
+                    // pre-llenar con lo que FALTA por pagar, no con el total:
+                    // al elegir tarjeta en el 2º o 3º método se volvía a poner
+                    // el total completo y se cobraba dos o tres veces.
                     final metodo = control.value ?? '';
                     if (metodo.contains('04') || metodo.contains('28')) {
+                      final restante = UtilsVenta.totalWithShipping -
+                          sumaAnticipos(excepto: controlNameTextField);
                       form.control(controlNameTextField).value =
-                          UtilsVenta.totalWithShipping;
+                          restante > 0 ? restante : 0.0;
                     }
                   },
                 ),
@@ -664,19 +754,34 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
                 child: ReactiveTextField(
                   formControlName: controlNameTextField,
                   validationMessages: validationMessages,
-                  decoration: const InputDecoration(
+                  // Traduce el texto con comas (36,980.00) al double del form.
+                  valueAccessor: MilesValueAccessor(),
+                  decoration: InputDecoration(
                       hintText: 'Anticipo o Pago',
-                      prefixIcon: Padding(
+                      helperText:
+                          'Máximo ${Utils.formatPrice(maximoCapturable(controlNameTextField))}',
+                      helperStyle: const TextStyle(fontSize: 11),
+                      prefixIcon: const Padding(
                         padding:
                             EdgeInsets.only(top: 15.0, left: 15.0, right: 5.0),
                         child:
                             Text('\$', style: TextStyle(color: Colors.black)),
                       ),
                       suffixText: 'MXN',
-                      contentPadding:
-                          EdgeInsets.only(top: 15.0, left: 15.0, right: 5.0),
+                      contentPadding: const EdgeInsets.only(
+                          top: 15.0, left: 15.0, right: 5.0),
                       alignLabelWithHint: true),
                   keyboardType: TextInputType.number,
+                  // No deja teclear un importe que exceda lo que falta por pagar.
+                  inputFormatters: [
+                    // Formato de miles en vivo (99,999,999.99)...
+                    const MilesInputFormatter(),
+                    // ...y tope de captura sobre el texto ya formateado.
+                    LimiteImporteFormatter(
+                      () => maximoCapturable(controlNameTextField),
+                      onRechazado: (maximo) => _avisarLimite(context, maximo),
+                    ),
+                  ],
                   readOnly: enable.value,
                 ),
               ),
@@ -690,6 +795,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
 
   void _submitForm() {
     FocusScope.of(context).unfocus();
+    if (_enviando) return;
     if (form.valid) {
       // Maneja el envío del formulario
       final metodo1 = form.control('metodoDePago1').value != null
@@ -769,6 +875,34 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       }
 
       final totalAnticipos = anticipoPago + anticipoPago2 + anticipoPago3;
+      final totalAPagar = UtilsVenta.totalWithShipping;
+
+      // El cobro nunca puede exceder el total del ticket.
+      if (totalAnticipos - totalAPagar > _tolerancia) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'El pago (${Utils.formatPrice(totalAnticipos)}) no puede ser mayor '
+                'al total a pagar (${Utils.formatPrice(totalAPagar)}). '
+                'Sobran ${Utils.formatPrice(totalAnticipos - totalAPagar)}.'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        return;
+      }
+
+      if (anticipoPago < 0 || anticipoPago2 < 0 || anticipoPago3 < 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Los importes de pago no pueden ser negativos.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 4),
+          ),
+        );
+        return;
+      }
+
       // Obtener información de cuentas y terminales desde el estado del Bloc
       final paymentInfoState = context.read<PaymentInfoBloc>().state;
       
@@ -887,8 +1021,9 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       print(data);
       print('═══════════════════════════════════════════════════════════════');
 
+      _enviando = true;
       context.read<PedidoVentaBloc>().add(
-          PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
+          PedidoAddEvent(data: data, products: List.of(UtilsVenta.listProductsOrder)));
       // if (widget.idSesion != 0 && widget.idSesion != null) {
       //   context
       //       .read<SesionPedidoBloc>()

@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/screen_utils.dart';
+import 'package:appexpflutter_update/config/utils/limite_importe_formatter.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/inventario/inventario_bloc.dart';
@@ -73,7 +74,64 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
     return metodosDePago.indexOf(metodo) + 1;
   }
 
-  final totalAPagar = UtilsVenta.total;
+  /// Tolerancia para comparar importes (evita falsos positivos por redondeo).
+  static const double _tolerancia = 0.01;
+
+  /// Evita que un doble toque en GUARDAR genere dos registros: el estado
+  /// de carga del bloc llega un microtask despues del primer toque.
+  bool _enviando = false;
+
+  double _anticipoDe(String controlName) {
+    final valor = form.control(controlName).value;
+    if (valor is num) return valor.toDouble();
+    return 0.0;
+  }
+
+  /// Suma de los anticipos capturados, opcionalmente sin uno de los campos.
+  double sumaAnticipos({String? excepto}) {
+    double suma = 0.0;
+    for (final control in const [
+      'anticipoPago1',
+      'anticipoPago2',
+      'anticipoPago3'
+    ]) {
+      if (control == excepto) continue;
+      suma += _anticipoDe(control);
+    }
+    return suma;
+  }
+
+  /// Máximo que se puede capturar en un campo de pago: lo que falta por pagar
+  /// considerando lo ya capturado en los otros dos campos.
+  double maximoCapturable(String controlName) {
+    final restante = UtilsVenta.totalWithShipping - sumaAnticipos(excepto: controlName);
+    return restante > 0 ? restante : 0.0;
+  }
+
+  /// Marca de tiempo del último aviso de límite, para no saturar de snackbars
+  /// mientras el usuario sigue tecleando.
+  DateTime? _ultimoAvisoLimite;
+
+  void _avisarLimite(BuildContext context, double maximo) {
+    final ahora = DateTime.now();
+    if (_ultimoAvisoLimite != null &&
+        ahora.difference(_ultimoAvisoLimite!) < const Duration(seconds: 2)) {
+      return;
+    }
+    _ultimoAvisoLimite = ahora;
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+              'El pago no puede exceder lo que falta por pagar: ${Utils.formatPrice(maximo)}'),
+          backgroundColor: Colors.orange,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+  }
+
+  final totalAPagar = UtilsVenta.totalWithShipping;
 
   // Future<void> _openPDF(String pdfUrl) async {
   //   try {
@@ -121,7 +179,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
       final anticipoPago2 = form.control('anticipoPago2').value ?? 0.0;
       final anticipoPago3 = form.control('anticipoPago3').value ?? 0.0;
       final totalAnticipo = anticipoPago1 + anticipoPago2 + anticipoPago3;
-      debePorPagar.value = totalAPagar - totalAnticipo;
+      debePorPagar.value = UtilsVenta.totalWithShipping - totalAnticipo;
     }
 
     useEffect(() {
@@ -183,13 +241,23 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text('Total a pagar'),
+                                      Text(UtilsVenta.hasShipping
+                                          ? 'Total (incluye envío)'
+                                          : 'Total a pagar'),
                                       Text(
-                                        Utils.formatPrice(UtilsVenta.total),
+                                        Utils.formatPrice(
+                                            UtilsVenta.totalWithShipping),
                                         style: const TextStyle(
                                             color: Colors.purple,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                      if (UtilsVenta.hasShipping)
+                                        Text(
+                                          'Envío: ${Utils.formatPrice(UtilsVenta.shippingCost)}',
+                                          style: const TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey),
+                                        ),
                                     ],
                                   ),
                                   Column(
@@ -291,6 +359,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                       }
                                       if (state is PedidoDetalleSesionLoaded) {
                                         loading.value = false;
+                                        _enviando = false;
                                         debePorPagar.value = 0.0;
 
                                         ScaffoldMessenger.of(context)
@@ -333,6 +402,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                         HomeRoute().go(context);
                                       } else if (state is PedidoSesionError) {
                                         loading.value = false;
+                                        _enviando = false;
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
@@ -558,19 +628,29 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                 child: ReactiveTextField(
                   formControlName: controlNameTextField,
                   validationMessages: validationMessages,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       hintText: 'Anticipo o Pago',
-                      prefixIcon: Padding(
+                      helperText:
+                          'Máximo ${Utils.formatPrice(maximoCapturable(controlNameTextField))}',
+                      helperStyle: const TextStyle(fontSize: 11),
+                      prefixIcon: const Padding(
                         padding:
                             EdgeInsets.only(top: 15.0, left: 15.0, right: 5.0),
                         child:
                             Text('\$', style: TextStyle(color: Colors.black)),
                       ),
                       suffixText: 'MXN',
-                      contentPadding:
-                          EdgeInsets.only(top: 15.0, left: 15.0, right: 5.0),
+                      contentPadding: const EdgeInsets.only(
+                          top: 15.0, left: 15.0, right: 5.0),
                       alignLabelWithHint: true),
                   keyboardType: TextInputType.number,
+                  // No deja teclear un importe que exceda lo que falta por pagar.
+                  inputFormatters: [
+                    LimiteImporteFormatter(
+                      () => maximoCapturable(controlNameTextField),
+                      onRechazado: (maximo) => _avisarLimite(context, maximo),
+                    ),
+                  ],
                   readOnly: enable.value,
                 ),
               ),
@@ -583,6 +663,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
 
   void _submitForm() {
     FocusScope.of(context).unfocus();
+    if (_enviando) return;
     if (form.valid) {
       // Maneja el envío del formulario
       final metodo1 = form.control('metodoDePago1').value != null
@@ -660,7 +741,35 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
         return;
       }
 
-      final totalAPagar = anticipoPago + anticipoPago2 + anticipoPago3;
+      final totalAnticipos = anticipoPago + anticipoPago2 + anticipoPago3;
+      final totalDeLaSesion = UtilsVenta.totalWithShipping;
+
+      // El cobro nunca puede exceder el total de la sesión.
+      if (totalAnticipos - totalDeLaSesion > _tolerancia) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'El pago (${Utils.formatPrice(totalAnticipos)}) no puede ser mayor '
+                'al total a pagar (${Utils.formatPrice(totalDeLaSesion)}). '
+                'Sobran ${Utils.formatPrice(totalAnticipos - totalDeLaSesion)}.'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        return;
+      }
+
+      if (anticipoPago < 0 || anticipoPago2 < 0 || anticipoPago3 < 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Los importes de pago no pueden ser negativos.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 4),
+          ),
+        );
+        return;
+      }
+
       // Obtener información de cuentas y terminales desde el estado del Bloc
       final paymentInfoState = context.read<PaymentInfoBloc>().state;
       
@@ -710,7 +819,11 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
         'anticipo': anticipoPago,
         'anticipo2': anticipoPago2,
         'anticipo3': anticipoPago3,
-        'total_pagar': totalAPagar,
+        // Total real de la sesión (antes se mandaba la suma de anticipos).
+        'total_pagar': totalDeLaSesion,
+        // Envío cotizado: el backend lo guarda como partida ENVIO del detalle
+        // para poder restaurarlo al recargar la sesión.
+        'envio': UtilsVenta.shippingCost,
         'entregado': entregado,
         'id_metodopago2': metodo2,
         'banco2': cuenta2?.banco ?? terminal2?.banco ?? '',
@@ -768,8 +881,9 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
       print(data);
       print('═══════════════════════════════════════════════════════════════');
 
+      _enviando = true;
       context.read<SesionPedidoBloc>().add(PedidoAddSesionEvent(
-          data: data, products: UtilsVenta.listProductsOrder));
+          data: data, products: List.of(UtilsVenta.listProductsOrder)));
     } else {
       form.markAllAsTouched();
     }

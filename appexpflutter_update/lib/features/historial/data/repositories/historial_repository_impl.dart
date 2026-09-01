@@ -76,6 +76,19 @@ class HistorialRepositoryImpl implements HistorialRepository {
   }
 
   @override
+  Future<Either<NetworkException, double>> getEnvioSesion(
+      String idSesion) async {
+    try {
+      final envio = await historialDataSource.getEnvioSesion(idSesion);
+      return Right(envio);
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
   Future<Either<NetworkException, ProductoEntity>> getProductInfo(
       String productKey) async {
     try {

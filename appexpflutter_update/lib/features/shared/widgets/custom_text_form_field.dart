@@ -20,6 +20,9 @@ class CustomReactiveTextField extends StatefulWidget {
   final TextStyle? hintStyle;
   final TextStyle? errorStyle;
 
+  /// characters = el teclado escribe directo en mayúsculas (shift fijo).
+  final TextCapitalization textCapitalization;
+
   const CustomReactiveTextField({
     super.key,
     this.label,
@@ -38,6 +41,7 @@ class CustomReactiveTextField extends StatefulWidget {
     this.readOnly = false,
     this.hintStyle,
     this.errorStyle,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -102,6 +106,7 @@ class _CustomReactiveTextFieldState extends State<CustomReactiveTextField> {
             readOnly: widget.readOnly,
             obscureText: widget.obscureText,
             keyboardType: widget.keyboardType,
+            textCapitalization: widget.textCapitalization,
             formControlName: widget.formControlName,
             inputFormatters: widget.inputFormatters,
             onSubmitted: widget.onSubmitted,

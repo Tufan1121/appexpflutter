@@ -7,12 +7,16 @@ class DetallePedidoEntity extends Equatable {
   final int cantidad;
   final double precio;
 
+  /// Observaciones opcionales de la partida (columna `observa` en backend).
+  final String observa;
+
   const DetallePedidoEntity({
     required this.idPedido,
     required this.clave,
     required this.clave2,
     required this.cantidad,
     required this.precio,
+    this.observa = '',
   });
 
   @override
@@ -22,5 +26,6 @@ class DetallePedidoEntity extends Equatable {
         clave2,
         cantidad,
         precio,
+        observa,
       ];
 }

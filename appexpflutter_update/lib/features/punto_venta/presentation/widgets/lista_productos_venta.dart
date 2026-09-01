@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/detalle_pedido_entity.dart';
+import 'package:appexpflutter_update/config/primera_mayuscula_formatter.dart';
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
+import 'package:appexpflutter_update/features/shared/widgets/descuento_dialog.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/shipping_quote_modal_v2.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/product_shipping_info.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -19,109 +23,76 @@ class ListaProductosVenta extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final total = useState<double>(0.0);
-    final shippingCost = useState<double>(UtilsVenta.shippingCost);
-    print('🔴 [ListaProductosVenta] build() - UtilsVenta.shippingCost=${UtilsVenta.shippingCost}, shippingCost.value=${shippingCost.value}, UtilsVenta.total=${UtilsVenta.total}');
+    // Se incrementa al cambiar una cantidad, un precio o el envío: obliga a
+    // reconstruir y, con ello, a recalcular el total y el detalle.
+    final revision = useState<int>(0);
 
-    // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
-    final countList = useState<List<int>>(List.filled(productos.length, 1));
-    final selectedPriceList =
-        useState<List<int>>(List.filled(productos.length, 1));
+    // Las cantidades y los precios viven en UtilsVenta indexados por clave, no
+    // en hooks locales: el bloc emite ProductoLoading cada vez que se escanea
+    // un producto, lo que desmonta este widget y borraba el estado local
+    // (todo volvía a cantidad 1 y a "Precio de Lista", el más caro).
 
-    void updateTotal() {
-      double newTotal = 0.0;
-      UtilsVenta.listProductsOrder.clear();
-      int totalItems = 0;
-
-      for (var i = 0; i < productos.length; i++) {
-        if (i >= countList.value.length ||
-            i >= selectedPriceList.value.length) {
-          continue; // Evita acceder fuera de los límites de las listas
-        }
-
-        final count = countList.value[i];
-        final selectedPrice = selectedPriceList.value[i];
-
-        if (count > 0) {
-          totalItems += count;
-          double precioUnitario = 0.0;
-          switch (selectedPrice) {
-            case 1:
-              precioUnitario = productos[i].precio1.toDouble();
-              break;
-            case 2:
-              precioUnitario = productos[i].precio2?.toDouble() ?? 0.0;
-              break;
-            default:
-              break;
-          }
-          final subtotal = precioUnitario * count;
-          newTotal += subtotal;
-          UtilsVenta.listProductsOrder.add(
-            DetallePedidoEntity(
-              idPedido: 0,
-              clave: productos[i].producto1,
-              clave2: productos[i].producto,
-              cantidad: count,
-              precio: precioUnitario,
-            ),
-          );
-        }
-      }
-      total.value = newTotal;
-      UtilsVenta.total = total.value;
-      
-      // Forzar redraw
-      shippingCost.value = UtilsVenta.shippingCost;
-      print('🟢 [ListaProductosVenta] updateTotal() - subtotal: ${total.value}, UtilsVenta.shippingCost: ${UtilsVenta.shippingCost}, UtilsVenta.totalWithShipping: ${UtilsVenta.totalWithShipping}, shippingCost.value: ${shippingCost.value}');
+    double precioUnitarioDe(ProductoExpoEntity producto) {
+      return UtilsVenta.precioSeleccionadoDe(producto.producto1) == 2
+          ? (producto.precio2?.toDouble() ?? 0.0)
+          : producto.precio1.toDouble();
     }
 
-    useEffect(() {
-      updateTotal(); // Initial calculation
-      // NO limpiar el envío aquí al desmontar el widget
-      // El envío se limpia solo cuando se guarda exitosamente o se cancela el pedido completo
-      return null; 
-    }, [countList.value, selectedPriceList.value]);
+    // El total y el detalle que se manda al backend se calculan en cada build a
+    // partir de lo que está en pantalla: nunca pueden quedar desfasados.
+    // subtotalBase: sin descuentos. subtotalConPartidas: solo descuentos por
+    // partida (base para convertir un monto general a %). subtotal: final.
+    double subtotalBase = 0.0;
+    double subtotalConPartidas = 0.0;
+    double subtotal = 0.0;
+    UtilsVenta.listProductsOrder.clear();
+    for (final producto in productos) {
+      final clave = producto.producto1;
+      final cantidad = UtilsVenta.cantidadDe(clave);
+      final precioBase = precioUnitarioDe(producto);
+      final precioUnitario = UtilsVenta.aplicarDescuentos(clave, precioBase);
+      subtotalBase += precioBase * cantidad;
+      subtotalConPartidas +=
+          precioBase * (1 - UtilsVenta.descuentoDe(clave) / 100) * cantidad;
+      subtotal += precioUnitario * cantidad;
+      UtilsVenta.listProductsOrder.add(
+        DetallePedidoEntity(
+          idPedido: 0,
+          clave: clave,
+          clave2: producto.producto,
+          cantidad: cantidad,
+          precio: precioUnitario,
+          observa: UtilsVenta.observaDe(clave),
+        ),
+      );
+    }
+    UtilsVenta.total = subtotal;
 
-    // Recalcular total cuando cambian los datos de los productos (ej: precio manual)
-    final productPricesKey = productos.map((p) => '${p.producto1}:${p.precio2}').join(',');
-    useEffect(() {
+    final envio = UtilsVenta.shippingCost;
+
+    // Fuerza un nuevo build (y con él, el recálculo de arriba).
+    void updateTotal() => revision.value++;
+
+    // Descuento general autorizado: se captura por % o por monto y el
+    // prorrateo entre partidas es automático.
+    Future<void> abrirDialogoDescuento() async {
+      final resultado = await mostrarDialogoDescuento(
+        context,
+        subtotalActual: subtotalConPartidas,
+        descuentoActualPct: UtilsVenta.descuentoGeneral,
+      );
+      if (resultado == null || !context.mounted) return;
+      UtilsVenta.descuentoGeneral = resultado.quitar ? 0 : resultado.porcentaje;
       updateTotal();
-      return null;
-    }, [productPricesKey]);
-
-    useEffect(() {
-      // Actualizar countList y selectedPriceList cuando cambia la longitud de los productos
-      final newCountList = List<int>.from(countList.value);
-      final newSelectedPriceList = List<int>.from(selectedPriceList.value);
-
-      // Ajusta la longitud de las listas
-      if (newCountList.length < productos.length) {
-        newCountList.addAll(
-            List<int>.filled(productos.length - newCountList.length, 1));
-        newSelectedPriceList.addAll(List<int>.filled(
-            productos.length - newSelectedPriceList.length, 1));
-      } else if (newCountList.length > productos.length) {
-        newCountList.removeRange(productos.length, newCountList.length);
-        newSelectedPriceList.removeRange(
-            productos.length, newSelectedPriceList.length);
-      }
-
-      countList.value = newCountList;
-      selectedPriceList.value = newSelectedPriceList;
-      updateTotal();
-      return null;
-    }, [productos.length]);
+    }
 
     // Construye la lista de productos con dimensiones para cotización
     // Usa las dimensiones del producto y estima el peso basado en el área
     List<ProductShippingInfo> buildProductsForQuote() {
       final List<ProductShippingInfo> result = [];
       
-      for (int i = 0; i < productos.length; i++) {
-        if (i < countList.value.length && countList.value[i] > 0) {
-          final producto = productos[i];
-          
+      for (final producto in productos) {
+
           // DEBUG: Imprimir valores originales del producto
           print('═══════════════════════════════════════════════════════════════');
           print('🔍 [PUNTO VENTA] buildProductsForQuote - Producto: ${producto.producto1}');
@@ -189,9 +160,8 @@ class ListaProductosVenta extends HookWidget {
             ancho: ancho,
             alto: alto,
             peso: peso,
-            cantidad: countList.value[i],
+            cantidad: UtilsVenta.cantidadDe(producto.producto1),
           ));
-        }
       }
       return result;
     }
@@ -211,8 +181,60 @@ class ListaProductosVenta extends HookWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Subtotal:', style: GoogleFonts.inter(fontSize: 14)),
-                    Text(Utils.formatPrice(total.value), style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold)),
+                    Text(Utils.formatPrice(subtotalBase), style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold)),
                   ],
+                ),
+                // Descuento general: área resaltada para que no pase
+                // desapercibida entre los totales.
+                Container(
+                  margin: const EdgeInsets.only(top: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colores.secondaryColor.withOpacity(
+                        UtilsVenta.descuentoGeneral > 0 ? 0.14 : 0.06),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colores.secondaryColor.withOpacity(0.5),
+                      width: UtilsVenta.descuentoGeneral > 0 ? 1.4 : 1,
+                    ),
+                  ),
+                  child: InkWell(
+                    onTap: abrirDialogoDescuento,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.percent,
+                                size: 16, color: Colores.secondaryColor),
+                            const SizedBox(width: 6),
+                            Text(
+                              UtilsVenta.descuentoGeneral > 0
+                                  ? 'Descuento general: ${UtilsVenta.descuentoGeneral.toStringAsFixed(2)}%'
+                                  : 'Aplicar descuento',
+                              style: const TextStyle(
+                                  color: Colores.secondaryColor,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          ],
+                        ),
+                        if (UtilsVenta.hayDescuento)
+                          Text(
+                            '-${Utils.formatPrice(subtotalBase - subtotal)}',
+                            style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green),
+                          )
+                        else
+                          const Icon(Icons.chevron_right,
+                              size: 18, color: Colores.secondaryColor),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -220,8 +242,7 @@ class ListaProductosVenta extends HookWidget {
                   children: [
                     ElevatedButton.icon(
                       onPressed: () {
-                         int totalCount = countList.value.fold(0, (sum, item) => sum + item);
-                         if (totalCount == 0 && productos.isEmpty) {
+                         if (productos.isEmpty) {
                            ScaffoldMessenger.of(context).showSnackBar(
                              const SnackBar(content: Text('Agrega productos para cotizar envío')),
                            );
@@ -237,7 +258,6 @@ class ListaProductosVenta extends HookWidget {
                               print('🟡 [ListaProductosVenta] onShippingSelected - price=$price, carrier=$carrier');
                               UtilsVenta.setShipping(price, carrier, description, breakdown);
                               print('🟡 [ListaProductosVenta] after setShipping - UtilsVenta.shippingCost=${UtilsVenta.shippingCost}');
-                              shippingCost.value = price;
                               updateTotal(); // Actualizar totales
                             },
                          );
@@ -249,7 +269,7 @@ class ListaProductosVenta extends HookWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       ),
                     ),
-                    if (shippingCost.value > 0)
+                    if (envio > 0)
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -260,13 +280,12 @@ class ListaProductosVenta extends HookWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              Utils.formatPrice(shippingCost.value),
+                              Utils.formatPrice(envio),
                               style: GoogleFonts.inter(fontSize: 14, color: Colors.green, fontWeight: FontWeight.bold),
                             ),
                             InkWell(
                               onTap: () {
                                 UtilsVenta.clearShipping();
-                                shippingCost.value = 0;
                                 updateTotal();
                               },
                               child: const Text('Eliminar envío', style: TextStyle(color: Colors.red, fontSize: 10)),
@@ -282,7 +301,7 @@ class ListaProductosVenta extends HookWidget {
                   children: [
                     Text('TOTAL:', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold)),
                     Text(
-                      Utils.formatPrice(total.value + shippingCost.value),
+                      Utils.formatPrice(subtotal + envio),
                       style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colores.primaryColor),
                     ),
                   ],
@@ -300,16 +319,53 @@ class ListaProductosVenta extends HookWidget {
               final producto = productos[index];
               final existencia = producto.hm;
               
-              // Usar valores directos de las listas
-              final currentCount = countList.value.length > index ? countList.value[index] : 1;
-              final currentSelectedPrice = selectedPriceList.value.length > index ? selectedPriceList.value[index] : 1;
+              // Cantidad y precio se leen por clave, nunca por posición.
+              final clave = producto.producto1;
+              final currentCount = UtilsVenta.cantidadDe(clave);
+              final currentSelectedPrice = UtilsVenta.precioSeleccionadoDe(clave);
 
               return HookBuilder(
+                // Sin key, al eliminar un producto el TextField del precio
+                // manual conservaba el importe del producto anterior.
+                key: ValueKey('pv_hooks_$clave'),
                 builder: (context) {
                   final customPrice = useState<double?>(null);
                   final customPriceController = useTextEditingController(
                       text: producto.precio2.toString());
+                  final descuentoController = useTextEditingController(
+                      text: UtilsVenta.descuentoDe(clave) > 0
+                          ? UtilsVenta.descuentoDe(clave).toString()
+                          : '');
+                  final observaController = useTextEditingController(
+                      text: UtilsVenta.observaDe(clave));
                   final scrollController = useScrollController(); // Scroll por item
+
+                  // El precio manual se aplica solo, sin botón: el usuario
+                  // olvidaba presionar APLICAR y el ticket salía con el precio
+                  // anterior. El debounce evita aplicar números a medio teclear.
+                  final debouncePrecio = useRef<Timer?>(null);
+                  useEffect(() => () => debouncePrecio.value?.cancel(), []);
+
+                  void aplicarPrecio() {
+                    final price = customPrice.value;
+                    if (price == null || price <= 0) return;
+                    if (price.round() == (producto.precio2 ?? 0)) return;
+                    context.read<ProductosTiendaBloc>().add(UpdateProductEvent(
+                        producto.copyWith(precio2: price.round())));
+                  }
+
+                  void aplicarPrecioDespues() {
+                    debouncePrecio.value?.cancel();
+                    debouncePrecio.value =
+                        Timer(const Duration(milliseconds: 600), () {
+                      if (context.mounted) aplicarPrecio();
+                    });
+                  }
+
+                  void aplicarPrecioAhora() {
+                    debouncePrecio.value?.cancel();
+                    aplicarPrecio();
+                  }
 
                   return ClipRect(
                     child: Card(
@@ -396,9 +452,8 @@ class ListaProductosVenta extends HookWidget {
                                         onPressed: () {
                                           if (currentCount <
                                               existencia.toInt()) {
-                                            final newList = List<int>.from(countList.value);
-                                            newList[index] = currentCount + 1;
-                                            countList.value = newList;
+                                            UtilsVenta.setCantidad(clave, currentCount + 1);
+                                            updateTotal();
                                           } else {
                                              ScaffoldMessenger.of(context).showSnackBar(
                                               const SnackBar(content: Text('No hay más existencia disponible'), duration: Duration(milliseconds: 1000)),
@@ -414,13 +469,13 @@ class ListaProductosVenta extends HookWidget {
                                         ),
                                         onPressed: () async {
                                           if (currentCount > 1) {
-                                            final newList = List<int>.from(countList.value);
-                                            newList[index] = currentCount - 1;
-                                            countList.value = newList;
+                                            UtilsVenta.setCantidad(
+                                                clave, currentCount - 1);
+                                            updateTotal();
                                           } else {
-                                            // Eliminar
-                                            final confirm = await _dialogEliminar(context, producto);
-                                            // Si confirma, Dismissible lo maneja o estado se actualiza por el bloc
+                                            // Eliminar: el bloc quita el producto y
+                                            // olvidar() descarta su selección.
+                                            await _dialogEliminar(context, producto);
                                           }
                                         },
                                       ),
@@ -445,9 +500,8 @@ class ListaProductosVenta extends HookWidget {
                                         price: producto.precio1.toDouble(),
                                         value: currentSelectedPrice == 1,
                                         onChanged: (bool? value) {
-                                          final newList = List<int>.from(selectedPriceList.value);
-                                          newList[index] = 1;
-                                          selectedPriceList.value = newList;
+                                          UtilsVenta.setPrecioSeleccionado(clave, 1);
+                                          updateTotal();
                                         },
                                       ),
                                       _buildPriceCheckbox(
@@ -457,12 +511,151 @@ class ListaProductosVenta extends HookWidget {
                                             producto.precio2?.toDouble() ?? 0.0,
                                         value: currentSelectedPrice == 2,
                                         onChanged: (bool? value) {
-                                          final newList = List<int>.from(selectedPriceList.value);
-                                          newList[index] = 2;
-                                          selectedPriceList.value = newList;
+                                          UtilsVenta.setPrecioSeleccionado(clave, 2);
+                                          updateTotal();
                                         },
                                       ),
                                     ],
+                                  ),
+                                ),
+                              ),
+                              // Descuento autorizado por partida: área
+                              // resaltada; el % se captura y el precio se
+                              // recalcula solo, sin cuentas a mano.
+                              Container(
+                                margin: const EdgeInsets.only(top: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colores.secondaryColor.withOpacity(
+                                      UtilsVenta.descuentoDe(clave) > 0
+                                          ? 0.12
+                                          : 0.05),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colores.secondaryColor
+                                        .withOpacity(0.4),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    const Icon(Icons.local_offer,
+                                        size: 13,
+                                        color: Colores.secondaryColor),
+                                    const SizedBox(width: 4),
+                                    const Text('Desc. partida:',
+                                        style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colores.secondaryColor)),
+                                    const SizedBox(width: 6),
+                                    SizedBox(
+                                      width: 62,
+                                      height: 28,
+                                      child: TextField(
+                                        controller: descuentoController,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: true),
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                        onChanged: (value) {
+                                          final pct =
+                                              double.tryParse(value) ?? 0;
+                                          UtilsVenta.setDescuento(clave,
+                                              pct.clamp(0, 100).toDouble());
+                                          updateTotal();
+                                        },
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          suffixText: '%',
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 6, vertical: 0),
+                                        ),
+                                      ),
+                                    ),
+                                    if (UtilsVenta.descuentoDe(clave) > 0 ||
+                                        UtilsVenta.descuentoGeneral > 0) ...[
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'c/desc: ${Utils.formatPrice(UtilsVenta.aplicarDescuentos(clave, precioUnitarioDe(producto)))}',
+                                        style: const TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              // Observaciones opcionales de la partida; viajan
+                              // en la columna `observa` del detalle.
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: TextField(
+                                  controller: observaController,
+                                  maxLength: 250,
+                                  minLines: 1,
+                                  maxLines: 2,
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
+                                  // Garantiza la primera letra en mayúscula
+                                  // (sentences solo lo sugiere en el teclado).
+                                  inputFormatters: const [
+                                    PrimeraMayusculaFormatter(),
+                                  ],
+                                  style: const TextStyle(
+                                    fontSize: 12.5,
+                                    fontStyle: FontStyle.italic,
+                                    color: Color(0xFF37474F),
+                                    height: 1.3,
+                                  ),
+                                  onChanged: (value) {
+                                    UtilsVenta.setObserva(clave, value);
+                                    updateTotal();
+                                  },
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    filled: true,
+                                    fillColor: const Color(0xFFF6F7FB),
+                                    prefixIcon: const Icon(Icons.edit_note,
+                                        size: 20, color: Colors.blueGrey),
+                                    prefixIconConstraints:
+                                        const BoxConstraints(
+                                            minWidth: 34, minHeight: 0),
+                                    labelText:
+                                        'Observaciones de la partida (opcional)',
+                                    labelStyle: const TextStyle(
+                                        fontSize: 11.5,
+                                        fontStyle: FontStyle.italic,
+                                        color: Colors.blueGrey),
+                                    counterText: '',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors.blueGrey.shade100),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors.blueGrey.shade100),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colores.secondaryColor,
+                                          width: 1.4),
+                                    ),
+                                    contentPadding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 8),
                                   ),
                                 ),
                               ),
@@ -470,8 +663,17 @@ class ListaProductosVenta extends HookWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    const Expanded(
+                                      child: Text(
+                                        'Precio manual (se aplica automáticamente)',
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                            fontSize: 10, color: Colors.grey),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
                                     SizedBox(
-                                      width: 80,
+                                      width: 90,
                                       height: 32,
                                       child: TextField(
                                         controller: customPriceController,
@@ -479,60 +681,18 @@ class ListaProductosVenta extends HookWidget {
                                         onChanged: (value) {
                                           customPrice.value =
                                               double.tryParse(value);
+                                          aplicarPrecioDespues();
                                         },
-                                        onSubmitted: (value) {
-                                          if (customPrice.value != null) {
-                                             // Aquí solo actualizamos el precio localmente en la lógica
-                                             // Pero la lógica actual depende del precio en el producto entity
-                                             // Así que enviamos evento para actualizar producto en bloc
-                                             
-                                              final price = double.parse(customPriceController.text);
-                                              final updatedProduct = producto.copyWith(precio2: price.toInt());
-                                              context.read<ProductosTiendaBloc>().add(UpdateProductEvent(updatedProduct));
-                                              // Se actualizará por el BlocListener padre
-                                          }
+                                        onSubmitted: (_) =>
+                                            aplicarPrecioAhora(),
+                                        onTapOutside: (_) {
+                                          aplicarPrecioAhora();
+                                          FocusScope.of(context).unfocus();
                                         },
                                         decoration: const InputDecoration(
                                           border: OutlineInputBorder(),
                                           contentPadding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 0),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    SizedBox(
-                                      height: 33,
-                                      width: 110,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Colores.secondaryColor),
-                                        onPressed: customPrice.value != null
-                                            ? () {
-                                                FocusScope.of(context)
-                                                    .unfocus();
-                                                final price = double.parse(
-                                                    customPriceController.text);
-
-                                                final updatedProduct =
-                                                    producto.copyWith(
-                                                        precio2: price.toInt());
-
-                                                context
-                                                    .read<ProductosTiendaBloc>()
-                                                    .add(UpdateProductEvent(
-                                                        updatedProduct));
-                                                // La lista se reconstruirá cuando el estado del bloc cambie
-                                              }
-                                            : null,
-                                        child: const AutoSizeText(
-                                          'APLICAR PRECIO',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colores
-                                                  .scaffoldBackgroundColor),
-                                          // maxLines: 1,
-                                          minFontSize: 8,
                                         ),
                                       ),
                                     ),

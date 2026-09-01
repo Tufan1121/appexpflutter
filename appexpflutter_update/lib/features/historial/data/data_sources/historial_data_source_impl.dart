@@ -100,6 +100,27 @@ class HistorialDataSourceImpl implements HistorialDataSource {
   }
 
   @override
+  Future<double> getEnvioSesion(String idSesion) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.get('/envioSesion',
+          queryParameters: {
+            'id_sesion': idSesion,
+          },
+          options: Options(headers: {
+            'Authorization': 'Bearer $token',
+          }));
+      final envio = result.data['envio'];
+      if (envio is num) return envio.toDouble();
+      return 0.0;
+    } catch (_) {
+      // Un backend sin el endpoint todavía no debe romper la carga de la
+      // sesión; simplemente no se restaura el envío.
+      return 0.0;
+    }
+  }
+
+  @override
   Future<ProductoModel> getProductInfo(String productKey) async {
     final token = await storage.read(key: 'accessToken');
     try {

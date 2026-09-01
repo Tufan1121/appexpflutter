@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:appexpflutter_update/features/historial/domain/entities/detalle_sesion_entity.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:appexpflutter_update/features/shared/widgets/descuento_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,106 +19,141 @@ class ListaDetalleProductos extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final total = useState<double>(0.0);
+    // Se incrementa al cambiar una cantidad o un precio: obliga a reconstruir
+    // y, con ello, a recalcular el total y el detalle.
+    final revision = useState<int>(0);
 
-    final countList = useState<List<int>>(
-        productos.map((p) => p.cantidad > 0 ? p.cantidad.toInt() : 1).toList());
-    final selectedPriceList = useState<List<int>>(productos.map((p) {
-      if (p.precio == p.precio1) {
+    // Cantidades y precios indexados por clave, no por posición: al quitar un
+    // producto intermedio las posiciones se recorrían y la cantidad/precio
+    // terminaban aplicados al producto equivocado.
+    for (final producto in productos) {
+      final clave = producto.producto1;
+      UtilsVenta.cantidades.putIfAbsent(
+          clave, () => producto.cantidad > 0 ? producto.cantidad.toInt() : 1);
+      UtilsVenta.preciosSeleccionados.putIfAbsent(clave, () {
+        if (producto.precio == producto.precio2) return 2;
+        if (producto.precio == producto.precio3) return 3;
         return 1;
-      } else if (p.precio == p.precio2) {
-        return 2;
-      } else if (p.precio == p.precio3) {
-        return 3;
-      }
-      return 1;
-    }).toList());
-
-    void updateTotal() {
-      double newTotal = 0.0;
-      UtilsVenta.listProductsOrder.clear();
-      for (var i = 0; i < productos.length; i++) {
-        if (i >= countList.value.length ||
-            i >= selectedPriceList.value.length) {
-          continue;
-        }
-
-        final count = countList.value[i];
-        final selectedPrice = selectedPriceList.value[i];
-
-        if (count > 0) {
-          double precioUnitario = 0.0;
-          switch (selectedPrice) {
-            case 1:
-              precioUnitario = productos[i].precio1.toDouble();
-              break;
-            case 2:
-              precioUnitario = productos[i].precio2.toDouble();
-              break;
-            case 3:
-              precioUnitario = productos[i].precio3.toDouble();
-              break;
-            default:
-              break;
-          }
-          final subtotal = precioUnitario * count;
-          newTotal += subtotal;
-          UtilsVenta.listProductsOrder.add(
-            DetallePedidoEntity(
-              idPedido: 0,
-              clave: productos[i].clave,
-              clave2: productos[i].clave2,
-              cantidad: count,
-              precio: precioUnitario,
-            ),
-          );
-        }
-      }
-      total.value = newTotal;
-      UtilsVenta.total = total.value;
+      });
     }
 
-    useEffect(() {
-      updateTotal();
-      return null;
-    }, [countList.value, selectedPriceList.value]);
-
-    useEffect(() {
-      final newCountList = List<int>.from(countList.value);
-      final newSelectedPriceList = List<int>.from(selectedPriceList.value);
-
-      if (newCountList.length < productos.length) {
-        newCountList.addAll(productos
-            .sublist(newCountList.length)
-            .map((p) => p.cantidad > 0 ? p.cantidad.toInt() : 1));
-        newSelectedPriceList.addAll(List<int>.filled(
-            productos.length - newSelectedPriceList.length, 1));
-      } else if (newCountList.length > productos.length) {
-        newCountList.removeRange(productos.length, newCountList.length);
-        newSelectedPriceList.removeRange(
-            productos.length, newSelectedPriceList.length);
+    double precioUnitarioDe(DetalleSesionEntity producto) {
+      switch (UtilsVenta.precioSeleccionadoDe(producto.producto1)) {
+        case 2:
+          return producto.precio2.toDouble();
+        case 3:
+          return producto.precio3.toDouble();
+        default:
+          return producto.precio1.toDouble();
       }
+    }
 
-      countList.value = newCountList;
-      selectedPriceList.value = newSelectedPriceList;
+    // El total y el detalle que se manda al backend se calculan en cada build a
+    // partir de lo que está en pantalla: nunca pueden quedar desfasados.
+    // totalBase: sin descuentos. subtotalConPartidas: solo descuentos por
+    // partida (base para convertir un monto general a %). totalValue: final.
+    double totalBase = 0.0;
+    double subtotalConPartidas = 0.0;
+    double totalValue = 0.0;
+    UtilsVenta.listProductsOrder.clear();
+    for (final producto in productos) {
+      final clave = producto.producto1;
+      final cantidad = UtilsVenta.cantidadDe(clave);
+      final precioBase = precioUnitarioDe(producto);
+      final precioUnitario = UtilsVenta.aplicarDescuentos(clave, precioBase);
+      totalBase += precioBase * cantidad;
+      subtotalConPartidas +=
+          precioBase * (1 - UtilsVenta.descuentoDe(clave) / 100) * cantidad;
+      totalValue += precioUnitario * cantidad;
+      UtilsVenta.listProductsOrder.add(
+        DetallePedidoEntity(
+          idPedido: 0,
+          clave: producto.clave,
+          clave2: producto.clave2,
+          cantidad: cantidad,
+          precio: precioUnitario,
+          // La observación se captura indexada por producto1 (la misma clave
+          // que cantidades y descuentos).
+          observa: UtilsVenta.observaDe(clave),
+        ),
+      );
+    }
+    UtilsVenta.total = totalValue;
+
+    // Fuerza un nuevo build (y con él, el recálculo de arriba).
+    void updateTotal() => revision.value++;
+
+    // Descuento general autorizado: se captura por % o por monto y el
+    // prorrateo entre partidas es automático.
+    Future<void> abrirDialogoDescuento() async {
+      final resultado = await mostrarDialogoDescuento(
+        context,
+        subtotalActual: subtotalConPartidas,
+        descuentoActualPct: UtilsVenta.descuentoGeneral,
+      );
+      if (resultado == null || !context.mounted) return;
+      UtilsVenta.descuentoGeneral = resultado.quitar ? 0 : resultado.porcentaje;
       updateTotal();
-      return null;
-    }, [productos.length]);
+    }
 
     return Column(
       children: [
-        Text('Total: ${Utils.formatPrice(total.value)}',
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+                'Total: ${Utils.formatPrice(totalValue + UtilsVenta.shippingCost)}',
+                style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Colores.scaffoldBackgroundColor,
+                    shadows: [
+                      const BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(2.0, 5.0),
+                      )
+                    ])),
+            const SizedBox(width: 8),
+            // Descuento general autorizado
+            InkWell(
+              onTap: abrirDialogoDescuento,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colores.scaffoldBackgroundColor.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  UtilsVenta.descuentoGeneral > 0
+                      ? '-${UtilsVenta.descuentoGeneral.toStringAsFixed(2)}%'
+                      : '% Desc.',
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colores.secondaryColor),
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (UtilsVenta.hayDescuento)
+          Text(
+            'Descuento: -${Utils.formatPrice(totalBase - totalValue)}',
             style: GoogleFonts.montserrat(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colores.scaffoldBackgroundColor,
-                shadows: [
-                  const BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(2.0, 5.0),
-                  )
-                ])),
+                color: Colors.greenAccent),
+          ),
+        if (UtilsVenta.hasShipping)
+          Text(
+            'Incluye envío: ${Utils.formatPrice(UtilsVenta.shippingCost)}',
+            style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colores.scaffoldBackgroundColor),
+          ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.66,
           child: ListView.builder(
@@ -127,14 +165,52 @@ class ListaDetalleProductos extends HookWidget {
                   productos[index].bodega3 +
                   productos[index].bodega4;
 
+              // Cantidad y precio se leen por clave, nunca por posición.
+              final clave = producto.producto1;
+
               return HookBuilder(
+                key: ValueKey('sesion_$clave'),
                 builder: (context) {
-                  final count = useState(countList.value[index]);
-                  final selectedPrice =
-                      useState<int>(selectedPriceList.value[index]);
+                  final count = UtilsVenta.cantidadDe(clave);
+                  final selectedPrice = UtilsVenta.precioSeleccionadoDe(clave);
                   final customPrice = useState<double?>(null);
                   final customPriceController = useTextEditingController(
                       text: producto.precio3.toString());
+                  final descuentoController = useTextEditingController(
+                      text: UtilsVenta.descuentoDe(clave) > 0
+                          ? UtilsVenta.descuentoDe(clave).toString()
+                          : '');
+                  final observaController = useTextEditingController(
+                      text: UtilsVenta.observaDe(clave));
+
+                  // El precio de mayoreo se aplica solo, sin botón: el usuario
+                  // olvidaba presionar APLICAR y el pedido salía con el precio
+                  // anterior. El debounce evita aplicar números a medio teclear.
+                  final debouncePrecio = useRef<Timer?>(null);
+                  useEffect(() => () => debouncePrecio.value?.cancel(), []);
+
+                  void aplicarPrecio() {
+                    final price = customPrice.value;
+                    if (price == null || price <= 0) return;
+                    if (price.round() == producto.precio3) return;
+                    context.read<DetalleSesionBloc>().add(UpdateProductEvent(
+                        producto.copyWith(precio3: price.round())));
+                    UtilsVenta.setPrecioSeleccionado(clave, 3);
+                    updateTotal();
+                  }
+
+                  void aplicarPrecioDespues() {
+                    debouncePrecio.value?.cancel();
+                    debouncePrecio.value =
+                        Timer(const Duration(milliseconds: 600), () {
+                      if (context.mounted) aplicarPrecio();
+                    });
+                  }
+
+                  void aplicarPrecioAhora() {
+                    debouncePrecio.value?.cancel();
+                    aplicarPrecio();
+                  }
 
                   return ClipRect(
                     child: Card(
@@ -199,23 +275,19 @@ class ListaDetalleProductos extends HookWidget {
                                       IconButton(
                                         icon: const Icon(Icons.add),
                                         onPressed: () {
-                                          if (count.value <
-                                              existencia.toInt()) {
-                                            count.value++;
-                                            countList.value[index] =
-                                                count.value;
+                                          if (count < existencia.toInt()) {
+                                            UtilsVenta.setCantidad(clave, count + 1);
                                             updateTotal();
                                           }
                                         },
                                       ),
-                                      Text('${count.value}'),
+                                      Text('$count'),
                                       IconButton(
                                         icon: const Icon(Icons.remove),
                                         onPressed: () {
-                                          if (count.value > 1) {
-                                            count.value--;
-                                            countList.value[index] =
-                                                count.value;
+                                          if (count > 1) {
+                                            UtilsVenta.setCantidad(
+                                                clave, count - 1);
                                             updateTotal();
                                           }
                                         },
@@ -236,11 +308,9 @@ class ListaDetalleProductos extends HookWidget {
                                         context: context,
                                         label: 'Precio de Lista',
                                         price: producto.precio1.toDouble(),
-                                        value: selectedPrice.value == 1,
+                                        value: selectedPrice == 1,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 1;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
+                                          UtilsVenta.setPrecioSeleccionado(clave, 1);
                                           updateTotal();
                                         },
                                       ),
@@ -248,11 +318,9 @@ class ListaDetalleProductos extends HookWidget {
                                         context: context,
                                         label: 'Precio de Expo',
                                         price: producto.precio2.toDouble(),
-                                        value: selectedPrice.value == 2,
+                                        value: selectedPrice == 2,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 2;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
+                                          UtilsVenta.setPrecioSeleccionado(clave, 2);
                                           updateTotal();
                                         },
                                       ),
@@ -260,11 +328,9 @@ class ListaDetalleProductos extends HookWidget {
                                         context: context,
                                         label: 'Precio Mayoreo',
                                         price: producto.precio3.toDouble(),
-                                        value: selectedPrice.value == 3,
+                                        value: selectedPrice == 3,
                                         onChanged: (bool? value) {
-                                          selectedPrice.value = 3;
-                                          selectedPriceList.value[index] =
-                                              selectedPrice.value;
+                                          UtilsVenta.setPrecioSeleccionado(clave, 3);
                                           updateTotal();
                                         },
                                       ),
@@ -272,12 +338,91 @@ class ListaDetalleProductos extends HookWidget {
                                   ),
                                 ),
                               ),
-                              if (selectedPrice.value == 3)
+                              // Descuento autorizado por partida: se captura el
+                              // % y el precio se recalcula solo, sin cuentas a
+                              // mano.
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  const Text('Desc. partida:',
+                                      style: TextStyle(
+                                          fontSize: 10, color: Colors.grey)),
+                                  const SizedBox(width: 6),
+                                  SizedBox(
+                                    width: 62,
+                                    height: 28,
+                                    child: TextField(
+                                      controller: descuentoController,
+                                      keyboardType: const TextInputType
+                                          .numberWithOptions(decimal: true),
+                                      style: const TextStyle(fontSize: 12),
+                                      onChanged: (value) {
+                                        final pct =
+                                            double.tryParse(value) ?? 0;
+                                        UtilsVenta.setDescuento(clave,
+                                            pct.clamp(0, 100).toDouble());
+                                        updateTotal();
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        suffixText: '%',
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 0),
+                                      ),
+                                    ),
+                                  ),
+                                  if (UtilsVenta.descuentoDe(clave) > 0 ||
+                                      UtilsVenta.descuentoGeneral > 0) ...[
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'c/desc: ${Utils.formatPrice(UtilsVenta.aplicarDescuentos(clave, precioUnitarioDe(producto)))}',
+                                      style: const TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              // Observaciones opcionales de la partida; viajan
+                              // en la columna `observa` del detalle.
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6),
+                                child: TextField(
+                                  controller: observaController,
+                                  maxLength: 250,
+                                  style: const TextStyle(fontSize: 12),
+                                  onChanged: (value) {
+                                    UtilsVenta.setObserva(clave, value);
+                                    updateTotal();
+                                  },
+                                  decoration: const InputDecoration(
+                                    isDense: true,
+                                    border: OutlineInputBorder(),
+                                    labelText:
+                                        'Observaciones de la partida (opcional)',
+                                    labelStyle: TextStyle(fontSize: 11),
+                                    counterText: '',
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 8),
+                                  ),
+                                ),
+                              ),
+                              if (selectedPrice == 3)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    const Expanded(
+                                      child: Text(
+                                        'Precio manual (se aplica automáticamente)',
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                            fontSize: 10, color: Colors.grey),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
                                     SizedBox(
-                                      width: 80,
+                                      width: 90,
                                       height: 32,
                                       child: TextField(
                                         controller: customPriceController,
@@ -285,58 +430,18 @@ class ListaDetalleProductos extends HookWidget {
                                         onChanged: (value) {
                                           customPrice.value =
                                               double.tryParse(value);
+                                          aplicarPrecioDespues();
                                         },
-                                        onSubmitted: (value) {
-                                          if (customPrice.value != null) {
-                                            selectedPriceList.value[index] =
-                                                3; // Precio personalizado
-                                            updateTotal();
-                                          }
+                                        onSubmitted: (_) =>
+                                            aplicarPrecioAhora(),
+                                        onTapOutside: (_) {
+                                          aplicarPrecioAhora();
+                                          FocusScope.of(context).unfocus();
                                         },
                                         decoration: const InputDecoration(
                                           border: OutlineInputBorder(),
                                           contentPadding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 0),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    SizedBox(
-                                      height: 33,
-                                      width: 110,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Colores.secondaryColor),
-                                        onPressed: customPrice.value != null
-                                            ? () {
-                                                FocusScope.of(context)
-                                                    .unfocus();
-                                                final price = double.parse(
-                                                    customPriceController.text);
-                                                final updatedProduct =
-                                                    producto.copyWith(
-                                                        precio3: price.toInt());
-                                                context
-                                                    .read<DetalleSesionBloc>()
-                                                    .add(UpdateProductEvent(
-                                                        updatedProduct));
-                                                // Actualiza el producto en la lista
-                                                productos[index] =
-                                                    updatedProduct;
-                                                // Refleja el nuevo precio en la lista de precios seleccionados
-                                                selectedPriceList.value[index] =
-                                                    3;
-                                                updateTotal();
-                                              }
-                                            : null,
-                                        child: const AutoSizeText(
-                                          'APLICAR DESCUENTO',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colores
-                                                  .scaffoldBackgroundColor),
-                                          minFontSize: 8,
                                         ),
                                       ),
                                     ),

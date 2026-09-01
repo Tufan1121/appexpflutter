@@ -1,10 +1,8 @@
 ﻿import 'package:appexpflutter_update/config/config.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:appexpflutter_update/features/shared/widgets/geometrical_background.dart';
 
@@ -28,143 +26,101 @@ class HomeScreen extends StatelessWidget {
             children: [
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  // Encabezado compacto en una sola fila (logo + usuario +
+                  // salir) para dejarle el espacio al grid de opciones.
+                  child: Row(
                     children: [
-                      // Header with logout button
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Spacer(),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.logout_rounded,
-                                size: 24,
-                              ),
-                              tooltip: 'Cerrar Sesión',
-                              color: Colors.white,
-                              onPressed: () async {
-                                context.read<AuthBloc>().add(const LogoutEvent());
-                                if (context.mounted) LoginRoute().go(context);
-                              },
-                            ),
+                      // Logo
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                            width: 1,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      
-                      // Logo and welcome section
-                      Center(
-                        child: Column(
-                          children: [
-                            // Logo with glassmorphism container
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.3),
-                                  width: 1.5,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 10),
-                                  ),
-                                ],
-                              ),
-                              child: Image.asset(
-                                'assets/images/logo_tufan.png',
-                                scale: 12,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            
-                            // User info
-                            FutureBuilder<(String, String)>(
-                              future: username(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Text(
-                                    'Error: ${snapshot.error}',
-                                    style: const TextStyle(color: Colors.white),
-                                  );
-                                } else if (snapshot.hasData) {
-                                  final (username, almacen) = snapshot.data!;
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                      vertical: 16,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.15),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.3),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          '¡Bienvenido!',
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                            letterSpacing: 0.5,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          username,
-                                          style: const TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w800,
-                                            color: Colors.white,
-                                            letterSpacing: -0.5,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Almacén: $almacen',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.white.withOpacity(0.9),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                } else {
-                                  return const Text(
-                                    'No data',
-                                    style: TextStyle(color: Colors.white),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
+                        ),
+                        child: Image.asset(
+                          'assets/images/logo_tufan.png',
+                          scale: 22,
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(width: 12),
+                      // Usuario y almacén
+                      Expanded(
+                        child: FutureBuilder<(String, String)>(
+                          future: username(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              );
+                            }
+                            final (username, almacen) = snapshot.data ?? ('', '');
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '¡Bienvenido, $username!',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                                Text(
+                                  'Almacén: $almacen',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Cerrar sesión
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.logout_rounded,
+                            size: 22,
+                          ),
+                          tooltip: 'Cerrar Sesión',
+                          color: Colors.white,
+                          onPressed: () async {
+                            context.read<AuthBloc>().add(const LogoutEvent());
+                            if (context.mounted) LoginRoute().go(context);
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),

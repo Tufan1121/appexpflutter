@@ -6,6 +6,7 @@ import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inv
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/lista_productos_tienda.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
+import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 
 import 'package:flutter/material.dart';
 import 'package:appexpflutter_update/features/shared/widgets/loading_indicator.dart';
@@ -297,13 +298,23 @@ class _InventarioTiendaState extends State<InventarioTienda>
                                         CustomReactiveTextField(
                                           formControlName: 'descripcio',
                                           hint: 'Calidad',
+                                          textCapitalization:
+                                              TextCapitalization.characters,
                                           hintStyle: TextStyle(fontSize: 15),
+                                          inputFormatters: [
+                                            UpperCaseTextFormatter()
+                                          ],
                                         ),
                                         SizedBox(height: 10),
                                         CustomReactiveTextField(
                                           formControlName: 'diseno',
                                           hint: 'Color',
+                                          textCapitalization:
+                                              TextCapitalization.characters,
                                           hintStyle: TextStyle(fontSize: 15),
+                                          inputFormatters: [
+                                            UpperCaseTextFormatter()
+                                          ],
                                         ),
                                       ],
                                     ),

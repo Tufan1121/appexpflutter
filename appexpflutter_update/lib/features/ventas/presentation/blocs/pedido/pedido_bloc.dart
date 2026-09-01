@@ -40,6 +40,7 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
         'clave2': producto.clave2,
         'cantidad': producto.cantidad,
         'precio': producto.precio,
+        'observa': producto.observa,
       };
     }).toList();
 

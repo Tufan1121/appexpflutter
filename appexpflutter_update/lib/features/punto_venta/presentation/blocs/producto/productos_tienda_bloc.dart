@@ -2,6 +2,7 @@
 
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/usecases/inventario_expo_usecase.dart';
+import 'package:appexpflutter_update/features/punto_venta/utils.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -136,7 +137,13 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
   Future<void> _removeProductEvent(
       RemoveProductEvent event, Emitter<ProductosState> emit) async {
     scannedProducts.remove(event.producto);
+    UtilsVenta.olvidar(event.producto.producto1);
     if (scannedProducts.isEmpty) {
+      // Sin productos la lista no se construye, así que el total y el detalle
+      // se quedarían con los valores del último producto eliminado.
+      UtilsVenta.total = 0;
+      UtilsVenta.listProductsOrder.clear();
+      UtilsVenta.clearSelecciones();
       emit(ProductoInitial());
     } else {
       emit(ProductosLoaded(productos: List.from(scannedProducts)));
@@ -149,6 +156,7 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
 
   void _clearProductsState(Emitter<ProductosState> emit) {
     scannedProducts.clear();
+    UtilsVenta.clearSelecciones();
     emit(ProductoInitial());
   }
 

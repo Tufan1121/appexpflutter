@@ -1,5 +1,6 @@
 // productos_bloc.dart
 
+import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,7 +66,11 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
       (failure) => emit(
           ProductoError(productos: scannedProducts, message: failure.message)),
       (producto) {
-        scannedProducts.add(producto);
+        // Sin este filtro la misma clave podía quedar dos veces en el pedido
+        // (dos partidas independientes por el mismo tapete).
+        if (!scannedProducts.any((p) => p.producto1 == producto.producto1)) {
+          scannedProducts.add(producto);
+        }
         emit(ProductosLoaded(productos: List.from(scannedProducts)));
       },
     );
@@ -82,7 +87,13 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
   Future<void> _removeProductEvent(
       RemoveProductEvent event, Emitter<ProductosState> emit) async {
     scannedProducts.remove(event.producto);
+    UtilsVenta.olvidar(event.producto.producto1);
     if (scannedProducts.isEmpty) {
+      // Sin productos la lista no se construye, así que el total y el detalle
+      // se quedarían con los valores del último producto eliminado.
+      UtilsVenta.total = 0;
+      UtilsVenta.listProductsOrder.clear();
+      UtilsVenta.clearSelecciones();
       emit(ProductoInitial());
     } else {
       emit(ProductosLoaded(productos: List.from(scannedProducts)));
@@ -95,6 +106,7 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
 
   void _clearProductsState(Emitter<ProductosState> emit) {
     scannedProducts.clear();
+    UtilsVenta.clearSelecciones();
     emit(ProductoInitial());
   }
 

@@ -49,6 +49,7 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
         'clave2': producto.clave2,
         'cantidad': producto.cantidad,
         'precio': producto.precio,
+        'observa': producto.observa,
       };
     }).toList();
 

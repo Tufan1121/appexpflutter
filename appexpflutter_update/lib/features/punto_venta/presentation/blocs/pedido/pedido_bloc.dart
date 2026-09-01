@@ -43,6 +43,7 @@ class PedidoVentaBloc extends Bloc<PedidoEvent, PedidoState> {
         'clave2': producto.clave2,
         'cantidad': producto.cantidad,
         'precio': producto.precio,
+        'observa': producto.observa,
         'cerrado': i == event.products.length - 1 ? 1 : 0,
       });
     }

@@ -253,6 +253,8 @@ class _InventarioBodegaState extends State<InventarioBodega>
                                         CustomReactiveTextField(
                                           formControlName: 'descripcio',
                                           hint: 'Calidad',
+                                          textCapitalization:
+                                              TextCapitalization.characters,
                                           hintStyle: TextStyle(fontSize: 15),
                                           inputFormatters: [
                                             UpperCaseTextFormatter()
@@ -262,6 +264,8 @@ class _InventarioBodegaState extends State<InventarioBodega>
                                         CustomReactiveTextField(
                                           formControlName: 'diseno',
                                           hint: 'Color',
+                                          textCapitalization:
+                                              TextCapitalization.characters,
                                           hintStyle: TextStyle(fontSize: 15),
                                           inputFormatters: [
                                             UpperCaseTextFormatter()

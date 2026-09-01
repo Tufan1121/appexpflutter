@@ -8,6 +8,9 @@ abstract interface class HistorialDataSource {
   Future<List<HistorialPedidoModel>> getHistorialPedido(String parameter);
   Future<List<HistorialSesionModel>> getHistorialSesion(String parameter);
   Future<List<DetalleSesionModel>> getHistorialDetalleSesion(String idSesion);
+
+  /// Envío cotizado guardado con la sesión (0 si no tiene).
+  Future<double> getEnvioSesion(String idSesion);
   Future<List<HistorialCotizaModel>> getHistorialCotiza(String parameter);
 
   Future<ProductoEntity> getProductInfo(

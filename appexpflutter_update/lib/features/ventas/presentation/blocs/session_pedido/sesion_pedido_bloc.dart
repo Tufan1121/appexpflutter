@@ -50,6 +50,7 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
         'clave2': producto.clave2,
         'cantidad': producto.cantidad,
         'precio': producto.precio,
+        'observa': producto.observa,
       };
     }).toList();
 

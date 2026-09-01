@@ -286,6 +286,8 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                                   CustomReactiveTextField(
                                     formControlName: 'descripcio',
                                     hint: 'Calidad',
+                                          textCapitalization:
+                                              TextCapitalization.characters,
                                     hintStyle: TextStyle(fontSize: 15),
                                     errorStyle: TextStyle(
                                         color: Colores.scaffoldBackgroundColor),
@@ -295,6 +297,8 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                                   CustomReactiveTextField(
                                     formControlName: 'diseno',
                                     hint: 'Color',
+                                          textCapitalization:
+                                              TextCapitalization.characters,
                                     hintStyle: TextStyle(fontSize: 15),
                                     inputFormatters: [UpperCaseTextFormatter()],
                                   ),

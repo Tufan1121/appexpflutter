@@ -27,6 +27,12 @@ class HistorialUsecase {
     return historialRepository.getHistorialDetalleSesion(idSesion);
   }
 
+  /// Envío cotizado guardado con la sesión (0 si no tiene).
+  Future<Either<NetworkException, double>> getEnvioSesion(
+      String idSesion) async {
+    return historialRepository.getEnvioSesion(idSesion);
+  }
+
   Future<Either<NetworkException, List<HistorialCotizaEntity>>>
       getHistorialCotiza(String parameter) async {
     return historialRepository.getHistorialCotiza(parameter);
