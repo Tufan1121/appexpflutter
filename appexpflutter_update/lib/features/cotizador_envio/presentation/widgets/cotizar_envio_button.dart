@@ -32,7 +32,7 @@ class CotizarEnvioButton extends StatelessWidget {
           context: context,
           products: [product],
           // Consulta: al elegir una tarifa solo se cierra el modal.
-          onShippingSelected: (_, __, ___, ____) {},
+          onShippingSelected: (_, __, ___, ____, _____) {},
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

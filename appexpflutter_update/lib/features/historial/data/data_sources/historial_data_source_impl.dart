@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/historial/domain/entities/envio_sesion.dart';
 import 'package:api_client/api_client.dart';
 import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source.dart';
@@ -100,7 +101,7 @@ class HistorialDataSourceImpl implements HistorialDataSource {
   }
 
   @override
-  Future<double> getEnvioSesion(String idSesion) async {
+  Future<EnvioSesion> getEnvioSesion(String idSesion) async {
     final token = await storage.read(key: 'accessToken');
     try {
       final result = await _dioClient.get('/envioSesion',
@@ -111,12 +112,15 @@ class HistorialDataSourceImpl implements HistorialDataSource {
             'Authorization': 'Bearer $token',
           }));
       final envio = result.data['envio'];
-      if (envio is num) return envio.toDouble();
-      return 0.0;
+      if (envio is! num) return EnvioSesion.vacio;
+      return EnvioSesion(
+        envio: envio.toDouble(),
+        observa: (result.data['observa'] ?? '').toString().trim(),
+      );
     } catch (_) {
       // Un backend sin el endpoint todavía no debe romper la carga de la
       // sesión; simplemente no se restaura el envío.
-      return 0.0;
+      return EnvioSesion.vacio;
     }
   }
 

@@ -254,9 +254,9 @@ class ListaProductosVenta extends HookWidget {
                          ShippingQuoteModalV2.show(
                            context: context,
                            products: productsForQuote,
-                            onShippingSelected: (price, carrier, description, breakdown) {
+                            onShippingSelected: (price, carrier, description, breakdown, ruta) {
                               print('🟡 [ListaProductosVenta] onShippingSelected - price=$price, carrier=$carrier');
-                              UtilsVenta.setShipping(price, carrier, description, breakdown);
+                              UtilsVenta.setShipping(price, carrier, description, breakdown, ruta);
                               print('🟡 [ListaProductosVenta] after setShipping - UtilsVenta.shippingCost=${UtilsVenta.shippingCost}');
                               updateTotal(); // Actualizar totales
                             },

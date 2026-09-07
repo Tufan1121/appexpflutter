@@ -229,7 +229,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       // quede rastro en el registro.
       final notas = <String>[];
       if (UtilsVenta.hasShipping) {
-        notas.add('Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}');
+        notas.add('Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}'
+            '${UtilsVenta.shippingRuta.isNotEmpty ? ' (${UtilsVenta.shippingRuta})' : ''}');
       }
       if (UtilsVenta.descuentoGeneral > 0) {
         notas.add(
@@ -1057,6 +1058,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         'dig3': '',  // No existe en los endpoints, siempre vacío
         'terminal3': terminal3?.id ?? '',
         'envio': UtilsVenta.shippingCost,
+        // Servicio + origen/destino (CP y ciudad): observación de la partida ENVIO.
+        'envio_observa': UtilsVenta.shippingObserva,
       };
 
       void enviarPedido() {

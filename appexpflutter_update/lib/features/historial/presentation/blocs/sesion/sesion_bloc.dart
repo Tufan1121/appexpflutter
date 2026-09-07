@@ -72,11 +72,15 @@ class DetalleSesionBloc extends Bloc<SesionEvent, SesionState>
     envioResult.fold(
       (_) {},
       (envio) {
-        if (envio > 0) {
+        if (envio.envio > 0) {
           UtilsVenta.setShipping(
-            cost: envio,
+            cost: envio.envio,
             carrier: 'Envío cotizado (sesión)',
-            serviceDescription: 'Envío guardado con la sesión',
+            // La observa guardada ya trae servicio y origen/destino; así el
+            // pedido que se genere desde la sesión conserva el mismo texto.
+            serviceDescription: envio.observa.isNotEmpty
+                ? envio.observa
+                : 'Envío guardado con la sesión',
           );
         }
       },

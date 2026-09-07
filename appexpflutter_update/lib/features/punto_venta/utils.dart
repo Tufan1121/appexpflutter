@@ -104,6 +104,20 @@ class UtilsVenta {
   static String shippingServiceDescription = '';
   static String shippingBreakdown = '';
 
+  /// Ruta cotizada: "Origen: CP Ciudad, EDO -> Destino: CP Ciudad, EDO".
+  static String shippingRuta = '';
+
+  /// Observación de la partida ENVIO (servicio + origen/destino); el backend
+  /// la guarda en pretikd.observa y va también en las observaciones del ticket.
+  static String get shippingObserva {
+    final partes = <String>[
+      if (shippingServiceDescription.trim().isNotEmpty)
+        shippingServiceDescription.trim(),
+      if (shippingRuta.trim().isNotEmpty) shippingRuta.trim(),
+    ];
+    return partes.join(' | ');
+  }
+
   static bool get hasShipping => shippingCost > 0;
 
   static double get totalWithShipping => total + shippingCost;
@@ -116,11 +130,13 @@ class UtilsVenta {
     return '$shippingServiceDescription\n$shippingBreakdown';
   }
 
-  static void setShipping(double cost, String carrier, String serviceDescription, [String breakdown = '']) {
+  static void setShipping(double cost, String carrier, String serviceDescription,
+      [String breakdown = '', String ruta = '']) {
     shippingCost = cost;
     shippingCarrier = carrier;
     shippingServiceDescription = serviceDescription;
     shippingBreakdown = breakdown;
+    shippingRuta = ruta;
   }
 
   static void clearShipping() {
@@ -128,6 +144,7 @@ class UtilsVenta {
     shippingCarrier = '';
     shippingServiceDescription = '';
     shippingBreakdown = '';
+    shippingRuta = '';
   }
 
   static void clearAll() {

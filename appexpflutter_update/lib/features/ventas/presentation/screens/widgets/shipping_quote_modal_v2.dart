@@ -21,14 +21,16 @@ class ShippingQuoteModalV2 extends StatefulWidget {
   final List<ProductShippingInfo> products;
 
   /// Callback cuando se selecciona un envío
-  /// Devuelve el precio total del envío, carrier, descripción del servicio y desglose
-  final void Function(double totalPrice, String carrier, String serviceDescription, String breakdown) onShippingSelected;
+  /// Devuelve el precio total del envío, carrier, descripción del servicio,
+  /// desglose y la ruta "Origen: CP Ciudad -> Destino: CP Ciudad" (sale en la
+  /// partida ENVIO del PDF de pedido/cotización y en el ticket).
+  final void Function(double totalPrice, String carrier, String serviceDescription, String breakdown, String ruta) onShippingSelected;
 
   /// Muestra el modal de cotización de envíos
   static Future<void> show({
     required BuildContext context,
     required List<ProductShippingInfo> products,
-    required void Function(double totalPrice, String carrier, String serviceDescription, String breakdown) onShippingSelected,
+    required void Function(double totalPrice, String carrier, String serviceDescription, String breakdown, String ruta) onShippingSelected,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -993,6 +995,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
               carrier,
               description,
               breakdown,
+              _rutaEnvio(),
             );
             Navigator.pop(context);
           },
@@ -1191,6 +1194,29 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
     );
   }
 
+  /// Texto de la ruta cotizada con CP y ciudad de origen y destino, ej.
+  /// "Origen: 45010 Zapopan, JAL -> Destino: 06600 Ciudad de México, CMX".
+  /// Solo ASCII/latin-1 en los separadores: los PDF de fpdf y las impresoras
+  /// de tickets no soportan flechas Unicode.
+  String _rutaEnvio() {
+    String lado(String cp, ZipcodeInfo? info) {
+      final partes = <String>[cp];
+      if (info != null) {
+        final ciudad = info.locality.trim();
+        final edo = info.stateCode2.trim();
+        if (ciudad.isNotEmpty) {
+          partes.add(edo.isNotEmpty ? '$ciudad, $edo' : ciudad);
+        }
+      }
+      return partes.join(' ');
+    }
+
+    final origen = lado(_codigoPostalOrigenController.text.trim(), _originInfo);
+    final destino =
+        lado(_codigoPostalDestinoController.text.trim(), _destinationInfo);
+    return 'Origen: $origen -> Destino: $destino';
+  }
+
   Widget _buildSelectableQuoteCard(String carrier, _AggregatedQuote quote) {
     final carrierColor = _getCarrierColor(carrier);
     final hasMultipleProducts = quote.productBreakdown.length > 1;
@@ -1219,6 +1245,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
               carrier,
               description,
               breakdown,
+              _rutaEnvio(),
             );
             Navigator.pop(context);
           },

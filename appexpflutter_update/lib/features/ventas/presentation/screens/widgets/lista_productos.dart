@@ -317,6 +317,16 @@ class ListaProductos extends HookWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
+                            if (UtilsVenta.shippingRuta.isNotEmpty)
+                              Text(
+                                UtilsVenta.shippingRuta,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 10,
+                                  color: Colores.textSecondary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                           ],
                         ),
                       ),
@@ -360,12 +370,14 @@ class ListaProductos extends HookWidget {
                     ShippingQuoteModalV2.show(
                       context: context,
                       products: productsForQuote,
-                      onShippingSelected: (price, carrier, description, breakdown) {
+                      onShippingSelected:
+                          (price, carrier, description, breakdown, ruta) {
                         UtilsVenta.setShipping(
                           cost: price,
                           carrier: carrier,
                           serviceDescription: description,
                           breakdown: breakdown,
+                          ruta: ruta,
                         );
                         updateTotal(); // Recalcular totales con envío
                       },

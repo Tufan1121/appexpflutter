@@ -112,6 +112,22 @@ class UtilsVenta {
   
   /// Desglose de costos por producto (para observaciones)
   static String shippingBreakdown = '';
+
+  /// Ruta cotizada: "Origen: CP Ciudad, EDO -> Destino: CP Ciudad, EDO".
+  static String shippingRuta = '';
+
+  /// Texto que se guarda como observación de la partida ENVIO en el backend
+  /// (sale en el PDF del pedido, el de la cotización y el ticket): servicio
+  /// más origen/destino. Al restaurar una sesión, la descripción ya trae la
+  /// ruta y esta queda vacía, así que no se duplica.
+  static String get shippingObserva {
+    final partes = <String>[
+      if (shippingServiceDescription.trim().isNotEmpty)
+        shippingServiceDescription.trim(),
+      if (shippingRuta.trim().isNotEmpty) shippingRuta.trim(),
+    ];
+    return partes.join(' | ');
+  }
   
   /// Indica si se ha seleccionado un envío
   static bool get hasShipping => shippingCost > 0;
@@ -133,11 +149,13 @@ class UtilsVenta {
     required String carrier,
     required String serviceDescription,
     String breakdown = '',
+    String ruta = '',
   }) {
     shippingCost = cost;
     shippingCarrier = carrier;
     shippingServiceDescription = serviceDescription;
     shippingBreakdown = breakdown;
+    shippingRuta = ruta;
   }
   
   /// Limpia la información del envío
@@ -146,6 +164,7 @@ class UtilsVenta {
     shippingCarrier = '';
     shippingServiceDescription = '';
     shippingBreakdown = '';
+    shippingRuta = '';
   }
   
   /// Limpia toda la información de la venta

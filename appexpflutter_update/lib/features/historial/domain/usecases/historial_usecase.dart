@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/historial/domain/entities/envio_sesion.dart';
 import 'package:api_client/exceptions/network_exception.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/detalle_sesion_entity.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/historial_cotiza_entity.dart';
@@ -28,7 +29,7 @@ class HistorialUsecase {
   }
 
   /// Envío cotizado guardado con la sesión (0 si no tiene).
-  Future<Either<NetworkException, double>> getEnvioSesion(
+  Future<Either<NetworkException, EnvioSesion>> getEnvioSesion(
       String idSesion) async {
     return historialRepository.getEnvioSesion(idSesion);
   }

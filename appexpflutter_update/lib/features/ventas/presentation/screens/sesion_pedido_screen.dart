@@ -824,6 +824,8 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
         // Envío cotizado: el backend lo guarda como partida ENVIO del detalle
         // para poder restaurarlo al recargar la sesión.
         'envio': UtilsVenta.shippingCost,
+        // Servicio + origen/destino (CP y ciudad): observación de la partida ENVIO.
+        'envio_observa': UtilsVenta.shippingObserva,
         'entregado': entregado,
         'id_metodopago2': metodo2,
         'banco2': cuenta2?.banco ?? terminal2?.banco ?? '',

@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/historial/domain/entities/envio_sesion.dart';
 import 'package:appexpflutter_update/features/historial/data/models/detalle_sesion_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_cotiza_model.dart';
 import 'package:appexpflutter_update/features/historial/data/models/historial_pedido_model.dart';
@@ -10,7 +11,7 @@ abstract interface class HistorialDataSource {
   Future<List<DetalleSesionModel>> getHistorialDetalleSesion(String idSesion);
 
   /// Envío cotizado guardado con la sesión (0 si no tiene).
-  Future<double> getEnvioSesion(String idSesion);
+  Future<EnvioSesion> getEnvioSesion(String idSesion);
   Future<List<HistorialCotizaModel>> getHistorialCotiza(String parameter);
 
   Future<ProductoEntity> getProductInfo(

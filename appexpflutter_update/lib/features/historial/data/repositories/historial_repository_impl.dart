@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/historial/domain/entities/envio_sesion.dart';
 import 'package:api_client/exceptions/custom_exceptions/not_found_expection.dart';
 import 'package:api_client/exceptions/network_exception.dart';
 import 'package:appexpflutter_update/features/historial/data/data_sources/historial_data_source.dart';
@@ -76,7 +77,7 @@ class HistorialRepositoryImpl implements HistorialRepository {
   }
 
   @override
-  Future<Either<NetworkException, double>> getEnvioSesion(
+  Future<Either<NetworkException, EnvioSesion>> getEnvioSesion(
       String idSesion) async {
     try {
       final envio = await historialDataSource.getEnvioSesion(idSesion);

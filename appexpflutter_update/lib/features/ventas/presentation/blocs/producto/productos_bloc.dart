@@ -94,6 +94,8 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
       UtilsVenta.total = 0;
       UtilsVenta.listProductsOrder.clear();
       UtilsVenta.clearSelecciones();
+      // Sin productos no hay nada que enviar: el envío cotizado ya no aplica.
+      UtilsVenta.clearShipping();
       emit(ProductoInitial());
     } else {
       emit(ProductosLoaded(productos: List.from(scannedProducts)));
@@ -107,6 +109,10 @@ class ProductosBloc extends Bloc<ProductosEvent, ProductosState> {
   void _clearProductsState(Emitter<ProductosState> emit) {
     scannedProducts.clear();
     UtilsVenta.clearSelecciones();
+    // El envío cotizado es estático (UtilsVenta) y pertenece al pedido que se
+    // está cerrando; si no se limpia aquí, el siguiente pedido de la sesión de
+    // ventas arranca con el envío del anterior.
+    UtilsVenta.clearShipping();
     emit(ProductoInitial());
   }
 

@@ -173,7 +173,8 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
     useEffect(() {
       // Pre-llenar observaciones con detalles de envío si hay
       if (UtilsVenta.hasShipping) {
-        String envioInfo = 'Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}';
+        String envioInfo = 'Envio: \$${UtilsVenta.shippingCost.toStringAsFixed(2)}'
+            '${UtilsVenta.shippingRuta.isNotEmpty ? ' (${UtilsVenta.shippingRuta})' : ''}';
         form.control('observaciones').value = envioInfo;
       }
       
@@ -615,6 +616,8 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
         'id_metodopago2': metodo2,
         'id_metodopago3': metodo3,
         'envio': UtilsVenta.shippingCost.toString(),
+        // Servicio + origen/destino (CP y ciudad): observación de la partida ENVIO.
+        'envio_observa': UtilsVenta.shippingObserva,
       };
 
       _enviando = true;
