@@ -1,7 +1,8 @@
-/// Envíos de un pedido / cotización / ticket: puede haber varias partidas
-/// ENVIO (p. ej. paquete para el tapete chico y Big Ticket para el grande),
-/// cada una con los tapetes que esa paquetería cotizó. Misma regla que
-/// cotizaciones.html en galería.
+/// Envíos de un pedido / cotización / ticket: se pueden combinar varias
+/// paqueterías (p. ej. paquete para el tapete chico y Big Ticket para el
+/// grande), cada una con los tapetes que cotizó. Al guardar se agrupan en UNA
+/// sola partida ENVIO (suma + observación que explica la combinación), porque
+/// al pasar el pedido a ticket solo puede ir una partida de envío.
 ///
 /// Los tapetes que ningún envío cubre llevan la leyenda [leyendaSinEnvio] al
 /// inicio de su observación; se quita al cubrirlos o al quitar los envíos.
@@ -114,6 +115,23 @@ class EnviosCotizados {
       : lista.map((e) => '${e.carrier}: ${e.servicio}').join(' | ');
 
   String get ruta => lista.isEmpty ? '' : lista.first.ruta;
+
+  /// Observación de la ÚNICA partida ENVIO que se guarda (el ticket solo
+  /// admite una): con un envío, su observación; con varios (p. ej. paquete +
+  /// Big Ticket), cada servicio con su importe y los tapetes que cubre, y al
+  /// final la ruta. Máx. 250 caracteres (tamaño de la columna).
+  String get observaAgrupada {
+    if (lista.isEmpty) return '';
+    if (lista.length == 1) return lista.first.observa;
+    final partes = lista.map((e) {
+      final cubre = e.cubre == null ? '' : ' (${e.cubre!.values.join(', ')})';
+      return '${e.servicio.trim()} \$${e.importe.toStringAsFixed(0)}$cubre';
+    }).join(' + ');
+    final texto = [partes, ruta.trim()].where((s) => s.isNotEmpty).join(' | ');
+    return texto.length > EnvioParcial.maxObserva
+        ? texto.substring(0, EnvioParcial.maxObserva)
+        : texto;
+  }
 
   /// Agrega un envío. Los que se traslapan con él (cubren alguno de sus
   /// tapetes) o cuya cobertura se desconoce se reemplazan.

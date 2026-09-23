@@ -1057,7 +1057,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         'cuenta3': cuenta3?.cuenta ?? terminal3?.cuenta ?? '',
         'dig3': '',  // No existe en los endpoints, siempre vacío
         'terminal3': terminal3?.id ?? '',
-        'envio': UtilsVenta.shippingCostEncabezado,
+        'envio': UtilsVenta.shippingCost,
         // Servicio + origen/destino (CP y ciudad): observación de la partida ENVIO.
         'envio_observa': UtilsVenta.shippingObserva,
       };
@@ -1065,7 +1065,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       void enviarPedido() {
         _enviando = true;
         context.read<PedidoBloc>().add(
-            PedidoAddEvent(data: data, products: UtilsVenta.detalleConEnvios));
+            PedidoAddEvent(data: data, products: List.of(UtilsVenta.listProductsOrder)));
         if (widget.idSesion != 0 && widget.idSesion != null) {
           context
               .read<SesionPedidoBloc>()

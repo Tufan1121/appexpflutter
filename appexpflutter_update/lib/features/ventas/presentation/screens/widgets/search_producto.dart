@@ -155,7 +155,7 @@ class SearchProducto extends HookWidget {
                                         'id_cliente': idCliente,
                                         'estatus': estatusPedido,
                                         'total_pagar': UtilsVenta.totalWithShipping.toInt(),
-                                        'envio': UtilsVenta.shippingCostEncabezado.toString(),
+                                        'envio': UtilsVenta.shippingCost.toString(),
                                         'envio_observa': UtilsVenta.shippingObserva,
                                       };
 
@@ -163,7 +163,7 @@ class SearchProducto extends HookWidget {
                                           PedidoAddSesionEvent(
                                               data: data,
                                               products: UtilsVenta
-                                                  .detalleConEnvios));
+                                                  .listProductsOrder));
                                     },
                               // onTap: () => SesionPedidoRoute(
                               //         idCliente: idCliente,
@@ -237,7 +237,7 @@ class SearchProducto extends HookWidget {
                                           'estatus': estatusPedido,
                                           'total_pagar':
                                               UtilsVenta.totalWithShipping.toInt(),
-                                          'envio': UtilsVenta.shippingCostEncabezado.toString(),
+                                          'envio': UtilsVenta.shippingCost.toString(),
                                           'envio_observa': UtilsVenta.shippingObserva,
                                         };
 
@@ -245,7 +245,7 @@ class SearchProducto extends HookWidget {
                                             PedidoAddEvent(
                                                 data: data,
                                                 products: UtilsVenta
-                                                    .detalleConEnvios));
+                                                    .listProductsOrder));
                                       }
 
                                 // onTap: () => CotizaPedidoRoute(

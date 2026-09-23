@@ -118,29 +118,10 @@ class UtilsVenta {
   /// Ruta cotizada: "Origen: CP Ciudad, EDO -> Destino: CP Ciudad, EDO".
   static String get shippingRuta => envios.ruta;
 
-  /// Primer envío: va en el encabezado (`envio` / `envio_observa`) y el
-  /// backend lo guarda como partida ENVIO, como siempre. Los demás van en el
-  /// detalle ([detalleConEnvios]).
-  static double get shippingCostEncabezado =>
-      envios.lista.isEmpty ? 0 : envios.lista.first.importe;
-  static String get shippingObserva =>
-      envios.lista.isEmpty ? '' : envios.lista.first.observa;
-
-  /// Detalle a guardar: las partidas y, después, los envíos adicionales como
-  /// renglones ENVIO (p. ej. el Big Ticket del tapete grande), igual que
-  /// galería; así cada paquetería queda en su propia partida.
-  static List<DetallePedidoEntity> get detalleConEnvios => [
-        ...listProductsOrder,
-        for (final e in envios.lista.skip(1))
-          DetallePedidoEntity(
-            idPedido: 0,
-            clave: 'ENVIO',
-            clave2: '',
-            cantidad: 1,
-            precio: e.importe,
-            observa: e.observa,
-          ),
-      ];
+  /// Observación de la única partida ENVIO (`envio_observa`); el importe
+  /// (`envio`) es [shippingCost], la suma de todos los envíos. Una sola
+  /// partida porque al pasar el pedido a ticket solo puede ir una de envío.
+  static String get shippingObserva => envios.observaAgrupada;
 
   /// Indica si se ha seleccionado un envío
   static bool get hasShipping => shippingCost > 0;
