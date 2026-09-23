@@ -17,12 +17,19 @@ class SearchClientes extends StatelessWidget {
           Expanded(
             child: CustomSearch(
               hintText: 'Cliente',
-              // onChanged: (value) {
-              //   context.read<ClienteBloc>().add(GetClientesEvent(name: value));
-              // },
+              // Busca mientras se escribe: el bloc espera 500 ms desde la
+              // última tecla antes de consultar, así que no satura el backend.
+              // Con una sola letra no busca; si se borra todo, la búsqueda
+              // vacía (por la misma cola) limpia la lista.
+              onChanged: (value) {
+                final texto = value.trim();
+                if (texto.length >= 2 || texto.isEmpty) {
+                  context.read<ClienteBloc>().add(GetClientesEvent(name: texto));
+                }
+              },
               onSubmitted: (value) => context
                   .read<ClienteBloc>()
-                  .add(GetClientesEvent(name: value)),
+                  .add(GetClientesEvent(name: value.trim())),
             ),
           ),
         ],

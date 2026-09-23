@@ -19,6 +19,13 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
 
   Future<void> _getClientesEvent(
       GetClientesEvent event, Emitter<ClienteState> emit) async {
+    // Búsqueda vacía (se borró el texto): lista limpia, sin consultar. Pasa
+    // por el mismo debounce que las demás para que una búsqueda pendiente no
+    // vuelva a llenar la lista después de borrar.
+    if (event.name.trim().isEmpty) {
+      emit(ClienteInitial());
+      return;
+    }
     emit(ClienteLoading());
     final result = await clienteUsecase.getClientes(event.name);
     result.fold(
@@ -81,7 +88,10 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     emit(ClienteInitial());
   }
 
+  /// Espera a que se deje de teclear y, si llega otra búsqueda mientras la
+  /// anterior sigue en curso, descarta la anterior (switchMap): así una
+  /// respuesta lenta de "JUA" no pisa la de "JUAN".
   EventTransformer<T> debounce<T>(Duration duration) {
-    return (events, mapper) => events.debounceTime(duration).flatMap(mapper);
+    return (events, mapper) => events.debounceTime(duration).switchMap(mapper);
   }
 }
