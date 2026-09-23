@@ -823,7 +823,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
         'total_pagar': totalDeLaSesion,
         // Envío cotizado: el backend lo guarda como partida ENVIO del detalle
         // para poder restaurarlo al recargar la sesión.
-        'envio': UtilsVenta.shippingCost,
+        'envio': UtilsVenta.shippingCostEncabezado,
         // Servicio + origen/destino (CP y ciudad): observación de la partida ENVIO.
         'envio_observa': UtilsVenta.shippingObserva,
         'entregado': entregado,
@@ -885,7 +885,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
 
       _enviando = true;
       context.read<SesionPedidoBloc>().add(PedidoAddSesionEvent(
-          data: data, products: List.of(UtilsVenta.listProductsOrder)));
+          data: data, products: UtilsVenta.detalleConEnvios));
     } else {
       form.markAllAsTouched();
     }

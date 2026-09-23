@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/features/cotizador_envio/data/models/envio_parcial.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/detalle_pedido_entity.dart';
 
 class UtilsVenta {
@@ -98,53 +99,133 @@ class UtilsVenta {
     descuentosPorClave.clear();
   }
 
-  // Datos para el envío
-  static double shippingCost = 0;
-  static String shippingCarrier = '';
-  static String shippingServiceDescription = '';
-  static String shippingBreakdown = '';
+  // ---------------------------------------------------------------------------
+  // Envío: una o varias partidas ENVIO (p. ej. paquete para un tapete y Big
+  // Ticket para otro), cada una con los tapetes que cubre.
+  // ---------------------------------------------------------------------------
+
+  static final EnviosCotizados envios = EnviosCotizados();
+
+  /// Suma de los envíos (0 si no hay envío).
+  static double get shippingCost => envios.total;
+
+  /// Paquetería(s) de los envíos.
+  static String get shippingCarrier => envios.carriers;
+
+  /// Servicio(s) de los envíos.
+  static String get shippingServiceDescription => envios.descripcion;
 
   /// Ruta cotizada: "Origen: CP Ciudad, EDO -> Destino: CP Ciudad, EDO".
-  static String shippingRuta = '';
+  static String get shippingRuta => envios.ruta;
 
-  /// Observación de la partida ENVIO (servicio + origen/destino); el backend
-  /// la guarda en pretikd.observa y va también en las observaciones del ticket.
-  static String get shippingObserva {
-    final partes = <String>[
-      if (shippingServiceDescription.trim().isNotEmpty)
-        shippingServiceDescription.trim(),
-      if (shippingRuta.trim().isNotEmpty) shippingRuta.trim(),
-    ];
-    return partes.join(' | ');
-  }
+  /// Primer envío: va en el encabezado (`envio` / `envio_observa`) y el
+  /// backend lo guarda como partida ENVIO, como siempre. Los demás van en el
+  /// detalle ([detalleConEnvios]).
+  static double get shippingCostEncabezado =>
+      envios.lista.isEmpty ? 0 : envios.lista.first.importe;
+  static String get shippingObserva =>
+      envios.lista.isEmpty ? '' : envios.lista.first.observa;
 
+  /// Detalle a guardar: las partidas y, después, los envíos adicionales como
+  /// renglones ENVIO (p. ej. el Big Ticket del tapete grande), igual que
+  /// galería; así cada paquetería queda en su propia partida.
+  static List<DetallePedidoEntity> get detalleConEnvios => [
+        ...listProductsOrder,
+        for (final e in envios.lista.skip(1))
+          DetallePedidoEntity(
+            idPedido: 0,
+            clave: 'ENVIO',
+            clave2: '',
+            cantidad: 1,
+            precio: e.importe,
+            observa: e.observa,
+          ),
+      ];
+
+  /// Indica si se ha seleccionado un envío
   static bool get hasShipping => shippingCost > 0;
 
+  /// Total incluyendo envío
   static double get totalWithShipping => total + shippingCost;
 
-  /// Obtiene la descripción completa del envío incluyendo desglose
-  static String get fullShippingDescription {
-    if (shippingBreakdown.isEmpty) {
-      return shippingServiceDescription;
+  /// Envío restaurado de una sesión guardada: un solo envío, con cobertura
+  /// desconocida (se reemplaza al agregar otro).
+  static void setShipping({
+    required double cost,
+    required String carrier,
+    required String serviceDescription,
+    String ruta = '',
+  }) {
+    clearShipping();
+    envios.agregar(EnvioAgregado(
+      importe: cost,
+      carrier: carrier,
+      servicio: serviceDescription,
+      ruta: ruta,
+    ));
+  }
+
+  /// Agrega el envío elegido en el cotizador. [partidas]: todas las partidas
+  /// del pedido (clave → nombre). La leyenda "No se cotizó el envío" queda
+  /// solo en las que ningún envío cubre.
+  static void agregarEnvio(EnvioAgregado envio, Map<String, String> partidas) {
+    envios.agregar(envio);
+    final faltan = coberturaEnvios(partidas).faltan;
+    for (final clave in partidas.keys) {
+      final obs = observaDe(clave);
+      setObserva(
+          clave,
+          faltan.containsKey(clave)
+              ? EnvioParcial.ponerLeyenda(obs)
+              : EnvioParcial.quitarLeyenda(obs));
     }
-    return '$shippingServiceDescription\n$shippingBreakdown';
   }
 
-  static void setShipping(double cost, String carrier, String serviceDescription,
-      [String breakdown = '', String ruta = '']) {
-    shippingCost = cost;
-    shippingCarrier = carrier;
-    shippingServiceDescription = serviceDescription;
-    shippingBreakdown = breakdown;
-    shippingRuta = ruta;
+  /// Envíos agregados y partidas que ninguno cubre.
+  static CoberturaEnvios coberturaEnvios(Map<String, String> partidas) {
+    final cubiertas = envios.cubiertas;
+    return CoberturaEnvios(
+      envios: List.unmodifiable(envios.lista),
+      faltan: {
+        for (final p in partidas.entries)
+          if (!cubiertas.contains(p.key)) p.key: p.value,
+      },
+    );
   }
 
+  /// Limpia la información del envío
   static void clearShipping() {
-    shippingCost = 0;
-    shippingCarrier = '';
-    shippingServiceDescription = '';
-    shippingBreakdown = '';
-    shippingRuta = '';
+    envios.clear();
+    // Sin envío ya no aplica la leyenda "No se cotizó el envío".
+    quitarLeyendasSinEnvio();
+  }
+
+  /// Aviso pendiente porque se quitaron los envíos al cambiar las partidas;
+  /// la lista lo muestra (diálogo) en su siguiente build.
+  static String? avisoEnvioQuitado;
+
+  /// La partida quedó fuera de los envíos cotizados (lleva la leyenda).
+  static bool sinEnvio(String clave) =>
+      EnvioParcial.tieneLeyenda(observaDe(clave));
+
+  static void quitarLeyendasSinEnvio() {
+    for (final clave in observacionesPorClave.keys.toList()) {
+      setObserva(clave, EnvioParcial.quitarLeyenda(observaDe(clave)));
+    }
+  }
+
+  /// Cambió lo que se embarca (se agregó, eliminó o cambió de cantidad un
+  /// tapete): los envíos ya no corresponden, así que se quitan y queda el
+  /// aviso pendiente. Una partida con "No se cotizó el envío" ([clave]) no
+  /// estaba incluida y no los afecta. Se llama antes de olvidar la partida.
+  /// Devuelve true si quitó los envíos.
+  static bool quitarEnvioPorCambio(String nombre, CambioPartida cambio,
+      {String? clave}) {
+    if (!hasShipping) return false;
+    if (clave != null && sinEnvio(clave)) return false;
+    clearShipping();
+    avisoEnvioQuitado = EnvioParcial.motivoQuitado(nombre.trim(), cambio);
+    return true;
   }
 
   static void clearAll() {

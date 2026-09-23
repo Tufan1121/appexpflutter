@@ -7,7 +7,10 @@ import 'package:appexpflutter_update/config/primera_mayuscula_formatter.dart';
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
 import 'package:appexpflutter_update/features/shared/widgets/descuento_dialog.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/shipping_quote_modal_v2.dart';
+import 'package:appexpflutter_update/features/cotizador_envio/data/models/envio_parcial.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/product_shipping_info.dart';
+import 'package:appexpflutter_update/features/cotizador_envio/presentation/widgets/aviso_envio_quitado.dart';
+import 'package:appexpflutter_update/features/cotizador_envio/presentation/widgets/ship_widgets.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,6 +73,25 @@ class ListaProductosVenta extends HookWidget {
 
     final envio = UtilsVenta.shippingCost;
 
+    // Partidas del ticket (clave → nombre) para la cobertura de los envíos.
+    final partidas = {
+      for (final p in productos) p.producto1: p.producto.trim(),
+    };
+
+    // Envío parcial: partidas que ningún envío cubre (llevan la leyenda).
+    final partidasSinEnvio =
+        productos.where((p) => UtilsVenta.sinEnvio(p.producto1)).length;
+
+    // Se quitaron los envíos porque cambiaron las partidas
+    // (UtilsVenta.quitarEnvioPorCambio): se avisa una sola vez.
+    final aviso = UtilsVenta.avisoEnvioQuitado;
+    if (aviso != null) {
+      UtilsVenta.avisoEnvioQuitado = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) mostrarAvisoEnvioQuitado(context, aviso);
+      });
+    }
+
     // Fuerza un nuevo build (y con él, el recálculo de arriba).
     void updateTotal() => revision.value++;
 
@@ -86,84 +108,23 @@ class ListaProductosVenta extends HookWidget {
       updateTotal();
     }
 
-    // Construye la lista de productos con dimensiones para cotización
-    // Usa las dimensiones del producto y estima el peso basado en el área
+    // Productos con sus medidas de EMPAQUE (largop/anchop/altop/pesoEnvio)
+    // para el cotizador. Igual que en galería: si falta alguna va en 0 y ese
+    // producto se queda fuera ("Faltan dimensiones") en lugar de cotizarse
+    // con medidas inventadas; los demás sí se cotizan.
     List<ProductShippingInfo> buildProductsForQuote() {
-      final List<ProductShippingInfo> result = [];
-      
-      for (final producto in productos) {
-
-          // DEBUG: Imprimir valores originales del producto
-          print('═══════════════════════════════════════════════════════════════');
-          print('🔍 [PUNTO VENTA] buildProductsForQuote - Producto: ${producto.producto1}');
-          print('   📦 Dimensiones de PAQUETE (largop/anchop/altop/pesoEnvio):');
-          print('      largop: ${producto.largop}');
-          print('      anchop: ${producto.anchop}');
-          print('      altop: ${producto.altop}');
-          print('      pesoEnvio: ${producto.pesoEnvio}');
-          print('   📐 Dimensiones de PRODUCTO (largo/ancho en metros):');
-          print('      largo: ${producto.largo}');
-          print('      ancho: ${producto.ancho}');
-          
-          // Prioridad: usar dimensiones de paquete si existen, si no usar dimensiones del producto
-          double largo;
-          double ancho;
-          double alto;
-          double peso;
-          
-          // Si tenemos dimensiones de paquete del backend, usarlas
-          if (producto.largop != null && producto.largop! > 0) {
-            largo = producto.largop!;
-          } else if (producto.largo != null && producto.largo! > 0) {
-            // Convertir largo del producto de metros a cm
-            largo = producto.largo! * 100;
-          } else {
-            largo = 30.0; // Valor por defecto
-          }
-          
-          if (producto.anchop != null && producto.anchop! > 0) {
-            ancho = producto.anchop!;
-          } else if (producto.ancho != null && producto.ancho! > 0) {
-            // Convertir ancho del producto de metros a cm
-            ancho = producto.ancho! * 100;
-          } else {
-            ancho = 20.0; // Valor por defecto
-          }
-          
-          if (producto.altop != null && producto.altop! > 0) {
-            alto = producto.altop!;
-          } else {
-            // Estimar alto basado en si es un tapete enrollado (diámetro aprox)
-            alto = 15.0; // Valor por defecto para tapete enrollado
-          }
-          
-          if (producto.pesoEnvio != null && producto.pesoEnvio! > 0) {
-            peso = producto.pesoEnvio!;
-          } else {
-            // Estimar peso basado en el área del producto (m2) * factor de peso por m2
-            final area = ((producto.largo ?? 1.0) * (producto.ancho ?? 1.0));
-            peso = area > 0 ? (area * 3.0).clamp(1.5, 50.0) : 2.0; // ~3kg por m2, mínimo 1.5kg, máximo 50kg
-          }
-          
-          // DEBUG: Imprimir valores calculados
-          print('   ✅ Valores USADOS para cotización:');
-          print('      largo: $largo cm');
-          print('      ancho: $ancho cm');
-          print('      alto: $alto cm');
-          print('      peso: $peso kg');
-          print('═══════════════════════════════════════════════════════════════');
-          
-          result.add(ProductShippingInfo(
+      return [
+        for (final producto in productos)
+          ProductShippingInfo(
             productKey: producto.producto1,
             productName: producto.producto,
-            largo: largo,
-            ancho: ancho,
-            alto: alto,
-            peso: peso,
+            largo: producto.largop ?? 0,
+            ancho: producto.anchop ?? 0,
+            alto: producto.altop ?? 0,
+            peso: producto.pesoEnvio ?? 0,
             cantidad: UtilsVenta.cantidadDe(producto.producto1),
-          ));
-      }
-      return result;
+          ),
+      ];
     }
 
     return Column(
@@ -248,18 +209,18 @@ class ListaProductosVenta extends HookWidget {
                            );
                            return;
                          }
-                        
-                         final productsForQuote = buildProductsForQuote();
-                         
+
+                         // Cada "Agregar" suma una partida ENVIO con los
+                         // tapetes que cubre (p. ej. paquete + Big Ticket);
+                         // mientras falten tapetes el cotizador sigue abierto.
                          ShippingQuoteModalV2.show(
                            context: context,
-                           products: productsForQuote,
-                            onShippingSelected: (price, carrier, description, breakdown, ruta) {
-                              print('🟡 [ListaProductosVenta] onShippingSelected - price=$price, carrier=$carrier');
-                              UtilsVenta.setShipping(price, carrier, description, breakdown, ruta);
-                              print('🟡 [ListaProductosVenta] after setShipping - UtilsVenta.shippingCost=${UtilsVenta.shippingCost}');
-                              updateTotal(); // Actualizar totales
-                            },
+                           products: buildProductsForQuote(),
+                           onShippingSelected: (envio) {
+                             UtilsVenta.agregarEnvio(envio, partidas);
+                             updateTotal(); // Actualizar totales
+                           },
+                           cobertura: () => UtilsVenta.coberturaEnvios(partidas),
                          );
                        },
                       icon: const Icon(Icons.local_shipping, size: 16, color: Colors.white),
@@ -274,11 +235,22 @@ class ListaProductosVenta extends HookWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(
-                              UtilsVenta.shippingCarrier,
-                              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            // Una línea por partida ENVIO (paquete, Big
+                            // Ticket...).
+                            for (final e in UtilsVenta.envios.lista)
+                              Text(
+                                UtilsVenta.envios.lista.length == 1
+                                    ? e.carrier
+                                    : '${e.carrier} ${Utils.formatPrice(e.importe)}',
+                                style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            if (partidasSinEnvio > 0)
+                              ShipTag(
+                                text:
+                                    'cubre ${productos.length - partidasSinEnvio} de ${productos.length}',
+                                color: Colores.errorColor,
+                              ),
                             Text(
                               Utils.formatPrice(envio),
                               style: GoogleFonts.inter(fontSize: 14, color: Colors.green, fontWeight: FontWeight.bold),
@@ -338,6 +310,14 @@ class ListaProductosVenta extends HookWidget {
                           : '');
                   final observaController = useTextEditingController(
                       text: UtilsVenta.observaDe(clave));
+                  // La leyenda "No se cotizó el envío" se pone o se quita
+                  // desde fuera (al elegir o quitar el envío): el campo debe
+                  // reflejarla. Se compara sin espacios para no pelear con lo
+                  // que el vendedor está tecleando.
+                  final observaActual = UtilsVenta.observaDe(clave);
+                  if (observaController.text.trim() != observaActual) {
+                    observaController.text = observaActual;
+                  }
                   final scrollController = useScrollController(); // Scroll por item
 
                   // El precio manual se aplica solo, sin botón: el usuario
@@ -453,6 +433,12 @@ class ListaProductosVenta extends HookWidget {
                                           if (currentCount <
                                               existencia.toInt()) {
                                             UtilsVenta.setCantidad(clave, currentCount + 1);
+                                            // Otra cantidad de guías: los envíos ya
+                                            // no corresponden (igual que en galería).
+                                            UtilsVenta.quitarEnvioPorCambio(
+                                                producto.producto,
+                                                CambioPartida.cantidad,
+                                                clave: clave);
                                             updateTotal();
                                           } else {
                                              ScaffoldMessenger.of(context).showSnackBar(
@@ -471,6 +457,12 @@ class ListaProductosVenta extends HookWidget {
                                           if (currentCount > 1) {
                                             UtilsVenta.setCantidad(
                                                 clave, currentCount - 1);
+                                            // Otra cantidad de guías: los envíos ya
+                                            // no corresponden (igual que en galería).
+                                            UtilsVenta.quitarEnvioPorCambio(
+                                                producto.producto,
+                                                CambioPartida.cantidad,
+                                                clave: clave);
                                             updateTotal();
                                           } else {
                                             // Eliminar: el bloc quita el producto y

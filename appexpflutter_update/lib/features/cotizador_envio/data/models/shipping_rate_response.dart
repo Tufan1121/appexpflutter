@@ -1,3 +1,8 @@
+/// Respuesta cruda de `POST /ship/rate/` de envia.com.
+///
+/// envia.com responde HTTP 200 con `meta: "error"` cuando la paquetería
+/// rechaza el bulto (dimensiones, peso, cobertura); ese mensaje es el que se
+/// le muestra a ventas como motivo de rechazo.
 class ShippingRateResponse {
   final String meta;
   final List<ShippingRate> data;
@@ -9,13 +14,30 @@ class ShippingRateResponse {
     this.error,
   });
 
+  bool get isError => meta == 'error' || error != null;
+
   factory ShippingRateResponse.fromJson(Map<String, dynamic> json) {
+    final meta = json['meta']?.toString() ?? '';
+    String? error;
+    if (meta == 'error') {
+      final err = json['error'];
+      if (err is Map) {
+        error = (err['message'] ?? err['description'])?.toString();
+      } else if (err != null) {
+        error = err.toString();
+      }
+      error = (error == null || error.trim().isEmpty)
+          ? 'Rechazado por la paquetería'
+          : error.trim();
+    }
     return ShippingRateResponse(
-      meta: json['meta'] ?? '',
+      meta: meta,
       data: (json['data'] as List<dynamic>?)
-              ?.map((e) => ShippingRate.fromJson(e as Map<String, dynamic>))
+              ?.whereType<Map<String, dynamic>>()
+              .map(ShippingRate.fromJson)
               .toList() ??
           [],
+      error: error,
     );
   }
 
@@ -28,6 +50,9 @@ class ShippingRateResponse {
   }
 }
 
+/// Una tarifa tal como la regresa envia.com. `totalPrice` es el precio
+/// ORIGINAL (sin margen); el margen por tipo de envío lo aplica el
+/// repositorio al construir `ShippingOption`.
 class ShippingRate {
   final int carrierId;
   final String carrier;
@@ -40,6 +65,14 @@ class ShippingRate {
   final double totalPrice;
   final String currency;
 
+  /// 0 = puerta a puerta; 1/2/3 = pasa por sucursal (ocurre).
+  final int dropOff;
+  final String dropOffDescription;
+
+  /// Sucursales (ocurre) que envia.com regresa con la tarifa. Solo vienen en
+  /// servicios con `dropOff` distinto de 0.
+  final List<ShippingBranch> branches;
+
   ShippingRate({
     required this.carrierId,
     required this.carrier,
@@ -51,28 +84,91 @@ class ShippingRate {
     this.deliveryDate,
     required this.totalPrice,
     required this.currency,
+    this.dropOff = 0,
+    this.dropOffDescription = '',
+    this.branches = const [],
   });
 
-  factory ShippingRate.fromJson(Map<String, dynamic> json) {
-    // Obtener el precio original y aplicar 30% de aumento con redondeo hacia arriba (a la centena superior)
-    final double originalPrice = (json['totalPrice'] ?? 0).toDouble();
-    final double priceWithMarkup = originalPrice * 1.30; // +30%
-    final double roundedPrice = (priceWithMarkup / 100).ceilToDouble() * 100; // Redondeo a la centena superior
+  bool get esOcurre => dropOff != 0;
 
+  factory ShippingRate.fromJson(Map<String, dynamic> json) {
     return ShippingRate(
-      carrierId: json['carrierId'] ?? 0,
-      carrier: json['carrier'] ?? '',
-      carrierDescription: json['carrierDescription'] ?? '',
-      serviceId: json['serviceId'] ?? 0,
-      service: json['service'] ?? '',
-      serviceDescription: json['serviceDescription'] ?? '',
-      deliveryEstimate: json['deliveryEstimate'] ?? '',
-      deliveryDate: json['deliveryDate'] != null
-          ? DeliveryDate.fromJson(json['deliveryDate'])
+      carrierId: _toInt(json['carrierId']),
+      carrier: json['carrier']?.toString() ?? '',
+      carrierDescription: json['carrierDescription']?.toString() ?? '',
+      serviceId: _toInt(json['serviceId']),
+      service: json['service']?.toString() ?? '',
+      serviceDescription: json['serviceDescription']?.toString() ?? '',
+      deliveryEstimate: json['deliveryEstimate']?.toString() ?? '',
+      deliveryDate: json['deliveryDate'] is Map<String, dynamic>
+          ? DeliveryDate.fromJson(json['deliveryDate'] as Map<String, dynamic>)
           : null,
-      totalPrice: roundedPrice,
-      currency: json['currency'] ?? 'MXN',
+      totalPrice: _toDouble(json['totalPrice']),
+      currency: json['currency']?.toString() ?? 'MXN',
+      dropOff: _toInt(json['dropOff']),
+      dropOffDescription: json['dropOffDescription']?.toString() ?? '',
+      branches: (json['branches'] as List<dynamic>?)
+              ?.whereType<Map<String, dynamic>>()
+              .map(ShippingBranch.fromJson)
+              .toList() ??
+          const [],
     );
+  }
+}
+
+/// Sucursal de la paquetería donde el cliente recoge (entrega en ocurre).
+class ShippingBranch {
+  final String id;
+  final String nombre;
+  final String dir;
+
+  /// Distancia al CP destino en km (null si la paquetería no la manda).
+  final double? km;
+
+  const ShippingBranch({
+    required this.id,
+    required this.nombre,
+    required this.dir,
+    this.km,
+  });
+
+  factory ShippingBranch.fromJson(Map<String, dynamic> json) {
+    final ad = json['address'];
+    final adMap = ad is Map<String, dynamic> ? ad : const <String, dynamic>{};
+    final dir = [
+      adMap['street'],
+      adMap['number'],
+      adMap['city'] ?? adMap['locality'],
+      adMap['state'],
+    ]
+        .where((e) => e != null && e.toString().trim().isNotEmpty)
+        .map((e) => e.toString())
+        .join(' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    final nombre = (json['reference'] ?? json['branch_code'] ?? 'Sucursal')
+        .toString()
+        .trim();
+    final distancia = json['distance'];
+    double? km;
+    if (distancia != null) {
+      final d = double.tryParse(distancia.toString());
+      if (d != null) km = (d * 10).round() / 10;
+    }
+    return ShippingBranch(
+      id: (json['branch_id'] ?? json['branch_code'] ?? '').toString(),
+      nombre: nombre.isEmpty ? 'Sucursal' : nombre,
+      dir: dir,
+      km: km,
+    );
+  }
+
+  /// "Nombre (3.2 km) · dirección"
+  String get etiqueta {
+    final buf = StringBuffer(nombre);
+    if (km != null) buf.write(' ($km km)');
+    if (dir.isNotEmpty) buf.write(' · $dir');
+    return buf.toString();
   }
 }
 
@@ -91,10 +187,23 @@ class DeliveryDate {
 
   factory DeliveryDate.fromJson(Map<String, dynamic> json) {
     return DeliveryDate(
-      date: json['date'] ?? '',
-      dateDifference: json['dateDifference'] ?? 0,
-      timeUnit: json['timeUnit'] ?? '',
-      time: json['time'] ?? '',
+      date: json['date']?.toString() ?? '',
+      dateDifference: _toInt(json['dateDifference']),
+      timeUnit: json['timeUnit']?.toString() ?? '',
+      time: json['time']?.toString() ?? '',
     );
   }
+}
+
+int _toInt(dynamic v) {
+  if (v == null) return 0;
+  if (v is int) return v;
+  if (v is num) return v.toInt();
+  return int.tryParse(v.toString()) ?? 0;
+}
+
+double _toDouble(dynamic v) {
+  if (v == null) return 0;
+  if (v is num) return v.toDouble();
+  return double.tryParse(v.toString()) ?? 0;
 }

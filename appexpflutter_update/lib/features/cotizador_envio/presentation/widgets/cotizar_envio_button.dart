@@ -11,8 +11,8 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/widget
 /// "Ver +Detalle" para no confundirse entre sí.
 ///
 /// A diferencia de la sesión de ventas, aquí es solo una **consulta**: abre el
-/// mismo `ShippingQuoteModalV2` con un único producto y, al seleccionar una
-/// tarifa, simplemente se cierra el modal (no se guarda envío en el pedido).
+/// mismo `ShippingQuoteModalV2` con un único producto en modo consulta (sin
+/// botón de agregar envío).
 class CotizarEnvioButton extends StatelessWidget {
   final ProductShippingInfo product;
 
@@ -31,8 +31,9 @@ class CotizarEnvioButton extends StatelessWidget {
         onTap: () => ShippingQuoteModalV2.show(
           context: context,
           products: [product],
-          // Consulta: al elegir una tarifa solo se cierra el modal.
-          onShippingSelected: (_, __, ___, ____, _____) {},
+          consulta: true,
+          // En modo consulta no hay selección; el callback no se invoca.
+          onShippingSelected: (_) {},
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

@@ -615,14 +615,14 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
         'entregado': entregado,
         'id_metodopago2': metodo2,
         'id_metodopago3': metodo3,
-        'envio': UtilsVenta.shippingCost.toString(),
+        'envio': UtilsVenta.shippingCostEncabezado.toString(),
         // Servicio + origen/destino (CP y ciudad): observación de la partida ENVIO.
         'envio_observa': UtilsVenta.shippingObserva,
       };
 
       _enviando = true;
       context.read<CotizaPedidoBloc>().add(
-          PedidoAddEvent(data: data, products: List.of(UtilsVenta.listProductsOrder)));
+          PedidoAddEvent(data: data, products: UtilsVenta.detalleConEnvios));
     } else {
       form.markAllAsTouched();
     }

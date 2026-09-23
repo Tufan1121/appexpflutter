@@ -1,5 +1,6 @@
 // productos_bloc.dart
 
+import 'package:appexpflutter_update/features/cotizador_envio/data/models/envio_parcial.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/usecases/inventario_expo_usecase.dart';
 import 'package:appexpflutter_update/features/punto_venta/utils.dart';
@@ -35,6 +36,12 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
       AddSelectedProductsToScannedEvent event,
       Emitter<ProductosState> emit) async {
     scannedProducts.addAll(event.productos);
+    // Partidas nuevas con envío ya cotizado: ese envío ya no corresponde.
+    if (event.productos.isNotEmpty) {
+      UtilsVenta.quitarEnvioPorCambio(
+          event.productos.map((p) => p.producto.trim()).join(', '),
+          CambioPartida.nueva);
+    }
     // if (state is IbodegaProductosLoaded) {
     //   final currentState = state as IbodegaProductosLoaded;
     // }
@@ -74,13 +81,20 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
           existencia = true;
         } else {
           if (!scannedProducts.any((p) => p.producto1 == producto.producto1)) {
-            scannedProducts.add(producto);
+            _agregar(producto);
             existencia = true;
           }
         }
         emit(ProductosLoaded(productos: List.from(scannedProducts)));
       },
     );
+  }
+
+  /// Agrega una partida nueva. Si ya había envío cotizado, ya no corresponde:
+  /// se quita y la lista avisa (UtilsVenta.avisoEnvioQuitado).
+  void _agregar(ProductoExpoEntity producto) {
+    scannedProducts.add(producto);
+    UtilsVenta.quitarEnvioPorCambio(producto.producto, CambioPartida.nueva);
   }
 
   Future<void> _getProductEvent(
@@ -116,7 +130,7 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
           existencia = true;
         } else {
           if (!scannedProducts.any((p) => p.producto1 == producto.producto1)) {
-            scannedProducts.add(producto);
+            _agregar(producto);
             existencia = true;
           }
         }
@@ -129,7 +143,7 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
   Future<void> _addProductToScannedEvent(
       AddProductToScannedEvent event, Emitter<ProductosState> emit) async {
     if (!scannedProducts.any((p) => p.producto1 == event.producto.producto1)) {
-      scannedProducts.add(event.producto);
+      _agregar(event.producto);
       emit(ProductosLoaded(productos: List.from(scannedProducts)));
     }
   }
@@ -137,8 +151,17 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
   Future<void> _removeProductEvent(
       RemoveProductEvent event, Emitter<ProductosState> emit) async {
     scannedProducts.remove(event.producto);
+    // El envío incluía este tapete: su importe ya no corresponde, así que se
+    // quita y se avisa (salvo que el tapete no estuviera cubierto). Va antes
+    // de olvidar la partida porque revisa su observación.
+    UtilsVenta.quitarEnvioPorCambio(
+        event.producto.producto, CambioPartida.eliminada,
+        clave: event.producto.producto1);
     UtilsVenta.olvidar(event.producto.producto1);
     if (scannedProducts.isEmpty) {
+      // Sin partidas no hay nada que enviar.
+      UtilsVenta.clearShipping();
+      UtilsVenta.avisoEnvioQuitado = null;
       // Sin productos la lista no se construye, así que el total y el detalle
       // se quedarían con los valores del último producto eliminado.
       UtilsVenta.total = 0;
@@ -157,6 +180,7 @@ class ProductosTiendaBloc extends Bloc<ProductosEvent, ProductosState> {
   void _clearProductsState(Emitter<ProductosState> emit) {
     scannedProducts.clear();
     UtilsVenta.clearSelecciones();
+    UtilsVenta.avisoEnvioQuitado = null;
     emit(ProductoInitial());
   }
 

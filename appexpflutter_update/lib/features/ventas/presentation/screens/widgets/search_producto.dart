@@ -155,14 +155,15 @@ class SearchProducto extends HookWidget {
                                         'id_cliente': idCliente,
                                         'estatus': estatusPedido,
                                         'total_pagar': UtilsVenta.totalWithShipping.toInt(),
-                                        'envio': UtilsVenta.shippingCost.toString(),
+                                        'envio': UtilsVenta.shippingCostEncabezado.toString(),
+                                        'envio_observa': UtilsVenta.shippingObserva,
                                       };
 
                                       context.read<SesionPedidoBloc>().add(
                                           PedidoAddSesionEvent(
                                               data: data,
                                               products: UtilsVenta
-                                                  .listProductsOrder));
+                                                  .detalleConEnvios));
                                     },
                               // onTap: () => SesionPedidoRoute(
                               //         idCliente: idCliente,
@@ -236,14 +237,15 @@ class SearchProducto extends HookWidget {
                                           'estatus': estatusPedido,
                                           'total_pagar':
                                               UtilsVenta.totalWithShipping.toInt(),
-                                          'envio': UtilsVenta.shippingCost.toString(),
+                                          'envio': UtilsVenta.shippingCostEncabezado.toString(),
+                                          'envio_observa': UtilsVenta.shippingObserva,
                                         };
 
                                         context.read<CotizaPedidoBloc>().add(
                                             PedidoAddEvent(
                                                 data: data,
                                                 products: UtilsVenta
-                                                    .listProductsOrder));
+                                                    .detalleConEnvios));
                                       }
 
                                 // onTap: () => CotizaPedidoRoute(
