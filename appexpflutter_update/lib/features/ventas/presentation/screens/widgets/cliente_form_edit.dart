@@ -9,6 +9,7 @@ import 'package:appexpflutter_update/features/ventas/domain/entities/cliente_ent
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lada_pais_selector.dart';
 
 // ignore: must_be_immutable
 class ClienteFormEdit extends StatefulHookWidget {
@@ -35,6 +36,7 @@ class _ClienteFormState extends State<ClienteFormEdit> {
           validators: [Validators.required], value: widget.cliente.nombre),
       'apellido': FormControl<String>(
           validators: [Validators.required], value: widget.cliente.apellido),
+      'lada_pais': FormControl<String>(value: widget.cliente.ladaPais),
       'telefono': FormControl<String>(
           validators: [Validators.required], value: widget.cliente.telefono),
       'rfc': FormControl<String>(value: widget.cliente.rfc),
@@ -82,16 +84,14 @@ class _ClienteFormState extends State<ClienteFormEdit> {
               formControlName: 'telefono',
               label: 'Telefono/WhatsApp',
               keyboardType: TextInputType.phone,
+              prefixIcon: const LadaPaisSelector(),
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
                   RegExp(r'^[0-9]*$'),
                 ),
-                LengthLimitingTextInputFormatter(10),
+                LengthLimitingTextInputFormatter(15),
               ],
-              validationMessages: {
-                ValidationMessage.required: (error) =>
-                    'Este campo es requerido',
-              },
+              validationMessages: telefonoValidationMessages,
             ),
             const SizedBox(height: 20),
             CustomReactiveTextField(
@@ -147,6 +147,7 @@ class _ClienteFormState extends State<ClienteFormEdit> {
       form.markAllAsTouched();
       return;
     }
+    if (!telefonoValido(form)) return;
     nombre = form.control('nombre').value!;
     apellido = form.control('apellido').value!;
     telefono = form.control('telefono').value!;
@@ -157,6 +158,7 @@ class _ClienteFormState extends State<ClienteFormEdit> {
       'nombre': nombre,
       'apellido': apellido,
       'telefono': telefono,
+      'lada_pais': form.control('lada_pais').value ?? widget.cliente.ladaPais,
       'correo': correo,
       'factura': widget.factura.value == false ? 0 : 1,
       'rfc': widget.factura.value == false ? '' : rfc

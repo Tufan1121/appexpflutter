@@ -6,6 +6,9 @@ class ClienteEntity extends Equatable {
   final String apellido;
   final String? direccion;
   final String telefono;
+
+  /// Clave de país del teléfono (clientes.lada_pais); '52' si no la tiene.
+  final String ladaPais;
   final String correo;
   final String? rfc;
   // final String? tipoPersona;
@@ -24,6 +27,7 @@ class ClienteEntity extends Equatable {
     required this.apellido,
     this.direccion,
     required this.telefono,
+    this.ladaPais = '52',
     required this.correo,
     this.rfc,
     // this.tipoPersona,
@@ -44,6 +48,7 @@ class ClienteEntity extends Equatable {
         apellido,
         direccion,
         telefono,
+        ladaPais,
         correo,
         rfc,
         // tipoPersona,

@@ -55,6 +55,54 @@ class PedidoDataSourceImpl implements PedidoDataSource {
     }
   }
 
+  /// Manda el PDF del pedido al cliente por WhatsApp desde el número de expo
+  /// (plantilla de Meta, backend /enviarPedidoWhatsapp). Si [telefono] viene
+  /// vacío el backend usa el del cliente del pedido con su clave de país; si
+  /// viene (capturado al enviar) se manda con [ladaPais] y, con [guardar], se
+  /// queda en el cliente. Lanza [TelefonoClienteException] si el cliente no
+  /// tiene número o es inválido, y Exception con el `detail` en otros errores.
+  @override
+  Future<String> enviarPedidoWhatsapp(
+      {required String pedidos,
+      int? idExpo,
+      String telefono = '',
+      String ladaPais = '',
+      bool guardar = false}) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.post(
+        '/enviarPedidoWhatsapp',
+        queryParameters: {
+          'pedidos': pedidos,
+          if (idExpo != null) 'id_expo': idExpo,
+          if (telefono.trim().isNotEmpty) 'telefono': telefono.trim(),
+          if (ladaPais.trim().isNotEmpty) 'lada_pais': ladaPais.trim(),
+          if (guardar) 'guardar': 1,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+          // Síncrono: puede generar el PDF y esperar la respuesta de Meta.
+          receiveTimeout: const Duration(seconds: 45),
+        ),
+      );
+      // Solo los últimos 4 dígitos: el vendedor no necesita ver el número
+      final tel = (result.data['telefono'] ?? '').toString();
+      final fin = tel.length > 4 ? tel.substring(tel.length - 4) : tel;
+      return 'WhatsApp enviado al cliente (…$fin)';
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final detail = data is Map ? data['detail'] : null;
+      if (e.response?.statusCode == 400 &&
+          detail is String &&
+          detail.startsWith('Telefono')) {
+        throw TelefonoClienteException(detail);
+      }
+      throw Exception(detail is String ? detail : 'No se pudo enviar el WhatsApp');
+    }
+  }
+
   @override
   Future<PedidoModel> addPedido(Map<String, dynamic> data) async {
     final token = await storage.read(key: 'accessToken');

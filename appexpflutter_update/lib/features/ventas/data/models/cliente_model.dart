@@ -11,6 +11,7 @@ class ClienteModel extends ClienteEntity
     required super.apellido,
     super.direccion,
     required super.telefono,
+    super.ladaPais,
     required super.correo,
     super.rfc,
     // super.tipoPersona,
@@ -32,6 +33,10 @@ class ClienteModel extends ClienteEntity
         apellido: json["apellido"] as String,
         direccion: json["direccion"] as String?,
         telefono: json["telefono"] as String,
+        // Sin la columna (o vacía) el cliente se toma como de México
+        ladaPais: (json["lada_pais"] ?? '').toString().trim().isEmpty
+            ? '52'
+            : json["lada_pais"].toString().trim(),
         correo: json["correo"] as String,
         rfc: json["rfc"] as String?,
         // tipoPersona: json["tipopersona"] as String?,
@@ -56,6 +61,7 @@ class ClienteModel extends ClienteEntity
       'apellido': apellido,
       'direccion': direccion,
       'telefono': telefono,
+      'lada_pais': ladaPais,
       'correo': correo,
       //   'rfc': rfc,
       //   'tipopersona': tipoPersona,
@@ -77,6 +83,7 @@ class ClienteModel extends ClienteEntity
         apellido: apellido,
         direccion: direccion,
         telefono: telefono,
+        ladaPais: ladaPais,
         correo: correo,
         rfc: rfc,
         // tipoPersona: tipoPersona,

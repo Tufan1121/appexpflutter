@@ -8,6 +8,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/lada_pais_selector.dart';
 
 class ClienteForm extends StatefulHookWidget {
   const ClienteForm({super.key});
@@ -28,6 +29,7 @@ class _LoginFormState extends State<ClienteForm> {
   final form = FormGroup({
     'nombre': FormControl<String>(validators: [Validators.required]),
     'apellido': FormControl<String>(validators: [Validators.required]),
+    'lada_pais': FormControl<String>(value: ladaMexico),
     'telefono': FormControl<String>(validators: [Validators.required]),
     'rfc': FormControl<String>(),
     'email': FormControl<String>(validators: [
@@ -76,16 +78,14 @@ class _LoginFormState extends State<ClienteForm> {
               formControlName: 'telefono',
               label: 'Telefono/WhatsApp',
               keyboardType: TextInputType.phone,
+              prefixIcon: const LadaPaisSelector(),
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
                   RegExp(r'^[0-9]*$'),
                 ),
-                LengthLimitingTextInputFormatter(10),
+                LengthLimitingTextInputFormatter(15),
               ],
-              validationMessages: {
-                ValidationMessage.required: (error) =>
-                    'Este campo es requerido',
-              },
+              validationMessages: telefonoValidationMessages,
             ),
             const SizedBox(height: 20),
             CustomReactiveTextField(
@@ -143,6 +143,7 @@ class _LoginFormState extends State<ClienteForm> {
                   form.control('nombre').reset();
                   form.control('apellido').reset();
                   form.control('telefono').reset();
+                  form.control('lada_pais').reset(value: ladaMexico);
                   form.control('email').reset();
                   form.control('rfc').reset();
                 } else if (state is ClienteError) {
@@ -177,6 +178,7 @@ class _LoginFormState extends State<ClienteForm> {
       form.markAllAsTouched();
       return;
     }
+    if (!telefonoValido(form)) return;
     nombre = form.control('nombre').value!;
     apellido = form.control('apellido').value!;
     telefono = form.control('telefono').value!;
@@ -187,6 +189,7 @@ class _LoginFormState extends State<ClienteForm> {
       'nombre': nombre,
       'apellido': apellido,
       'telefono': telefono,
+      'lada_pais': form.control('lada_pais').value ?? ladaMexico,
       'correo': correo,
       'factura': factura.value == false ? 0 : 1,
       'rfc': rfc

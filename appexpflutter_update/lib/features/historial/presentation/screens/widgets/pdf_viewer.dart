@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/enviar_pedido_whatsapp.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -18,6 +19,11 @@ class PdfViewerScreen extends HookWidget {
   final String userName;
   final String clientPhoneNumber;
 
+  /// Expo del pedido. Si viene, el documento es un PEDIDO: el WhatsApp sale
+  /// del número de expo (backend /enviarPedidoWhatsapp) y no se ofrece
+  /// "Compartir", para que el vendedor no se quede con el contacto.
+  final int? idExpo;
+
   const PdfViewerScreen({
     super.key,
     required this.fileName,
@@ -25,13 +31,16 @@ class PdfViewerScreen extends HookWidget {
     required this.url,
     required this.userName,
     required this.clientPhoneNumber,
+    this.idExpo,
   });
 
   @override
   Widget build(BuildContext context) {
     final pdfViewerKey = useState(GlobalKey<SfPdfViewerState>());
     final isUrlValid = useState<bool?>(null);
+    final enviandoWhatsApp = useState(false);
     final dio = useMemoized(() => Dio());
+    final esPedido = idExpo != null;
 
     useEffect(() {
       Future<void> checkUrlValidity() async {
@@ -106,6 +115,41 @@ class PdfViewerScreen extends HookWidget {
       }
     }
 
+    Future<void> enviarPedido() async {
+      final confirmar = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Enviar por WhatsApp'),
+          content: Text(
+              'Se enviará el pedido $fileName al cliente desde el WhatsApp de la expo.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Enviar'),
+            ),
+          ],
+        ),
+      );
+      if (confirmar != true || !context.mounted) return;
+
+      enviandoWhatsApp.value = true;
+      try {
+        // Sin teléfono del cliente (o inválido) pide capturarlo y lo guarda
+        await enviarPedidoWhatsApp(
+          dialogContext: context,
+          messenger: ScaffoldMessenger.of(context),
+          pedidos: fileName,
+          idExpo: idExpo,
+        );
+      } finally {
+        if (context.mounted) enviandoWhatsApp.value = false;
+      }
+    }
+
     Future<void> sendToWhatsApp() async {
       try {
         final appDownloadsDir = await getTemporaryDirectory();
@@ -161,14 +205,25 @@ class PdfViewerScreen extends HookWidget {
             icon: const Icon(Icons.download),
             onPressed: downloadPdf,
           ),
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: sharePdf,
-          ),
-          IconButton(
-            icon: const FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: sendToWhatsApp,
-          ),
+          if (!esPedido)
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: sharePdf,
+            ),
+          enviandoWhatsApp.value
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14),
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  ),
+                )
+              : IconButton(
+                  icon: const FaIcon(FontAwesomeIcons.whatsapp),
+                  onPressed: esPedido ? enviarPedido : sendToWhatsApp,
+                ),
         ],
       ),
       body: isUrlValid.value == null

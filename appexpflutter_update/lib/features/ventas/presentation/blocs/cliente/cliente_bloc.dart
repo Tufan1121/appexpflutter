@@ -66,6 +66,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
           nombre: event.data['nombre'],
           apellido: event.data['apellido'],
           telefono: event.data['telefono'],
+          ladaPais: event.data['lada_pais'] ?? updatedClientes[index].ladaPais,
           correo: event.data['correo'],
           factura: event.data['factura'],
         );

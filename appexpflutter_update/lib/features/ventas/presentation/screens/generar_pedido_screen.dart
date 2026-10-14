@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 
 import 'package:appexpflutter_update/config/router/routes.dart';
@@ -20,14 +19,12 @@ import 'package:appexpflutter_update/features/ventas/presentation/blocs/pedido/p
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/session_pedido/sesion_pedido_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
-import 'package:dio/dio.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/enviar_pedido_whatsapp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../config/theme/app_theme.dart';
 
@@ -159,38 +156,17 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     final isPendienteFinDeExpo = useState(true);
     final debePorPagar = useState(totalAPagar);
     final scrollController = useScrollController();
-    final dio = useMemoized(() => Dio());
 
-    Future<void> sendToWhatsApp(String url, String clientPhoneNumber,
-        String userName, String fileName) async {
-      try {
-        final appDownloadsDir = await getTemporaryDirectory();
-        final file = File('${appDownloadsDir.path}/$fileName.pdf');
-        await dio.download(url, file.path);
-
-        final whatsappUrl = Uri.parse(
-            'whatsapp://send?phone=$clientPhoneNumber&text=Hola Soy $userName, te comparto el link del pedido $fileName. $url');
-        if (await canLaunchUrl(whatsappUrl)) {
-          await launchUrl(whatsappUrl);
-        } else {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('No se pudo abrir WhatsApp.'),
-              ),
-            );
-          }
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error al enviar a WhatsApp: $e'),
-            ),
-          );
-        }
-      }
-    }
+    /// Manda el PDF del pedido por WhatsApp desde el número de expo (backend),
+    /// ya no desde el WhatsApp del vendedor. Messenger y Navigator raíz se
+    /// toman antes de navegar a Home: siguen vivos para avisar el resultado o
+    /// pedir el teléfono si el cliente no tiene.
+    Future<void> sendToWhatsApp(String pedidos, int idExpo) => enviarPedidoWhatsApp(
+          dialogContext: Navigator.of(context, rootNavigator: true).context,
+          messenger: ScaffoldMessenger.of(context),
+          pedidos: pedidos,
+          idExpo: idExpo,
+        );
 
     void toggleCheckbox(String controlName) {
       if (controlName == 'entregado') {
@@ -475,7 +451,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                     context,
                                     pdfUrl,
                                     state.pedido.pedidos,
-                                    state.username,
+                                    state.pedido.idExpo,
                                     sendToWhatsApp);
 
                                 //  form.reset();
@@ -1210,10 +1186,8 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
       BuildContext context,
       String pdfUrl,
       String nombrePdf,
-      String userName,
-      Function(String url, String clientPhoneNumber, String userName,
-              String fileName)
-          sendToWhatsApp) {
+      int idExpo,
+      Future<void> Function(String pedidos, int idExpo) sendToWhatsApp) {
     // final getpdf = Getpdf(context: context);
     showDialog(
       context: context,
@@ -1248,8 +1222,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                   // getpdf.downloadPDF(pdfUrl, nombrePdf);
                   // opcion 2
                   // _openPDF(pdfUrl);
-                  sendToWhatsApp(
-                      pdfUrl, widget.telefonoCliente, userName, nombrePdf);
+                  sendToWhatsApp(nombrePdf, idExpo);
                   form.control('metodoDePago1').reset();
                   form.control('metodoDePago2').reset();
                   form.control('metodoDePago3').reset();

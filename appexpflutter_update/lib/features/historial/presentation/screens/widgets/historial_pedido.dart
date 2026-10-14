@@ -60,6 +60,7 @@ class HistorialListPedido extends StatelessWidget {
                         userName: prefs.getString('username') ?? historial[index].nombre,
                         clientPhoneNumber: historial[index].telefonoCliente,
                         url: pdfUrl,
+                        idExpo: historial[index].idExpo,
                       ),
                     ),
                   );
