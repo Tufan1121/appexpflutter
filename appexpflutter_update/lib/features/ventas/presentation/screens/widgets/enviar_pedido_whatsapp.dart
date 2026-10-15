@@ -21,9 +21,8 @@ Future<void> enviarPedidoWhatsApp({
   final dataSource = GetIt.instance<PedidoDataSource>();
   String? motivo;
   try {
-    final mensaje =
-        await dataSource.enviarPedidoWhatsapp(pedidos: pedidos, idExpo: idExpo);
-    _aviso(messenger, mensaje, Colors.green);
+    await dataSource.enviarPedidoWhatsapp(pedidos: pedidos, idExpo: idExpo);
+    _aviso(messenger, 'Pedido $pedidos enviado', Colors.green);
     return;
   } on TelefonoClienteException catch (e) {
     motivo = e.message;
@@ -37,14 +36,14 @@ Future<void> enviarPedidoWhatsApp({
   if (capturado == null) return;
 
   try {
-    final mensaje = await dataSource.enviarPedidoWhatsapp(
+    await dataSource.enviarPedidoWhatsapp(
       pedidos: pedidos,
       idExpo: idExpo,
       telefono: capturado.telefono,
       ladaPais: capturado.lada,
       guardar: true,
     );
-    _aviso(messenger, mensaje, Colors.green);
+    _aviso(messenger, 'Pedido $pedidos enviado', Colors.green);
   } catch (e) {
     _avisoError(messenger, pedidos, e);
   }
