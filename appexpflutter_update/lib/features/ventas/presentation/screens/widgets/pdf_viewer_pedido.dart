@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/enviar_pedido_whatsapp.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -19,6 +20,11 @@ class PdfViewerPedidoScreen extends HookWidget {
   final String userName;
   final String clientPhoneNumber;
 
+  /// Expo de la cotización. Si viene, el WhatsApp sale del número de expo
+  /// (backend /enviarCotizacionWhatsapp) y no se ofrece "Compartir", para que
+  /// el vendedor no se quede con el contacto.
+  final int? idExpo;
+
   const PdfViewerPedidoScreen({
     super.key,
     required this.fileName,
@@ -26,6 +32,7 @@ class PdfViewerPedidoScreen extends HookWidget {
     required this.url,
     required this.userName,
     required this.clientPhoneNumber,
+    this.idExpo,
   });
 
   @override
@@ -33,7 +40,9 @@ class PdfViewerPedidoScreen extends HookWidget {
     final pdfViewerKey = useState(GlobalKey<SfPdfViewerState>());
     final isUrlValid = useState<bool?>(null);
     final isLoading = useState<bool>(true);
+    final enviandoWhatsApp = useState(false);
     final dio = useMemoized(() => Dio());
+    final envioPorExpo = idExpo != null;
 
     useEffect(() {
       Future<void> checkUrlValidity() async {
@@ -110,6 +119,22 @@ class PdfViewerPedidoScreen extends HookWidget {
       }
     }
 
+    Future<void> enviarPorExpo() async {
+      enviandoWhatsApp.value = true;
+      try {
+        // Sin teléfono del cliente (o inválido) pide capturarlo y lo guarda
+        await enviarPedidoWhatsApp(
+          dialogContext: context,
+          messenger: ScaffoldMessenger.of(context),
+          pedidos: fileName,
+          idExpo: idExpo,
+          cotizacion: true,
+        );
+      } finally {
+        if (context.mounted) enviandoWhatsApp.value = false;
+      }
+    }
+
     Future<void> sendToWhatsApp() async {
       try {
         final appDownloadsDir = await getTemporaryDirectory();
@@ -179,14 +204,25 @@ class PdfViewerPedidoScreen extends HookWidget {
               icon: const Icon(Icons.download),
               onPressed: downloadPdf,
             ),
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: sharePdf,
-            ),
-            IconButton(
-              icon: const FaIcon(FontAwesomeIcons.whatsapp),
-              onPressed: sendToWhatsApp,
-            ),
+            if (!envioPorExpo)
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: sharePdf,
+              ),
+            enviandoWhatsApp.value
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white),
+                    ),
+                  )
+                : IconButton(
+                    icon: const FaIcon(FontAwesomeIcons.whatsapp),
+                    onPressed: envioPorExpo ? enviarPorExpo : sendToWhatsApp,
+                  ),
           ],
         ),
         body: isLoading.value

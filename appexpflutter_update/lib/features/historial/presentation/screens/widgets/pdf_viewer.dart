@@ -19,10 +19,13 @@ class PdfViewerScreen extends HookWidget {
   final String userName;
   final String clientPhoneNumber;
 
-  /// Expo del pedido. Si viene, el documento es un PEDIDO: el WhatsApp sale
-  /// del número de expo (backend /enviarPedidoWhatsapp) y no se ofrece
-  /// "Compartir", para que el vendedor no se quede con el contacto.
+  /// Expo del pedido o cotización. Si viene, el WhatsApp sale del número de
+  /// expo (backend /enviarPedidoWhatsapp o /enviarCotizacionWhatsapp) y no se
+  /// ofrece "Compartir", para que el vendedor no se quede con el contacto.
   final int? idExpo;
+
+  /// El documento es una cotización (si no, un pedido).
+  final bool cotizacion;
 
   const PdfViewerScreen({
     super.key,
@@ -32,6 +35,7 @@ class PdfViewerScreen extends HookWidget {
     required this.userName,
     required this.clientPhoneNumber,
     this.idExpo,
+    this.cotizacion = false,
   });
 
   @override
@@ -40,7 +44,7 @@ class PdfViewerScreen extends HookWidget {
     final isUrlValid = useState<bool?>(null);
     final enviandoWhatsApp = useState(false);
     final dio = useMemoized(() => Dio());
-    final esPedido = idExpo != null;
+    final envioPorExpo = idExpo != null;
 
     useEffect(() {
       Future<void> checkUrlValidity() async {
@@ -115,13 +119,13 @@ class PdfViewerScreen extends HookWidget {
       }
     }
 
-    Future<void> enviarPedido() async {
+    Future<void> enviarPorExpo() async {
       final confirmar = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Enviar por WhatsApp'),
           content: Text(
-              'Se enviará el pedido $fileName al cliente desde el WhatsApp de la expo.'),
+              'Se enviará ${cotizacion ? 'la cotización' : 'el pedido'} $fileName al cliente desde el WhatsApp de la expo.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -144,6 +148,7 @@ class PdfViewerScreen extends HookWidget {
           messenger: ScaffoldMessenger.of(context),
           pedidos: fileName,
           idExpo: idExpo,
+          cotizacion: cotizacion,
         );
       } finally {
         if (context.mounted) enviandoWhatsApp.value = false;
@@ -205,7 +210,7 @@ class PdfViewerScreen extends HookWidget {
             icon: const Icon(Icons.download),
             onPressed: downloadPdf,
           ),
-          if (!esPedido)
+          if (!envioPorExpo)
             IconButton(
               icon: const Icon(Icons.share),
               onPressed: sharePdf,
@@ -222,7 +227,7 @@ class PdfViewerScreen extends HookWidget {
                 )
               : IconButton(
                   icon: const FaIcon(FontAwesomeIcons.whatsapp),
-                  onPressed: esPedido ? enviarPedido : sendToWhatsApp,
+                  onPressed: envioPorExpo ? enviarPorExpo : sendToWhatsApp,
                 ),
         ],
       ),

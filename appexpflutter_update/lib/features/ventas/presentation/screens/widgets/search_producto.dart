@@ -189,6 +189,7 @@ class SearchProducto extends HookWidget {
                                     url: pdfUrl,
                                     userName: state.username,
                                     clientPhoneNumber: telefonoCliente,
+                                    idExpo: state.pedido.idExpo,
                                   ),
                                 ),
                               );

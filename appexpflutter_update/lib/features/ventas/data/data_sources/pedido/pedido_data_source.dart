@@ -17,7 +17,8 @@ abstract interface class PedidoDataSource {
       int? idExpo,
       String telefono = '',
       String ladaPais = '',
-      bool guardar = false});
+      bool guardar = false,
+      bool cotizacion = false});
 }
 
 /// El cliente del pedido no tiene teléfono o el que tiene es inválido: la app

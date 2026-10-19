@@ -61,17 +61,20 @@ class PedidoDataSourceImpl implements PedidoDataSource {
   /// viene (capturado al enviar) se manda con [ladaPais] y, con [guardar], se
   /// queda en el cliente. Lanza [TelefonoClienteException] si el cliente no
   /// tiene número o es inválido, y Exception con el `detail` en otros errores.
+  /// Con [cotizacion] usa /enviarCotizacionWhatsapp (mismas reglas, otra
+  /// plantilla) y [pedidos] es el folio de la cotización.
   @override
   Future<String> enviarPedidoWhatsapp(
       {required String pedidos,
       int? idExpo,
       String telefono = '',
       String ladaPais = '',
-      bool guardar = false}) async {
+      bool guardar = false,
+      bool cotizacion = false}) async {
     final token = await storage.read(key: 'accessToken');
     try {
       final result = await _dioClient.post(
-        '/enviarPedidoWhatsapp',
+        cotizacion ? '/enviarCotizacionWhatsapp' : '/enviarPedidoWhatsapp',
         queryParameters: {
           'pedidos': pedidos,
           if (idExpo != null) 'id_expo': idExpo,

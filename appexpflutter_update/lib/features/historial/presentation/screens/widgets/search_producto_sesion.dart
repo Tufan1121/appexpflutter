@@ -199,6 +199,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
                                     url: pdfUrl,
                                     userName: state.username,
                                     clientPhoneNumber: telefonoCliente,
+                                    idExpo: state.pedido.idExpo,
                                   ),
                                 ),
                               );

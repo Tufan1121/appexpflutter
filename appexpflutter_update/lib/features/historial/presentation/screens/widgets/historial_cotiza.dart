@@ -61,6 +61,8 @@ class HistorialListCotiza extends StatelessWidget {
                               historial[index].nombre,
                           clientPhoneNumber: historial[index].telefono,
                           url: pdfUrl,
+                          idExpo: historial[index].idExpo,
+                          cotizacion: true,
                         ),
                       ),
                     );
