@@ -18,6 +18,23 @@ class SearchHistorial extends HookWidget {
     'Buscar por cotización'
   ];
 
+  /// Pide al backend la lista del tipo elegido, solo lo del usuario que
+  /// consulta; [texto] filtra por nombre del cliente o folio (vacío = todo).
+  void _buscar(BuildContext context, String tipo, String texto) {
+    final bloc = context.read<HistorialBloc>();
+    switch (tipo) {
+      case 'Buscar por pedido':
+        bloc.add(GetHistorialPedido(parameter: texto, search: 'pedido'));
+        break;
+      case 'Buscar por sesión':
+        bloc.add(GetHistorialSesion(parameter: texto, search: 'sesión'));
+        break;
+      case 'Buscar por cotización':
+        bloc.add(GetHistorialCotiza(parameter: texto, search: 'cotización'));
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = useTextEditingController();
@@ -26,10 +43,21 @@ class SearchHistorial extends HookWidget {
 
     useEffect(() {
       controller.addListener(() {
+        if (controller.text == textFieldValue.value) return;
         textFieldValue.value = controller.text;
+        // Filtra mientras se escribe (el bloc espera a que se deje de teclear)
+        _buscar(context, dropdownValue.value, controller.text.trim());
       });
       return null;
     }, [controller]);
+
+    // Al entrar: la lista completa del tipo elegido
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) _buscar(context, dropdownValue.value, '');
+      });
+      return null;
+    }, []);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -48,6 +76,10 @@ class SearchHistorial extends HookWidget {
               ),
               onChanged: (value) {
                 dropdownValue.value = value!;
+                // Nuevo tipo: su lista completa, sin el filtro anterior
+                textFieldValue.value = '';
+                controller.clear();
+                _buscar(context, value, '');
               },
               icon: const FaIcon(
                 FontAwesomeIcons.diagramNext,
@@ -87,27 +119,9 @@ class SearchHistorial extends HookWidget {
               ),
               obscureText: false,
               keyboardType: TextInputType.text,
-              onChanged: (value) {},
-              onSubmitted: (value) {
-                if (textFieldValue.value.isNotEmpty) {
-                  switch (dropdownValue.value) {
-                    case 'Buscar por pedido':
-                      context.read<HistorialBloc>().add(GetHistorialPedido(
-                          parameter: textFieldValue.value, search: 'pedido'));
-                      break;
-                    case 'Buscar por sesión':
-                      context.read<HistorialBloc>().add(GetHistorialSesion(
-                          parameter: textFieldValue.value, search: 'sesión'));
-                      break;
-
-                    case 'Buscar por cotización':
-                      context.read<HistorialBloc>().add(GetHistorialCotiza(
-                          parameter: textFieldValue.value,
-                          search: 'cotización'));
-                      break;
-                  }
-                }
-              },
+              textCapitalization: TextCapitalization.characters,
+              onSubmitted: (value) =>
+                  _buscar(context, dropdownValue.value, value.trim()),
               decoration: InputDecoration(
                 suffixIcon: controller.text.isNotEmpty
                     ? IconButton(
@@ -126,7 +140,7 @@ class SearchHistorial extends HookWidget {
                     color: Colores.secondaryColor,
                   ),
                 ),
-                hintText: 'Buscar pedido/cliente',
+                hintText: 'Filtrar por cliente o folio',
                 hintStyle: const TextStyle(color: Colors.grey),
                 fillColor: Colors.white,
                 filled: true,
