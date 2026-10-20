@@ -106,6 +106,44 @@ class PedidoDataSourceImpl implements PedidoDataSource {
     }
   }
 
+  /// Manda el ticket de punto de venta por WhatsApp desde el número central
+  /// (backend /enviarTicketWhatsapp). Mismas reglas que [enviarPedidoWhatsapp].
+  @override
+  Future<String> enviarTicketWhatsapp(
+      {required String documen,
+      String telefono = '',
+      String ladaPais = '',
+      bool guardar = false}) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      await _dioClient.post(
+        '/enviarTicketWhatsapp',
+        queryParameters: {
+          'documen': documen,
+          if (telefono.trim().isNotEmpty) 'telefono': telefono.trim(),
+          if (ladaPais.trim().isNotEmpty) 'lada_pais': ladaPais.trim(),
+          if (guardar) 'guardar': 1,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+          receiveTimeout: const Duration(seconds: 45),
+        ),
+      );
+      return 'WhatsApp enviado';
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final detail = data is Map ? data['detail'] : null;
+      if (e.response?.statusCode == 400 &&
+          detail is String &&
+          detail.startsWith('Telefono')) {
+        throw TelefonoClienteException(detail);
+      }
+      throw Exception(detail is String ? detail : 'No se pudo enviar el WhatsApp');
+    }
+  }
+
   /// Manda el PDF del pedido (o de la cotización, con [cotizacion]) por correo
   /// con el PDF adjunto (backend /enviarPedidoCorreo, que lo pide a _authapi).
   /// Sin [correo] se usa el del cliente; con [guardar] el capturado se queda

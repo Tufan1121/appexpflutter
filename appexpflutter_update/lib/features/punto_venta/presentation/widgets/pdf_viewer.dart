@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/enviar_pedido_whatsapp.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PdfViewerScreen extends HookWidget {
   final String fileName;
@@ -29,6 +28,7 @@ class PdfViewerScreen extends HookWidget {
   Widget build(BuildContext context) {
     final pdfViewerKey = useState(GlobalKey<SfPdfViewerState>());
     final isUrlValid = useState<bool?>(null);
+    final enviando = useState(false);
     final dio = useMemoized(() => Dio());
 
     useEffect(() {
@@ -83,54 +83,39 @@ class PdfViewerScreen extends HookWidget {
       }
     }
 
-    Future<void> sharePdf() async {
-      try {
-        // Descargar el PDF a una ubicación temporal
-        final tempDir = await getTemporaryDirectory();
-        final tempFile = File('${tempDir.path}/$fileName.pdf');
-        await dio.download(url, tempFile.path);
-
-        // Compartir el PDF
-        await Share.shareXFiles([XFile(tempFile.path)],
-            text: 'Compartiendo $fileName.pdf');
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error al compartir el PDF: $e'),
+    /// El ticket sale por WhatsApp desde el número central (backend), ya no
+    /// desde el del vendedor; si el ticket no tiene teléfono se pide capturarlo.
+    Future<void> enviarTicket() async {
+      final confirmar = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Enviar por WhatsApp'),
+          content: Text(
+              'Se enviará el ticket $fileName al cliente desde el WhatsApp de Tapetes Tufán.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
             ),
-          );
-        }
-      }
-    }
-
-    Future<void> sendToWhatsApp() async {
-      try {
-        final appDownloadsDir = await getTemporaryDirectory();
-        final file = File('${appDownloadsDir.path}/$fileName.pdf');
-        await dio.download(url, file.path);
-
-        final whatsappUrl = Uri.parse(
-            'whatsapp://send?phone=$clientPhoneNumber&text=Hola Soy $userName, te comparto el link del Ticket $fileName. $url');
-        if (await canLaunchUrl(whatsappUrl)) {
-          await launchUrl(whatsappUrl);
-        } else {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('No se pudo abrir WhatsApp.'),
-              ),
-            );
-          }
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error al enviar a WhatsApp: $e'),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Enviar'),
             ),
-          );
-        }
+          ],
+        ),
+      );
+      if (confirmar != true || !context.mounted) return;
+
+      enviando.value = true;
+      try {
+        await enviarPedidoWhatsApp(
+          dialogContext: context,
+          messenger: ScaffoldMessenger.of(context),
+          pedidos: fileName,
+          ticket: true,
+        );
+      } finally {
+        if (context.mounted) enviando.value = false;
       }
     }
 
@@ -160,26 +145,20 @@ class PdfViewerScreen extends HookWidget {
             icon: const Icon(Icons.download),
             onPressed: downloadPdf,
           ),
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: sharePdf,
-          ),
-          IconButton(
-            icon: const FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: () {
-              if (clientPhoneNumber != null &&
-                  clientPhoneNumber!.trim().length == 10) {
-                sendToWhatsApp();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                        'El número de teléfono del cliente debe de existir y tener 10 dígitos.'),
+          enviando.value
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14),
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
                   ),
-                );
-              }
-            },
-          )
+                )
+              : IconButton(
+                  icon: const FaIcon(FontAwesomeIcons.whatsapp),
+                  onPressed: enviarTicket,
+                ),
         ],
       ),
       body: isUrlValid.value == null

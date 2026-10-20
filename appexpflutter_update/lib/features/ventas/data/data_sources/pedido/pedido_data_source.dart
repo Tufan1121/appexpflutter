@@ -19,6 +19,11 @@ abstract interface class PedidoDataSource {
       String ladaPais = '',
       bool guardar = false,
       bool cotizacion = false});
+  Future<String> enviarTicketWhatsapp(
+      {required String documen,
+      String telefono = '',
+      String ladaPais = '',
+      bool guardar = false});
   Future<String> enviarDocumentoCorreo(
       {required String pedidos,
       int? idExpo,

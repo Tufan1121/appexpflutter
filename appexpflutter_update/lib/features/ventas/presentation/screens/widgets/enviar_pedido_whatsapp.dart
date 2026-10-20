@@ -14,21 +14,43 @@ import 'package:reactive_forms/reactive_forms.dart';
 ///
 /// [dialogContext] debe seguir montado mientras dura el envío: si la pantalla
 /// que llama navega enseguida, pasar el del Navigator raíz.
+///
+/// Con [ticket], [pedidos] es el folio de un ticket de punto de venta: sale
+/// del número central y el teléfono capturado se guarda en el ticket.
 Future<void> enviarPedidoWhatsApp({
   required BuildContext dialogContext,
   required ScaffoldMessengerState messenger,
   required String pedidos,
   int? idExpo,
   bool cotizacion = false,
+  bool ticket = false,
 }) async {
   final dataSource = GetIt.instance<PedidoDataSource>();
-  final documento = cotizacion ? 'la cotización' : 'el pedido';
-  final enviado =
-      cotizacion ? 'Cotización $pedidos enviada' : 'Pedido $pedidos enviado';
+  final documento =
+      ticket ? 'el ticket' : (cotizacion ? 'la cotización' : 'el pedido');
+  final enviado = ticket
+      ? 'Ticket $pedidos enviado'
+      : (cotizacion ? 'Cotización $pedidos enviada' : 'Pedido $pedidos enviado');
+
+  Future<void> enviar(
+          {String telefono = '', String ladaPais = '', bool guardar = false}) =>
+      ticket
+          ? dataSource.enviarTicketWhatsapp(
+              documen: pedidos,
+              telefono: telefono,
+              ladaPais: ladaPais,
+              guardar: guardar)
+          : dataSource.enviarPedidoWhatsapp(
+              pedidos: pedidos,
+              idExpo: idExpo,
+              telefono: telefono,
+              ladaPais: ladaPais,
+              guardar: guardar,
+              cotizacion: cotizacion);
+
   String? motivo;
   try {
-    await dataSource.enviarPedidoWhatsapp(
-        pedidos: pedidos, idExpo: idExpo, cotizacion: cotizacion);
+    await enviar();
     _aviso(messenger, enviado, Colors.green);
     return;
   } on TelefonoClienteException catch (e) {
@@ -39,19 +61,14 @@ Future<void> enviarPedidoWhatsApp({
   }
 
   if (!dialogContext.mounted) return;
-  final capturado =
-      await _capturarTelefono(dialogContext, '$documento $pedidos', motivo);
+  final capturado = await _capturarTelefono(
+      dialogContext, '$documento $pedidos', motivo,
+      guardaEn: ticket ? 'el ticket' : 'el cliente');
   if (capturado == null) return;
 
   try {
-    await dataSource.enviarPedidoWhatsapp(
-      pedidos: pedidos,
-      idExpo: idExpo,
-      telefono: capturado.telefono,
-      ladaPais: capturado.lada,
-      guardar: true,
-      cotizacion: cotizacion,
-    );
+    await enviar(
+        telefono: capturado.telefono, ladaPais: capturado.lada, guardar: true);
     _aviso(messenger, enviado, Colors.green);
   } catch (e) {
     _avisoError(messenger, '$documento $pedidos', e);
@@ -78,7 +95,8 @@ void _avisoError(ScaffoldMessengerState messenger, String documento, Object e,
 typedef _TelefonoCapturado = ({String lada, String telefono});
 
 Future<_TelefonoCapturado?> _capturarTelefono(
-    BuildContext context, String documento, String motivo) {
+    BuildContext context, String documento, String motivo,
+    {String guardaEn = 'el cliente'}) {
   final form = FormGroup({
     'lada_pais': FormControl<String>(value: ladaMexico),
     'telefono': FormControl<String>(validators: [Validators.required]),
@@ -114,9 +132,9 @@ Future<_TelefonoCapturado?> _capturarTelefono(
             Text(
               motivo.contains('no tiene')
                   ? 'El cliente $delDocumento no tiene teléfono. '
-                      'Captúralo para enviárselo; se guardará en el cliente.'
+                      'Captúralo para enviárselo; se guardará en $guardaEn.'
                   : 'El teléfono del cliente $delDocumento no es válido. '
-                      'Captúralo de nuevo; se guardará en el cliente.',
+                      'Captúralo de nuevo; se guardará en $guardaEn.',
             ),
             const SizedBox(height: 16),
             CustomReactiveTextField(
