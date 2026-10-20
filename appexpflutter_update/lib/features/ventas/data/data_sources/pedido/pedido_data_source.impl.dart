@@ -106,6 +106,48 @@ class PedidoDataSourceImpl implements PedidoDataSource {
     }
   }
 
+  /// Manda el PDF del pedido (o de la cotización, con [cotizacion]) por correo
+  /// con el PDF adjunto (backend /enviarPedidoCorreo, que lo pide a _authapi).
+  /// Sin [correo] se usa el del cliente; con [guardar] el capturado se queda
+  /// en el cliente. Lanza [CorreoClienteException] si falta o es inválido.
+  @override
+  Future<String> enviarDocumentoCorreo(
+      {required String pedidos,
+      int? idExpo,
+      String correo = '',
+      bool guardar = false,
+      bool cotizacion = false}) async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      await _dioClient.post(
+        cotizacion ? '/enviarCotizacionCorreo' : '/enviarPedidoCorreo',
+        queryParameters: {
+          'pedidos': pedidos,
+          if (idExpo != null) 'id_expo': idExpo,
+          if (correo.trim().isNotEmpty) 'correo': correo.trim(),
+          if (guardar) 'guardar': 1,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+          // Puede generar el PDF antes de pedir el correo
+          receiveTimeout: const Duration(seconds: 45),
+        ),
+      );
+      return 'Correo enviado';
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final detail = data is Map ? data['detail'] : null;
+      if (e.response?.statusCode == 400 &&
+          detail is String &&
+          detail.startsWith('Correo')) {
+        throw CorreoClienteException(detail);
+      }
+      throw Exception(detail is String ? detail : 'No se pudo enviar el correo');
+    }
+  }
+
   @override
   Future<PedidoModel> addPedido(Map<String, dynamic> data) async {
     final token = await storage.read(key: 'accessToken');

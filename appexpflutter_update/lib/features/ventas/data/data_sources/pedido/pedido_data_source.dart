@@ -19,6 +19,22 @@ abstract interface class PedidoDataSource {
       String ladaPais = '',
       bool guardar = false,
       bool cotizacion = false});
+  Future<String> enviarDocumentoCorreo(
+      {required String pedidos,
+      int? idExpo,
+      String correo = '',
+      bool guardar = false,
+      bool cotizacion = false});
+}
+
+/// El cliente no tiene correo o el que tiene es inválido: la app ofrece
+/// capturarlo y reintenta.
+class CorreoClienteException implements Exception {
+  final String message;
+  const CorreoClienteException(this.message);
+
+  @override
+  String toString() => message;
 }
 
 /// El cliente del pedido no tiene teléfono o el que tiene es inválido: la app

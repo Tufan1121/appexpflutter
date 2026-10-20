@@ -157,15 +157,18 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     final debePorPagar = useState(totalAPagar);
     final scrollController = useScrollController();
 
-    /// Manda el PDF del pedido por WhatsApp desde el número de expo (backend),
-    /// ya no desde el WhatsApp del vendedor. Messenger y Navigator raíz se
-    /// toman antes de navegar a Home: siguen vivos para avisar el resultado o
-    /// pedir el teléfono si el cliente no tiene.
-    Future<void> sendToWhatsApp(String pedidos, int idExpo) => enviarPedidoWhatsApp(
+    /// Manda el PDF del pedido por WhatsApp (número de expo) y/o correo vía el
+    /// backend, ya no desde el WhatsApp del vendedor. Messenger y Navigator
+    /// raíz se toman antes de navegar a Home: siguen vivos para avisar el
+    /// resultado o pedir el teléfono/correo si el cliente no tiene.
+    Future<void> enviarDocumento(
+            String pedidos, int idExpo, MediosEnvio medios) =>
+        enviarPorMedios(
           dialogContext: Navigator.of(context, rootNavigator: true).context,
           messenger: ScaffoldMessenger.of(context),
           pedidos: pedidos,
           idExpo: idExpo,
+          medios: medios,
         );
 
     void toggleCheckbox(String controlName) {
@@ -452,7 +455,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                                     pdfUrl,
                                     state.pedido.pedidos,
                                     state.pedido.idExpo,
-                                    sendToWhatsApp);
+                                    enviarDocumento);
 
                                 //  form.reset();
                                 context
@@ -1182,66 +1185,31 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
     );
   }
 
-  void _showDownloadModal(
+  /// "Se generó el pedido": pregunta si se manda por WhatsApp y/o correo,
+  /// lanza el envío y regresa a Home (el envío sigue y avisa al terminar).
+  Future<void> _showDownloadModal(
       BuildContext context,
       String pdfUrl,
       String nombrePdf,
       int idExpo,
-      Future<void> Function(String pedidos, int idExpo) sendToWhatsApp) {
-    // final getpdf = Getpdf(context: context);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Se genero el pedido exitosamente '),
-          content: Row(
-            children: [
-              const Text('PEDIDO: ', style: TextStyle(fontSize: 15)),
-              Text(
-                nombrePdf,
-                style:
-                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          actions: [
-            Center(
-              child: ElevatedButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Colores.secondaryColor,
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text(
-                  'Aceptar',
-                  style: TextStyle(color: Colores.scaffoldBackgroundColor),
-                ),
-                onPressed: () {
-                  FocusScope.of(context).unfocus();
-                  // opcion 1
-                  // getpdf.downloadPDF(pdfUrl, nombrePdf);
-                  // opcion 2
-                  // _openPDF(pdfUrl);
-                  sendToWhatsApp(nombrePdf, idExpo);
-                  form.control('metodoDePago1').reset();
-                  form.control('metodoDePago2').reset();
-                  form.control('metodoDePago3').reset();
-                  form.control('observaciones').reset();
-                  form.control('anticipoPago1').reset();
-                  form.control('anticipoPago2').reset();
-                  form.control('anticipoPago3').reset();
-                  form.control('pagado1').reset();
-                  form.control('pagado2').reset();
-                  form.control('pagado3').reset();
-                  form.control('entregado').reset();
-                  Navigator.of(context).pop();
-                  HomeRoute().go(context);
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
+      Future<void> Function(String pedidos, int idExpo, MediosEnvio medios)
+          enviar) async {
+    FocusScope.of(context).unfocus();
+    final medios =
+        await elegirMediosEnvio(context, 'Pedido $nombrePdf generado');
+    if (!context.mounted) return;
+    if (medios != null) enviar(nombrePdf, idExpo, medios);
+    form.control('metodoDePago1').reset();
+    form.control('metodoDePago2').reset();
+    form.control('metodoDePago3').reset();
+    form.control('observaciones').reset();
+    form.control('anticipoPago1').reset();
+    form.control('anticipoPago2').reset();
+    form.control('anticipoPago3').reset();
+    form.control('pagado1').reset();
+    form.control('pagado2').reset();
+    form.control('pagado3').reset();
+    form.control('entregado').reset();
+    HomeRoute().go(context);
   }
 }

@@ -119,21 +119,36 @@ class PdfViewerPedidoScreen extends HookWidget {
       }
     }
 
-    Future<void> enviarPorExpo() async {
+    /// Envío desde el backend (WhatsApp de expo y/o correo). Sin teléfono o
+    /// correo del cliente (o inválido) pide capturarlo y lo guarda.
+    Future<void> enviarPorExpo(MediosEnvio medios) async {
       enviandoWhatsApp.value = true;
       try {
-        // Sin teléfono del cliente (o inválido) pide capturarlo y lo guarda
-        await enviarPedidoWhatsApp(
+        await enviarPorMedios(
           dialogContext: context,
           messenger: ScaffoldMessenger.of(context),
           pedidos: fileName,
           idExpo: idExpo,
+          medios: medios,
           cotizacion: true,
         );
       } finally {
         if (context.mounted) enviandoWhatsApp.value = false;
       }
     }
+
+    // Recién terminada la cotización: preguntar cómo se le manda al cliente
+    useEffect(() {
+      if (envioPorExpo) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!context.mounted) return;
+          final medios =
+              await elegirMediosEnvio(context, 'Cotización $fileName generada');
+          if (medios != null && context.mounted) enviarPorExpo(medios);
+        });
+      }
+      return null;
+    }, []);
 
     Future<void> sendToWhatsApp() async {
       try {
@@ -221,8 +236,16 @@ class PdfViewerPedidoScreen extends HookWidget {
                   )
                 : IconButton(
                     icon: const FaIcon(FontAwesomeIcons.whatsapp),
-                    onPressed: envioPorExpo ? enviarPorExpo : sendToWhatsApp,
+                    onPressed: envioPorExpo
+                        ? () => enviarPorExpo((whatsapp: true, correo: false))
+                        : sendToWhatsApp,
                   ),
+            if (envioPorExpo && !enviandoWhatsApp.value)
+              IconButton(
+                tooltip: 'Enviar por correo',
+                icon: const Icon(Icons.email_outlined),
+                onPressed: () => enviarPorExpo((whatsapp: false, correo: true)),
+              ),
           ],
         ),
         body: isLoading.value

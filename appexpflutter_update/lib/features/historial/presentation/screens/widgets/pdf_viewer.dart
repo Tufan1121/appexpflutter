@@ -119,13 +119,16 @@ class PdfViewerScreen extends HookWidget {
       }
     }
 
-    Future<void> enviarPorExpo() async {
+    /// Reenvío desde el backend por WhatsApp (número de expo) o por correo.
+    Future<void> enviarPorExpo({bool porCorreo = false}) async {
+      final documento = cotizacion ? 'la cotización' : 'el pedido';
       final confirmar = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Enviar por WhatsApp'),
-          content: Text(
-              'Se enviará ${cotizacion ? 'la cotización' : 'el pedido'} $fileName al cliente desde el WhatsApp de la expo.'),
+          title: Text(porCorreo ? 'Enviar por correo' : 'Enviar por WhatsApp'),
+          content: Text(porCorreo
+              ? 'Se enviará $documento $fileName al correo del cliente, con el PDF adjunto.'
+              : 'Se enviará $documento $fileName al cliente desde el WhatsApp de la expo.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -142,12 +145,13 @@ class PdfViewerScreen extends HookWidget {
 
       enviandoWhatsApp.value = true;
       try {
-        // Sin teléfono del cliente (o inválido) pide capturarlo y lo guarda
-        await enviarPedidoWhatsApp(
+        // Sin teléfono/correo del cliente (o inválido) pide capturarlo y lo guarda
+        await enviarPorMedios(
           dialogContext: context,
           messenger: ScaffoldMessenger.of(context),
           pedidos: fileName,
           idExpo: idExpo,
+          medios: (whatsapp: !porCorreo, correo: porCorreo),
           cotizacion: cotizacion,
         );
       } finally {
@@ -227,8 +231,15 @@ class PdfViewerScreen extends HookWidget {
                 )
               : IconButton(
                   icon: const FaIcon(FontAwesomeIcons.whatsapp),
-                  onPressed: envioPorExpo ? enviarPorExpo : sendToWhatsApp,
+                  onPressed:
+                      envioPorExpo ? () => enviarPorExpo() : sendToWhatsApp,
                 ),
+          if (envioPorExpo && !enviandoWhatsApp.value)
+            IconButton(
+              tooltip: 'Enviar por correo',
+              icon: const Icon(Icons.email_outlined),
+              onPressed: () => enviarPorExpo(porCorreo: true),
+            ),
         ],
       ),
       body: isUrlValid.value == null
