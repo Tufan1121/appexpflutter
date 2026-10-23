@@ -2,6 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 
+/// Porcentaje máximo de descuento autorizado, tanto general como por partida.
+const double kDescuentoMaximo = 40;
+
+/// Máximo % que se puede aplicar encima de [otroPct] sin que el descuento
+/// combinado de una partida pase de [kDescuentoMaximo]. Los descuentos son
+/// acumulables (1 - p)(1 - g), no se suman: con 20% de partida el general
+/// puede llegar a 25%, no a 20%.
+double descuentoDisponible(double otroPct) {
+  final restante =
+      (1 - (1 - kDescuentoMaximo / 100) / (1 - otroPct / 100)) * 100;
+  // Redondeo hacia abajo a 2 decimales para no rebasar el tope por centavos.
+  return (restante * 100 + 1e-6).floorToDouble().clamp(0, kDescuentoMaximo * 100) /
+      100;
+}
+
+/// Lee el % capturado en el campo de descuento por partida y lo limita a
+/// [maximo]. Si se pasó, corrige el texto del campo y avisa al usuario.
+double leerDescuentoPartida(
+  BuildContext context,
+  TextEditingController controller,
+  double maximo,
+) {
+  final pct = double.tryParse(controller.text) ?? 0;
+  if (pct <= maximo) return pct < 0 ? 0 : pct;
+
+  final tope = maximo.truncateToDouble() == maximo
+      ? maximo.toStringAsFixed(0)
+      : maximo.toStringAsFixed(2);
+  controller.value = TextEditingValue(
+    text: tope,
+    selection: TextSelection.collapsed(offset: tope.length),
+  );
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+      content: Text(maximo < kDescuentoMaximo
+          ? 'Con el descuento general, esta partida admite máximo $tope% '
+              '(total ${kDescuentoMaximo.toStringAsFixed(0)}%)'
+          : 'El descuento máximo es de $tope%'),
+      duration: const Duration(milliseconds: 2000),
+    ));
+  return maximo;
+}
+
 /// Resultado del diálogo de descuento general.
 class DescuentoAutorizado {
   const DescuentoAutorizado({required this.porcentaje, this.quitar = false});
@@ -22,6 +66,8 @@ Future<DescuentoAutorizado?> mostrarDialogoDescuento(
   BuildContext context, {
   required double subtotalActual,
   required double descuentoActualPct,
+  // Tope para el general; baja cuando ya hay descuentos por partida.
+  double maximoPct = kDescuentoMaximo,
 }) {
   return showDialog<DescuentoAutorizado>(
     context: context,
@@ -50,8 +96,14 @@ Future<DescuentoAutorizado?> mostrarDialogoDescuento(
           }
           final montoDescuento = subtotalActual * pct / 100;
           final nuevoSubtotal = subtotalActual - montoDescuento;
-          final valido = valor > 0 &&
-              (esPorcentaje ? valor <= 100 : valor <= subtotalActual + 0.01);
+          // Tolerancia de redondeo al capturar por monto.
+          final valido = valor > 0 && pct > 0 &&
+              (esPorcentaje
+                  ? valor <= maximoPct
+                  : valor / subtotalActual * 100 <= maximoPct + 0.01);
+          final textoMaximo = maximoPct.truncateToDouble() == maximoPct
+              ? maximoPct.toStringAsFixed(0)
+              : maximoPct.toStringAsFixed(2);
 
           return AlertDialog(
             title: const Row(
@@ -122,8 +174,11 @@ Future<DescuentoAutorizado?> mostrarDialogoDescuento(
                         fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                 ] else if (valor > 0)
-                  const Text(
-                    'El descuento no puede exceder el subtotal.',
+                  Text(
+                    'El descuento máximo es de $textoMaximo%'
+                    '${esPorcentaje ? '' : ' (${Utils.formatPrice(subtotalActual * maximoPct / 100)})'}'
+                    '${maximoPct < kDescuentoMaximo ? ' porque ya hay descuento por partida; '
+                        'el total por partida no puede pasar de ${kDescuentoMaximo.toStringAsFixed(0)}%' : ''}.',
                     style: TextStyle(fontSize: 12, color: Colors.red),
                   ),
                 const SizedBox(height: 4),

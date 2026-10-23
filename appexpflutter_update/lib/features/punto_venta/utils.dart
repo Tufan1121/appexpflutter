@@ -1,5 +1,6 @@
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/envio_parcial.dart';
 import 'package:appexpflutter_update/features/punto_venta/domain/entities/detalle_pedido_entity.dart';
+import 'package:appexpflutter_update/features/shared/widgets/descuento_dialog.dart';
 
 class UtilsVenta {
   static double total = 0;
@@ -80,18 +81,30 @@ class UtilsVenta {
     if (pct <= 0) {
       descuentosPorClave.remove(clave);
     } else {
-      descuentosPorClave[clave] = pct > 100 ? 100 : pct;
+      final maximo = maxDescuentoPartida;
+      descuentosPorClave[clave] = pct > maximo ? maximo : pct;
     }
   }
+
+  /// Tope por partida dado el descuento general vigente.
+  static double get maxDescuentoPartida =>
+      descuentoDisponible(descuentoGeneral);
+
+  /// Tope del general dado el mayor descuento por partida capturado.
+  static double get maxDescuentoGeneral => descuentoDisponible(
+      descuentosPorClave.values.fold(0.0, (a, b) => a > b ? a : b));
 
   static bool get hayDescuento =>
       descuentoGeneral > 0 || descuentosPorClave.isNotEmpty;
 
   /// Precio unitario final: primero el descuento de la partida y sobre ese
   /// resultado el descuento general (son acumulables, no se suman los %).
+  /// El combinado nunca pasa de [kDescuentoMaximo].
   static double aplicarDescuentos(String clave, double precioBase) {
-    final conPartida = precioBase * (1 - descuentoDe(clave) / 100);
-    return conPartida * (1 - descuentoGeneral / 100);
+    final factor =
+        (1 - descuentoDe(clave) / 100) * (1 - descuentoGeneral / 100);
+    final minimo = 1 - kDescuentoMaximo / 100;
+    return precioBase * (factor < minimo ? minimo : factor);
   }
 
   static void clearDescuentos() {

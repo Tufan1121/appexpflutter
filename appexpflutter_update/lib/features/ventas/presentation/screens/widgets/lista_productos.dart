@@ -108,6 +108,7 @@ class ListaProductos extends HookWidget {
         context,
         subtotalActual: subtotalConPartidas,
         descuentoActualPct: UtilsVenta.descuentoGeneral,
+        maximoPct: UtilsVenta.maxDescuentoGeneral,
       );
       if (resultado == null || !context.mounted) return;
       UtilsVenta.descuentoGeneral = resultado.quitar ? 0 : resultado.porcentaje;
@@ -705,11 +706,14 @@ class ListaProductos extends HookWidget {
                                         style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold),
-                                        onChanged: (value) {
-                                          final pct =
-                                              double.tryParse(value) ?? 0;
-                                          UtilsVenta.setDescuento(clave,
-                                              pct.clamp(0, 100).toDouble());
+                                        onChanged: (_) {
+                                          UtilsVenta.setDescuento(
+                                              clave,
+                                              leerDescuentoPartida(
+                                                  context,
+                                                  descuentoController,
+                                                  UtilsVenta
+                                                      .maxDescuentoPartida));
                                           updateTotal();
                                         },
                                         decoration: InputDecoration(
