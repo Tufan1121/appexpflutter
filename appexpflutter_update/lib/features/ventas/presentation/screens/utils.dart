@@ -102,12 +102,13 @@ class UtilsVenta {
 
   /// Precio unitario final: primero el descuento de la partida y sobre ese
   /// resultado el descuento general (son acumulables, no se suman los %).
-  /// El combinado nunca pasa de [kDescuentoMaximo].
+  /// El combinado nunca pasa de [kDescuentoMaximo]. Se redondea a pesos
+  /// enteros: los importes se cobran sin centavos.
   static double aplicarDescuentos(String clave, double precioBase) {
     final factor =
         (1 - descuentoDe(clave) / 100) * (1 - descuentoGeneral / 100);
     final minimo = 1 - kDescuentoMaximo / 100;
-    return precioBase * (factor < minimo ? minimo : factor);
+    return (precioBase * (factor < minimo ? minimo : factor)).roundToDouble();
   }
 
   static void clearDescuentos() {
@@ -122,8 +123,9 @@ class UtilsVenta {
 
   static final EnviosCotizados envios = EnviosCotizados();
 
-  /// Suma de los envíos (0 si no hay envío).
-  static double get shippingCost => envios.total;
+  /// Suma de los envíos (0 si no hay envío), en pesos enteros: los importes
+  /// se cobran sin centavos.
+  static double get shippingCost => envios.total.roundToDouble();
 
   /// Paquetería(s) de los envíos.
   static String get shippingCarrier => envios.carriers;
