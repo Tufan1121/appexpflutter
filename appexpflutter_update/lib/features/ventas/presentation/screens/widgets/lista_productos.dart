@@ -235,7 +235,7 @@ class ListaProductos extends HookWidget {
                           const SizedBox(width: 6),
                           Text(
                             UtilsVenta.descuentoGeneral > 0
-                                ? 'Descuento general: ${UtilsVenta.descuentoGeneral.toStringAsFixed(2)}%'
+                                ? 'Descuento general: ${UtilsVenta.descuentoGeneral.toStringAsFixed(0)}%'
                                 : 'Aplicar descuento',
                             style: const TextStyle(
                                 color: Colores.secondaryColor,
@@ -473,9 +473,7 @@ class ListaProductos extends HookWidget {
                   final customPriceController = useTextEditingController(
                       text: producto.precio3.toString());
                   final descuentoController = useTextEditingController(
-                      text: UtilsVenta.descuentoDe(clave) > 0
-                          ? UtilsVenta.descuentoDe(clave).toString()
-                          : '');
+                      text: textoDescuento(UtilsVenta.descuentoDe(clave)));
                   final observaController = useTextEditingController(
                       text: UtilsVenta.observaDe(clave));
                   // La leyenda "No se cotizó el envío" se pone o se quita
@@ -701,8 +699,8 @@ class ListaProductos extends HookWidget {
                                       height: 28,
                                       child: TextField(
                                         controller: descuentoController,
-                                        keyboardType: const TextInputType
-                                            .numberWithOptions(decimal: true),
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: formatoDescuento,
                                         style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold),

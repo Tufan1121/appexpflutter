@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 
 /// Porcentaje máximo de descuento autorizado, tanto general como por partida.
 const double kDescuentoMaximo = 40;
 
-/// Máximo % que se puede aplicar encima de [otroPct] sin que el descuento
-/// combinado de una partida pase de [kDescuentoMaximo]. Los descuentos son
-/// acumulables (1 - p)(1 - g), no se suman: con 20% de partida el general
-/// puede llegar a 25%, no a 20%.
+/// Los descuentos son porcentajes enteros (2.5% no se permite): solo dígitos.
+final List<TextInputFormatter> formatoDescuento = [
+  FilteringTextInputFormatter.digitsOnly,
+];
+
+/// Texto inicial de un campo de descuento: entero, vacío si no hay descuento.
+String textoDescuento(double pct) =>
+    pct > 0 ? pct.truncate().toString() : '';
+
+/// Máximo % entero que se puede aplicar encima de [otroPct] sin que el
+/// descuento combinado de una partida pase de [kDescuentoMaximo]. Los
+/// descuentos son acumulables (1 - p)(1 - g), no se suman: con 20% de partida
+/// el general puede llegar a 25%, no a 20%.
 double descuentoDisponible(double otroPct) {
   final restante =
       (1 - (1 - kDescuentoMaximo / 100) / (1 - otroPct / 100)) * 100;
-  // Redondeo hacia abajo a 2 decimales para no rebasar el tope por centavos.
-  return (restante * 100 + 1e-6).floorToDouble().clamp(0, kDescuentoMaximo * 100) /
-      100;
+  // Hacia abajo al entero para no rebasar el tope.
+  return (restante + 1e-6).floorToDouble().clamp(0, kDescuentoMaximo);
 }
 
 /// Lee el % capturado en el campo de descuento por partida y lo limita a
@@ -24,12 +33,10 @@ double leerDescuentoPartida(
   TextEditingController controller,
   double maximo,
 ) {
-  final pct = double.tryParse(controller.text) ?? 0;
-  if (pct <= maximo) return pct < 0 ? 0 : pct;
+  final pct = (int.tryParse(controller.text) ?? 0).toDouble();
+  if (pct <= maximo) return pct;
 
-  final tope = maximo.truncateToDouble() == maximo
-      ? maximo.toStringAsFixed(0)
-      : maximo.toStringAsFixed(2);
+  final tope = maximo.toStringAsFixed(0);
   controller.value = TextEditingValue(
     text: tope,
     selection: TextSelection.collapsed(offset: tope.length),
@@ -73,37 +80,30 @@ Future<DescuentoAutorizado?> mostrarDialogoDescuento(
     context: context,
     builder: (context) {
       bool esPorcentaje = true;
-      final controller = TextEditingController(
-        text: descuentoActualPct > 0
-            ? descuentoActualPct.toStringAsFixed(
-                descuentoActualPct.truncateToDouble() == descuentoActualPct
-                    ? 0
-                    : 2)
-            : '',
-      );
+      final controller =
+          TextEditingController(text: textoDescuento(descuentoActualPct));
 
       return StatefulBuilder(
         builder: (context, setState) {
-          final valor = double.tryParse(controller.text) ?? 0;
-          // Convertir a porcentaje para la vista previa.
+          // Porcentaje y monto se capturan sin decimales.
+          final valor = (int.tryParse(controller.text) ?? 0).toDouble();
+          // Convertir a porcentaje entero: un monto se baja al % entero
+          // inmediato inferior (el descuento nunca lleva decimales).
           double pct;
           if (esPorcentaje) {
             pct = valor.clamp(0, 100).toDouble();
           } else {
             pct = subtotalActual > 0
-                ? (valor / subtotalActual * 100).clamp(0, 100).toDouble()
+                ? (valor / subtotalActual * 100 + 1e-6)
+                    .floorToDouble()
+                    .clamp(0, 100)
+                    .toDouble()
                 : 0;
           }
           final montoDescuento = subtotalActual * pct / 100;
           final nuevoSubtotal = subtotalActual - montoDescuento;
-          // Tolerancia de redondeo al capturar por monto.
-          final valido = valor > 0 && pct > 0 &&
-              (esPorcentaje
-                  ? valor <= maximoPct
-                  : valor / subtotalActual * 100 <= maximoPct + 0.01);
-          final textoMaximo = maximoPct.truncateToDouble() == maximoPct
-              ? maximoPct.toStringAsFixed(0)
-              : maximoPct.toStringAsFixed(2);
+          final valido = valor > 0 && pct > 0 && pct <= maximoPct;
+          final textoMaximo = maximoPct.toStringAsFixed(0);
 
           return AlertDialog(
             title: const Row(
@@ -147,8 +147,8 @@ Future<DescuentoAutorizado?> mostrarDialogoDescuento(
                 TextField(
                   controller: controller,
                   autofocus: true,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: formatoDescuento,
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
@@ -164,7 +164,7 @@ Future<DescuentoAutorizado?> mostrarDialogoDescuento(
                     style: const TextStyle(fontSize: 13)),
                 if (valido) ...[
                   Text(
-                    'Descuento (${pct.toStringAsFixed(2)}%): '
+                    'Descuento (${pct.toStringAsFixed(0)}%): '
                     '-${Utils.formatPrice(montoDescuento)}',
                     style: const TextStyle(fontSize: 13, color: Colors.green),
                   ),
@@ -173,7 +173,12 @@ Future<DescuentoAutorizado?> mostrarDialogoDescuento(
                     style: const TextStyle(
                         fontSize: 14, fontWeight: FontWeight.bold),
                   ),
-                ] else if (valor > 0)
+                ] else if (valor > 0 && pct == 0)
+                  const Text(
+                    'El monto no llega al 1% del subtotal.',
+                    style: TextStyle(fontSize: 12, color: Colors.red),
+                  )
+                else if (valor > 0)
                   Text(
                     'El descuento máximo es de $textoMaximo%'
                     '${esPorcentaje ? '' : ' (${Utils.formatPrice(subtotalActual * maximoPct / 100)})'}'
@@ -182,6 +187,11 @@ Future<DescuentoAutorizado?> mostrarDialogoDescuento(
                     style: TextStyle(fontSize: 12, color: Colors.red),
                   ),
                 const SizedBox(height: 4),
+                if (!esPorcentaje)
+                  const Text(
+                    'El monto se convierte a % entero (sin decimales).',
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
                 const Text(
                   'Se prorratea automáticamente entre todas las partidas.',
                   style: TextStyle(fontSize: 11, color: Colors.grey),

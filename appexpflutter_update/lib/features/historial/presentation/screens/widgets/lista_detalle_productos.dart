@@ -128,7 +128,7 @@ class ListaDetalleProductos extends HookWidget {
                 ),
                 child: Text(
                   UtilsVenta.descuentoGeneral > 0
-                      ? '-${UtilsVenta.descuentoGeneral.toStringAsFixed(2)}%'
+                      ? '-${UtilsVenta.descuentoGeneral.toStringAsFixed(0)}%'
                       : '% Desc.',
                   style: const TextStyle(
                       fontSize: 12,
@@ -178,9 +178,7 @@ class ListaDetalleProductos extends HookWidget {
                   final customPriceController = useTextEditingController(
                       text: producto.precio3.toString());
                   final descuentoController = useTextEditingController(
-                      text: UtilsVenta.descuentoDe(clave) > 0
-                          ? UtilsVenta.descuentoDe(clave).toString()
-                          : '');
+                      text: textoDescuento(UtilsVenta.descuentoDe(clave)));
                   final observaController = useTextEditingController(
                       text: UtilsVenta.observaDe(clave));
 
@@ -354,8 +352,8 @@ class ListaDetalleProductos extends HookWidget {
                                     height: 28,
                                     child: TextField(
                                       controller: descuentoController,
-                                      keyboardType: const TextInputType
-                                          .numberWithOptions(decimal: true),
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: formatoDescuento,
                                       style: const TextStyle(fontSize: 12),
                                       onChanged: (_) {
                                         UtilsVenta.setDescuento(

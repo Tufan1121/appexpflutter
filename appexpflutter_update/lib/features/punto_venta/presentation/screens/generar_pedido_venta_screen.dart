@@ -170,7 +170,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoVentaScreen> {
       }
       if (UtilsVenta.descuentoGeneral > 0) {
         notas.add(
-            'Desc. general: ${UtilsVenta.descuentoGeneral.toStringAsFixed(2)}%');
+            'Desc. general: ${UtilsVenta.descuentoGeneral.toStringAsFixed(0)}%');
       }
       if (UtilsVenta.descuentosPorClave.isNotEmpty) {
         final porPartida = UtilsVenta.descuentosPorClave.entries

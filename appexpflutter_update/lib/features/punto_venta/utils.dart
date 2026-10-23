@@ -78,6 +78,7 @@ class UtilsVenta {
   static double descuentoDe(String clave) => descuentosPorClave[clave] ?? 0;
 
   static void setDescuento(String clave, double pct) {
+    pct = pct.truncateToDouble(); // los descuentos no llevan decimales
     if (pct <= 0) {
       descuentosPorClave.remove(clave);
     } else {
