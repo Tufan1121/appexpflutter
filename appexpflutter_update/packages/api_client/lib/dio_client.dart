@@ -63,24 +63,43 @@ class DioClient {
   ///   upstream/túnel no responde).
   /// NO salta ante errores de aplicación (400/401/404/500), porque ahí el
   /// backend sí está vivo y respondiendo.
-  bool _shouldFailover(DioException e) {
+  ///
+  /// Con [idempotente] en false (POST/PUT/PATCH/DELETE) solo salta cuando la
+  /// petición seguro NO llegó al backend (no conectó, o 502/503). Si se envió y
+  /// tardó en responder (send/receiveTimeout, 504) el backend pudo haberla
+  /// procesado: repetirla en la otra URL guardaba dos veces la misma venta.
+  bool _shouldFailover(DioException e, {bool idempotente = true}) {
     if (e.type == DioExceptionType.connectionError ||
-        e.type == DioExceptionType.connectionTimeout ||
-        e.type == DioExceptionType.sendTimeout ||
-        e.type == DioExceptionType.receiveTimeout ||
-        e.error is SocketException) {
+        e.type == DioExceptionType.connectionTimeout) {
+      return true;
+    }
+    if (idempotente &&
+        (e.type == DioExceptionType.sendTimeout ||
+            e.type == DioExceptionType.receiveTimeout ||
+            e.error is SocketException)) {
       return true;
     }
     if (e.type == DioExceptionType.badResponse) {
       final code = e.response?.statusCode ?? 0;
-      return code == 502 || code == 503 || code == 504;
+      return code == 502 || code == 503 || (idempotente && code == 504);
     }
     return false;
   }
 
+  /// Tiempo de espera de las peticiones que guardan (POST/PUT/PATCH/DELETE):
+  /// el backend puede tardar (p.ej. arma el PDF del pedido) y cortar antes
+  /// hacía que el usuario reintentara algo que sí se estaba guardando.
+  static const Duration _receiveTimeoutEscritura = Duration(seconds: 60);
+
+  Options _opcionesEscritura(Options? options) =>
+      (options ?? Options()).copyWith(
+        receiveTimeout: options?.receiveTimeout ?? _receiveTimeoutEscritura,
+      );
+
   Future<Response<dynamic>> _request(
-    Future<Response<dynamic>> Function() requestFunction,
-  ) async {
+    Future<Response<dynamic>> Function() requestFunction, {
+    bool idempotente = true,
+  }) async {
     final urls = Environment.apiUrls;
     final start = Environment.activeIndex;
     DioException? lastError;
@@ -97,7 +116,7 @@ class DioClient {
       } on DioException catch (e) {
         lastError = e;
         final hayOtra = i < urls.length - 1;
-        if (_shouldFailover(e) && hayOtra) {
+        if (_shouldFailover(e, idempotente: idempotente) && hayOtra) {
           continue; // la URL no respondió (o gateway caído): prueba el respaldo
         }
         rethrow;
@@ -131,15 +150,17 @@ class DioClient {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    return _request(() => _dio.post(
-          uri,
-          data: data,
-          queryParameters: queryParameters,
-          options: options,
-          cancelToken: cancelToken,
-          onSendProgress: onSendProgress,
-          onReceiveProgress: onReceiveProgress,
-        ));
+    return _request(
+        () => _dio.post(
+              uri,
+              data: data,
+              queryParameters: queryParameters,
+              options: _opcionesEscritura(options),
+              cancelToken: cancelToken,
+              onSendProgress: onSendProgress,
+              onReceiveProgress: onReceiveProgress,
+            ),
+        idempotente: false);
   }
 
   Future<Response<dynamic>> put(
@@ -151,15 +172,17 @@ class DioClient {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    return _request(() => _dio.put(
-          uri,
-          data: data,
-          queryParameters: queryParameters,
-          options: options,
-          cancelToken: cancelToken,
-          onSendProgress: onSendProgress,
-          onReceiveProgress: onReceiveProgress,
-        ));
+    return _request(
+        () => _dio.put(
+              uri,
+              data: data,
+              queryParameters: queryParameters,
+              options: _opcionesEscritura(options),
+              cancelToken: cancelToken,
+              onSendProgress: onSendProgress,
+              onReceiveProgress: onReceiveProgress,
+            ),
+        idempotente: false);
   }
 
   Future<Response<dynamic>> patch(
@@ -171,15 +194,17 @@ class DioClient {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    return _request(() => _dio.patch(
-          uri,
-          data: data,
-          queryParameters: queryParameters,
-          options: options,
-          cancelToken: cancelToken,
-          onSendProgress: onSendProgress,
-          onReceiveProgress: onReceiveProgress,
-        ));
+    return _request(
+        () => _dio.patch(
+              uri,
+              data: data,
+              queryParameters: queryParameters,
+              options: _opcionesEscritura(options),
+              cancelToken: cancelToken,
+              onSendProgress: onSendProgress,
+              onReceiveProgress: onReceiveProgress,
+            ),
+        idempotente: false);
   }
 
   Future<Response<dynamic>> delete(
@@ -189,12 +214,14 @@ class DioClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    return _request(() => _dio.delete(
-          uri,
-          data: data,
-          queryParameters: queryParameters,
-          options: options,
-          cancelToken: cancelToken,
-        ));
+    return _request(
+        () => _dio.delete(
+              uri,
+              data: data,
+              queryParameters: queryParameters,
+              options: _opcionesEscritura(options),
+              cancelToken: cancelToken,
+            ),
+        idempotente: false);
   }
 }

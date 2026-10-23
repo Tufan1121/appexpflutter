@@ -2,6 +2,7 @@ import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_enti
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:appexpflutter_update/features/shared/guardado_pendiente.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,14 +19,27 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
     on<ClearPedidoStateEvent>((event, emit) => _clearPedidoState(emit));
   }
 
+  // Avance del pedido en curso: si falla a medias, el reintento continúa.
+  final _guardado = GuardadoPendiente<PedidoEntity>();
+
   Future<void> _pedidoAddEvent(
       PedidoAddEvent event, Emitter<PedidoState> emit) async {
     emit(PedidoLoading());
+    _guardado.iniciar(firmaGuardado(event.data, event.products.map(
+        (p) => '${p.clave}|${p.cantidad}|${p.precio}|${p.observa}')));
+    final previo = _guardado.encabezado;
+    if (previo != null) {
+      add(_guardado.partidasCompletas
+          ? PedidoAddIdPedidoEvent(pedido: previo)
+          : PedidoAddDetalleEvent(pedido: previo, products: event.products));
+      return;
+    }
     final result = await pedidoUsecase.addPedido(event.data);
 
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (pedido) {
+        _guardado.encabezado = pedido;
         add(PedidoAddDetalleEvent(pedido: pedido, products: event.products));
       },
     );
@@ -44,13 +58,18 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
       };
     }).toList();
 
-    final result = await pedidoUsecase.addDetallePedido(detallesData);
-    result.fold(
-      (failure) => emit(PedidoError(message: failure.message)),
-      (success) {
-        add(PedidoAddIdPedidoEvent(pedido: event.pedido));
-      },
-    );
+    // Una partida a la vez para saber cuáles ya quedaron guardadas.
+    for (int i = _guardado.partidasGuardadas; i < detallesData.length; i++) {
+      final result = await pedidoUsecase.addDetallePedido([detallesData[i]]);
+      final error = result.fold((failure) => failure.message, (_) => null);
+      if (error != null) {
+        emit(PedidoError(message: error));
+        return;
+      }
+      _guardado.partidasGuardadas = i + 1;
+    }
+    _guardado.partidasCompletas = true;
+    add(PedidoAddIdPedidoEvent(pedido: event.pedido));
   }
 
   Future<void> _pedidoAddIdPedidoEvent(
@@ -60,6 +79,7 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
     result.fold(
       (failure) => emit(PedidoError(message: failure.message)),
       (success) {
+        _guardado.terminar();
         emit(PedidoDetalleLoaded(
             username: prefs.getString('username') ?? '',
             pedido: event.pedido,
@@ -69,6 +89,7 @@ class PedidoBloc extends Bloc<PedidoEvent, PedidoState> {
   }
 
   void _clearPedidoState(Emitter<PedidoState> emit) {
+    _guardado.terminar();
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
     emit(PedidoInitial());

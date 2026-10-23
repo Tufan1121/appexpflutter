@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/features/ventas/domain/entities/pedido_enti
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:appexpflutter_update/features/shared/guardado_pendiente.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,14 +20,27 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
     on<ClearPedidoCotizaEvent>((event, emit) => _clearPedidoCotizaState(emit));
   }
 
+  // Avance de la cotización en curso: si falla a medias, el reintento continúa.
+  final _guardado = GuardadoPendiente<CotizaEntity>();
+
   Future<void> _pedidoAddEvent(
       PedidoAddEvent event, Emitter<CotizaPedidoState> emit) async {
     emit(PedidoCotizaLoading());
+    _guardado.iniciar(firmaGuardado(event.data, event.products.map(
+        (p) => '${p.clave}|${p.cantidad}|${p.precio}|${p.observa}')));
+    final previo = _guardado.encabezado;
+    if (previo != null) {
+      add(_guardado.partidasCompletas
+          ? PedidoAddIdPedidoEvent(pedido: previo)
+          : PedidoAddDetalleEvent(pedido: previo, products: event.products));
+      return;
+    }
     final result = await pedidoUsecase.addCotizaPedido(event.data);
 
     result.fold(
       (failure) => emit(PedidoCotizaError(message: failure.message)),
       (pedido) {
+        _guardado.encabezado = pedido;
 //         print('''
 //             Pedido: ${pedido.idPedido}
 //             Pedidos: ${pedido.pedidos}
@@ -53,14 +67,19 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
       };
     }).toList();
 
-    final result = await pedidoUsecase.addCotizaDetallePedido(detallesData);
-    result.fold(
-      (failure) => emit(PedidoCotizaError(message: failure.message)),
-      (success) {
-        add(PedidoAddIdPedidoEvent(pedido: event.pedido));
-        // emit(PedidoDetalleLoaded(pedido: event.pedido, message: success));
-      },
-    );
+    // Una partida a la vez para saber cuáles ya quedaron guardadas.
+    for (int i = _guardado.partidasGuardadas; i < detallesData.length; i++) {
+      final result =
+          await pedidoUsecase.addCotizaDetallePedido([detallesData[i]]);
+      final error = result.fold((failure) => failure.message, (_) => null);
+      if (error != null) {
+        emit(PedidoCotizaError(message: error));
+        return;
+      }
+      _guardado.partidasGuardadas = i + 1;
+    }
+    _guardado.partidasCompletas = true;
+    add(PedidoAddIdPedidoEvent(pedido: event.pedido));
   }
 
   Future<void> _pedidoAddIdPedidoEvent(
@@ -70,12 +89,14 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
     result.fold(
       (failure) => emit(PedidoCotizaError(message: failure.message)),
       (success) {
+        _guardado.terminar();
         emit(PedidoDetalleCotizaLoaded(username: prefs.getString('username')!, pedido: event.pedido, message: success));
       },
     );
   }
 
   void _clearPedidoCotizaState(Emitter<CotizaPedidoState> emit) {
+    _guardado.terminar();
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
     emit(PedidoInitial());

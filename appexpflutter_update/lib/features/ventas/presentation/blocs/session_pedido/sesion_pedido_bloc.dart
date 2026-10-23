@@ -2,6 +2,7 @@ import 'package:appexpflutter_update/features/ventas/domain/entities/sesion_enti
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/utils.dart';
+import 'package:appexpflutter_update/features/shared/guardado_pendiente.dart';
 import 'package:appexpflutter_update/features/ventas/domain/entities/detalle_pedido_entity.dart';
 import 'package:appexpflutter_update/features/ventas/domain/usecases/pedido_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,14 +20,25 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
     on<ClearPedidoSesionEvent>((event, emit) => _clearPedidoSesionState(emit));
   }
 
+  // Avance de la sesión en curso: si falla a medias, el reintento continúa.
+  final _guardado = GuardadoPendiente<SesionEntity>();
+
   Future<void> _pedidoAddEvent(
       PedidoAddSesionEvent event, Emitter<SesionPedidoState> emit) async {
     emit(PedidoSesionLoading());
+    _guardado.iniciar(firmaGuardado(event.data, event.products.map(
+        (p) => '${p.clave}|${p.cantidad}|${p.precio}|${p.observa}')));
+    final previo = _guardado.encabezado;
+    if (previo != null) {
+      add(PedidoAddDetalleEvent(pedido: previo, products: event.products));
+      return;
+    }
     final result = await pedidoUsecase.addSesionPedido(event.data);
 
     result.fold(
       (failure) => emit(PedidoSesionError(message: failure.message)),
       (pedido) {
+        _guardado.encabezado = pedido;
 //         print('''
 //             Pedido: ${pedido.idPedido}
 //             Pedidos: ${pedido.pedidos}
@@ -54,17 +66,26 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
       };
     }).toList();
 
-    final result = await pedidoUsecase.addSesionDetallePedido(detallesData);
-    result.fold(
-      (failure) => emit(PedidoSesionError(message: failure.message)),
-      (success) {
-        // add(PedidoAddIdPedidoEvent(pedido: event.pedido));
-        emit(PedidoDetalleSesionLoaded(
-            username: prefs.getString('username') ?? '',
-            pedido: event.pedido,
-            message: success));
-      },
-    );
+    // Una partida a la vez para saber cuáles ya quedaron guardadas.
+    String mensaje = '';
+    for (int i = _guardado.partidasGuardadas; i < detallesData.length; i++) {
+      final result =
+          await pedidoUsecase.addSesionDetallePedido([detallesData[i]]);
+      final error = result.fold((failure) => failure.message, (ok) {
+        mensaje = ok;
+        return null;
+      });
+      if (error != null) {
+        emit(PedidoSesionError(message: error));
+        return;
+      }
+      _guardado.partidasGuardadas = i + 1;
+    }
+    _guardado.terminar();
+    emit(PedidoDetalleSesionLoaded(
+        username: prefs.getString('username') ?? '',
+        pedido: event.pedido,
+        message: mensaje));
   }
 
   Future<void> _pedidoFinalSesionEvent(
@@ -79,6 +100,7 @@ class SesionPedidoBloc extends Bloc<SesionPedidoEvent, SesionPedidoState> {
   }
 
   void _clearPedidoSesionState(Emitter<SesionPedidoState> emit) {
+    _guardado.terminar();
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
     emit(PedidoSesionInitial());
