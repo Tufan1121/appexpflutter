@@ -481,7 +481,8 @@ class ListaProductosVenta extends HookWidget {
       final vistos = <double>{};
       return [
         for (final (etiqueta, precio) in [
-          ('-15%', producto.precio11),
+          // Sin capturar, precio11 viene igual que precio8 (-20%).
+          ('-15%', producto.precio11 == producto.precio8 ? null : producto.precio11),
           ('-20%', producto.precio8),
           ('-25%', producto.precio9),
           ('-30%', producto.precio4),
