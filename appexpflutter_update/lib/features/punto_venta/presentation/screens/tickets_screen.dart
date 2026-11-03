@@ -12,6 +12,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const list = [
   'Pendiente Pago (Anticipo)',
@@ -90,10 +91,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
             shape: const CircleBorder(),
             padding: const EdgeInsets.all(8),
           ),
-          child: Image.asset(
-            'assets/iconos/generar pedido- rosa.png',
-            scale: 4.5,
-          ),
+          child: Icon(PhosphorIconsLight.notePencil, size: 32, color: Colores.secondaryColor),
         ),
         body: Stack(
           children: [
@@ -160,14 +158,14 @@ class _PedidoScreenState extends State<TicketsScreen> {
                                 hint: 'Selecciona Estatus del pedido',
                                 styleHint: const TextStyle(fontSize: 15),
                                 prefixIcon: const FaIcon(
-                                  FontAwesomeIcons.bagShopping,
+                                  PhosphorIconsLight.shoppingBag,
                                   color: Colores.secondaryColor,
                                 ),
                                 onChanged: (value) {
                                   dropdownValue.value = value!;
                                 },
                                 icon: const FaIcon(
-                                  FontAwesomeIcons.diagramNext,
+                                  PhosphorIconsLight.caretDown,
                                   color: Colores.secondaryColor,
                                 ),
                                 items: list
@@ -192,7 +190,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                                       context: context,
                                       icon: const Center(
                                         child: FaIcon(
-                                          FontAwesomeIcons.circleCheck,
+                                          PhosphorIconsLight.checkCircle,
                                           color: Colors.green,
                                           size: 40,
                                         ),
@@ -212,7 +210,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                                       context: context,
                                       icon: const Center(
                                         child: FaIcon(
-                                          FontAwesomeIcons.circleXmark,
+                                          PhosphorIconsLight.xCircle,
                                           color: Colors.red,
                                           size: 40,
                                         ),

@@ -2,6 +2,7 @@ import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CustomAppBar extends StatelessWidget {
   final Function()? onPressed;
@@ -25,7 +26,7 @@ class CustomAppBar extends StatelessWidget {
     return AppBar(
       leading: IconButton(
         onPressed: onPressed,
-        icon: const Icon(Icons.arrow_back_rounded),
+        icon: const Icon(PhosphorIconsLight.caretLeft),
       ),
       iconTheme: IconThemeData(color: color ?? theme.colorScheme.onPrimary),
       backgroundColor:
@@ -33,9 +34,10 @@ class CustomAppBar extends StatelessWidget {
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: AutoSizeText(
-          title,
+          title.toUpperCase(),
           style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w400,
+            letterSpacing: 2,
             color: color ?? theme.colorScheme.onPrimary,
           ),
           maxLines: 1,

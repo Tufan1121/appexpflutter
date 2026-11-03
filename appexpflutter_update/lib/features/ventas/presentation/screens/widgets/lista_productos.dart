@@ -11,6 +11,7 @@ import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:precios/domain/entities/producto_entity.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ListaProductos extends HookWidget {
   const ListaProductos({super.key, required this.productos});
@@ -208,7 +209,7 @@ class ListaProductos extends HookWidget {
                             alignment: Alignment.centerLeft,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child:
-                                const Icon(Icons.delete, color: Colors.white),
+                                const Icon(PhosphorIconsLight.trash, color: Colors.white),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -274,7 +275,7 @@ class ListaProductos extends HookWidget {
                                     Row(
                                       children: [
                                         IconButton(
-                                          icon: const Icon(Icons.add),
+                                          icon: const Icon(PhosphorIconsLight.plus),
                                           onPressed: () {
                                             if (count.value <
                                                 existencia.toInt()) {
@@ -287,7 +288,7 @@ class ListaProductos extends HookWidget {
                                         ),
                                         Text('${count.value}'),
                                         IconButton(
-                                          icon: const Icon(Icons.remove),
+                                          icon: const Icon(PhosphorIconsLight.minus),
                                           onPressed: () {
                                             if (count.value > 1) {
                                               count.value--;
@@ -336,7 +337,7 @@ class ListaProductos extends HookWidget {
                                         },
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.edit),
+                                        icon: const Icon(PhosphorIconsLight.pencilSimple),
                                         onPressed: isSelectedList.value[index]
                                             ? () {
                                                 showCustomPrice.value =
@@ -605,7 +606,7 @@ class ListaProductos extends HookWidget {
             // Botón para editar el precio del Dropdown
             IconButton(
               icon: Icon(
-                Icons.edit,
+                PhosphorIconsLight.pencilSimple,
                 color: dropdownPrice.value != null
                     ? Colores.secondaryColor
                     : Colors.grey,
@@ -748,7 +749,7 @@ class ListaProductos extends HookWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           icon: const Icon(
-            Icons.warning,
+            PhosphorIconsLight.warning,
             color: Colors.red,
           ),
           title: const Text(

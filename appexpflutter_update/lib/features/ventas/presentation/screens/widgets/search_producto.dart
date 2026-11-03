@@ -12,6 +12,7 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/widget
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SearchProducto extends HookWidget {
   const SearchProducto({
@@ -68,10 +69,7 @@ class SearchProducto extends HookWidget {
               padding: const EdgeInsets.all(8),
               // Otros estilos según sea necesario
             ),
-            child: Image.asset(
-              'assets/iconos/qr/qr 72_.png',
-              scale: 5,
-            ),
+            child: Icon(PhosphorIconsLight.qrCode, size: 28, color: Colores.secondaryColor),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
@@ -92,10 +90,7 @@ class SearchProducto extends HookWidget {
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
             ),
-            child: Image.asset(
-              'assets/iconos/inventario bodegas - rosa2.png',
-              scale: 5,
-            ),
+            child: Icon(PhosphorIconsLight.warehouse, size: 28, color: Colores.secondaryColor),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
@@ -156,8 +151,7 @@ class SearchProducto extends HookWidget {
                               text: loading
                                   ? 'GENERANDO...'
                                   : 'GENERAR COTIZACION',
-                              assetPathIcon:
-                                  'assets/iconos/pedidos - rosa gris.png',
+                              icon: PhosphorIconsLight.fileText,
                               onTap: loading
                                   ? null
                                   : () {
@@ -229,10 +223,7 @@ class SearchProducto extends HookWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                'assets/iconos/pedidos - rosa gris.png',
-                scale: 6,
-              ),
+              child: Icon(PhosphorIconsLight.fileText, size: 24, color: Colores.secondaryColor),
             ),
           ),
         ],

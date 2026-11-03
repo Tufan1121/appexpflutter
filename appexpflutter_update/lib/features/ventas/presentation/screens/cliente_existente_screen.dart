@@ -12,6 +12,7 @@ import 'package:appexpflutter_update/features/home/presentation/screens/widgets/
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
 import '../../../../config/config.dart';
 import 'widgets/widgets.dart' show SearchClientes;
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ClienteExistenteScreen extends StatelessWidget with Modal {
   const ClienteExistenteScreen({super.key});
@@ -118,7 +119,7 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                                                 CustomListTile(
                                                   text: 'EDITAR CLIENTE',
                                                   icon:
-                                                      FontAwesomeIcons.userPlus,
+                                                      PhosphorIconsLight.userPlus,
                                                   onTap: () {
                                                     FocusScope.of(context)
                                                         .unfocus();
@@ -165,7 +166,7 @@ class ClienteExistenteScreen extends StatelessWidget with Modal {
                                               Radius.circular(50))),
                                       child: Center(
                                         child: FaIcon(
-                                          FontAwesomeIcons.userLarge,
+                                          PhosphorIconsLight.user,
                                           color: Theme.of(context).colorScheme.primary,
                                           size: 20,
                                         ),

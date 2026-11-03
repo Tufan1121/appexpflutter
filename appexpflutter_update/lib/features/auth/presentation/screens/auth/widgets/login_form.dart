@@ -7,6 +7,7 @@ import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class LoginForm extends StatefulHookWidget {
   const LoginForm({super.key});
@@ -68,7 +69,7 @@ class _LoginFormState extends State<LoginForm> {
                 },
                 suffixIcon: IconButton(
                   icon: Icon(
-                    Icons.remove_red_eye_outlined,
+                    PhosphorIconsLight.eye,
                     color: showPassword.value
                         ? Colors.grey
                         : Colores.secondaryColor,

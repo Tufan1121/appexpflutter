@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 //  import 'package:path_provider/path_provider.dart';
 
 class PdfViewerPedidoScreen extends HookWidget {
@@ -227,7 +228,7 @@ class PdfViewerPedidoScreen extends HookWidget {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(PhosphorIconsLight.caretLeft),
             onPressed: () async {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 HomeRoute().push(context);
@@ -253,12 +254,12 @@ class PdfViewerPedidoScreen extends HookWidget {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.download),
+              icon: const Icon(PhosphorIconsLight.downloadSimple),
               onPressed: downloadPdf,
             ),
             if (!envioPorExpo)
               IconButton(
-                icon: const Icon(Icons.share),
+                icon: const Icon(PhosphorIconsLight.shareNetwork),
                 onPressed: sharePdf,
               ),
             enviandoWhatsApp.value
@@ -272,7 +273,7 @@ class PdfViewerPedidoScreen extends HookWidget {
                     ),
                   )
                 : IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.whatsapp),
+                    icon: const FaIcon(PhosphorIconsLight.whatsappLogo),
                     onPressed: envioPorExpo
                         ? () => enviarPorExpo((whatsapp: true, correo: false))
                         : sendToWhatsApp,
@@ -280,7 +281,7 @@ class PdfViewerPedidoScreen extends HookWidget {
             if (envioPorExpo && !enviandoWhatsApp.value)
               IconButton(
                 tooltip: 'Enviar por correo',
-                icon: const Icon(Icons.email_outlined),
+                icon: const Icon(PhosphorIconsLight.envelopeSimple),
                 onPressed: () => enviarPorExpo((whatsapp: false, correo: true)),
               ),
           ],
@@ -304,7 +305,7 @@ class PdfViewerPedidoScreen extends HookWidget {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colores.secondaryColor,
                                 foregroundColor: Colors.white),
-                            icon: const Icon(Icons.open_in_new),
+                            icon: const Icon(PhosphorIconsLight.arrowSquareOut),
                             label: const Text('Abrir PDF'),
                             onPressed: abrirConSistema,
                           ),

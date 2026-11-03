@@ -15,6 +15,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../config/theme/app_theme.dart';
 import '../../../shared/widgets/layout_screens.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SesionPedidoScreen extends StatefulHookWidget {
   const SesionPedidoScreen({
@@ -309,7 +310,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                         onPressed:
                                             loading.value ? null : _submitForm,
                                         icon: const Icon(
-                                          Icons.save,
+                                          PhosphorIconsLight.floppyDisk,
                                           color:
                                               Colores.scaffoldBackgroundColor,
                                         ),
@@ -331,7 +332,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
                                   ),
                                   ElevatedButton.icon(
                                     onPressed: _dialogCancel,
-                                    icon: const Icon(Icons.close,
+                                    icon: const Icon(PhosphorIconsLight.x,
                                         color: Colores.secondaryColor),
                                     label: const Text(
                                       'CANCELAR',
@@ -490,7 +491,7 @@ class _SesionPedidoScreenState extends State<SesionPedidoScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.warning,
+                PhosphorIconsLight.warning,
                 color: Colors.red,
               ),
               SizedBox(width: 10),

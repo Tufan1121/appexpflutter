@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:appexpflutter_update/config/theme/app_theme.dart';
 
 class PuntoVentaProductSearch extends HookWidget {
   const PuntoVentaProductSearch({
@@ -56,10 +58,7 @@ class PuntoVentaProductSearch extends HookWidget {
               padding: const EdgeInsets.all(8),
               // Otros estilos según sea necesario
             ),
-            child: Image.asset(
-              'assets/iconos/qr/qr 72_.png',
-              scale: 5,
-            ),
+            child: Icon(PhosphorIconsLight.qrCode, size: 28, color: Colores.secondaryColor),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
@@ -80,10 +79,7 @@ class PuntoVentaProductSearch extends HookWidget {
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
             ),
-            child: Image.asset(
-              'assets/iconos/inventario bodegas - rosa2.png',
-              scale: 5,
-            ),
+            child: Icon(PhosphorIconsLight.warehouse, size: 28, color: Colores.secondaryColor),
           ),
           const SizedBox(width: 10),
         ],

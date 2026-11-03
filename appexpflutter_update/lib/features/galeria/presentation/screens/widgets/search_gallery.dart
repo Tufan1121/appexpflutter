@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SearchGallery extends HookWidget {
   const SearchGallery({
@@ -70,7 +71,7 @@ class SearchGallery extends HookWidget {
                   prefixIcon: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Icon(
-                      Icons.search,
+                      PhosphorIconsLight.magnifyingGlass,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
@@ -80,7 +81,7 @@ class SearchGallery extends HookWidget {
                             controller.clear();
                           },
                           icon: const Icon(
-                            Icons.clear,
+                            PhosphorIconsLight.x,
                             color: Colors.red,
                           ))
                       : null,

@@ -11,6 +11,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class PuntoVentaConsultaScreen extends HookWidget {
   const PuntoVentaConsultaScreen({super.key});
@@ -129,7 +130,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                       children: [
                                         CustomListTile(
                                             text: 'VISUALIZAR',
-                                            icon: Icons.remove_red_eye,
+                                            icon: PhosphorIconsLight.eye,
                                             onTap: () async {
                                               final prefs =
                                                   await SharedPreferences
@@ -236,7 +237,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                         selectDate(selectedDateDesde, dateControllerDesde),
                     decoration: InputDecoration(
                       labelText: 'Fecha desde',
-                      suffixIcon: const Icon(Icons.calendar_today),
+                      suffixIcon: const Icon(PhosphorIconsLight.calendarBlank),
                       labelStyle:
                           const TextStyle(color: Colors.black, fontSize: 14),
                       border: OutlineInputBorder(
@@ -260,7 +261,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                       labelText: 'Fecha hasta',
                       labelStyle:
                           const TextStyle(color: Colors.black, fontSize: 14),
-                      suffixIcon: const Icon(Icons.calendar_today),
+                      suffixIcon: const Icon(PhosphorIconsLight.calendarBlank),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -285,7 +286,7 @@ class PuntoVentaConsultaScreen extends HookWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.search,
+                    PhosphorIconsLight.magnifyingGlass,
                     color: Colores.scaffoldBackgroundColor,
                   ),
                   SizedBox(width: 5),

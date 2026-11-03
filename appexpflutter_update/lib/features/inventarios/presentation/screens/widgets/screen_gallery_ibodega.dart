@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class FullScreenGalleryIBodegas extends StatefulWidget {
   final ProductoEntity producto;
@@ -270,15 +271,15 @@ class _FullScreenGalleryIBodegasState extends State<FullScreenGalleryIBodegas> {
         ),
         actions: [
           // IconButton(
-          //   icon: const Icon(Icons.download),
+          //   icon: const Icon(PhosphorIconsLight.downloadSimple),
           //   onPressed: () => downloadImage(imageUrls[initialIndex], 'image_${initialIndex + 1}'),
           // ),
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: const Icon(PhosphorIconsLight.shareNetwork),
             onPressed: () => shareImage(widget.imageUrls[_currentIndex]),
           ),
           // IconButton(
-          //   icon: const FaIcon(FontAwesomeIcons.whatsapp),
+          //   icon: const FaIcon(PhosphorIconsLight.whatsappLogo),
           //   onPressed: () => sendToWhatsApp(
           //       imageUrls[initialIndex], 'image_${initialIndex + 1}'),
           // ),

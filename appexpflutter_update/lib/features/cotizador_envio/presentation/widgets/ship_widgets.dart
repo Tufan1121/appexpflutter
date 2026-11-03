@@ -6,6 +6,7 @@ import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/shipping_quote.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/shipping_rate_response.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/repositories/shipping_repository.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Icono, color y nombre por paquetería (misma paleta que `CARRIER_COLORS`
 /// en galería).
@@ -15,27 +16,27 @@ class CarrierStyle {
   static IconData icon(String carrier) {
     switch (carrier) {
       case 'paquetexpress':
-        return Icons.inventory_2_rounded;
+        return PhosphorIconsLight.package;
       case 'fedex':
-        return Icons.flight_rounded;
+        return PhosphorIconsLight.airplane;
       case 'fedexFreight':
-        return Icons.local_shipping_rounded;
+        return PhosphorIconsLight.truck;
       case 'dhl':
-        return Icons.local_shipping_rounded;
+        return PhosphorIconsLight.truck;
       case 'tresguerras':
-        return Icons.factory_rounded;
+        return PhosphorIconsLight.factory;
       case 'estafeta':
-        return Icons.markunread_mailbox_rounded;
+        return PhosphorIconsLight.mailbox;
       case 'ups':
-        return Icons.inventory_rounded;
+        return PhosphorIconsLight.package;
       case 'sendex':
-        return Icons.delivery_dining_rounded;
+        return PhosphorIconsLight.moped;
       case 'almex':
-        return Icons.view_in_ar_rounded;
+        return PhosphorIconsLight.cube;
       case 'castores':
-        return Icons.local_shipping_rounded;
+        return PhosphorIconsLight.truck;
       default:
-        return Icons.local_shipping_rounded;
+        return PhosphorIconsLight.truck;
     }
   }
 
@@ -150,7 +151,7 @@ class ShipOptionsSelector extends StatelessWidget {
             Expanded(
               child: _dropdown<ShipEmpaque>(
                 label: 'Empaque para carga',
-                icon: Icons.inventory_2_outlined,
+                icon: PhosphorIconsLight.package,
                 value: empaque,
                 items: ShipEmpaque.values,
                 labelOf: (e) => e.label,
@@ -161,7 +162,7 @@ class ShipOptionsSelector extends StatelessWidget {
             Expanded(
               child: _dropdown<ShipEntrega>(
                 label: 'Entrega',
-                icon: Icons.storefront_outlined,
+                icon: PhosphorIconsLight.storefront,
                 value: entrega,
                 items: ShipEntrega.values,
                 labelOf: (e) => e == ShipEntrega.ocurre ? 'En ocurre (recoge en sucursal)' : 'A domicilio',
@@ -193,7 +194,7 @@ class ShipOptionsSelector extends StatelessWidget {
       value: value,
       isExpanded: true,
       isDense: true,
-      icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
+      icon: const Icon(PhosphorIconsLight.caretDown, size: 18),
       style: GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.w500,
@@ -303,7 +304,7 @@ class ShipSection extends StatelessWidget {
                 AnimatedRotation(
                   turns: abierta ? 0.5 : 0,
                   duration: const Duration(milliseconds: 150),
-                  child: Icon(Icons.expand_more_rounded, size: 20, color: color),
+                  child: Icon(PhosphorIconsLight.caretDown, size: 20, color: color),
                 ),
               ],
             ),
@@ -444,7 +445,7 @@ class _ShipRateTileState extends State<ShipRateTile> {
                     ),
                     if (widget.onTap != null) ...[
                       const SizedBox(width: 4),
-                      const Icon(Icons.chevron_right_rounded, color: Colores.textTertiary, size: 20),
+                      const Icon(PhosphorIconsLight.caretRight, color: Colores.textTertiary, size: 20),
                     ],
                   ],
                 ),
@@ -558,7 +559,7 @@ class _ShipRechazosListState extends State<ShipRechazosList> {
             child: Row(
               children: [
                 Icon(
-                  _abierto ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+                  _abierto ? PhosphorIconsLight.caretUp : PhosphorIconsLight.caretDown,
                   size: 16,
                   color: Colores.textTertiary,
                 ),

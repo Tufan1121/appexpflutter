@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class HistorialListCotiza extends StatelessWidget {
   const HistorialListCotiza(
@@ -84,7 +85,7 @@ class HistorialListCotiza extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(50))),
                   child: Center(
                     child: FaIcon(
-                      FontAwesomeIcons.userLarge,
+                      PhosphorIconsLight.user,
                       color: Theme.of(context).colorScheme.primary,
                       size: 20,
                     ),

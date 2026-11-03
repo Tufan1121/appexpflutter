@@ -15,6 +15,7 @@ import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class InventarioTienda extends StatefulWidget {
   const InventarioTienda({super.key});
@@ -137,7 +138,7 @@ class _InventarioTiendaState extends State<InventarioTienda>
                             builder: (context, state) {
                               if (state is InventarioProductosLoaded) {
                                 return IconButton(
-                                  icon: const Icon(Icons.check),
+                                  icon: const Icon(PhosphorIconsLight.check),
                                   onPressed: () {
                                     context.read<ProductosTiendaBloc>().add(
                                         AddSelectedProductsToScannedEvent(
@@ -147,7 +148,7 @@ class _InventarioTiendaState extends State<InventarioTienda>
                                       context: context,
                                       icon: const Center(
                                         child: FaIcon(
-                                          FontAwesomeIcons.circleCheck,
+                                          PhosphorIconsLight.checkCircle,
                                           color: Colors.green,
                                           size: 40,
                                         ),
@@ -389,7 +390,7 @@ class _InventarioTiendaState extends State<InventarioTienda>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        Icons.search,
+                                        PhosphorIconsLight.magnifyingGlass,
                                         color: Colores.scaffoldBackgroundColor,
                                       ),
                                       SizedBox(width: 5),
@@ -573,7 +574,7 @@ class _InventarioTiendaState extends State<InventarioTienda>
                                       children: [
                                         const SizedBox(height: 150),
                                         const Icon(
-                                          Icons.error,
+                                          PhosphorIconsLight.warningCircle,
                                           color: Colors.red,
                                           size: 100,
                                         ),

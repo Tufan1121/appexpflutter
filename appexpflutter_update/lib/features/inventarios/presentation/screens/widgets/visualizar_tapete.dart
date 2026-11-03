@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Flujo "Ver en mi espacio": el usuario toma/elige una foto de su espacio,
 /// se combina con el tapete seleccionado vía el endpoint `/visualizarTapete`
@@ -187,12 +188,12 @@ class VisualizarTapete {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_camera_outlined),
+              leading: const Icon(PhosphorIconsLight.camera),
               title: const Text('Tomar foto'),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
+              leading: const Icon(PhosphorIconsLight.images),
               title: const Text('Elegir de la galería'),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
@@ -265,7 +266,7 @@ class VisualizarTapete {
                     ),
                     IconButton(
                       tooltip: 'Cerrar',
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(PhosphorIconsLight.x),
                       onPressed: () => Navigator.of(ctx).pop(),
                     ),
                   ],
@@ -292,7 +293,7 @@ class VisualizarTapete {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        icon: const Icon(Icons.download),
+                        icon: const Icon(PhosphorIconsLight.downloadSimple),
                         label: const Text('Descargar'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.colorScheme.primary,
@@ -304,7 +305,7 @@ class VisualizarTapete {
                     const SizedBox(width: 10),
                     Expanded(
                       child: ElevatedButton.icon(
-                        icon: const Icon(Icons.share),
+                        icon: const Icon(PhosphorIconsLight.shareNetwork),
                         label: const Text('Compartir'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.colorScheme.primary,

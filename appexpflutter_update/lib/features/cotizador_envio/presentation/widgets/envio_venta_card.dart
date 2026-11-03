@@ -7,6 +7,7 @@ import 'package:appexpflutter_update/features/cotizador_envio/data/models/envio_
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/product_shipping_info.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/presentation/widgets/aviso_envio_quitado.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/shipping_quote_modal_v2.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Partidas con las que se cotizó cada lista de envíos (clave:cantidad). Si
 /// cambian (se agregó, quitó o cambió de cantidad un tapete) el envío ya no
@@ -89,7 +90,7 @@ class EnvioVentaCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: OutlinedButton.icon(
           onPressed: () => _abrirCotizador(context),
-          icon: const Icon(Icons.local_shipping_rounded, size: 20),
+          icon: const Icon(PhosphorIconsLight.truck, size: 20),
           label: Text('Cotizar envío',
               style: GoogleFonts.montserrat(fontWeight: FontWeight.w600)),
           style: OutlinedButton.styleFrom(
@@ -116,7 +117,7 @@ class EnvioVentaCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.local_shipping_rounded,
+          const Icon(PhosphorIconsLight.truck,
               color: Colores.secondaryColor, size: 20),
           const SizedBox(width: 8),
           Expanded(
@@ -170,7 +171,7 @@ class EnvioVentaCard extends StatelessWidget {
           ),
           IconButton(
             tooltip: 'Quitar envío',
-            icon: const Icon(Icons.close_rounded, size: 18),
+            icon: const Icon(PhosphorIconsLight.x, size: 18),
             color: Colores.textSecondary,
             onPressed: () {
               envios.clear();

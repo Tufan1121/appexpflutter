@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inventarios/data/data_sources/inventario_expo_data_source.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Widget que muestra el bloque "¿Quiso decir?" con sugerencias de calidad.
 ///
@@ -77,7 +78,7 @@ class _QuisoDecirState extends State<QuisoDecir> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.lightbulb_outline,
+                      Icon(PhosphorIconsLight.lightbulb,
                           size: 18, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(

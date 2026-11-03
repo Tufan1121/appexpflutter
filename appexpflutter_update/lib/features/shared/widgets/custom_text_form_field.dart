@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CustomReactiveTextField extends StatelessWidget {
   final String? label;
@@ -106,7 +107,7 @@ class CustomReactiveTextField extends StatelessWidget {
                 suffixIcon: suffixIcon,
                 border: InputBorder.none,
                 suffixText: suffixText
-                // icon: Icon( Icons.supervised_user_circle_outlined, color: colors.primary, )
+                // icon: Icon( PhosphorIconsLight.usersThree, color: colors.primary, )
                 ),
           ),
         ),

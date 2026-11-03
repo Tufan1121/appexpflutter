@@ -10,7 +10,8 @@ class CustomFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const radius = Radius.circular(10);
+    // Esquinas casi rectas y texto en mayúsculas espaciado (estilo limpio)
+    const radius = Radius.circular(4);
 
     return FilledButton(
         style: FilledButton.styleFrom(
@@ -23,8 +24,9 @@ class CustomFilledButton extends StatelessWidget {
             ))),
         onPressed: onPressed,
         child: Text(
-          text,
-          style: const TextStyle(fontSize: 18),
+          text.toUpperCase(),
+          style: const TextStyle(
+              fontSize: 15, fontWeight: FontWeight.w400, letterSpacing: 1.5),
         ));
   }
 }

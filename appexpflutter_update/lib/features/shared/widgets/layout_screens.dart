@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/config/theme/responsive.dart';
 import 'package:appexpflutter_update/features/shared/widgets/background_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class LayoutScreens extends StatelessWidget {
   const LayoutScreens({
@@ -40,7 +41,7 @@ class LayoutScreens extends StatelessWidget {
               children: [
                 IconButton(
                     onPressed: onPressed,
-                    icon: const Icon(Icons.arrow_back_rounded,
+                    icon: const Icon(PhosphorIconsLight.caretLeft,
                         size: 30, color: Colors.white)),
                 const SizedBox(width: 50),
                 Text(

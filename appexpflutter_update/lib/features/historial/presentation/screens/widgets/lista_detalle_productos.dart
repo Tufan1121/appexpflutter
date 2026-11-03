@@ -9,6 +9,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/utils/utils.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ListaDetalleProductos extends HookWidget {
   const ListaDetalleProductos({super.key, required this.productos});
@@ -152,7 +153,7 @@ class ListaDetalleProductos extends HookWidget {
                           color: Colors.red,
                           alignment: Alignment.centerLeft,
                           padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: const Icon(Icons.delete, color: Colors.white),
+                          child: const Icon(PhosphorIconsLight.trash, color: Colors.white),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -197,7 +198,7 @@ class ListaDetalleProductos extends HookWidget {
                                   Row(
                                     children: [
                                       IconButton(
-                                        icon: const Icon(Icons.add),
+                                        icon: const Icon(PhosphorIconsLight.plus),
                                         onPressed: () {
                                           if (count.value <
                                               existencia.toInt()) {
@@ -210,7 +211,7 @@ class ListaDetalleProductos extends HookWidget {
                                       ),
                                       Text('${count.value}'),
                                       IconButton(
-                                        icon: const Icon(Icons.remove),
+                                        icon: const Icon(PhosphorIconsLight.minus),
                                         onPressed: () {
                                           if (count.value > 1) {
                                             count.value--;
@@ -364,7 +365,7 @@ class ListaDetalleProductos extends HookWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           icon: const Icon(
-            Icons.warning,
+            PhosphorIconsLight.warning,
             color: Colors.red,
           ),
           title: const Text(

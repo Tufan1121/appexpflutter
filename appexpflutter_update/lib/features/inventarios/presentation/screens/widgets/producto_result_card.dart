@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Card de un resultado de búsqueda, inspirada en el grid del web
 /// (`F:\python\galeria\busquedaglobal.html:1809-1840`).
@@ -162,7 +163,7 @@ class ProductoResultCard extends HookWidget {
                           child: Tooltip(
                             message: 'Copiar',
                             child: Icon(
-                              Icons.copy,
+                              PhosphorIconsLight.copy,
                               size: 13,
                               color: theme.colorScheme.primary,
                             ),
@@ -230,7 +231,7 @@ class _Thumb extends StatelessWidget {
             color: theme.colorScheme.surface,
             child: firstFoto == null
                 ? Center(
-                    child: Icon(Icons.image_not_supported_outlined,
+                    child: Icon(PhosphorIconsLight.imageBroken,
                         color: theme.disabledColor, size: 40),
                   )
                 : FadeInImage.assetNetwork(
@@ -267,7 +268,7 @@ class _Thumb extends StatelessWidget {
                   child: SizedBox(
                     width: 38,
                     height: 38,
-                    child: Icon(Icons.weekend_outlined,
+                    child: Icon(PhosphorIconsLight.armchair,
                         color: Colors.white, size: 20),
                   ),
                 ),
@@ -299,7 +300,7 @@ class _VerDetalleButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.zoom_in, color: Colors.white, size: 16),
+              const Icon(PhosphorIconsLight.magnifyingGlassPlus, color: Colors.white, size: 16),
               const SizedBox(width: 6),
               Text(
                 'Ver +Detalle',
@@ -515,8 +516,8 @@ class _PriceFooter extends StatelessWidget {
                 ),
                 Icon(
                   showPrice
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
+                      ? PhosphorIconsLight.caretUp
+                      : PhosphorIconsLight.caretDown,
                   size: 20,
                   color: Colores.secondaryColor,
                 ),

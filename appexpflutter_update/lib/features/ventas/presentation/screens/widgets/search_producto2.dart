@@ -6,6 +6,7 @@ import 'package:appexpflutter_update/features/ventas/presentation/screens/widget
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SearchProducto extends HookWidget {
   const SearchProducto({
@@ -75,7 +76,7 @@ class SearchProducto extends HookWidget {
                         FocusScope.of(context).unfocus();
                       },
                       icon: const Icon(
-                        Icons.search,
+                        PhosphorIconsLight.magnifyingGlass,
                         color: Colores.secondaryColor,
                       ),
                     ),
@@ -86,7 +87,7 @@ class SearchProducto extends HookWidget {
                             controller.clear();
                           },
                           icon: const Icon(
-                            Icons.clear,
+                            PhosphorIconsLight.x,
                             color: Colors.red,
                           ))
                       : null,
@@ -138,7 +139,7 @@ class SearchProducto extends HookWidget {
                 padding: const EdgeInsets.all(8),
               ),
               child: const FaIcon(
-                FontAwesomeIcons.truck,
+                PhosphorIconsLight.truck,
                 color: Colores.secondaryColor,
                 size: 35,
               ),
@@ -162,7 +163,7 @@ class SearchProducto extends HookWidget {
               padding: const EdgeInsets.all(8),
             ),
             child: const FaIcon(
-              FontAwesomeIcons.store,
+              PhosphorIconsLight.storefront,
               color: Colores.secondaryColor,
               size: 35,
             ),
@@ -191,7 +192,7 @@ class SearchProducto extends HookWidget {
               // Otros estilos según sea necesario
             ),
             child: const Icon(
-              Icons.qr_code_2_rounded,
+              PhosphorIconsLight.qrCode,
               color: Colores.secondaryColor,
               size: 40,
             ),

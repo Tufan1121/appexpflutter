@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class InventarioBodega2 extends StatefulWidget {
   const InventarioBodega2({super.key});
@@ -76,7 +77,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                             builder: (context, state) {
                               if (state is InventarioProductosLoaded) {
                                 return IconButton(
-                                  icon: const Icon(Icons.check),
+                                  icon: const Icon(PhosphorIconsLight.check),
                                   onPressed: () {
                                     context.read<DetalleSesionBloc>().add(
                                           AddSelectedProductsEvent(
@@ -92,7 +93,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                                       context: context,
                                       icon: const Center(
                                         child: FaIcon(
-                                          FontAwesomeIcons.circleCheck,
+                                          PhosphorIconsLight.checkCircle,
                                           color: Colors.green,
                                           size: 40,
                                         ),
@@ -235,7 +236,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        Icons.search,
+                                        PhosphorIconsLight.magnifyingGlass,
                                         color: Colors.white,
                                       ),
                                       SizedBox(width: 5),
@@ -387,7 +388,7 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                                             context: context,
                                             icon: const Center(
                                               child: FaIcon(
-                                                FontAwesomeIcons.circleCheck,
+                                                PhosphorIconsLight.checkCircle,
                                                 color: Colors.green,
                                                 size: 40,
                                               ),

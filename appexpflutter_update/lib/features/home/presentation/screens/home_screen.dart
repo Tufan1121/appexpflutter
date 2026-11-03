@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -47,8 +48,8 @@ class HomeScreen extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         Theme.of(context).brightness == Brightness.dark
-                            ? Icons.light_mode
-                            : Icons.dark_mode,
+                            ? PhosphorIconsLight.sun
+                            : PhosphorIconsLight.moon,
                         size: 28,
                       ),
                       tooltip: 'Cambiar tema',
@@ -60,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                     const Spacer(),
                     IconButton(
                       icon: const Icon(
-                        Icons.logout,
+                        PhosphorIconsLight.signOut,
                         size: 30,
                       ),
                       tooltip: 'Cerrar Sesión',
@@ -137,7 +138,8 @@ class HomeScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                           maxLines: 2,
                           style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.2,
                             color: Colors.white,
                             shadows: const [
                               BoxShadow(
@@ -151,7 +153,8 @@ class HomeScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                           maxLines: 2,
                           style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.2,
                             color: Colors.white70,
                             shadows: const [
                               BoxShadow(
@@ -210,7 +213,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _preciosCard(BuildContext context) {
     return CardItem(
-      assetPathIcon: 'assets/iconos/qr/qr 72_.png',
+      icon: PhosphorIconsLight.qrCode,
       label: 'Precios',
       onTap: () => PreciosRoute().push(context),
     );
@@ -218,7 +221,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _inventariosCard(BuildContext context) {
     return CardItem(
-      assetPathIcon: 'assets/iconos/inventarios - rosa gris.png',
+      icon: PhosphorIconsLight.clipboardText,
       label: 'Inventarios',
       onTap: () => homeModalButtom(
           context: context,
@@ -227,21 +230,23 @@ class HomeScreen extends StatelessWidget {
             children: [
               CustomListTile(
                 text: 'INVENTARIO TIENDA',
-                assetPathIcon: 'assets/iconos/inventario expo - rosa.png',
+                icon: PhosphorIconsLight.storefront,
+                flecha: true,
                 onTap: () => InvetarioExpoRoute().push(context),
               ),
               const Divider(),
               CustomListTile(
                   text: 'INVENTARIO BODEGAS',
-                  assetPathIcon:
-                      'assets/iconos/inventario bodegas - rosa2.png',
+                  icon: PhosphorIconsLight.warehouse,
+                  flecha: true,
                   onTap: () {
                     InvetarioBodegaRoute().push(context);
                   }),
               const Divider(),
               CustomListTile(
                 text: 'BUSQUEDA GLOBAL',
-                assetPathIcon: 'assets/iconos/busqueda global - rosa.png',
+                icon: PhosphorIconsLight.magnifyingGlass,
+                flecha: true,
                 onTap: () => BusquedaGlobalRoute().push(context),
               ),
             ],
@@ -251,7 +256,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _cotizacionesCard(BuildContext context) {
     return CardItem(
-      assetPathIcon: 'assets/iconos/precios - rosa gris.png',
+      icon: PhosphorIconsLight.receipt,
       label: 'Cotizaciones',
       onTap: () => homeModalButtom(
           height: 160,
@@ -260,14 +265,15 @@ class HomeScreen extends StatelessWidget {
             children: [
               CustomListTile(
                 text: 'CLIENTE NUEVO',
-                assetPathIcon: 'assets/iconos/cliente nuevo - rosa gris.png',
+                icon: PhosphorIconsLight.userPlus,
+                flecha: true,
                 onTap: () => ClienteNuevoRoute().push(context),
               ),
               const Divider(),
               CustomListTile(
                 text: 'CLIENTE EXISTENTE',
-                assetPathIcon:
-                    'assets/iconos/cliente existente - rosa gris.png',
+                icon: PhosphorIconsLight.users,
+                flecha: true,
                 onTap: () => ClienteExistenteRoute().push(context),
               ),
             ],
@@ -277,7 +283,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _historialCard(BuildContext context) {
     return CardItem(
-      icon: Icons.history_rounded,
+      icon: PhosphorIconsLight.clockCounterClockwise,
       label: 'Historial',
       onTap: () => HistorialRoute().push(context),
     );
@@ -285,7 +291,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _galeriaCard(BuildContext context) {
     return CardItem(
-      icon: Icons.photo_library,
+      icon: PhosphorIconsLight.images,
       label: 'Galería',
       onTap: () {
         GaleriaRoute().push(context);
@@ -295,7 +301,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _puntoVentaCard(BuildContext context) {
     return CardItem(
-      icon: Icons.point_of_sale_sharp,
+      icon: PhosphorIconsLight.cashRegister,
       label: 'Punto de Venta',
       onTap: () => PuntoVentaRoute().push(context),
     );

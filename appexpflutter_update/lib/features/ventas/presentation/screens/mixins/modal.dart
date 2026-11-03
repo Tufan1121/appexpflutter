@@ -2,6 +2,7 @@ import 'package:sesion_ventas/domain/entities/cliente_entity.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/cliente_form_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 mixin Modal {
   Future<void> modalEditarCliente(
@@ -18,7 +19,7 @@ mixin Modal {
                 IconButton(
                     tooltip: 'Cerrar',
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close))
+                    icon: const Icon(PhosphorIconsLight.x))
               ],
             ),
             Center(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// País para la clave internacional del teléfono del cliente (clientes.lada_pais).
 /// El backend la usa para mandar el WhatsApp del pedido; sin ella supone México.
@@ -97,7 +98,7 @@ class LadaPaisSelector extends StatelessWidget {
               children: [
                 Text('${actual.bandera} +${actual.lada}',
                     style: const TextStyle(fontSize: 15)),
-                const Icon(Icons.arrow_drop_down, size: 20),
+                const Icon(PhosphorIconsLight.caretDown, size: 20),
               ],
             ),
           ),

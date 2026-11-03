@@ -11,6 +11,7 @@ import 'package:appexpflutter_update/features/cotizador_envio/data/models/shippi
 import 'package:appexpflutter_update/features/cotizador_envio/data/models/zipcode_info.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/data/repositories/shipping_repository.dart';
 import 'package:appexpflutter_update/features/cotizador_envio/presentation/widgets/ship_widgets.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Envío elegido (una partida ENVIO): importe, paquetería, servicio (modo,
 /// guías y sucursal de ocurre), ruta "Origen: CP Ciudad -> Destino: CP
@@ -623,7 +624,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                       ],
                     ),
                     child: const Icon(
-                      Icons.local_shipping_rounded,
+                      PhosphorIconsLight.truck,
                       color: Colors.white,
                       size: 24,
                     ),
@@ -653,7 +654,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded),
+                    icon: const Icon(PhosphorIconsLight.x),
                     color: Colores.textSecondary,
                   ),
                 ],
@@ -672,7 +673,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildSectionTitle('Códigos Postales', Icons.pin_drop_rounded),
+                      _buildSectionTitle('Códigos Postales', PhosphorIconsLight.mapPin),
                       const SizedBox(height: 12),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -681,7 +682,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                             child: _buildZipcodeField(
                               controller: _codigoPostalOrigenController,
                               label: 'CP Origen',
-                              icon: Icons.flight_takeoff_rounded,
+                              icon: PhosphorIconsLight.airplaneTakeoff,
                               info: _originInfo,
                               isLoading: _isLoadingOrigin,
                               onChanged: (_) => _buscarInfoOrigen(),
@@ -692,7 +693,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                             child: _buildZipcodeField(
                               controller: _codigoPostalDestinoController,
                               label: 'CP Destino',
-                              icon: Icons.flight_land_rounded,
+                              icon: PhosphorIconsLight.airplaneLanding,
                               info: _destinationInfo,
                               isLoading: _isLoadingDestination,
                               onChanged: (_) => _buscarInfoDestino(),
@@ -702,13 +703,13 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                       ),
                       const SizedBox(height: 20),
 
-                      _buildSectionTitle('Dimensiones y Peso por Producto', Icons.straighten_rounded),
+                      _buildSectionTitle('Dimensiones y Peso por Producto', PhosphorIconsLight.ruler),
                       const SizedBox(height: 12),
                       ..._buildProductDimensionCards(),
                       const SizedBox(height: 8),
 
                       // Empaque para carga y tipo de entrega
-                      _buildSectionTitle('Empaque y entrega', Icons.local_shipping_outlined),
+                      _buildSectionTitle('Empaque y entrega', PhosphorIconsLight.truck),
                       const SizedBox(height: 12),
                       ShipOptionsSelector(
                         empaque: _empaque,
@@ -722,7 +723,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                       // Botón cotizar
                       _buildGradientButton(
                         label: _isLoading ? 'Cotizando...' : 'Cotizar Envío',
-                        icon: _isLoading ? Icons.hourglass_top_rounded : Icons.calculate_rounded,
+                        icon: _isLoading ? PhosphorIconsLight.hourglass : PhosphorIconsLight.calculator,
                         onPressed: _isLoading ? () {} : _calcularCotizacion,
                       ),
 
@@ -738,7 +739,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.error_outline, color: Colors.red, size: 20),
+                              const Icon(PhosphorIconsLight.warningCircle, color: Colors.red, size: 20),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -796,7 +797,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       return [
         Column(
           children: [
-            const Icon(Icons.sentiment_dissatisfied_rounded, size: 36, color: Colores.textTertiary),
+            const Icon(PhosphorIconsLight.smileySad, size: 36, color: Colores.textTertiary),
             const SizedBox(height: 6),
             Text(
               'Ninguna paquetería aceptó estos productos en esta ruta. Motivos:',
@@ -821,7 +822,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       ],
       _buildSectionTitle(
         widget.consulta ? 'Cotizaciones disponibles' : 'Selecciona una opción',
-        Icons.receipt_long_rounded,
+        PhosphorIconsLight.receipt,
       ),
       const SizedBox(height: 4),
       Text(
@@ -859,7 +860,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       ],
       ShipSection(
         titulo: 'Paquetería normal (paquete)',
-        icono: Icons.inventory_2_outlined,
+        icono: PhosphorIconsLight.package,
         resumen: resumen(_totPaquete, 'ninguna aceptó los productos'),
         abierta: _paqueteAbierto,
         onToggle: () => setState(() => _paqueteAbierto = !_paqueteAbierto),
@@ -871,7 +872,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       const SizedBox(height: 8),
       ShipSection(
         titulo: 'Carga / Big Ticket',
-        icono: Icons.local_shipping_outlined,
+        icono: PhosphorIconsLight.truck,
         resumen: resumen(_totCarga, 'sin opciones'),
         nota: hayPaqueteCompleto && _totCarga.isNotEmpty ? 'para bultos que no entran como paquete' : '',
         abierta: _cargaAbierta,
@@ -882,7 +883,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
         ],
       ),
       const SizedBox(height: 16),
-      _buildSectionTitle('Detalle por producto', Icons.list_alt_rounded),
+      _buildSectionTitle('Detalle por producto', PhosphorIconsLight.listBullets),
       const SizedBox(height: 8),
       ...results.map((pr) => _buildProductoCard(pr, nProductos)),
     ];
@@ -905,7 +906,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(completo ? Icons.check_circle_rounded : Icons.local_shipping_rounded,
+          Icon(completo ? PhosphorIconsLight.checkCircle : PhosphorIconsLight.truck,
               color: color, size: 20),
           const SizedBox(width: 8),
           Expanded(
@@ -960,7 +961,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.warning_amber_rounded, color: Colores.warningColor, size: 20),
+          const Icon(PhosphorIconsLight.warning, color: Colores.warningColor, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -1052,7 +1053,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
       else ...[
         ShipSection(
           titulo: 'Paquetería normal (paquete)',
-          icono: Icons.inventory_2_outlined,
+          icono: PhosphorIconsLight.package,
           resumen: resumen(paquete, 'ninguna aceptó este bulto'),
           abierta: _paqueteAbierto,
           onToggle: () => setState(() => _paqueteAbierto = !_paqueteAbierto),
@@ -1061,7 +1062,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
         const SizedBox(height: 8),
         ShipSection(
           titulo: 'Carga / Big Ticket',
-          icono: Icons.local_shipping_outlined,
+          icono: PhosphorIconsLight.truck,
           resumen: resumen(carga, 'sin opciones'),
           nota: paquete.isNotEmpty && carga.isNotEmpty ? 'para bultos que no entran como paquete' : '',
           abierta: _cargaAbierta,
@@ -1206,7 +1207,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                       if (!consulta) ...[
                         const SizedBox(width: 4),
                         Icon(
-                          t.completo ? Icons.add_circle_rounded : Icons.add_circle_outline_rounded,
+                          t.completo ? PhosphorIconsLight.plusCircle : PhosphorIconsLight.plusCircle,
                           color: t.completo ? Colores.primaryColor : Colores.warningColor,
                           size: 22,
                         ),
@@ -1376,7 +1377,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
               ),
             ),
             if (seleccionable)
-              const Icon(Icons.chevron_right_rounded, size: 14, color: Colores.textTertiary),
+              const Icon(PhosphorIconsLight.caretRight, size: 14, color: Colores.textTertiary),
           ],
         ),
       ),
@@ -1443,7 +1444,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                   child: _buildCompactTextField(
                     controller: _largoControllers[index],
                     label: 'Largo (cm)',
-                    icon: Icons.straighten_rounded,
+                    icon: PhosphorIconsLight.ruler,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -1451,7 +1452,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                   child: _buildCompactTextField(
                     controller: _altoControllers[index],
                     label: 'Alto (cm)',
-                    icon: Icons.height_rounded,
+                    icon: PhosphorIconsLight.arrowsVertical,
                   ),
                 ),
               ],
@@ -1463,7 +1464,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                   child: _buildCompactTextField(
                     controller: _anchoControllers[index],
                     label: 'Ancho (cm)',
-                    icon: Icons.open_in_full_rounded,
+                    icon: PhosphorIconsLight.arrowsOut,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -1471,7 +1472,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                   child: _buildCompactTextField(
                     controller: _pesoControllers[index],
                     label: 'Peso (kg)',
-                    icon: Icons.scale_rounded,
+                    icon: PhosphorIconsLight.scales,
                   ),
                 ),
               ],
@@ -1533,7 +1534,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
                     ),
                   )
                 : info != null
-                    ? const Icon(Icons.check_circle_rounded, color: Colors.green, size: 20)
+                    ? const Icon(PhosphorIconsLight.checkCircle, color: Colors.green, size: 20)
                     : null,
             counterText: '',
             filled: true,
@@ -1576,7 +1577,7 @@ class _ShippingQuoteModalV2State extends State<ShippingQuoteModalV2> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.place_rounded, color: Colores.primaryColor, size: 14),
+                const Icon(PhosphorIconsLight.mapPin, color: Colores.primaryColor, size: 14),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(

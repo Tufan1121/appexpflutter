@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Layout responsivo para las pantallas de búsqueda
 /// (Inventario Tienda, Bodegas, Búsqueda Global).
@@ -140,7 +141,7 @@ class _FiltrosHeader extends StatelessWidget {
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                const Icon(Icons.tune, color: Colors.white, size: 20),
+                const Icon(PhosphorIconsLight.slidersHorizontal, color: Colors.white, size: 20),
                 const SizedBox(width: 10),
                 const Text(
                   'Filtros',
@@ -162,7 +163,7 @@ class _FiltrosHeader extends StatelessWidget {
                 AnimatedRotation(
                   turns: abierto ? 0.5 : 0,
                   duration: const Duration(milliseconds: 200),
-                  child: const Icon(Icons.keyboard_arrow_down,
+                  child: const Icon(PhosphorIconsLight.caretDown,
                       color: Colors.white),
                 ),
               ],

@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+/// Opción del menú: icono de línea delgada y etiqueta en mayúsculas con
+/// letras espaciadas (estilo limpio, sin el círculo con sombra de antes).
 class CardItem extends StatelessWidget {
   final IconData? icon;
   final String label;
@@ -20,51 +22,42 @@ class CardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cardColor = theme.colorScheme.surface;
-    final iconColor = theme.colorScheme.primary;
+    final iconColor = theme.colorScheme.onSurface;
 
     return GestureDetector(
       onTap: onTap,
       child: Card(
         color: cardColor,
-        elevation: 3,
+        // Sin sombra: borde gris fino, estilo plano
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(4.0),
+          side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.4)),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                      color: cardColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.shadowColor.withValues(alpha: 0.3),
-                          blurRadius: 1,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                      borderRadius: const BorderRadius.all(Radius.circular(50))),
-                  child: assetPathIcon != null
-                      ? Image.asset(assetPathIcon ?? '', scale: 6)
-                      : Center(
-                          child: Icon(icon,
-                              size: 30, color: iconColor))),
-              const SizedBox(height: 10),
-              Expanded(
-                child: Center(
-                  child: AutoSizeText(label,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface),
-                      textAlign: TextAlign.center,
-                      maxLines: 2),
-                ),
+              SizedBox(
+                height: 48,
+                width: 48,
+                child: assetPathIcon != null
+                    ? Image.asset(assetPathIcon ?? '', scale: 6)
+                    : Icon(icon, size: 40, color: iconColor),
               ),
+              const SizedBox(height: 14),
+              AutoSizeText(label.toUpperCase(),
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 1.4,
+                      color: iconColor),
+                  textAlign: TextAlign.center,
+                  // Encoge la letra antes que partir una palabra
+                  wrapWords: false,
+                  minFontSize: 9,
+                  maxLines: 2),
             ],
           ),
         ),

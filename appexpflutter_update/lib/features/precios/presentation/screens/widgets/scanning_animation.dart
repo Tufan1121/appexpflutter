@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ScanningAnimation extends StatefulWidget {
   const ScanningAnimation({super.key});
@@ -51,7 +52,7 @@ class _ScanningAnimationState extends State<ScanningAnimation>
             alignment: Alignment.center,
             children: [
               Icon(
-                Icons.qr_code_2,
+                PhosphorIconsLight.qrCode,
                 size: 150,
                 color: Colores.secondaryColor.withOpacity(0.1),
               ),

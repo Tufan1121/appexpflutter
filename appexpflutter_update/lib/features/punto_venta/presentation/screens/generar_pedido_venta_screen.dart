@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../config/theme/app_theme.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class GenerarPedidoVentaScreen extends StatefulHookWidget {
   const GenerarPedidoVentaScreen({
@@ -349,7 +350,7 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
               return ElevatedButton.icon(
                 onPressed: loading.value ? null : _submitForm,
                 icon: const Icon(
-                  Icons.save,
+                  PhosphorIconsLight.floppyDisk,
                   color: Colores.scaffoldBackgroundColor,
                 ),
                 label: Text(
@@ -366,7 +367,7 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
           ),
           ElevatedButton.icon(
             onPressed: _dialogCancel,
-            icon: const Icon(Icons.close, color: Colores.secondaryColor),
+            icon: const Icon(PhosphorIconsLight.x, color: Colores.secondaryColor),
             label: const Text(
               'CANCELAR',
               style: TextStyle(color: Colores.secondaryColor),
@@ -435,7 +436,7 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.warning,
+                PhosphorIconsLight.warning,
                 color: Colors.red,
               ),
               SizedBox(width: 10),

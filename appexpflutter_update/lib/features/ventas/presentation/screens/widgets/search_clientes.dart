@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../shared/widgets/widgets.dart' show CustomSearch;
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SearchClientes extends StatelessWidget {
   const SearchClientes({
@@ -59,7 +60,7 @@ class SearchClientes extends StatelessWidget {
 //         prefixIcon: const Padding(
 //           padding: EdgeInsets.all(10.0),
 //           child: Icon(
-//             Icons.search,
+//             PhosphorIconsLight.magnifyingGlass,
 //             color: Colores.secondaryColor,
 //           ),
 //         ),

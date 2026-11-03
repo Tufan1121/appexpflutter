@@ -11,6 +11,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 // import 'package:permission_handler/permission_handler.dart';
 
 class PdfViewerScreen extends HookWidget {
@@ -213,12 +214,12 @@ class PdfViewerScreen extends HookWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.download),
+            icon: const Icon(PhosphorIconsLight.downloadSimple),
             onPressed: downloadPdf,
           ),
           if (!envioPorExpo)
             IconButton(
-              icon: const Icon(Icons.share),
+              icon: const Icon(PhosphorIconsLight.shareNetwork),
               onPressed: sharePdf,
             ),
           enviandoWhatsApp.value
@@ -232,14 +233,14 @@ class PdfViewerScreen extends HookWidget {
                   ),
                 )
               : IconButton(
-                  icon: const FaIcon(FontAwesomeIcons.whatsapp),
+                  icon: const FaIcon(PhosphorIconsLight.whatsappLogo),
                   onPressed:
                       envioPorExpo ? () => enviarPorExpo() : sendToWhatsApp,
                 ),
           if (envioPorExpo && !enviandoWhatsApp.value)
             IconButton(
               tooltip: 'Enviar por correo',
-              icon: const Icon(Icons.email_outlined),
+              icon: const Icon(PhosphorIconsLight.envelopeSimple),
               onPressed: () => enviarPorExpo(porCorreo: true),
             ),
         ],

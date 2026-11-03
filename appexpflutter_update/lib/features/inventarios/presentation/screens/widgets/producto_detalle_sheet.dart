@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Bottom sheet de detalle de producto inspirado en el modal del web
 /// (`F:\python\galeria\busquedaglobal.html`).
@@ -81,7 +82,7 @@ class ProductoDetalleSheet extends HookWidget {
           if (data.variantes.length > 1) ...[
             const SizedBox(height: 18),
             const _SectionTitle(
-              icon: Icons.straighten,
+              icon: PhosphorIconsLight.ruler,
               text: 'Medida',
             ),
             const SizedBox(height: 6),
@@ -96,7 +97,7 @@ class ProductoDetalleSheet extends HookWidget {
           if (data.colores.isNotEmpty) ...[
             const SizedBox(height: 18),
             const _SectionTitle(
-              icon: Icons.palette_outlined,
+              icon: PhosphorIconsLight.palette,
               text: 'Colores',
             ),
             const SizedBox(height: 6),
@@ -105,7 +106,7 @@ class ProductoDetalleSheet extends HookWidget {
           if (data.cuidados.isNotEmpty) ...[
             const SizedBox(height: 18),
             const _SectionTitle(
-              icon: Icons.water_drop_outlined,
+              icon: PhosphorIconsLight.drop,
               text: 'Cuidados',
             ),
             const SizedBox(height: 6),
@@ -120,7 +121,7 @@ class ProductoDetalleSheet extends HookWidget {
           ),
           const SizedBox(height: 18),
           const _SectionTitle(
-            icon: Icons.warehouse_outlined,
+            icon: PhosphorIconsLight.warehouse,
             text: 'Inventario por almacén',
           ),
           const SizedBox(height: 6),
@@ -279,7 +280,7 @@ class _Header extends StatelessWidget {
           ),
           IconButton(
             tooltip: 'Cerrar',
-            icon: const Icon(Icons.close),
+            icon: const Icon(PhosphorIconsLight.x),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
         ],
@@ -378,7 +379,7 @@ class _Galeria extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _OverlayIconBtn(
-                        icon: Icons.share,
+                        icon: PhosphorIconsLight.shareNetwork,
                         tooltip: 'Compartir esta foto',
                         onPressed: () => compartirFoto(
                           context,
@@ -387,7 +388,7 @@ class _Galeria extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       _OverlayIconBtn(
-                        icon: Icons.fullscreen,
+                        icon: PhosphorIconsLight.arrowsOut,
                         tooltip: 'Ver en pantalla completa',
                         onPressed: () => _openLightbox(context),
                       ),
@@ -476,7 +477,7 @@ class _Galeria extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
         ),
         child: const Center(
-          child: Icon(Icons.image_not_supported_outlined,
+          child: Icon(PhosphorIconsLight.imageBroken,
               size: 48, color: Colors.grey),
         ),
       ),
@@ -535,7 +536,7 @@ class _LightboxState extends State<_Lightbox> {
         actions: [
           IconButton(
             tooltip: 'Compartir esta foto',
-            icon: const Icon(Icons.share),
+            icon: const Icon(PhosphorIconsLight.shareNetwork),
             onPressed: () => compartirFoto(context, widget.fotos[_index]),
           ),
         ],
@@ -645,7 +646,7 @@ class _Claves extends StatelessWidget {
                   child: Tooltip(
                     message: 'Copiar',
                     child: Icon(
-                      Icons.copy,
+                      PhosphorIconsLight.copy,
                       size: 14,
                       color: theme.colorScheme.primary,
                     ),
@@ -767,7 +768,7 @@ class _Especificaciones extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle(icon: Icons.straighten, text: 'Especificaciones'),
+        const _SectionTitle(icon: PhosphorIconsLight.ruler, text: 'Especificaciones'),
         const SizedBox(height: 8),
         LayoutBuilder(
           builder: (context, c) {
@@ -912,7 +913,7 @@ class _BulletList extends StatelessWidget {
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(top: 6, right: 8, left: 4),
-                      child: Icon(Icons.circle, size: 5),
+                      child: Icon(PhosphorIconsLight.circle, size: 5),
                     ),
                     Expanded(
                       child: Text(t, style: const TextStyle(fontSize: 13)),
@@ -956,7 +957,7 @@ class _PreciosToggle extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child: Row(
                 children: [
-                  Icon(Icons.payments_outlined,
+                  Icon(PhosphorIconsLight.money,
                       size: 16,
                       color: theme.textTheme.bodySmall?.color
                           ?.withValues(alpha: 0.7)),
@@ -974,8 +975,8 @@ class _PreciosToggle extends StatelessWidget {
                     ),
                   ),
                   Icon(open
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down),
+                      ? PhosphorIconsLight.caretUp
+                      : PhosphorIconsLight.caretDown),
                 ],
               ),
             ),
@@ -1131,7 +1132,7 @@ class _InventarioList extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               child: Row(
                 children: [
-                  Icon(Icons.warehouse_outlined,
+                  Icon(PhosphorIconsLight.warehouse,
                       size: 18, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Expanded(

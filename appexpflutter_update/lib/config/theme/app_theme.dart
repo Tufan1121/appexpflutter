@@ -43,7 +43,14 @@ class AppTheme {
         onSurface: onSurfaceColor,
       ),
       scaffoldBackgroundColor: scaffoldBg,
-      textTheme: TextTheme(
+      // Líneas separadoras gris claro (antes salían negras)
+      dividerColor: const Color(0xFFE0E0E0),
+      dividerTheme:
+          const DividerThemeData(color: Color(0xFFE0E0E0), thickness: 1),
+      // Letra base Montserrat para toda la app (antes Roboto)
+      textTheme: GoogleFonts.montserratTextTheme(
+              ThemeData(brightness: Brightness.light).textTheme)
+          .copyWith(
         titleLarge: GoogleFonts.montserratAlternates()
             .copyWith(fontSize: 40, fontWeight: FontWeight.bold),
         titleMedium: GoogleFonts.montserratAlternates()
@@ -55,8 +62,8 @@ class AppTheme {
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(primaryColor),
           textStyle: WidgetStatePropertyAll(
-            GoogleFonts.montserratAlternates()
-                .copyWith(fontWeight: FontWeight.w700),
+            GoogleFonts.montserrat()
+                .copyWith(fontWeight: FontWeight.w500, letterSpacing: 1.2),
           ),
         ),
       ),
@@ -64,17 +71,27 @@ class AppTheme {
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
-        titleTextStyle: GoogleFonts.montserratAlternates().copyWith(
-          fontSize: 25,
-          fontWeight: FontWeight.bold,
+        titleTextStyle: GoogleFonts.montserrat().copyWith(
+          fontSize: 22,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 2,
           color: Colors.white,
         ),
       ),
+      // Tarjetas planas: sin sombra, borde fino y esquinas casi rectas
       cardTheme: CardThemeData(
         color: surfaceColor,
-        elevation: 1,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
+          side: const BorderSide(color: Color(0xFFE0E0E0)),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          textStyle: GoogleFonts.montserrat(
+              fontWeight: FontWeight.w400, letterSpacing: 1.2),
         ),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
@@ -106,7 +123,9 @@ class AppTheme {
         onSurface: onSurfaceColor,
       ),
       scaffoldBackgroundColor: scaffoldBg,
-      textTheme: TextTheme(
+      textTheme: GoogleFonts.montserratTextTheme(
+              ThemeData(brightness: Brightness.dark).textTheme)
+          .copyWith(
         titleLarge: GoogleFonts.montserratAlternates().copyWith(
             fontSize: 40,
             fontWeight: FontWeight.bold,
@@ -122,8 +141,8 @@ class AppTheme {
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(primaryColor),
           textStyle: WidgetStatePropertyAll(
-            GoogleFonts.montserratAlternates()
-                .copyWith(fontWeight: FontWeight.w700),
+            GoogleFonts.montserrat()
+                .copyWith(fontWeight: FontWeight.w500, letterSpacing: 1.2),
           ),
         ),
       ),
@@ -131,17 +150,27 @@ class AppTheme {
         backgroundColor: surfaceColor,
         foregroundColor: onSurfaceColor,
         elevation: 0,
-        titleTextStyle: GoogleFonts.montserratAlternates().copyWith(
-          fontSize: 25,
-          fontWeight: FontWeight.bold,
+        titleTextStyle: GoogleFonts.montserrat().copyWith(
+          fontSize: 22,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 2,
           color: onSurfaceColor,
         ),
       ),
+      // Tarjetas planas: sin sombra, borde fino y esquinas casi rectas
       cardTheme: CardThemeData(
         color: surfaceColor,
-        elevation: 1,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
+          side: const BorderSide(color: Color(0x33FFFFFF)),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          textStyle: GoogleFonts.montserrat(
+              fontWeight: FontWeight.w400, letterSpacing: 1.2),
         ),
       ),
       bottomSheetTheme: const BottomSheetThemeData(

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class BusquedaGlobalScreen extends StatefulWidget {
   const BusquedaGlobalScreen({super.key});
@@ -268,7 +269,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                           onSubmitted: (_) => _buscarPorClave(),
                           prefixIcon: IconButton(
                             icon: Icon(
-                              Icons.qr_code_scanner,
+                              PhosphorIconsLight.qrCode,
                               color: Theme.of(context).colorScheme.primary,
                             ),
                             tooltip: 'Escanear clave',
@@ -288,7 +289,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                                   )
                                 : IconButton(
                                     icon: Icon(
-                                      Icons.search,
+                                      PhosphorIconsLight.magnifyingGlass,
                                       color:
                                           Theme.of(context).colorScheme.primary,
                                     ),
@@ -503,7 +504,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  Icons.search,
+                                  PhosphorIconsLight.magnifyingGlass,
                                   color: Colors.white,
                                 ),
                                 SizedBox(width: 5),
@@ -522,7 +523,7 @@ class _BusquedaGlobalScreenState extends State<BusquedaGlobalScreen>
                           width: double.infinity,
                           child: OutlinedButton.icon(
                             onPressed: _clearFilters,
-                            icon: const Icon(Icons.clear_all, size: 18),
+                            icon: const Icon(PhosphorIconsLight.broom, size: 18),
                             label: const Text('Limpiar filtros'),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.white,

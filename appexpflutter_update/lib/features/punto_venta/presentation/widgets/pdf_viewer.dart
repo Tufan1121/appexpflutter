@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class PdfViewerScreen extends HookWidget {
   final String fileName;
@@ -142,7 +143,7 @@ class PdfViewerScreen extends HookWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.download),
+            icon: const Icon(PhosphorIconsLight.downloadSimple),
             onPressed: downloadPdf,
           ),
           enviando.value
@@ -156,7 +157,7 @@ class PdfViewerScreen extends HookWidget {
                   ),
                 )
               : IconButton(
-                  icon: const FaIcon(FontAwesomeIcons.whatsapp),
+                  icon: const FaIcon(PhosphorIconsLight.whatsappLogo),
                   onPressed: enviarTicket,
                 ),
         ],

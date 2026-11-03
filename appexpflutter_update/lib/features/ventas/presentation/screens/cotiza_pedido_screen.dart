@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CotizaPedidoScreen extends StatefulHookWidget {
   const CotizaPedidoScreen({
@@ -360,7 +361,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                         onPressed:
                                             loading.value ? null : _submitForm,
                                         icon: Icon(
-                                          Icons.save,
+                                          PhosphorIconsLight.floppyDisk,
                                           color:
                                               theme.scaffoldBackgroundColor,
                                         ),
@@ -382,7 +383,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                   ),
                                   ElevatedButton.icon(
                                     onPressed: _dialogCancel,
-                                    icon: Icon(Icons.close,
+                                    icon: Icon(PhosphorIconsLight.x,
                                         color: theme.colorScheme.primary),
                                     label: Text(
                                       'CANCELAR',
@@ -548,7 +549,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.warning,
+                PhosphorIconsLight.warning,
                 color: Colors.red,
               ),
               SizedBox(width: 10),

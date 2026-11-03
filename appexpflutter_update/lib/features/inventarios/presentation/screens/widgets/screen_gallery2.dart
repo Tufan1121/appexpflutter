@@ -11,6 +11,7 @@ import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class FullScreenGallery2 extends StatefulWidget {
   final ProductoExpoEntity producto;
@@ -178,7 +179,7 @@ class _FullScreenGallery2State extends State<FullScreenGallery2> {
         ),
         actions: [
           IconButton(
-              icon: const Icon(Icons.share),
+              icon: const Icon(PhosphorIconsLight.shareNetwork),
               onPressed: () => shareImage(widget.imageUrls[_currentIndex])),
         ],
       ),

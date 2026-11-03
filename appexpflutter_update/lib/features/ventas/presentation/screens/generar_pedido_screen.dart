@@ -20,6 +20,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../config/theme/app_theme.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class GenerarPedidoScreen extends StatefulHookWidget {
   const GenerarPedidoScreen(
@@ -159,7 +160,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
         child: AppBar(
           leading: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: const Icon(PhosphorIconsLight.caretLeft),
           ),
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colores.secondaryColor.withOpacity(0.78),
@@ -377,7 +378,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                               return ElevatedButton.icon(
                                 onPressed: loading.value ? null : _submitForm,
                                 icon: const Icon(
-                                  Icons.save,
+                                  PhosphorIconsLight.floppyDisk,
                                   color: Colores.scaffoldBackgroundColor,
                                 ),
                                 label: Text(
@@ -394,7 +395,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
                           ),
                           ElevatedButton.icon(
                             onPressed: _dialogCancel,
-                            icon: const Icon(Icons.close,
+                            icon: const Icon(PhosphorIconsLight.x,
                                 color: Colores.secondaryColor),
                             label: const Text(
                               'CANCELAR',
@@ -553,7 +554,7 @@ class _GenerarPedidoScreenState extends State<GenerarPedidoScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.warning,
+                PhosphorIconsLight.warning,
                 color: Colors.red,
               ),
               SizedBox(width: 10),

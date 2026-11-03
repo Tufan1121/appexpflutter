@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// Manda el pedido (o la cotización, con [cotizacion]) por WhatsApp desde el
 /// número de expo y avisa el resultado en [messenger]. Si el cliente no tiene
@@ -303,7 +304,7 @@ Future<MediosEnvio?> elegirMediosEnvio(BuildContext context, String titulo) {
                 contentPadding: EdgeInsets.zero,
                 value: whatsapp,
                 onChanged: (v) => setState(() => whatsapp = v ?? false),
-                secondary: const FaIcon(FontAwesomeIcons.whatsapp,
+                secondary: const FaIcon(PhosphorIconsLight.whatsappLogo,
                     color: Color(0xFF25D366)),
                 title: const Text('WhatsApp'),
               ),
@@ -311,7 +312,7 @@ Future<MediosEnvio?> elegirMediosEnvio(BuildContext context, String titulo) {
                 contentPadding: EdgeInsets.zero,
                 value: correo,
                 onChanged: (v) => setState(() => correo = v ?? false),
-                secondary: const Icon(Icons.email_outlined),
+                secondary: const Icon(PhosphorIconsLight.envelopeSimple),
                 title: const Text('Correo'),
               ),
             ],

@@ -9,6 +9,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:appexpflutter_update/config/config.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_filled_button.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_text_form_field.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ClienteForm extends StatefulHookWidget {
   const ClienteForm({super.key});
@@ -53,7 +54,7 @@ class _LoginFormState extends State<ClienteForm> {
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: _buscarClienteExistente,
-                icon: const Icon(Icons.person_search,
+                icon: const Icon(PhosphorIconsLight.userFocus,
                     color: Colores.secondaryColor),
                 label: const Text(
                   'BUSCAR CLIENTE EXISTENTE',
@@ -238,7 +239,7 @@ class _LoginFormState extends State<ClienteForm> {
                         .read<ClienteBloc>()
                         .add(GetClientesEvent(name: value.trim())),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search),
+                      prefixIcon: const Icon(PhosphorIconsLight.magnifyingGlass),
                       hintText: 'Nombre del cliente',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30)),
@@ -273,7 +274,7 @@ class _LoginFormState extends State<ClienteForm> {
                             final c = state.clientes[index];
                             return ListTile(
                               dense: true,
-                              leading: const Icon(Icons.person,
+                              leading: const Icon(PhosphorIconsLight.user,
                                   color: Colores.secondaryColor),
                               title: Text('${c.nombre} ${c.apellido}'.trim()),
                               subtitle: Text(

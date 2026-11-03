@@ -1,3 +1,4 @@
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:appexpflutter_update/features/home/presentation/screens/widgets/card_item.dart';
@@ -43,12 +44,12 @@ class PuntoVentaScreen extends HookWidget {
                   padding: const EdgeInsets.all(20.0),
                   children: [
                     CardItem(
-                      icon: Icons.point_of_sale_sharp,
+                      icon: PhosphorIconsLight.receipt,
                       label: 'TICKETS',
                       onTap: () => ClienteNuevoVentaRoute().push(context),
                     ),
                     CardItem(
-                      icon: Icons.history_rounded,
+                      icon: PhosphorIconsLight.clockCounterClockwise,
                       label: 'CONSULTA',
                       onTap: () => PuntoVentaHistoryRoute().push(context),
                     ),

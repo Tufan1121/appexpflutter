@@ -11,6 +11,7 @@ import 'package:appexpflutter_update/features/historial/presentation/blocs/sesio
 import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/lista_detalle_productos.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/widgets/search_producto_sesion.dart';
 import 'package:appexpflutter_update/features/shared/widgets/custom_dropdownbutton.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const list = [
   'Pendiente Pago (Anticipo)',
@@ -80,10 +81,7 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(8),
               ),
-              child: Image.asset(
-                'assets/iconos/generar pedido- rosa.png',
-                scale: 4.5,
-              ),
+              child: Icon(PhosphorIconsLight.notePencil, size: 32, color: Colores.secondaryColor),
             );
           },
         ),
@@ -117,14 +115,14 @@ class _PedidoSesionScreenState extends State<PedidoSesionScreen> {
                     hint: 'Selecciona Estatus del pedido',
                     styleHint: const TextStyle(fontSize: 15),
                     prefixIcon: FaIcon(
-                      FontAwesomeIcons.bagShopping,
+                      PhosphorIconsLight.shoppingBag,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     onChanged: (value) {
                       dropdownValue.value = value!;
                     },
                     icon: FaIcon(
-                      FontAwesomeIcons.diagramNext,
+                      PhosphorIconsLight.caretDown,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     items: list.map<DropdownMenuItem<String>>((String value) {

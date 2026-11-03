@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CustomSearch extends StatelessWidget {
   const CustomSearch({
@@ -56,7 +57,7 @@ class CustomSearch extends StatelessWidget {
                   return AlertDialog(
                     icon: const Center(
                       child: FaIcon(
-                        FontAwesomeIcons.circleXmark,
+                        PhosphorIconsLight.xCircle,
                         color: Colors.red,
                         size: 40,
                       ),
@@ -97,7 +98,7 @@ class CustomSearch extends StatelessWidget {
           prefixIcon: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Icon(
-              Icons.search,
+              PhosphorIconsLight.magnifyingGlass,
               color: Theme.of(context).colorScheme.primary,
             ),
           ),

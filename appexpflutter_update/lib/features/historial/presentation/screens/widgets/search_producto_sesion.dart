@@ -15,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/producto/productos_bloc.dart';
 import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/scanner_page_producto.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SearchProductoSesion extends HookWidget with ProductoSesion {
   const SearchProductoSesion({
@@ -72,10 +73,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
               padding: const EdgeInsets.all(8),
               // Otros estilos según sea necesario
             ),
-            child: Image.asset(
-              'assets/iconos/qr/qr 72_.png',
-              scale: 5,
-            ),
+            child: Icon(PhosphorIconsLight.qrCode, size: 28, color: Colores.secondaryColor),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
@@ -96,10 +94,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(8),
             ),
-            child: Image.asset(
-              'assets/iconos/inventario bodegas - rosa2.png',
-              scale: 5,
-            ),
+            child: Icon(PhosphorIconsLight.warehouse, size: 28, color: Colores.secondaryColor),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
@@ -150,8 +145,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
                             }
                             return CustomListTile(
                               text: loading ? 'GENERANDO...' : 'GENERAR SESION',
-                              assetPathIcon:
-                                  'assets/iconos/pedidos - rosa gris.png',
+                              icon: PhosphorIconsLight.fileText,
                               onTap: loading
                                   ? null
                                   : () {
@@ -233,8 +227,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
                                 text: loading
                                     ? 'GENERANDO...'
                                     : 'GENERAR COTIZACION',
-                                assetPathIcon:
-                                    'assets/iconos/pedidos - rosa gris.png',
+                                icon: PhosphorIconsLight.fileText,
                                 onTap: loading
                                     ? null
                                     : () {
@@ -307,10 +300,7 @@ class SearchProductoSesion extends HookWidget with ProductoSesion {
             ),
             child: Padding(
               padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                'assets/iconos/pedidos - rosa gris.png',
-                scale: 6,
-              ),
+              child: Icon(PhosphorIconsLight.fileText, size: 24, color: Colores.secondaryColor),
             ),
           ),
         ],

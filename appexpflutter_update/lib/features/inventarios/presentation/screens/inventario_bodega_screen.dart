@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventarios/domain/entities/medidas_entity_inv.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class InventarioBodegaScreen extends StatefulWidget {
   const InventarioBodegaScreen({super.key});
@@ -386,7 +387,7 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  Icons.search,
+                                  PhosphorIconsLight.magnifyingGlass,
                                   color: Colors.white,
                                 ),
                                 SizedBox(width: 5),
@@ -405,7 +406,7 @@ class _InventarioBodegaScreenState extends State<InventarioBodegaScreen>
                           width: double.infinity,
                           child: OutlinedButton.icon(
                             onPressed: _clearFilters,
-                            icon: const Icon(Icons.clear_all, size: 18),
+                            icon: const Icon(PhosphorIconsLight.broom, size: 18),
                             label: const Text('Limpiar filtros'),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.white,
