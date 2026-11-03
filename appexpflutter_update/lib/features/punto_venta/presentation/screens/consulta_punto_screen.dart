@@ -114,6 +114,27 @@ class PuntoVentaConsultaScreen extends HookWidget {
                           itemCount: state.tickets.length,
                           itemBuilder: (context, index) {
                             final ticket = state.tickets[index];
+                            Future<void> verTicket() async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              final String pdfUrl =
+                                  'https://tapetestufan.mx/tickets/${prefs.getString('digsig')}/pdf/${ticket.documen}.pdf';
+                              if (context.mounted) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PdfViewerScreen(
+                                      fileName: ticket.documen,
+                                      userName: prefs.getString('username') ??
+                                          'TUFAN TAPETES',
+                                      clientPhoneNumber: ticket.telefono,
+                                      url: pdfUrl,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+
                             return Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16.0, vertical: 4.0),
@@ -131,32 +152,21 @@ class PuntoVentaConsultaScreen extends HookWidget {
                                         CustomListTile(
                                             text: 'VISUALIZAR',
                                             icon: PhosphorIconsLight.eye,
-                                            onTap: () async {
-                                              final prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              final String pdfUrl =
-                                                  'https://tapetestufan.mx/tickets/${prefs.getString('digsig')}/pdf/${ticket.documen}.pdf';
-                                              if (context.mounted) {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PdfViewerScreen(
-                                                      fileName: ticket.documen,
-                                                      userName: prefs.getString(
-                                                              'username') ??
-                                                          'TUFAN TAPETES',
-                                                      clientPhoneNumber:
-                                                          ticket.telefono,
-                                                      url: pdfUrl,
-                                                    ),
-                                                  ),
-                                                );
-                                              }
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              verTicket();
                                             }),
                                       ],
                                     ),
+                                  ),
+                                  // Ver el ticket: tocando la tarjeta o el ojo
+                                  onTap: verTicket,
+                                  trailing: IconButton(
+                                    tooltip: 'Ver ticket',
+                                    icon: const Icon(PhosphorIconsLight.eye,
+                                        size: 28,
+                                        color: Colores.secondaryColor),
+                                    onPressed: verTicket,
                                   ),
                                   title: Text(
                                     'Ticket: ${ticket.documen}',
