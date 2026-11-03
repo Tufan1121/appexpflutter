@@ -451,9 +451,12 @@ class _PriceFooter extends StatelessWidget {
     final theme = Theme.of(context);
     final mutedColor = theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7);
 
-    // El Precio de Lista se muestra siempre; estos 7 escalones de descuento
+    // El Precio de Lista se muestra siempre; estos escalones de descuento
     // van dentro del desplegable "Promoción".
     final descuentos = <({String label, int precio})>[
+      // Sin capturar, precio11 viene igual que precio8 (-20%).
+      if (variante.precio11 > 0 && variante.precio11 != variante.precio8)
+        (label: '-15%', precio: variante.precio11),
       (label: '-20%', precio: variante.precio8),
       (label: '-25%', precio: variante.precio9),
       (label: '-30%', precio: variante.precio4),

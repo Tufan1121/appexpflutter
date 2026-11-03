@@ -1010,6 +1010,9 @@ class _PreciosTabla extends StatelessWidget {
     // Descuentos de tienda (el Precio Normal se muestra aparte, arriba de
     // cada medida).
     List<({String label, int precio})> descuentosDe(Variante v) => [
+          // Sin capturar, precio11 viene igual que precio8 (-20%).
+          if (v.precio11 > 0 && v.precio11 != v.precio8)
+            (label: '-15%', precio: v.precio11),
           (label: '-20%', precio: v.precio8),
           (label: '-25%', precio: v.precio9),
           (label: '-30%', precio: v.precio4),

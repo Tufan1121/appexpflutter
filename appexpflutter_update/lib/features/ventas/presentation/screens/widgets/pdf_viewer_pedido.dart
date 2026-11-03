@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -41,21 +42,35 @@ class PdfViewerPedidoScreen extends HookWidget {
     final pdfViewerKey = useState(GlobalKey<SfPdfViewerState>());
     final isUrlValid = useState<bool?>(null);
     final isLoading = useState<bool>(true);
+    final pdfBytes = useState<Uint8List?>(null);
     final enviandoWhatsApp = useState(false);
     final dio = useMemoized(() => Dio());
     final envioPorExpo = idExpo != null;
 
     useEffect(() {
       Future<void> checkUrlValidity() async {
-        await Future.delayed(const Duration(seconds: 3)); // delay de 3 segundos
-        try {
-          final response = await dio.head(url);
-          isUrlValid.value = response.statusCode == 200;
-        } catch (e) {
-          isUrlValid.value = false;
-        } finally {
-          isLoading.value = false;
+        // Se descarga con Dio y se muestra desde memoria: SfPdfViewer.network
+        // fallaba en Windows con un "Error" genérico aunque el PDF estuviera bien.
+        // Un reintento por si el servidor aún no terminaba de escribirlo.
+        for (var intento = 0; intento < 2; intento++) {
+          await Future.delayed(Duration(seconds: intento == 0 ? 1 : 3));
+          try {
+            final response = await dio.get<List<int>>(
+              url,
+              queryParameters: {'t': DateTime.now().millisecondsSinceEpoch},
+              options: Options(responseType: ResponseType.bytes),
+            );
+            final bytes = Uint8List.fromList(response.data ?? const []);
+            // Un PDF válido empieza con "%PDF"
+            if (bytes.length > 4 &&
+                String.fromCharCodes(bytes.sublist(0, 4)) == '%PDF') {
+              pdfBytes.value = bytes;
+              break;
+            }
+          } catch (_) {}
         }
+        isUrlValid.value = pdfBytes.value != null;
+        isLoading.value = false;
       }
 
       checkUrlValidity();
@@ -253,8 +268,8 @@ class PdfViewerPedidoScreen extends HookWidget {
         body: isLoading.value
             ? const Center(child: CircularProgressIndicator())
             : isUrlValid.value == true
-                ? SfPdfViewer.network(
-                    url,
+                ? SfPdfViewer.memory(
+                    pdfBytes.value!,
                     key: pdfViewerKey.value,
                     onDocumentLoadFailed:
                         (PdfDocumentLoadFailedDetails details) {
