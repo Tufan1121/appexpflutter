@@ -88,6 +88,16 @@ class DioClient {
         ));
   }
 
+  /// Tiempo de espera de las peticiones que guardan (POST/PUT/PATCH/DELETE):
+  /// el backend puede tardar (p.ej. arma el PDF de la cotización) y cortar
+  /// antes hacía que el usuario reintentara algo que sí se estaba guardando.
+  static const Duration _receiveTimeoutEscritura = Duration(seconds: 60);
+
+  Options _opcionesEscritura(Options? options) =>
+      (options ?? Options()).copyWith(
+        receiveTimeout: options?.receiveTimeout ?? _receiveTimeoutEscritura,
+      );
+
   Future<Response<dynamic>> post(
     String uri, {
     dynamic data,
@@ -101,7 +111,7 @@ class DioClient {
           uri,
           data: data,
           queryParameters: queryParameters,
-          options: options,
+          options: _opcionesEscritura(options),
           cancelToken: cancelToken,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress,
@@ -121,7 +131,7 @@ class DioClient {
           uri,
           data: data,
           queryParameters: queryParameters,
-          options: options,
+          options: _opcionesEscritura(options),
           cancelToken: cancelToken,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress,
@@ -141,7 +151,7 @@ class DioClient {
           uri,
           data: data,
           queryParameters: queryParameters,
-          options: options,
+          options: _opcionesEscritura(options),
           cancelToken: cancelToken,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress,
@@ -159,7 +169,7 @@ class DioClient {
           uri,
           data: data,
           queryParameters: queryParameters,
-          options: options,
+          options: _opcionesEscritura(options),
           cancelToken: cancelToken,
         ));
   }
