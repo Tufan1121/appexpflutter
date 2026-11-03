@@ -55,6 +55,7 @@ class PedidoVentaBloc extends Bloc<PedidoEvent, PedidoState> {
         'clave2': producto.clave2,
         'cantidad': producto.cantidad,
         'precio': producto.precio,
+        'observa': producto.observa,
         'cerrado': i == event.products.length - 1 ? 1 : 0,
       });
     }
@@ -100,6 +101,7 @@ class PedidoVentaBloc extends Bloc<PedidoEvent, PedidoState> {
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
     UtilsVenta.clearShipping();
+    UtilsVenta.clearServicios();
     emit(PedidoInitial());
   }
 }

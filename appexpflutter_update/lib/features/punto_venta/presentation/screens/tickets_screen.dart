@@ -1,3 +1,5 @@
+import 'package:appexpflutter_update/features/punto_venta/presentation/widgets/servicios_venta_card.dart';
+import 'package:appexpflutter_update/features/punto_venta/utils.dart';
 import 'package:appexpflutter_update/config/router/routes.dart';
 import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/inventario_tienda/inventario_tienda_bloc.dart';
@@ -46,6 +48,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
       canPop: true,
       // Permite la navegación hacia atrás nativa
       onPopInvoked: (didPop) async {
+        UtilsVenta.clearServicios();
         context.read<ProductosTiendaBloc>().add(ClearProductoStateEvent());
         context
             .read<InventarioTiendaBloc>()
@@ -55,7 +58,8 @@ class _PedidoScreenState extends State<TicketsScreen> {
         resizeToAvoidBottomInset: true,
         floatingActionButton: ElevatedButton(
           onPressed: () {
-            if (productos.isNotEmpty) {
+            // Un ticket puede ser solo de servicio o de anticipo
+            if (productos.isNotEmpty || UtilsVenta.hasServicios) {
               GenerarPedidoVentaRoute(
                       estadoPedido: getEstadoPedidoPagoId(dropdownValue.value),
                       $extra: widget.data)
@@ -66,7 +70,8 @@ class _PedidoScreenState extends State<TicketsScreen> {
                 builder: (context) {
                   return AlertDialog(
                     title: const Text('Atención'),
-                    content: const Text('Debes agregar algún producto'),
+                    content: const Text(
+                        'Debes agregar algún producto, servicio o anticipo'),
                     actions: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -113,6 +118,7 @@ class _PedidoScreenState extends State<TicketsScreen> {
                       backgroundColor: Colors.transparent,
                       color: Colores.secondaryColor,
                       onPressed: () {
+                        UtilsVenta.clearServicios();
                         context
                             .read<ProductosTiendaBloc>()
                             .add(ClearProductoStateEvent());
@@ -305,7 +311,10 @@ class _PedidoScreenState extends State<TicketsScreen> {
                                   return Container();
                                 }
                               },
-                            )
+                            ),
+                            // Servicios (lavado, etc.) y anticipos sin mercancía
+                            const ServiciosVentaCard(),
+                            const SizedBox(height: 70),
                           ],
                         ),
                       ),

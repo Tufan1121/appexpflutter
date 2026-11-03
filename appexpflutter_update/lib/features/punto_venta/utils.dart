@@ -18,8 +18,24 @@ class UtilsVenta {
 
   static bool get hasShipping => shippingCost > 0;
 
-  /// Total incluyendo envío
-  static double get totalWithShipping => total + shippingCost;
+  // ---------------------------------------------------------------------------
+  // Servicios (p. ej. lavado de tapete) y anticipos: partidas sin mercancía
+  // con clave SERVICIO / ANTICIPO y la descripción en pretikd.observa, igual
+  // que el punto de venta de la galería.
+  // ---------------------------------------------------------------------------
+
+  static final List<ServicioVenta> servicios = [];
+
+  static double get serviciosTotal =>
+      servicios.fold(0.0, (suma, s) => suma + s.precio);
+
+  static bool get hasServicios => servicios.isNotEmpty;
+
+  static void clearServicios() => servicios.clear();
+
+  /// Total incluyendo servicios, anticipos y envío
+  static double get totalWithShipping =>
+      total + serviciosTotal + shippingCost;
 
   /// Servicio(s) y ruta de los envíos, para observaciones.
   static String get shippingObserva => envios.observaAgrupada;
@@ -30,6 +46,15 @@ class UtilsVenta {
   /// (clave2 vacía, igual que la que arma mainExpo en pretikd).
   static List<DetallePedidoEntity> get partidasConEnvio => [
         ...listProductsOrder,
+        for (final s in servicios)
+          DetallePedidoEntity(
+            idPedido: 0,
+            clave: s.clave,
+            clave2: '',
+            cantidad: 1,
+            precio: s.precio,
+            observa: s.descripcion,
+          ),
         if (hasShipping)
           DetallePedidoEntity(
             idPedido: 0,
@@ -37,6 +62,20 @@ class UtilsVenta {
             clave2: '',
             cantidad: 1,
             precio: shippingCost,
+            observa: shippingObserva,
           ),
       ];
+}
+
+/// Servicio o anticipo capturado en el ticket.
+class ServicioVenta {
+  /// 'SERVICIO' o 'ANTICIPO'
+  final String clave;
+  final String descripcion;
+  final double precio;
+
+  const ServicioVenta(
+      {required this.clave, required this.descripcion, required this.precio});
+
+  bool get esAnticipo => clave == 'ANTICIPO';
 }

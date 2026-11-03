@@ -6,6 +6,8 @@ class DetallePedidoEntity extends Equatable {
   final String clave2;
   final int cantidad;
   final double precio;
+  // Descripción del SERVICIO/ANTICIPO o ruta del ENVIO (pretikd.observa)
+  final String observa;
 
   const DetallePedidoEntity({
     required this.idPedido,
@@ -13,6 +15,7 @@ class DetallePedidoEntity extends Equatable {
     required this.clave2,
     required this.cantidad,
     required this.precio,
+    this.observa = '',
   });
 
   @override
@@ -22,5 +25,6 @@ class DetallePedidoEntity extends Equatable {
         clave2,
         cantidad,
         precio,
+        observa,
       ];
 }

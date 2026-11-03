@@ -286,6 +286,11 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
               style: const TextStyle(
                   color: Colores.secondaryColor, fontWeight: FontWeight.bold),
             ),
+            if (UtilsVenta.hasServicios)
+              Text(
+                'Servicios y anticipos: ${Utils.formatPrice(UtilsVenta.serviciosTotal)}',
+                style: const TextStyle(fontSize: 11, color: Colors.grey),
+              ),
             if (UtilsVenta.hasShipping)
               Text(
                 'Envío: ${Utils.formatPrice(UtilsVenta.shippingCost)}',
