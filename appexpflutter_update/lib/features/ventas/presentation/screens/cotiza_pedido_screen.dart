@@ -58,7 +58,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
     return metodosDePago.indexOf(metodo) + 1;
   }
 
-  final totalAPagar = UtilsVenta.total;
+  final totalAPagar = UtilsVenta.totalWithShipping;
 
   // Future<void> _openPDF(String pdfUrl) async {
   //   try {
@@ -186,9 +186,12 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text('Total a pagar'),
+                                      Text(UtilsVenta.hasShipping
+                                          ? 'Total (incluye envío)'
+                                          : 'Total a pagar'),
                                       Text(
-                                        Utils.formatPrice(UtilsVenta.total),
+                                        Utils.formatPrice(
+                                            UtilsVenta.totalWithShipping),
                                         style: TextStyle(
                                             color: theme.colorScheme.primary,
                                             fontWeight: FontWeight.bold),
@@ -512,7 +515,11 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
       final data = {
         'id_cliente': widget.idCliente,
         'id_metodopago': metodo1,
-        'observaciones': observaciones,
+        // El servicio y la ruta del envío van también en las observaciones.
+        'observaciones': [
+          observaciones,
+          if (UtilsVenta.hasShipping) 'Envío: ${UtilsVenta.shippingObserva}',
+        ].where((t) => t.trim().isNotEmpty).join(' | '),
         'estatus': widget.estadoPedido,
         'anticipo': anticipoPago.toInt(),
         'anticipo2': anticipoPago2.toInt(),
@@ -524,7 +531,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
       };
 
       context.read<CotizaPedidoBloc>().add(
-          PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
+          PedidoAddEvent(data: data, products: UtilsVenta.partidasConEnvio));
     } else {
       form.markAllAsTouched();
     }

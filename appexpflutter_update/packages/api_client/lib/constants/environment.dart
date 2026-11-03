@@ -10,6 +10,9 @@ class Environment {
     }
   }
 
+  /// Token de envia.com para el cotizador de envíos.
+  static String enviaToken = dotenv.env['TOKEN'] ?? '';
+
   static String apiUrl =
       dotenv.env['API_URL'] ?? 'No está configurado el API_URL';
 }

@@ -99,6 +99,7 @@ class PedidoVentaBloc extends Bloc<PedidoEvent, PedidoState> {
     _guardado.terminar();
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
+    UtilsVenta.clearShipping();
     emit(PedidoInitial());
   }
 }

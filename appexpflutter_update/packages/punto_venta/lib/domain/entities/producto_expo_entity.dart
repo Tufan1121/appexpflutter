@@ -41,6 +41,11 @@ class ProductoExpoEntity extends Equatable {
   final int? precio10;
   // precio11 = tarifa -15% (gproducto.precio11).
   final int? precio11;
+  // Empaque (cm) y peso (kg) de gproducto, para el cotizador de envíos.
+  final double? largop;
+  final double? anchop;
+  final double? altop;
+  final double? peso;
   final String? desalmacen;
 
   const ProductoExpoEntity({
@@ -83,6 +88,10 @@ class ProductoExpoEntity extends Equatable {
     this.precio9,
     this.precio10,
     this.precio11,
+    this.largop,
+    this.anchop,
+    this.altop,
+    this.peso,
     this.desalmacen,
   });
 
@@ -126,6 +135,10 @@ class ProductoExpoEntity extends Equatable {
     int? precio9,
     int? precio10,
     int? precio11,
+    double? largop,
+    double? anchop,
+    double? altop,
+    double? peso,
     String? desalmacen,
   }) =>
       ProductoExpoEntity(
@@ -168,6 +181,10 @@ class ProductoExpoEntity extends Equatable {
         precio9: precio9 ?? this.precio9,
         precio10: precio10 ?? this.precio10,
         precio11: precio11 ?? this.precio11,
+        largop: largop ?? this.largop,
+        anchop: anchop ?? this.anchop,
+        altop: altop ?? this.altop,
+        peso: peso ?? this.peso,
         desalmacen: desalmacen ?? this.desalmacen,
       );
 
@@ -212,6 +229,10 @@ class ProductoExpoEntity extends Equatable {
         precio9,
         precio10,
         precio11,
+        largop,
+        anchop,
+        altop,
+        peso,
         desalmacen,
       ];
 }

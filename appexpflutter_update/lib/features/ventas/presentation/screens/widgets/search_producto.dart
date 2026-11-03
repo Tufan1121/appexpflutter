@@ -168,7 +168,12 @@ class SearchProducto extends HookWidget {
                                         // 'anticipo': anticipoPago.toInt(),
                                         // 'anticipo2': anticipoPago2.toInt(),
                                         // 'anticipo3': anticipoPago3.toInt(),
-                                        'total_pagar': UtilsVenta.total.toInt(),
+                                        'total_pagar': UtilsVenta
+                                            .totalWithShipping
+                                            .toInt(),
+                                        if (UtilsVenta.hasShipping)
+                                          'observaciones':
+                                              'Envío: ${UtilsVenta.shippingObserva}',
                                         // 'entregado': entregado,
                                         // 'id_metodopago2': metodo2,
                                         // 'id_metodopago3': metodo3.toString(),
@@ -178,7 +183,7 @@ class SearchProducto extends HookWidget {
                                           PedidoAddEvent(
                                               data: data,
                                               products: UtilsVenta
-                                                  .listProductsOrder));
+                                                  .partidasConEnvio));
                                     },
                             );
                           },

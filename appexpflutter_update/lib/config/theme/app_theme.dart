@@ -6,6 +6,20 @@ class Colores {
   static const Color primaryColor = Color(0xff424CB8);
   static const Color secondaryColor = Color(0xffD90080);
   static const scaffoldBackgroundColor = Color(0xFFF8F7F7);
+
+  // Paleta del cotizador de envíos (igual que expo).
+  static const textPrimary = Color(0xff0F172A); // Slate 900
+  static const textSecondary = Color(0xff64748B); // Slate 500
+  static const textTertiary = Color(0xff94A3B8); // Slate 400
+  static const successColor = Color(0xff10B981); // Green 500
+  static const errorColor = Color(0xffEF4444); // Red 500
+  static const warningColor = Color(0xffF59E0B); // Amber 500
+  static const infoColor = Color(0xff3B82F6); // Blue 500
+  static const gradientStart = Color(0xFF312E81); // Indigo 900
+  static const gradientMiddle = Color(0xFF4338CA); // Indigo 700
+  static const gradientEnd = Color(0xFF6366F1); // Indigo 400
+  static const inputBackground = Color(0xFFF1F5F9); // Slate 100
+  static const inputBorder = Color(0xFFE2E8F0); // Slate 200
 }
 
 class AppTheme {

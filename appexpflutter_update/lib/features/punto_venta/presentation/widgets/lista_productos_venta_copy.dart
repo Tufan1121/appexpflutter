@@ -1,3 +1,5 @@
+import 'package:appexpflutter_update/features/cotizador_envio/data/models/product_shipping_info.dart';
+import 'package:appexpflutter_update/features/cotizador_envio/presentation/widgets/envio_venta_card.dart';
 import 'package:punto_venta/domain/entities/producto_expo_entity.dart';
 import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/producto/productos_tienda_bloc.dart';
 import 'package:punto_venta/domain/entities/detalle_pedido_entity.dart';
@@ -18,6 +20,8 @@ class ListaProductosVenta extends HookWidget {
   Widget build(BuildContext context) {
     final total = useState<double>(0.0);
     final scrollController = useScrollController();
+    // Se agregó o quitó un envío: fuerza el build.
+    final revisionEnvio = useState(0);
     // Inicializa las listas con la longitud de productos, llenas de valores predeterminados
     final countList = useState<List<int>>(List.filled(productos.length, 1));
     final customPriceList =
@@ -140,10 +144,28 @@ class ListaProductosVenta extends HookWidget {
                     offset: Offset(2.0, 5.0),
                   )
                 ])),
+        // Envío cotizado (una o varias paqueterías): se guarda como partida
+        // ENVIO junto con los productos.
+        EnvioVentaCard(
+          envios: UtilsVenta.envios,
+          productos: [
+            for (var i = 0; i < productos.length && i < countList.value.length; i++)
+              ProductShippingInfo(
+                productKey: productos[i].producto1,
+                productName: productos[i].producto,
+                largo: productos[i].largop ?? 0,
+                ancho: productos[i].anchop ?? 0,
+                alto: productos[i].altop ?? 0,
+                peso: productos[i].peso ?? 0,
+                cantidad: countList.value[i],
+              ),
+          ],
+          onChanged: () => revisionEnvio.value++,
+        ),
         Scrollbar(
           controller: scrollController,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.66,
+            height: MediaQuery.of(context).size.height * 0.60,
             child: ListView.builder(
               // Asignamos el mismo controlador al ListView
               scrollDirection: Axis.vertical,

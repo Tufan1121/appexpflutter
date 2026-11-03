@@ -50,6 +50,10 @@ Map<String, dynamic> convertReducedJsonToFullJson(
     "precio9": (normalizedJson["precio9"]) ?? 0,
     "precio10": (normalizedJson["precio10"]) ?? 0,
     "precio11": (normalizedJson["precio11"]) ?? 0,
+    "largop": normalizedJson["largop"],
+    "anchop": normalizedJson["anchop"],
+    "altop": normalizedJson["altop"],
+    "peso": normalizedJson["peso"],
     "desalmacen": normalizedJson["desalmacen"] ?? "",
   };
 }
@@ -95,6 +99,10 @@ class ProductoExpoModel extends ProductoExpoEntity {
       required super.precio9,
       required super.precio10,
       super.precio11,
+      super.largop,
+      super.anchop,
+      super.altop,
+      super.peso,
       required super.desalmacen});
 
   factory ProductoExpoModel.fromJson(Map<String, dynamic> json) {
@@ -139,6 +147,10 @@ class ProductoExpoModel extends ProductoExpoEntity {
       precio9: json["precio9"],
       precio10: json["precio10"],
       precio11: json["precio11"],
+      largop: (json["largop"] as num?)?.toDouble(),
+      anchop: (json["anchop"] as num?)?.toDouble(),
+      altop: (json["altop"] as num?)?.toDouble(),
+      peso: (json["peso"] as num?)?.toDouble(),
       desalmacen: json["desalmacen"],
     );
   }
@@ -218,5 +230,9 @@ class ProductoExpoModel extends ProductoExpoEntity {
       precio9: precio9,
       precio10: precio10,
       precio11: precio11,
+      largop: largop,
+      anchop: anchop,
+      altop: altop,
+      peso: peso,
       desalmacen: desalmacen);
 }

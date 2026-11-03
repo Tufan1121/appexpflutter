@@ -55,7 +55,7 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
     return metodosDePago.indexOf(metodo) + 1;
   }
 
-  final totalAPagar = UtilsVenta.total;
+  final totalAPagar = UtilsVenta.totalWithShipping;
 
   void updateDebePorPagar(FormGroup form, ValueNotifier<double> debePorPagar) {
     final anticipoPago1 = form.control('anticipoPago1').value ?? 0.0;
@@ -67,7 +67,7 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final debePorPagar = useState(UtilsVenta.total);
+    final debePorPagar = useState(UtilsVenta.totalWithShipping);
     final scrollController = useScrollController();
     final loading = useState(false);
 
@@ -194,9 +194,11 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Total a pagar'),
+            Text(UtilsVenta.hasShipping
+                ? 'Total (incluye envío)'
+                : 'Total a pagar'),
             Text(
-              Utils.formatPrice(UtilsVenta.total),
+              Utils.formatPrice(UtilsVenta.totalWithShipping),
               style: const TextStyle(
                   color: Colors.purple, fontWeight: FontWeight.bold),
             ),
@@ -402,7 +404,11 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
         'direccion': widget.dataCliente['direccion'],
         'telefono': widget.dataCliente['telefono'],
         'id_metodopago': metodo1,
-        'observaciones': observaciones,
+        // El servicio y la ruta del envío van también en las observaciones.
+        'observaciones': [
+          observaciones,
+          if (UtilsVenta.hasShipping) 'Envío: ${UtilsVenta.shippingObserva}',
+        ].where((t) => t.trim().isNotEmpty).join(' | '),
         'estatus': widget.estadoPedido,
         'anticipo': anticipoPago.toInt(),
         'anticipo2': anticipoPago2.toInt(),
@@ -414,7 +420,7 @@ class _GenerarPedidoVentaScreenState extends State<GenerarPedidoVentaScreen> {
       };
 
       context.read<PedidoVentaBloc>().add(
-          PedidoAddEvent(data: data, products: UtilsVenta.listProductsOrder));
+          PedidoAddEvent(data: data, products: UtilsVenta.partidasConEnvio));
     } else {
       form.markAllAsTouched();
     }

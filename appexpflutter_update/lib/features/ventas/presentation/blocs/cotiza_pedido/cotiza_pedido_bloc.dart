@@ -104,6 +104,7 @@ class CotizaPedidoBloc extends Bloc<CotizaPedidoEvent, CotizaPedidoState> {
     _guardado.terminar();
     UtilsVenta.listProductsOrder.clear();
     UtilsVenta.total = 0.0;
+    UtilsVenta.clearShipping();
     emit(PedidoInitial());
   }
 }
