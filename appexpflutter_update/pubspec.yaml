@@ -83,7 +83,9 @@ dependency_overrides:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/iconos/GRUPO-TUFAN-LOGO-CUADRADO.ico"
+  # Logo Grupo Tufan en azul acero (paleta de tienda); iOS no acepta transparencia
+  image_path: "assets/iconos/tufan_icono_azul.png"
+  image_path_ios: "assets/iconos/tufan_icono_azul_ios.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   # web:
   #   generate: true
