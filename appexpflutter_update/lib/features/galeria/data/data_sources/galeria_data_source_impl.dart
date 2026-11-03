@@ -68,6 +68,8 @@ class GaleriaDataSourceImpl implements GaleriaDataSource {
           ));
       final List<dynamic> jsonList = result.data;
       final galeria = jsonList
+          // Sin coincidencias el backend manda [{"galeria": "No hay resultados"}]
+          .where((json) => json is Map && json['descripcio'] != null)
           .map(
             (json) => GaleriaModel.fromJson(json),
           )

@@ -19,8 +19,13 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
 
   Future<void> _getClientesEvent(
       GetClientesEvent event, Emitter<ClienteState> emit) async {
+    // Se busca mientras se escribe: con el campo vacío se limpia la lista.
+    if (event.name.trim().isEmpty) {
+      emit(ClienteInitial());
+      return;
+    }
     emit(ClienteLoading());
-    final result = await clienteUsecase.getClientes(event.name);
+    final result = await clienteUsecase.getClientes(event.name.trim());
     result.fold(
       (failure) => emit(ClienteError(message: failure.message)),
       (clientes) => emit(ClienteLoaded(clientes: clientes)),
@@ -82,6 +87,6 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   }
 
   EventTransformer<T> debounce<T>(Duration duration) {
-    return (events, mapper) => events.debounceTime(duration).flatMap(mapper);
+    return (events, mapper) => events.debounceTime(duration).switchMap(mapper);
   }
 }

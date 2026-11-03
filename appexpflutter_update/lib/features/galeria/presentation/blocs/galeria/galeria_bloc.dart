@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:galeria/domain/entities/galeria_entity.dart';
 import 'package:galeria/domain/usecase/galeria_usecases.dart';
 
@@ -13,7 +14,10 @@ class GaleriaBloc extends Bloc<GaleriaEvent, GaleriaState> {
   bool isSearching = false; // Indicador de búsqueda activa
 
   GaleriaBloc({required this.galeriaUsecases}) : super(GaleriaInitial()) {
-    on<GetGaleriaEvent>(_getGaleriaEvent);
+    // switchMap: al escribir, una búsqueda nueva descarta la anterior para que
+    // una respuesta lenta no tape los resultados de lo último que se escribió.
+    on<GetGaleriaEvent>(_getGaleriaEvent,
+        transformer: (events, mapper) => events.switchMap(mapper));
     on<ResetGaleriaEvent>((event, emit) {
       _loadedGaleria.clear(); // Limpiar la lista al resetear
       isSearching = false; // Reiniciar el estado de búsqueda

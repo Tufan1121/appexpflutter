@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/galeria/presentation/blocs/galeria/galeria_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,11 +17,22 @@ class SearchGallery extends HookWidget {
     final controller = useTextEditingController();
     final textFieldValue = useState<String>('');
 
+    // Busca mientras se escribe, medio segundo después de la última tecla
+    final debounce = useRef<Timer?>(null);
     useEffect(() {
       controller.addListener(() {
+        if (controller.text == textFieldValue.value) return;
         textFieldValue.value = controller.text;
+        debounce.value?.cancel();
+        debounce.value = Timer(const Duration(milliseconds: 500), () {
+          if (!context.mounted) return;
+          final texto = controller.text.trim();
+          context.read<GaleriaBloc>().add(texto.isEmpty
+              ? const GetGaleriaEvent()
+              : GetGaleriaEvent(descripcion: texto));
+        });
       });
-      return null;
+      return () => debounce.value?.cancel();
     }, [controller]);
 
     return Padding(
@@ -48,6 +62,7 @@ class SearchGallery extends HookWidget {
                 ),
                 obscureText: false,
                 keyboardType: TextInputType.text,
+                inputFormatters: [UpperCaseTextFormatter()],
                 onSubmitted: (value) => context
                     .read<GaleriaBloc>()
                     .add(GetGaleriaEvent(descripcion: value.trim())),
@@ -63,16 +78,13 @@ class SearchGallery extends HookWidget {
                       ? IconButton(
                           onPressed: () {
                             controller.clear();
-                            context
-                                .read<GaleriaBloc>()
-                                .add(const GetGaleriaEvent());
                           },
                           icon: const Icon(
                             Icons.clear,
                             color: Colors.red,
                           ))
                       : null,
-                  hintText: 'Busca una colección',
+                  hintText: 'Colección, color, composición u origen',
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
                   filled: true,

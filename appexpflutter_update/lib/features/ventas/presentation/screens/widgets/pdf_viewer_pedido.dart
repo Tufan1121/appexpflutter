@@ -43,6 +43,9 @@ class PdfViewerPedidoScreen extends HookWidget {
     final isUrlValid = useState<bool?>(null);
     final isLoading = useState<bool>(true);
     final pdfBytes = useState<Uint8List?>(null);
+    // El visor de Syncfusion puede fallar en Windows con un PDF válido; en ese
+    // caso se ofrece abrirlo con el visor de PDF del sistema.
+    final visorFallo = useState(false);
     final enviandoWhatsApp = useState(false);
     final dio = useMemoized(() => Dio());
     final envioPorExpo = idExpo != null;
@@ -76,6 +79,23 @@ class PdfViewerPedidoScreen extends HookWidget {
       checkUrlValidity();
       return null;
     }, [url]);
+
+    Future<void> abrirConSistema() async {
+      try {
+        final tempDir = await getTemporaryDirectory();
+        final file = File('${tempDir.path}/$fileName.pdf');
+        await file.writeAsBytes(pdfBytes.value!, flush: true);
+        if (!await launchUrl(Uri.file(file.path))) {
+          throw Exception('no hay una aplicación para abrir PDF');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('No se pudo abrir el PDF: $e')),
+          );
+        }
+      }
+    }
 
     Future<void> downloadPdf() async {
       try {
@@ -267,17 +287,45 @@ class PdfViewerPedidoScreen extends HookWidget {
         ),
         body: isLoading.value
             ? const Center(child: CircularProgressIndicator())
+            : isUrlValid.value == true && visorFallo.value
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'El PDF se generó, pero no se puede mostrar aquí.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colores.secondaryColor,
+                                foregroundColor: Colors.white),
+                            icon: const Icon(Icons.open_in_new),
+                            label: const Text('Abrir PDF'),
+                            onPressed: abrirConSistema,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
             : isUrlValid.value == true
                 ? SfPdfViewer.memory(
                     pdfBytes.value!,
                     key: pdfViewerKey.value,
                     onDocumentLoadFailed:
                         (PdfDocumentLoadFailedDetails details) {
+                      debugPrint(
+                          'Visor PDF ${details.error}: ${details.description}');
+                      visorFallo.value = true;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           backgroundColor: Colors.red,
-                          content:
-                              Text('Error al cargar el PDF: ${details.error}'),
+                          content: Text(
+                              'Error al cargar el PDF: ${details.error}. ${details.description}'),
                         ),
                       );
                     },

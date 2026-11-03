@@ -1,4 +1,5 @@
 import 'package:appexpflutter_update/features/ventas/presentation/blocs/cliente/cliente_bloc.dart';
+import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../shared/widgets/widgets.dart' show CustomSearch;
@@ -17,9 +18,10 @@ class SearchClientes extends StatelessWidget {
           Expanded(
             child: CustomSearch(
               hintText: 'Cliente',
-              // onChanged: (value) {
-              //   context.read<ClienteBloc>().add(GetClientesEvent(name: value));
-              // },
+              inputFormatters: [UpperCaseTextFormatter()],
+              // Busca mientras se escribe (el bloc espera 500 ms sin teclear).
+              onChanged: (value) =>
+                  context.read<ClienteBloc>().add(GetClientesEvent(name: value)),
               onSubmitted: (value) => context
                   .read<ClienteBloc>()
                   .add(GetClientesEvent(name: value)),

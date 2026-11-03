@@ -124,6 +124,17 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                           child: Text(state.message),
                         );
                       }
+                      if (state is GaleriaLoaded &&
+                          galeriaBloc.isSearching &&
+                          state.galeria.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 120),
+                          child: Text(
+                            'Sin resultados',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        );
+                      }
                       if (state is GaleriaLoaded) {
                         // Incrementar la página y desactivar la carga si no es búsqueda
                         if (!galeriaBloc.isSearching) {
@@ -227,12 +238,42 @@ class _GaleriaScreenState extends State<GaleriaScreen> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          galeria.descripcio,
-                                          style: GoogleFonts.montserrat(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).colorScheme.primary,
-                                          ),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              galeria.descripcio,
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.montserrat(
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                              ),
+                                            ),
+                                            // Origen · composición, igual que la galería web
+                                            if (galeria.origen.isNotEmpty ||
+                                                galeria.composicion.isNotEmpty)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.only(top: 2),
+                                                child: Text(
+                                                  [
+                                                    galeria.origen,
+                                                    galeria.composicion
+                                                  ]
+                                                      .where((t) => t.isNotEmpty)
+                                                      .join(' · '),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    fontSize: 10,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
                                     ],
