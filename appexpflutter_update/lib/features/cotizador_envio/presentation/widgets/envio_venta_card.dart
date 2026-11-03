@@ -94,6 +94,7 @@ class EnvioVentaCard extends StatelessWidget {
               style: GoogleFonts.montserrat(fontWeight: FontWeight.w600)),
           style: OutlinedButton.styleFrom(
             foregroundColor: Colores.secondaryColor,
+            backgroundColor: Colors.white,
             side: BorderSide(color: Colores.secondaryColor.withOpacity(0.4)),
             minimumSize: const Size.fromHeight(40),
           ),
@@ -107,9 +108,11 @@ class EnvioVentaCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      // Fondo blanco: la lista va sobre el degradado oscuro de la pantalla.
       decoration: BoxDecoration(
-        color: Colores.secondaryColor.withOpacity(0.08),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colores.secondaryColor.withOpacity(0.4)),
       ),
       child: Row(
         children: [

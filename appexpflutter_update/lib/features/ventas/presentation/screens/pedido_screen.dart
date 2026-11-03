@@ -81,16 +81,16 @@ class _PedidoScreenState extends State<PedidoScreen> {
                           children: [
                             Text(
                               'Cliente: ',
-                              style: TextStyle(
-                                  color: theme.colorScheme.primary,
+                              style: const TextStyle(
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20),
                             ),
                             AutoSizeText(
                               maxLines: 2,
                               widget.nombreCliente,
-                              style: TextStyle(
-                                  color: theme.colorScheme.primary,
+                              style: const TextStyle(
+                                  color: Colors.white,
                                   fontSize: 20),
                             ),
                           ],

@@ -1,3 +1,4 @@
+import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
 import 'package:appexpflutter_update/features/historial/domain/entities/producto_entity.dart';
 import 'package:appexpflutter_update/features/historial/presentation/blocs/sesion/sesion_bloc.dart';
 import 'package:appexpflutter_update/features/historial/presentation/screens/mixin_products.dart';
@@ -141,12 +142,14 @@ class _InventarioBodega2State extends State<InventarioBodega2>
                                       children: [
                                         CustomReactiveTextField(
                                           formControlName: 'descripcio',
+                                          inputFormatters: [UpperCaseTextFormatter()],
                                           hint: 'Calidad',
                                           hintStyle: TextStyle(fontSize: 15),
                                         ),
                                         SizedBox(height: 10),
                                         CustomReactiveTextField(
                                           formControlName: 'diseno',
+                                          inputFormatters: [UpperCaseTextFormatter()],
                                           hint: 'Color',
                                           hintStyle: TextStyle(fontSize: 15),
                                         ),
