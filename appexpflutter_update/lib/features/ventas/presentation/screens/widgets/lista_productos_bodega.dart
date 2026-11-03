@@ -21,25 +21,22 @@ class ListaProductosBodegaCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<double> promociones = [
-      producto.precio8.toDouble(),
-      if (producto.precio9 != null) producto.precio9!.toDouble(),
-      producto.precio4.toDouble(),
-      if (producto.precio10 != null) producto.precio10!.toDouble(),
-      producto.precio5.toDouble(),
-      producto.precio6.toDouble(),
-      producto.precio7.toDouble(),
+    // Promociones (porcentaje, precio); se omiten las tarifas sin capturar.
+    final opciones = [
+      for (final (etiqueta, precio) in [
+        ('-15%', producto.precio11),
+        ('-20%', producto.precio8),
+        ('-25%', producto.precio9),
+        ('-30%', producto.precio4),
+        ('-35%', producto.precio10),
+        ('-40%', producto.precio5),
+        ('-50%', producto.precio6),
+        ('-70%', producto.precio7),
+      ])
+        if ((precio ?? 0) > 0) (etiqueta, precio!.toDouble()),
     ];
-
-    final descuentos = [
-      '-20%',
-      '-25%',
-      '-30%',
-      '-35%',
-      '-40%',
-      '-50%',
-      '-70%',
-    ];
+    final promociones = [for (final o in opciones) o.$2];
+    final descuentos = [for (final o in opciones) o.$1];
 
     return ClipRect(
       child: Card(
@@ -158,7 +155,7 @@ class ListaProductosBodegaCard extends HookWidget {
                   ),
                   children: [
                     SizedBox(
-                      height: 150,
+                      height: 170,
                       child: ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),

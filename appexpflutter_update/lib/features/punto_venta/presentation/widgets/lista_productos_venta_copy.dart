@@ -474,30 +474,36 @@ class ListaProductosVenta extends HookWidget {
     required int index,
     required VoidCallback updateTotal,
   }) {
+    // Promociones (porcentaje, precio) en el orden del menú. Se omiten las
+    // tarifas sin capturar y las repetidas: el Dropdown truena si dos
+    // opciones traen el mismo precio.
+    final opciones = useMemoized(() {
+      final vistos = <double>{};
+      return [
+        for (final (etiqueta, precio) in [
+          ('-15%', producto.precio11),
+          ('-20%', producto.precio8),
+          ('-25%', producto.precio9),
+          ('-30%', producto.precio4),
+          ('-35%', producto.precio10),
+          ('-40%', producto.precio5),
+          ('-50%', producto.precio6),
+          ('-70%', producto.precio7),
+        ])
+          if ((precio ?? 0) > 0 && vistos.add(precio!.toDouble()))
+            (etiqueta, precio.toDouble()),
+      ];
+    });
+
     // Lista de promociones (precios) - la lista necesita ser mutable si el precio cambia
-    final promociones = useState<List<double?>>([
-      if (producto.precio8 != null) producto.precio8?.toDouble(),
-      if (producto.precio9 != null) producto.precio9?.toDouble(),
-      if (producto.precio4 != null) producto.precio4?.toDouble(),
-      if (producto.precio10 != null) producto.precio10?.toDouble(),
-      if (producto.precio5 != null) producto.precio5?.toDouble(),
-      if (producto.precio6 != null) producto.precio6?.toDouble(),
-      if (producto.precio7 != null) producto.precio7?.toDouble(),
-    ]);
+    final promociones =
+        useState<List<double?>>([for (final o in opciones) o.$2]);
 
     // Variable para almacenar el valor editado antes de aplicarlo
     final editPrice = useState<double?>(null);
 
     // Lista de descuentos en porcentaje que corresponde a las promociones
-    final descuentos = [
-      '-20%',
-      '-25%',
-      '-30%',
-      '-35%',
-      '-40%',
-      '-50%',
-      '-70%',
-    ];
+    final descuentos = [for (final o in opciones) o.$1];
 
     final showCustomPriceDropdown = useState<bool>(
         false); // Controla la visibilidad del TextField para editar el precio de promoción
@@ -638,51 +644,53 @@ class ListaProductosVenta extends HookWidget {
 
                       switch (dropdownPrice.value) {
                         case double value
+                            when value == producto.precio11?.toDouble():
+                          updatedProduct =
+                              producto.copyWith(precio11: price.toInt());
+                          break;
+                        case double value
                             when value == producto.precio4?.toDouble():
                           updatedProduct =
                               producto.copyWith(precio4: price.toInt());
-                          promociones.value[0] = price;
                           break;
                         case double value
                             when value == producto.precio5?.toDouble():
                           updatedProduct =
                               producto.copyWith(precio5: price.toInt());
-                          promociones.value[1] = price;
                           break;
                         case double value
                             when value == producto.precio6?.toDouble():
                           updatedProduct =
                               producto.copyWith(precio6: price.toInt());
-                          promociones.value[2] = price;
                           break;
                         case double value
                             when value == producto.precio7?.toDouble():
                           updatedProduct =
                               producto.copyWith(precio7: price.toInt());
-                          promociones.value[3] = price;
                           break;
                         case double value
                             when value == producto.precio8?.toDouble():
                           updatedProduct =
                               producto.copyWith(precio8: price.toInt());
-                          promociones.value[4] = price;
                           break;
                         case double value
                             when value == producto.precio9?.toDouble():
                           updatedProduct =
                               producto.copyWith(precio9: price.toInt());
-                          promociones.value[5] = price;
                           break;
                         case double value
                             when value == producto.precio10?.toDouble():
                           updatedProduct =
                               producto.copyWith(precio10: price.toInt());
-                          promociones.value[6] = price;
                           break;
                         default:
                           updatedProduct =
                               producto.copyWith(precio1: price.toInt());
                       }
+
+                      final iPromo =
+                          promociones.value.indexOf(dropdownPrice.value);
+                      if (iPromo >= 0) promociones.value[iPromo] = price;
 
                       context
                           .read<ProductosTiendaBloc>()

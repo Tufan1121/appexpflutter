@@ -49,6 +49,7 @@ Map<String, dynamic> convertReducedJsonToFullJson(
     "precio8": (normalizedJson["precio8"]) ?? 0,
     "precio9": (normalizedJson["precio9"]) ?? 0,
     "precio10": (normalizedJson["precio10"]) ?? 0,
+    "precio11": (normalizedJson["precio11"]) ?? 0,
     "desalmacen": normalizedJson["desalmacen"] ?? "",
   };
 }
@@ -93,6 +94,7 @@ class ProductoExpoModel extends ProductoExpoEntity {
       required super.precio8,
       required super.precio9,
       required super.precio10,
+      super.precio11,
       required super.desalmacen});
 
   factory ProductoExpoModel.fromJson(Map<String, dynamic> json) {
@@ -136,6 +138,7 @@ class ProductoExpoModel extends ProductoExpoEntity {
       precio8: json["precio8"],
       precio9: json["precio9"],
       precio10: json["precio10"],
+      precio11: json["precio11"],
       desalmacen: json["desalmacen"],
     );
   }
@@ -214,5 +217,6 @@ class ProductoExpoModel extends ProductoExpoEntity {
       precio8: precio8,
       precio9: precio9,
       precio10: precio10,
+      precio11: precio11,
       desalmacen: desalmacen);
 }

@@ -39,6 +39,8 @@ class ProductoExpoEntity extends Equatable {
   final int? precio8;
   final int? precio9;
   final int? precio10;
+  // precio11 = tarifa -15% (gproducto.precio11).
+  final int? precio11;
   final String? desalmacen;
 
   const ProductoExpoEntity({
@@ -80,6 +82,7 @@ class ProductoExpoEntity extends Equatable {
     this.precio8,
     this.precio9,
     this.precio10,
+    this.precio11,
     this.desalmacen,
   });
 
@@ -122,6 +125,7 @@ class ProductoExpoEntity extends Equatable {
     int? precio8,
     int? precio9,
     int? precio10,
+    int? precio11,
     String? desalmacen,
   }) =>
       ProductoExpoEntity(
@@ -163,6 +167,7 @@ class ProductoExpoEntity extends Equatable {
         precio8: precio8 ?? this.precio8,
         precio9: precio9 ?? this.precio9,
         precio10: precio10 ?? this.precio10,
+        precio11: precio11 ?? this.precio11,
         desalmacen: desalmacen ?? this.desalmacen,
       );
 
@@ -206,6 +211,7 @@ class ProductoExpoEntity extends Equatable {
         precio8,
         precio9,
         precio10,
+        precio11,
         desalmacen,
       ];
 }
