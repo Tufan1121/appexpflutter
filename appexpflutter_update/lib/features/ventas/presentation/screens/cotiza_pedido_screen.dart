@@ -339,6 +339,7 @@ class _SesionPedidoScreenState extends State<CotizaPedidoScreen> {
                                                 url: pdfUrl,
                                                 userName: state.username,
                                                 clientPhoneNumber: '',
+                                                idExpo: state.pedido.idExpo,
                                               ),
                                             ),
                                           );

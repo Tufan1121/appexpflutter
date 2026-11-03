@@ -8,6 +8,8 @@ Future<void> init() async {
     ..registerLazySingleton<DioClient>(DioClient.new)
 
     //* Data Sources
+    ..registerLazySingleton<EnvioDocumentosDataSource>(
+        () => EnvioDocumentosDataSource(dioClient: injector()))
     ..registerLazySingleton<AuthDatasource>(
         () => AuthDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<ProductoDataSource>(

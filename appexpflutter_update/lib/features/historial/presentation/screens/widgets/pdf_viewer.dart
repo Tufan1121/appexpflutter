@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:appexpflutter_update/features/ventas/presentation/screens/widgets/enviar_pedido_whatsapp.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -19,6 +20,14 @@ class PdfViewerScreen extends HookWidget {
   final String userName;
   final String clientPhoneNumber;
 
+  /// Expo del pedido o cotización. Si viene, el WhatsApp sale del número de
+  /// expo (backend /enviarPedidoWhatsapp o /enviarCotizacionWhatsapp) y no se
+  /// ofrece "Compartir", para que el vendedor no se quede con el contacto.
+  final int? idExpo;
+
+  /// El documento es una cotización (si no, un pedido).
+  final bool cotizacion;
+
   const PdfViewerScreen({
     super.key,
     required this.fileName,
@@ -26,13 +35,17 @@ class PdfViewerScreen extends HookWidget {
     required this.url,
     required this.userName,
     required this.clientPhoneNumber,
+    this.idExpo,
+    this.cotizacion = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final pdfViewerKey = useState(GlobalKey<SfPdfViewerState>());
     final isUrlValid = useState<bool?>(null);
+    final enviandoWhatsApp = useState(false);
     final dio = useMemoized(() => Dio());
+    final envioPorExpo = idExpo != null;
 
     useEffect(() {
       Future<void> checkUrlValidity() async {
@@ -107,6 +120,46 @@ class PdfViewerScreen extends HookWidget {
       }
     }
 
+    /// Reenvío desde el backend por WhatsApp (número de expo) o por correo.
+    Future<void> enviarPorExpo({bool porCorreo = false}) async {
+      final documento = cotizacion ? 'la cotización' : 'el pedido';
+      final confirmar = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(porCorreo ? 'Enviar por correo' : 'Enviar por WhatsApp'),
+          content: Text(porCorreo
+              ? 'Se enviará $documento $fileName al correo del cliente, con el PDF adjunto.'
+              : 'Se enviará $documento $fileName al cliente desde el WhatsApp de la expo.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Enviar'),
+            ),
+          ],
+        ),
+      );
+      if (confirmar != true || !context.mounted) return;
+
+      enviandoWhatsApp.value = true;
+      try {
+        // Sin teléfono/correo del cliente (o inválido) pide capturarlo y lo guarda
+        await enviarPorMedios(
+          dialogContext: context,
+          messenger: ScaffoldMessenger.of(context),
+          pedidos: fileName,
+          idExpo: idExpo,
+          medios: (whatsapp: !porCorreo, correo: porCorreo),
+          cotizacion: cotizacion,
+        );
+      } finally {
+        if (context.mounted) enviandoWhatsApp.value = false;
+      }
+    }
+
     Future<void> sendToWhatsApp() async {
       try {
         final appDownloadsDir = await getTemporaryDirectory();
@@ -163,14 +216,32 @@ class PdfViewerScreen extends HookWidget {
             icon: const Icon(Icons.download),
             onPressed: downloadPdf,
           ),
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: sharePdf,
-          ),
-          IconButton(
-            icon: const FaIcon(FontAwesomeIcons.whatsapp),
-            onPressed: sendToWhatsApp,
-          ),
+          if (!envioPorExpo)
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: sharePdf,
+            ),
+          enviandoWhatsApp.value
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14),
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  ),
+                )
+              : IconButton(
+                  icon: const FaIcon(FontAwesomeIcons.whatsapp),
+                  onPressed:
+                      envioPorExpo ? () => enviarPorExpo() : sendToWhatsApp,
+                ),
+          if (envioPorExpo && !enviandoWhatsApp.value)
+            IconButton(
+              tooltip: 'Enviar por correo',
+              icon: const Icon(Icons.email_outlined),
+              onPressed: () => enviarPorExpo(porCorreo: true),
+            ),
         ],
       ),
       body: isUrlValid.value == null

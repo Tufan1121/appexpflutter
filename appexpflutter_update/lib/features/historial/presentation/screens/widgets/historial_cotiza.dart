@@ -61,6 +61,9 @@ class HistorialListCotiza extends StatelessWidget {
                               historial[index].nombre,
                           clientPhoneNumber: historial[index].telefono,
                           url: pdfUrl,
+                          // En tienda id_expo es 0: el envío lo hace mainTienda.
+                          idExpo: historial[index].idExpo,
+                          cotizacion: true,
                         ),
                       ),
                     );

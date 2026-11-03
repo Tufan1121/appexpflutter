@@ -18,6 +18,14 @@ class SearchHistorial extends HookWidget {
     'Buscar por cotización'
   ];
 
+  /// Pide las cotizaciones de la tienda; [texto] filtra por nombre del
+  /// cliente o folio (vacío = todas).
+  void _buscar(BuildContext context, String texto) {
+    context
+        .read<HistorialBloc>()
+        .add(GetHistorialCotiza(parameter: texto, search: 'cotización'));
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = useTextEditingController();
@@ -26,10 +34,21 @@ class SearchHistorial extends HookWidget {
 
     useEffect(() {
       controller.addListener(() {
+        if (controller.text == textFieldValue.value) return;
         textFieldValue.value = controller.text;
+        // Filtra mientras se escribe (el bloc espera a que se deje de teclear)
+        _buscar(context, controller.text.trim());
       });
       return null;
     }, [controller]);
+
+    // Al entrar: la lista completa
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) _buscar(context, '');
+      });
+      return null;
+    }, []);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -106,8 +125,7 @@ class SearchHistorial extends HookWidget {
                           search: 'cotización'));
                       break;
                   } */
-                context.read<HistorialBloc>().add(GetHistorialCotiza(
-                    parameter: textFieldValue.value, search: 'cotización'));
+                _buscar(context, value.trim());
               },
               decoration: InputDecoration(
                 suffixIcon: controller.text.isNotEmpty
@@ -127,7 +145,7 @@ class SearchHistorial extends HookWidget {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                hintText: 'Buscar cliente/cotización',
+                hintText: 'Filtrar por cliente o folio',
                 hintStyle: const TextStyle(color: Colors.grey),
                 fillColor: Colors.white,
                 filled: true,
