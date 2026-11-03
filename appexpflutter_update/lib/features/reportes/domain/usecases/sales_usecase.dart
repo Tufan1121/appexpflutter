@@ -3,6 +3,7 @@ import 'package:appexpflutter_update/features/reportes/domain/entities/sales_ped
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_tickets_entity.dart';
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_vendedor_entity.dart';
 import 'package:appexpflutter_update/features/reportes/domain/entities/meta_expo_entity.dart';
+import 'package:appexpflutter_update/features/reportes/domain/entities/ventas_expo_entity.dart';
 import 'package:appexpflutter_update/features/reportes/domain/repositories/sales_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -24,5 +25,9 @@ class  SalesUsecase {
 
   Future<Either<NetworkException, MetaExpoEntity>> getMetaExpo() async {
     return await salesRepository.getMetaExpo();
+  }
+
+  Future<Either<NetworkException, VentasExpoEntity>> getVentasExpo() async {
+    return await salesRepository.getVentasExpo();
   }
 }

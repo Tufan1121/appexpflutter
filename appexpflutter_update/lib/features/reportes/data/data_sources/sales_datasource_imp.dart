@@ -4,6 +4,7 @@ import 'package:appexpflutter_update/features/reportes/data/models/sales_pedidos
 import 'package:appexpflutter_update/features/reportes/data/models/sales_tickets_model.dart';
 import 'package:appexpflutter_update/features/reportes/data/models/sales_vendedor_model.dart';
 import 'package:appexpflutter_update/features/reportes/data/models/meta_expo_model.dart';
+import 'package:appexpflutter_update/features/reportes/data/models/ventas_expo_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -95,6 +96,24 @@ class SalesDatasourceImp implements SalesDatasource {
             },
           ));
       return MetaExpoModel.fromJson(result.data);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  /// Mismo endpoint que la pestaña Ventas de la lista de pedidos web
+  /// (listaexpo): los pedidos que ya tienen ticket no suman.
+  @override
+  Future<VentasExpoModel> getVentasExpo() async {
+    final token = await storage.read(key: 'accessToken');
+    try {
+      final result = await _dioClient.get('/ventasExpo/',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ));
+      return VentasExpoModel.fromJson(result.data);
     } catch (_) {
       rethrow;
     }

@@ -1,4 +1,5 @@
-﻿import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_page_precios.dart';
+﻿import 'package:appexpflutter_update/config/upper_case_text_formatter.dart';
+import 'package:appexpflutter_update/features/precios/presentation/screens/widgets/scanner_page_precios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:appexpflutter_update/config/theme/app_theme.dart';
@@ -50,6 +51,9 @@ class SearchPrices extends HookWidget {
                 ),
                 obscureText: false,
                 keyboardType: TextInputType.text,
+                // Las claves van en mayúscula
+                textCapitalization: TextCapitalization.characters,
+                inputFormatters: [UpperCaseTextFormatter()],
                 onChanged: (value) {
                   context
                       .read<PreciosBloc>()

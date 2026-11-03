@@ -5,6 +5,7 @@ import 'package:appexpflutter_update/features/reportes/domain/entities/sales_ped
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_tickets_entity.dart';
 import 'package:appexpflutter_update/features/reportes/domain/entities/sales_vendedor_entity.dart';
 import 'package:appexpflutter_update/features/reportes/domain/entities/meta_expo_entity.dart';
+import 'package:appexpflutter_update/features/reportes/domain/entities/ventas_expo_entity.dart';
 import 'package:appexpflutter_update/features/reportes/domain/repositories/sales_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
@@ -63,6 +64,18 @@ class SalesRepositoryImp implements SalesRepository {
     try {
       final result = await salesDatasource.getMetaExpo();
       return Right(result.toEntity());
+    } on NotFoundException catch (e) {
+      return Left(NetworkException.customMessage(e.message));
+    } on DioException catch (e) {
+      return Left(NetworkException.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, VentasExpoEntity>> getVentasExpo() async {
+    try {
+      final result = await salesDatasource.getVentasExpo();
+      return Right(result);
     } on NotFoundException catch (e) {
       return Left(NetworkException.customMessage(e.message));
     } on DioException catch (e) {

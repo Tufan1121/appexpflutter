@@ -39,6 +39,10 @@ class GetReportesVendedorEvent extends ReportesEvent {
 
 class GetReportesMetaEvent extends ReportesEvent {}
 
+/// Meta, venta por día y por vendedor de la expo activa desde /ventasExpo/,
+/// el mismo endpoint de la lista de pedidos web.
+class GetVentasExpoEvent extends ReportesEvent {}
+
 
 
 class AuthMovilEvent extends ReportesEvent {

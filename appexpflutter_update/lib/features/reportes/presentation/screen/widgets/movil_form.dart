@@ -88,10 +88,7 @@ class _MovilForm extends State<MovilForm> {
                     );
                   } else {
                     isLoading.value = false;
-                    context.read<ReportesBloc>().add(GetReportesPedidosEvent());
-                    context.read<ReportesBloc>().add(GetReportesTicketsEvent());
-                    context.read<ReportesBloc>().add(GetReportesVendedorEvent());
-                    context.read<ReportesBloc>().add(GetReportesMetaEvent());
+                    context.read<ReportesBloc>().add(GetVentasExpoEvent());
                     ReportesScreenRoute().push(context);
                   }
                 }

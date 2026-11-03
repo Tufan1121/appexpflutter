@@ -17,6 +17,7 @@ class ReportesBloc extends Bloc<ReportesEvent, ReportesState> {
     on<GetReportesTicketsEvent>(_getReportesTicketsEvent);
     on<GetReportesVendedorEvent>(_getReportesVendedorEvent);
     on<GetReportesMetaEvent>(_getReportesMetaEvent);
+    on<GetVentasExpoEvent>(_getVentasExpoEvent);
     on<AuthMovilEvent>(_authMovilEvent);
   }
   List<SalesPedidosEntity> _pedidos = [];
@@ -81,6 +82,24 @@ class ReportesBloc extends Bloc<ReportesEvent, ReportesState> {
     result.fold((failure) => emit(ReportesError(message: failure.message)),
         (metaExpo) {
       _metaExpo = metaExpo;
+      emit(ReportesLoaded(
+          salesPedidos: _pedidos,
+          salesTickets: _tickets,
+          salesVendedor: _vendedores,
+          metaExpo: _metaExpo));
+    });
+  }
+
+  Future<void> _getVentasExpoEvent(
+      GetVentasExpoEvent event, Emitter<ReportesState> emit) async {
+    emit(ReportesLoading());
+    final result = await salesUsecase.getVentasExpo();
+    result.fold((failure) => emit(ReportesError(message: failure.message)),
+        (ventas) {
+      _pedidos = ventas.pedidosPorDia;
+      _tickets = ventas.ticketsPorDia;
+      _vendedores = ventas.porVendedor;
+      _metaExpo = ventas.meta;
       emit(ReportesLoaded(
           salesPedidos: _pedidos,
           salesTickets: _tickets,
