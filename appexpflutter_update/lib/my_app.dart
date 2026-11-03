@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:appexpflutter_update/features/punto_venta/presentation/blocs/payment_info/payment_info_bloc.dart';
 import 'package:api_client/api_client.dart';
 import 'package:appexpflutter_update/features/auth/config/config_token.dart';
 import 'package:flutter/material.dart';
@@ -129,6 +130,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<PedidoBloc>(create: (_) => injector<PedidoBloc>()),
         BlocProvider<PedidoVentaBloc>(
             create: (_) => injector<PedidoVentaBloc>()),
+        BlocProvider<PaymentInfoBloc>(create: (_) => injector<PaymentInfoBloc>()),
         BlocProvider<SesionPedidoBloc>(
             create: (_) => injector<SesionPedidoBloc>()),
         BlocProvider<CotizaPedidoBloc>(

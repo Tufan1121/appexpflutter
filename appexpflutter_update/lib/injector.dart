@@ -10,6 +10,11 @@ Future<void> init() async {
     //* Data Sources
     ..registerLazySingleton<EnvioDocumentosDataSource>(
         () => EnvioDocumentosDataSource(dioClient: injector()))
+    // Cuentas y terminales para los pagos del punto de venta
+    ..registerLazySingleton<PaymentInfoDataSource>(
+        () => PaymentInfoDataSourceImpl(dioClient: injector()))
+    ..registerLazySingleton<PaymentInfoRepository>(
+        () => PaymentInfoRepositoryImpl(injector()))
     ..registerLazySingleton<AuthDatasource>(
         () => AuthDataSourceImpl(dioClient: injector()))
     ..registerLazySingleton<ProductoDataSource>(
@@ -115,6 +120,8 @@ Future<void> init() async {
         () => ProductosTiendaBloc(productoUsecase: injector()))
     ..registerLazySingleton<PedidoVentaBloc>(
         () => PedidoVentaBloc(pedidoUsecase: injector()))
+    ..registerLazySingleton<PaymentInfoBloc>(
+        () => PaymentInfoBloc(repository: injector()))
     ..registerLazySingleton<ConsultaBloc>(
         () => ConsultaBloc(ticketsUsecase: injector()))
     ..registerLazySingleton<PedidoBloc>(
